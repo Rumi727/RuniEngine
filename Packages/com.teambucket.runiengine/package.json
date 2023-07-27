@@ -1,0 +1,19 @@
+{
+  "name": "com.teambucket.runiengine",
+  "version": "0.0.0",
+  "author": {
+    "name": "Simsimhan Chobo"
+  },
+  "unity": "2022.1",
+  "displayName": "Runi Engine",
+  "description": "Unity-only universal kernel system that everyone will use",
+  "dependencies": {
+    "com.cysharp.unitask": "0.0.0"
+  },
+  "keywords": [
+    "Runi",
+    "Runi Engine",
+    "Engine"
+  ],
+  "license": "MIT"
+}
