@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 
@@ -17,6 +18,9 @@ namespace RuniEngine.Booting
 #if UNITY_2020_2_OR_NEWER
         public static event PlayerLoopSystem.UpdateFunction? timeUpdateEvent;
 #endif
+
+        [Awaken]
+        public static void Awaken() => Application.quitting += () => PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
 
         public static void EventRegister(ref PlayerLoopSystem loopSystems)
         {
@@ -40,7 +44,7 @@ namespace RuniEngine.Booting
                     updateDelegate += preLateUpdateEvent;
                 else if (type == typeof(PostLateUpdate))
                     updateDelegate += postLateUpdateEvent;
-                #if UNITY_2020_2_OR_NEWER
+#if UNITY_2020_2_OR_NEWER
                 else if (type == typeof(TimeUpdate))
                     updateDelegate += timeUpdateEvent;
 #endif
