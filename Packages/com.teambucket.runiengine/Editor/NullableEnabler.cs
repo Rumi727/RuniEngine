@@ -38,6 +38,8 @@ namespace RuniEngine.Editor
                     if (!text.StartsWith(nullableCode))
                         File.WriteAllText(csFilePath, nullableCode + Environment.NewLine + text);
                 }
+
+                AssetDatabase.Refresh();
             }
         }
     }
