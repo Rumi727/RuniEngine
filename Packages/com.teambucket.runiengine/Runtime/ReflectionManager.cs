@@ -11,20 +11,18 @@ namespace RuniEngine
         {
             assemblys = AppDomain.CurrentDomain.GetAssemblies();
 
+            List<Type> result = new List<Type>();
+            for (int assemblysIndex = 0; assemblysIndex < assemblys.Length; assemblysIndex++)
             {
-                List<Type> result = new List<Type>();
-                for (int assemblysIndex = 0; assemblysIndex < assemblys.Length; assemblysIndex++)
+                Type[] types = assemblys[assemblysIndex].GetTypes();
+                for (int typesIndex = 0; typesIndex < types.Length; typesIndex++)
                 {
-                    Type[] types = assemblys[assemblysIndex].GetTypes();
-                    for (int typesIndex = 0; typesIndex < types.Length; typesIndex++)
-                    {
-                        Type type = types[typesIndex];
-                        result.Add(type);
-                    }
+                    Type type = types[typesIndex];
+                    result.Add(type);
                 }
-
-                types = result.ToArray();
             }
+
+            types = result.ToArray();
         }
 
         /// <summary>
