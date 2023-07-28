@@ -119,25 +119,5 @@ namespace RuniEngine
 
             return fieldToSave;
         }
-
-        public enum GetComponentMode
-        {
-            none,
-            addIfNull,
-            destroyIfNull
-        }
-
-        public enum GetComponentInMode
-        {
-            none,
-            destroyIfNull
-        }
-
-        public enum GetComponentsMode
-        {
-            none,
-            addZeroLengthIfNull,
-            destroyIfNull
-        }
     }
 }

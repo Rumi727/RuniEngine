@@ -327,19 +327,6 @@ namespace RuniEngine
             }
         }
 
-        public enum DataSizeType
-        {
-            b,
-            kb,
-            mb,
-            gb,
-            tb,
-            pb,
-            eb,
-            zb,
-            yb
-        }
-
         public static string ToSummaryString(this Exception e) => $"{e.GetType().Name}: {e.Message}\n\n{e.StackTrace.Substring(5)}";
     }
 }
