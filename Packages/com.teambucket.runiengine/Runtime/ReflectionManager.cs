@@ -3,7 +3,7 @@ using System.Reflection;
 using System;
 using System.Collections.Generic;
 
-namespace RuniEngine.Reflection
+namespace RuniEngine
 {
     public static class ReflectionManager
     {
