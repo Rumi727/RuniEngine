@@ -1,7 +1,6 @@
 #nullable enable
 using System.Globalization;
 using System;
-using UnityEngine;
 
 namespace RuniEngine
 {
