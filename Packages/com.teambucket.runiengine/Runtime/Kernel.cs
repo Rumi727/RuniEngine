@@ -351,7 +351,6 @@ namespace RuniEngine
             }
 
             internetReachability = Application.internetReachability;
-            Debug.Log("asdf");
         }
 
         static void Qutting()
