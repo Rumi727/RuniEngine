@@ -48,6 +48,10 @@ namespace RuniEngine.UI
             rectTransform.position = targetRectTransform.position;
             rectTransform.rotation = targetRectTransform.rotation;
             rectTransform.localScale = targetRectTransform.localScale;
+
+            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
         }
     }
 }
