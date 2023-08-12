@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace RuniEngine.Editor
+namespace RuniEngine.Editor.Attribute
 {
     [CustomPropertyDrawer(typeof(NotNullFieldAttribute), true)]
     public sealed class NotNullFieldAttributeDrawer : PropertyDrawer
