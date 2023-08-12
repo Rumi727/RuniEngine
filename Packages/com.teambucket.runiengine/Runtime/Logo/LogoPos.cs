@@ -1,5 +1,4 @@
 #nullable enable
-using RuniEngine.Logo;
 using RuniEngine.UI;
 using UnityEngine;
 
