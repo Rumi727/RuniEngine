@@ -3,7 +3,7 @@ using RuniEngine.Logo;
 using RuniEngine.UI;
 using UnityEngine;
 
-namespace RuniEngine
+namespace RuniEngine.Logo
 {
     [ExecuteAlways]
     public class LogoPos : UIBase
