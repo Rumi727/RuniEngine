@@ -14,13 +14,23 @@
       "dependencies": {},
       "hash": "d210e3d76adc0cce77f4ad2af1ade88dad6b1d5a"
     },
+    "com.ibicha.youtube-player": {
+      "version": "2.0.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
+      },
+      "url": "https://registry.npmjs.com"
+    },
     "com.teambucket.runiengine": {
       "version": "file:com.teambucket.runiengine",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.cysharp.unitask": "0.0.0",
-        "com.coffee.softmask-for-ugui": "0.0.0"
+        "com.cysharp.unitask": "2.3.3",
+        "com.coffee.softmask-for-ugui": "1.0.2",
+        "com.ibicha.youtube-player": "2.0.2"
       }
     },
     "com.unity.collab-proxy": {
@@ -78,6 +88,13 @@
     },
     "com.unity.ide.vscode": {
       "version": "1.2.5",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
