@@ -16,7 +16,7 @@ namespace RuniEngine
             get
             {
                 if (_emptyTransform == null)
-                    _emptyTransform = Resources.Load<RectTransform>("Empty Transform");
+                    _emptyTransform = Resources.Load<Transform>("Empty Transform");
 
                 return _emptyTransform;
             }
