@@ -3,7 +3,7 @@ using System.IO;
 
 namespace RuniEngine.Editor
 {
-    public static class EditorTool
+    public partial class EditorTool
     {
         public static string RelativePathToAbsolutePath(string path) => Path.Combine(Directory.GetCurrentDirectory(), path);
 
