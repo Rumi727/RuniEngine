@@ -30,11 +30,13 @@
       "dependencies": {
         "com.cysharp.unitask": "2.3.3",
         "com.coffee.softmask-for-ugui": "1.0.2",
-        "com.ibicha.youtube-player": "2.0.2"
+        "com.ibicha.youtube-player": "2.0.2",
+        "com.unity.ugui": "1.0.0",
+        "com.unity.textmeshpro": "3.0.6"
       }
     },
     "com.unity.collab-proxy": {
-      "version": "2.0.5",
+      "version": "2.0.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

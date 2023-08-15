@@ -8,8 +8,11 @@
   "displayName": "Runi Engine",
   "description": "Unity-only universal kernel system that everyone will use",
   "dependencies": {
-    "com.cysharp.unitask": "0.0.0",
-    "com.coffee.softmask-for-ugui": "0.0.0"
+    "com.cysharp.unitask": "2.3.3",
+    "com.coffee.softmask-for-ugui": "1.0.2",
+    "com.ibicha.youtube-player": "2.0.2",
+    "com.unity.ugui": "1.0.0",
+    "com.unity.textmeshpro": "3.0.6"
   },
   "keywords": [
     "Runi",
