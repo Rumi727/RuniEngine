@@ -29,7 +29,15 @@ namespace RuniEngine.Install
                 installerScreens = installerScreens.OrderBy(x => x.sort).ToList();
             }
 
-            ShowInstallerWindow();
+            {
+                EditorApplication.update += Update;
+
+                static void Update()
+                {
+                    ShowInstallerWindow();
+                    EditorApplication.update -= Update;
+                }
+            }
         }
 
 
