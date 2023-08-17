@@ -77,6 +77,9 @@ namespace RuniEngine.Install
 
             string url = await YoutubePlayer.YoutubePlayer.GetRawVideoUrlAsync(music);
 
+            if (videoPlayer == null)
+                return;
+
             videoPlayer.url = url;
             videoPlayer.Play();
 
