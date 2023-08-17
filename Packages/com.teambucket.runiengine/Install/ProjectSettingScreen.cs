@@ -7,6 +7,8 @@ namespace RuniEngine.Install
 {
     public sealed class ProjectSettingScreen : IInstallerScreen
     {
+        public InstallerMainWindow? installerMainWindow { get; set; }
+
         public string label { get; } = "프로젝트 설정 변경";
         public bool headDisable { get; } = false;
 

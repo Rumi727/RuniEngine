@@ -47,6 +47,9 @@ namespace RuniEngine.Install
             scrollPosition = Vector2.zero;
             screenIndex = 0;
             musicVolume = 0.5f;
+
+            for (int i = 0; i < installerScreens.Count; i++)
+                installerScreens[i].installerMainWindow = this;
         }
 
         void OnDisable() => VideoDestroy();
