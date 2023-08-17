@@ -36,7 +36,7 @@ namespace RuniEngine.Install
         {
             scrollPosition = Vector2.zero;
             screenIndex = 0;
-            musicVolume = 0.7f;
+            musicVolume = 0.5f;
         }
 
         void Update()
@@ -106,7 +106,7 @@ namespace RuniEngine.Install
 
         static Vector2 scrollPosition = Vector2.zero;
         static int screenIndex = 0;
-        static float musicVolume = 0.7f;
+        static float musicVolume = 0.5f;
 
         public static void DrawGUI()
         {
