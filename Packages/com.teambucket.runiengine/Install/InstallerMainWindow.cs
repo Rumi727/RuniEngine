@@ -41,6 +41,9 @@ namespace RuniEngine.Install
 
         void Update()
         {
+            if (Kernel.isPlaying)
+                return;
+
             if (videoPlayer != null)
             {
                 EditorApplication.QueuePlayerLoopUpdate();
@@ -165,33 +168,36 @@ namespace RuniEngine.Install
                         GUI.enabled = true;
                     }
 
-                    GUILayout.Space(5);
-
-                    if (videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url))
+                    if (!Kernel.isPlaying)
                     {
-                        {
-                            GUILayout.Label($"볼륨 {(musicVolume * 100).Floor()}/100");
-                            float volume = GUILayout.HorizontalSlider(musicVolume, 0, 1, GUILayout.Width(100));
+                        GUILayout.Space(5);
 
-                            if (musicVolume != volume)
+                        if (videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url))
+                        {
                             {
-                                musicVolume = volume;
-                                videoPlayer.SetDirectAudioVolume(0, musicVolume);
+                                GUILayout.Label($"볼륨 {(musicVolume * 100).Floor()}/100");
+                                float volume = GUILayout.HorizontalSlider(musicVolume, 0, 1, GUILayout.Width(100));
+
+                                if (musicVolume != volume)
+                                {
+                                    musicVolume = volume;
+                                    videoPlayer.SetDirectAudioVolume(0, musicVolume);
+                                }
+                            }
+
+                            GUILayout.Space(10);
+
+                            if (GUILayout.Button("오디오 리셋"))
+                            {
+                                AudioSettings.Reset(AudioSettings.GetConfiguration());
+
+                                videoPlayer.Stop();
+                                videoPlayer.Play();
                             }
                         }
-
-                        GUILayout.Space(10);
-
-                        if (GUILayout.Button("오디오 리셋"))
-                        {
-                            AudioSettings.Reset(AudioSettings.GetConfiguration());
-
-                            videoPlayer.Stop();
-                            videoPlayer.Play();
-                        }
+                        else
+                            GUILayout.Label("음악 로딩중...");
                     }
-                    else
-                        GUILayout.Label("음악 로딩중...");
                 }
 
                 GUILayout.FlexibleSpace();
