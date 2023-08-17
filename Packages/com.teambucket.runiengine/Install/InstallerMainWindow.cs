@@ -54,6 +54,9 @@ namespace RuniEngine.Install
         {
             stopwatch.Restart();
 
+            minSize = new Vector2(518, 285);
+            maxSize = minSize;
+
             scrollPosition = Vector2.zero;
             screenIndex = 0;
             musicVolume = 0.5f;
