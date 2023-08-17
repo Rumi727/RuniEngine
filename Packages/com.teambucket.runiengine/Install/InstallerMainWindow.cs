@@ -83,10 +83,12 @@ namespace RuniEngine.Install
             if (videoPlayer == null)
                 return;
 
+            videoPlayer.isLooping = true;
             videoPlayer.url = url;
-            videoPlayer.Play();
 
+            videoPlayer.Play();
             videoPlayer.SetDirectAudioVolume(0, musicVolume);
+
             Repaint();
         }
 
