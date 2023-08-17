@@ -64,7 +64,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Inverse: 0
   m_MaskInteraction: 85
-  m_UseStencil: 1
+  m_UseStencil: 0
   m_RaycastFilter: 0
 --- !u!114 &7973990190336537839
 MonoBehaviour:
@@ -277,7 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 0
+  m_DownSamplingRate: 1
   m_Softness: 1
   m_Alpha: 1
   m_IgnoreParent: 0
@@ -412,7 +412,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7973990190415913272}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -525,7 +525,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -553,7 +553,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Inverse: 0
   m_MaskInteraction: 85
-  m_UseStencil: 1
+  m_UseStencil: 0
   m_RaycastFilter: 0
 --- !u!114 &7973990190792610672
 MonoBehaviour:
@@ -659,7 +659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 0
+  m_DownSamplingRate: 1
   m_Softness: 1
   m_Alpha: 1
   m_IgnoreParent: 0
@@ -730,7 +730,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -758,7 +758,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Inverse: 0
   m_MaskInteraction: 85
-  m_UseStencil: 1
+  m_UseStencil: 0
   m_RaycastFilter: 0
 --- !u!114 &7973990191385368882
 MonoBehaviour:
@@ -864,7 +864,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 0
+  m_DownSamplingRate: 1
   m_Softness: 1
   m_Alpha: 1
   m_IgnoreParent: 0
@@ -999,7 +999,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7973990191554376003}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1185,7 +1185,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7973990191570024388}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1317,7 +1317,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7973990191614299829}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1385,7 +1385,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1413,7 +1413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Inverse: 0
   m_MaskInteraction: 85
-  m_UseStencil: 1
+  m_UseStencil: 0
   m_RaycastFilter: 0
 --- !u!114 &7973990191619928784
 MonoBehaviour:
@@ -1519,7 +1519,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 0
+  m_DownSamplingRate: 1
   m_Softness: 1
   m_Alpha: 1
   m_IgnoreParent: 0
