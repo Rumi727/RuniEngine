@@ -32,12 +32,16 @@ namespace RuniEngine.Install
             ShowInstallerWindow();
         }
 
+
+
         void OnEnable()
         {
             scrollPosition = Vector2.zero;
             screenIndex = 0;
             musicVolume = 0.5f;
         }
+
+        void OnDisable() => VideoDestroy();
 
         void Update()
         {
@@ -54,8 +58,6 @@ namespace RuniEngine.Install
         }
 
         void OnGUI() => DrawGUI();
-
-        void OnDisable() => VideoDestroy();
 
 
 
