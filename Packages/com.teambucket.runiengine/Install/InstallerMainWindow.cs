@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using RuniEngine.Editor;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -12,6 +13,13 @@ namespace RuniEngine.Install
 {
     public sealed class InstallerMainWindow : EditorWindow
     {
+        public static VideoPlayer? videoPlayer;
+
+        public Texture2D? logoTexture;
+        public Stopwatch stopwatch = new Stopwatch();
+
+
+
         [InitializeOnLoadMethod]
         static void InitializeOnLoadMethod()
         {
@@ -44,6 +52,8 @@ namespace RuniEngine.Install
 
         void OnEnable()
         {
+            stopwatch.Restart();
+
             scrollPosition = Vector2.zero;
             screenIndex = 0;
             musicVolume = 0.5f;
@@ -82,7 +92,6 @@ namespace RuniEngine.Install
         }
 
         const string music = "https://youtu.be/G0WZTlLJlHg";
-        public static VideoPlayer? videoPlayer;
         async UniTaskVoid MusicPlay()
         {
             VideoDestroy();
@@ -142,7 +151,6 @@ namespace RuniEngine.Install
                         scrollPosition = GUILayout.BeginScrollView(scrollPosition);
                         screen.DrawGUI();
 
-                        GUILayout.FlexibleSpace();
                         GUILayout.EndScrollView();
                     }
                 }
