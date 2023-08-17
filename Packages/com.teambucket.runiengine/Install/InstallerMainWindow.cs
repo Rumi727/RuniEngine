@@ -68,7 +68,7 @@ namespace RuniEngine.Install
                 FocusWindowIfItsOpen<InstallerMainWindow>();
         }
 
-        const string music = "https://youtu.be/oNXzMBA9VU4";
+        const string music = "https://youtu.be/G0WZTlLJlHg";
         public static VideoPlayer? videoPlayer;
         async UniTaskVoid MusicPlay()
         {
