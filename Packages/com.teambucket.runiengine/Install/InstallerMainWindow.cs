@@ -60,7 +60,7 @@ namespace RuniEngine.Install
         public static void ShowInstallerWindow()
         {
             if (!HasOpenInstances<InstallerMainWindow>())
-                GetWindow<InstallerMainWindow>("Runi Engine Installer");
+                GetWindow<InstallerMainWindow>(true, "Runi Engine Installer");
             else
                 FocusWindowIfItsOpen<InstallerMainWindow>();
         }
