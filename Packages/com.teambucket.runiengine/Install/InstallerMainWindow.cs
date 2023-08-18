@@ -4,6 +4,7 @@ using RuniEngine.Editor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -37,7 +38,10 @@ namespace RuniEngine.Install
                 installerScreens = installerScreens.OrderBy(x => x.sort).ToList();
             }
 
+            string path = EditorTool.RelativePathToAbsolutePath(Path.Combine("Assets", "~RumiEngineInstalled~"));
+            if (!File.Exists(path))
             {
+                File.WriteAllText(path, string.Empty);
                 EditorApplication.update += Update;
 
                 static void Update()
