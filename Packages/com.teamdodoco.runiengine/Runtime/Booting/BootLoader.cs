@@ -54,7 +54,7 @@ namespace RuniEngine.Booting
             Kernel.PathInitialize();
 
             //Player Loop Setting
-            Debug.Log("Player Loop Setting...");
+            Debug.Log("Player Loop Setting...", nameof(BootLoader));
             {
                 PlayerLoopSystem loopSystems = PlayerLoop.GetCurrentPlayerLoop();
 
@@ -70,7 +70,7 @@ namespace RuniEngine.Booting
             }
 
             //Storable Class
-            Debug.Log("Storable Class Loading...");
+            Debug.Log("Storable Class Loading...", nameof(BootLoader));
             {
                 await UniTask.WhenAll(
                     UniTask.RunOnThreadPool(() => _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>()),
