@@ -23,8 +23,8 @@
       },
       "url": "https://registry.npmjs.com"
     },
-    "com.teambucket.runiengine": {
-      "version": "file:com.teambucket.runiengine",
+    "com.teamdodoco.runiengine": {
+      "version": "file:com.teamdodoco.runiengine",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
