@@ -1,5 +1,6 @@
 #nullable enable
 using RuniEngine.Booting;
+using RuniEngine.Data;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
@@ -355,6 +356,7 @@ namespace RuniEngine
         static void Qutting()
         {
             ResourceManager.AllDestroy();
+            StorableClassUtility.SaveAll(BootLoader.userData, userDataPath);
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.pauseStateChanged -= PauseStateChanged;
