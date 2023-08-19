@@ -1,6 +1,5 @@
 #nullable enable
 using RuniEngine.Booting;
-using System;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
@@ -90,26 +89,26 @@ namespace RuniEngine
         static string _temporaryCachePath = "";
 
         /// <summary>
-        /// PathTool.Combine(Kernel.persistentDataPath, "Save Data")
+        /// PathTool.Combine(Kernel.persistentDataPath, "User Data")
         /// </summary>
-        public static string saveDataPath
+        public static string userDataPath
         {
             get
             {
-                if (string.IsNullOrEmpty(_saveDataPath))
-                    return _saveDataPath;
+                if (string.IsNullOrEmpty(_userDataPath))
+                    return _userDataPath;
                 else
                 {
-                    _saveDataPath = Path.Combine(persistentDataPath, "Save Data");
+                    _userDataPath = Path.Combine(persistentDataPath, "User Data");
 
-                    if (!Directory.Exists(_saveDataPath))
-                        Directory.CreateDirectory(_saveDataPath);
+                    if (!Directory.Exists(_userDataPath))
+                        Directory.CreateDirectory(_userDataPath);
 
-                    return _saveDataPath;
+                    return _userDataPath;
                 }
             }
         }
-        static string _saveDataPath = "";
+        static string _userDataPath = "";
 
         /// <summary>
         /// PathTool.Combine(Kernel.persistentDataPath, "Resource Pack")
@@ -133,10 +132,10 @@ namespace RuniEngine
         }
         static string _resourcePackPath = "";
 
-        /*/// <summary>
-        /// PathTool.Combine(Kernel.streamingAssetsPath, "projectSettings")
+        /// <summary>
+        /// PathTool.Combine(Kernel.streamingAssetsPath, "projectData")
         /// </summary>
-        public static string projectSettingPath { get; } = Path.Combine(streamingAssetsPath, "projectSettings");*/
+        public static string projectDataPath { get; } = Path.Combine(streamingAssetsPath, "projectData");
 
 
 
@@ -287,7 +286,7 @@ namespace RuniEngine
             _ = streamingAssetsPath;
             _ = persistentDataPath;
             _ = temporaryCachePath;
-            _ = saveDataPath;
+            _ = userDataPath;
             _ = resourcePackPath;
 
             _ = companyName;
