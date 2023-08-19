@@ -12,8 +12,8 @@ namespace RuniEngine.Logo
         public float aniSpeed { get => _aniSpeed; set => _aniSpeed = value; }
         [SerializeField, Min(0)] float _aniSpeed = 0.01f;
 
-        public float aniProgress { get => _aniProgress.Clamp01(); set => _aniProgress = value; }
-        [SerializeField, Range(0, 1)] float _aniProgress = 0;
+        public float aniProgress { get => _aniProgress; set => _aniProgress = value; }
+        [SerializeField, Range(0, 3)] float _aniProgress = 0;
 
         void Update()
         {

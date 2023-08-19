@@ -1,6 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Data;
+using RuniEngine.Splash;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -35,6 +36,9 @@ namespace RuniEngine.Booting
         internal static StorableClass[] _userData = null!;
 
         public static bool basicDataLoaded { get; set; } = false;
+        public static bool allLoaded { get; set; } = false;
+
+        public static bool splashAniPlaying { get; set; } = false;
 
         [RuntimeInitializeOnLoadMethod]
         public static async void Booting()
@@ -80,6 +84,11 @@ namespace RuniEngine.Booting
 
                 basicDataLoaded = true;
             }
+
+            await UniTask.Delay(100);
+            SplashScreen.isPlaying = true;
+
+            allLoaded = true;
         }
 
         static void AttributeInvoke<T>() where T : Attribute
