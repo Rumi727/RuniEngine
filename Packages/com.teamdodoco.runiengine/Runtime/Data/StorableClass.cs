@@ -77,6 +77,10 @@ namespace RuniEngine.Data
                 jObject.Add(dataMemberInfo.name, JToken.FromObject(dataMemberInfo.memberInfo.GetValue(null)));
             }
 
+            string folderPath = Path.Combine(path, "..");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
             File.WriteAllText(path, jObject.ToString());
         }
 
