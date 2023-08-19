@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Packages/com.teamdodoco.runiengine/Runtime/Splash/Default Splash Scene.unity
+    guid: 9c39878cacc84604e9ee8a3e3aefca65
   m_configObjects: {}
