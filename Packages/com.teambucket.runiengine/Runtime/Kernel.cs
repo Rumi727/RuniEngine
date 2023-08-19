@@ -1,4 +1,5 @@
 #nullable enable
+using Newtonsoft.Json;
 using RuniEngine.Booting;
 using RuniEngine.Data;
 using System.Diagnostics;
@@ -8,6 +9,12 @@ namespace RuniEngine
 {
     public static partial class Kernel
     {
+        [UserData]
+        public sealed class UserData
+        {
+            [JsonProperty] public static Version lastRuniEngineVersion { get; set; } = runiEngineVersion;
+        }
+
         public static Version runiEngineVersion { get; } = new Version(0, 0, 0);
 
         /// <summary>
