@@ -38,7 +38,7 @@ namespace RuniEngine.Install
                 installerScreens = installerScreens.OrderBy(x => x.sort).ToList();
             }
 
-            string path = EditorTool.RelativePathToAbsolutePath(Path.Combine("Assets", "~RumiEngineInstalled~"));
+            string path = Path.Combine("Assets", "~RumiEngineInstalled~");
             if (!File.Exists(path))
             {
                 File.WriteAllText(path, string.Empty);
