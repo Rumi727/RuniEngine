@@ -37,6 +37,15 @@ namespace RuniEngine.Data
             return storableObjectInfos.ToArray();
         }
 
+        public static void AutoNameSave(this StorableClass storableObject, string folderPath) => storableObject.Save(Path.Combine(folderPath, storableObject.fullName + ".json"));
+
+        /// <summary>
+        /// 모든 저장 가능한 클래스를 로드합니다
+        /// </summary>
+        /// <param name="storableObjects">저장 가능한 클래스 리스트</param>
+        /// <param name="folderPath">폴더 경로</param>
+        public static void AutoNameLoad(this StorableClass storableObject, string folderPath) => storableObject.Load(Path.Combine(folderPath, storableObject.fullName + ".json"));
+
         /// <summary>
         /// 모든 저장 가능한 클래스를 저장합니다
         /// </summary>
