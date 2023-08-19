@@ -104,6 +104,8 @@ namespace RuniEngine.Install
             VideoDestroy();
             Repaint();
 
+            AudioReset();
+
             videoPlayer = Instantiate(ResourceManager.emptyTransform.gameObject, null).AddComponent<VideoPlayer>();
             videoPlayer.name = $"{nameof(InstallerMainWindow)} Background Music";
 
@@ -127,6 +129,17 @@ namespace RuniEngine.Install
             {
                 videoPlayer.Stop();
                 DestroyImmediate(videoPlayer.gameObject);
+            }
+        }
+
+        static void AudioReset()
+        {
+            AudioSettings.Reset(AudioSettings.GetConfiguration());
+
+            if (videoPlayer != null)
+            {
+                videoPlayer.Stop();
+                videoPlayer.Play();
             }
         }
 
@@ -218,12 +231,7 @@ namespace RuniEngine.Install
                             GUILayout.Space(10);
 
                             if (GUILayout.Button("오디오 리셋"))
-                            {
-                                AudioSettings.Reset(AudioSettings.GetConfiguration());
-
-                                videoPlayer.Stop();
-                                videoPlayer.Play();
-                            }
+                                AudioReset();
                         }
                         else
                             GUILayout.Label("음악 로딩중...");
