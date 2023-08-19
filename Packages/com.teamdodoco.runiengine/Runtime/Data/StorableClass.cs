@@ -9,7 +9,7 @@ using System.Reflection;
 namespace RuniEngine.Data
 {
     /// <summary>
-    /// 클래스를 저장/로드 해주는 클래스 입니다 (프로퍼티만 저장/로드 합니다)
+    /// 클래스를 저장/로드 해주는 클래스 입니다 (정적 프로퍼티만 저장/로드 합니다)
     /// </summary>
     public sealed class StorableClass
     {
@@ -19,7 +19,7 @@ namespace RuniEngine.Data
         public StorableClassMemberInfo<PropertyInfo>[] memberInfos { get; }
 
         /// <summary>
-        /// 정적 클래스에 대한 저장 가능한 오브젝트 생성
+        /// 클래스에 대한 저장 가능한 오브젝트 생성
         /// </summary>
         /// <param name="type"></param>
         public StorableClass(Type type)
