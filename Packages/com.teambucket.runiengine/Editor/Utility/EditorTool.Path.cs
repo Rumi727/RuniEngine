@@ -5,8 +5,6 @@ namespace RuniEngine.Editor
 {
     public partial class EditorTool
     {
-        public static string RelativePathToAbsolutePath(string path) => Path.Combine(Directory.GetCurrentDirectory(), path);
-
         public static string AbsolutePathToRelativePath(string path) => path.Remove(Directory.GetCurrentDirectory().Length + 1);
 
         public static bool PathIsProjectPath(string path)
