@@ -74,3 +74,14 @@ crashlytics-build.properties
 # Custom Ignore
 .vsconfig
 .idea/*
+
+/[Aa]ssets/[Ss]treamingAssets/*
+/[Aa]ssets/[Ss]treamingAssets.meta
+
+/[Aa]ssets/Runi Engine/*
+/[Aa]ssets/Runi Engine.meta
+
+/[Aa]ssets/Text Mesh Pro/*
+/[Aa]ssets/TextMeshPro.meta
+
+/[Aa]ssets/~RumiEngineInstalled~
