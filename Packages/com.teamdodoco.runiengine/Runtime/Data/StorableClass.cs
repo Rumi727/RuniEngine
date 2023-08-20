@@ -32,7 +32,7 @@ namespace RuniEngine.Data
             for (int i = 0; i < propertyInfos.Length; i++)
             {
                 PropertyInfo propertyInfo = propertyInfos[i];
-                if (Attribute.GetCustomAttributes(propertyInfo, typeof(JsonIgnoreAttribute)).Length > 0)
+                if (propertyInfo.AttributeContains<JsonIgnoreAttribute>())
                     continue;
 
                 if (!propertyInfo.CanRead || !propertyInfo.CanWrite)
@@ -53,7 +53,7 @@ namespace RuniEngine.Data
                 }
 
                 //JsonProperty 어트리뷰트가 없으면 경고 표시
-                if (Attribute.GetCustomAttributes(propertyInfo, typeof(JsonPropertyAttribute)).Length <= 0)
+                if (!propertyInfo.AttributeContains<JsonPropertyAttribute>())
                 {
                     Debug.LogWarning($"{fullName}.{propertyInfo.Name}" +
                         @" 프로퍼티에 [JsonProperty] 어트리뷰트가 추가되어있지 않습니다.

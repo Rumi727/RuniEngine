@@ -31,7 +31,7 @@ namespace RuniEngine.Install
                 for (int i = 0; i < types.Length; i++)
                 {
                     Type type = types[i];
-                    if (type != typeof(IInstallerScreen) && typeof(IInstallerScreen).IsAssignableFrom(type))
+                    if (type.IsSubtypeOf<IInstallerScreen>())
                         installerScreens.Add((IInstallerScreen)Activator.CreateInstance(type));
                 }
 

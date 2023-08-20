@@ -34,5 +34,20 @@ namespace RuniEngine
         /// All loaded types
         /// </summary>
         public static Type[] types { get; }
+
+        public static bool IsSubtypeOf<T>(this Type type) => type != typeof(T) && typeof(T).IsAssignableFrom(type);
+        public static bool IsSubtypeOf(this Type type, Type surclass) => type != surclass && surclass.IsAssignableFrom(type);
+
+        public static bool AttributeContains<T>(this MemberInfo element) where T : Attribute => element.AttributeContains(typeof(T));
+        public static bool AttributeContains(this MemberInfo element, Type attribute) => Attribute.GetCustomAttributes(element, attribute).Length > 0;
+
+        public static bool AttributeContains<T>(this Assembly element) where T : Attribute => element.AttributeContains(typeof(T));
+        public static bool AttributeContains(this Assembly element, Type attribute) => Attribute.GetCustomAttributes(element, attribute).Length > 0;
+
+        public static bool AttributeContains<T>(this ParameterInfo element) where T : Attribute => element.AttributeContains(typeof(T));
+        public static bool AttributeContains(this ParameterInfo element, Type attribute) => Attribute.GetCustomAttributes(element, attribute).Length > 0;
+
+        public static bool AttributeContains<T>(this Module element) where T : Attribute => element.AttributeContains(typeof(T));
+        public static bool AttributeContains(this Module element, Type attribute) => element.GetCustomAttributes(attribute, false).Length > 0;
     }
 }

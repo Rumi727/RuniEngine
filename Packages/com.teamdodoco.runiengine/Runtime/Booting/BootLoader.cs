@@ -100,7 +100,7 @@ namespace RuniEngine.Booting
                 for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.Length; methodInfoIndex++)
                 {
                     MethodInfo methodInfo = methodInfos[methodInfoIndex];
-                    if (Attribute.GetCustomAttributes(methodInfo, typeof(T)).Length > 0 && methodInfo.GetParameters().Length <= 0)
+                    if (methodInfo.AttributeContains<T>() && methodInfo.GetParameters().Length <= 0)
                     {
                         try
                         {
