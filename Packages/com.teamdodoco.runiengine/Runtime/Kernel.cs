@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using RuniEngine.Booting;
 using RuniEngine.Data;
+using RuniEngine.Resource;
 using System.Diagnostics;
 using UnityEngine;
 
