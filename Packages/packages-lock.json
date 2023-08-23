@@ -23,6 +23,16 @@
       },
       "url": "https://registry.npmjs.com"
     },
+    "com.looooong.asyncimageloader_forked_by_teamdodoko": {
+      "version": "https://github.com/SimsimhanChobo/UnityAsyncImageLoader.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.burst": "1.5.4",
+        "com.unity.mathematics": "1.2.1"
+      },
+      "hash": "7cb549c8b6ae95e7845df8a8faa59c0eae2fa5c8"
+    },
     "com.teamdodoco.runiengine": {
       "version": "file:com.teamdodoco.runiengine",
       "depth": 0,
@@ -32,8 +42,18 @@
         "com.coffee.softmask-for-ugui": "1.0.2",
         "com.ibicha.youtube-player": "2.0.2",
         "com.unity.ugui": "1.0.0",
-        "com.unity.textmeshpro": "3.0.6"
+        "com.unity.textmeshpro": "3.0.6",
+        "com.looooong.asyncimageloader_forked_by_teamdodoko": "727.1.3"
       }
+    },
+    "com.unity.burst": {
+      "version": "1.6.6",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
       "version": "2.0.7",
@@ -90,6 +110,13 @@
     },
     "com.unity.ide.vscode": {
       "version": "1.2.5",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.mathematics": {
+      "version": "1.2.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
