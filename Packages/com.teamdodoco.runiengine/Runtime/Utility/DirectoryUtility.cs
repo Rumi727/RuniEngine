@@ -1,6 +1,8 @@
 #nullable enable
+using RuniEngine.Resource;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace RuniEngine
 {
@@ -31,18 +33,20 @@ namespace RuniEngine
             }
         }
 
-        public static string[] GetFiles(string path, params string[] searchPatterns) => GetFiles(path, searchPatterns, SearchOption.TopDirectoryOnly);
+        public static string[] GetFiles(string path, ExtensionFilter extensionFilter) => GetFiles(path, extensionFilter, SearchOption.TopDirectoryOnly);
         
-        public static string[] GetFiles(string path, string[] searchPatterns, SearchOption searchOption)
+        public static string[] GetFiles(string path, ExtensionFilter extensionFilter, SearchOption searchOption)
         {
-            List<string> paths = new List<string>();
-            for (int i = 0; i < searchPatterns.Length; i++)
+            return Directory.EnumerateFiles(path, "*", searchOption).Where(x =>
             {
-                string searchPattern = searchPatterns[i];
-                paths.AddRange(Directory.GetFiles(path, searchPattern, searchOption));
-            }
+                for (int i = 0; i < extensionFilter.extensions.Length; i++)
+                {
+                    if (x.EndsWith(extensionFilter.extensions[i]))
+                        return true;
+                }
 
-            return paths.ToArray();
+                return false;
+            }).ToArray();
         }
     }
 }
