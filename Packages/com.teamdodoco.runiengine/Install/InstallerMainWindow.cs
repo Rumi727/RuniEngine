@@ -106,7 +106,7 @@ namespace RuniEngine.Install
 
             AudioReset();
 
-            videoPlayer = Instantiate(ResourceManager.emptyTransform.gameObject, null).AddComponent<VideoPlayer>();
+            videoPlayer = Instantiate(ResourceUtility.emptyTransform.gameObject, null).AddComponent<VideoPlayer>();
             videoPlayer.name = $"{nameof(InstallerMainWindow)} Background Music";
 
             string url = await YoutubePlayer.YoutubePlayer.GetRawVideoUrlAsync(music);
