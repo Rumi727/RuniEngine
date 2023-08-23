@@ -68,6 +68,7 @@ namespace RuniEngine.Booting
                 CustomPlayerLoopSetter.EventRegister(ref loopSystems);
                 PlayerLoop.SetPlayerLoop(loopSystems);
             }
+            Debug.Log("Player Loop Setting End", nameof(BootLoader));
 
             //Storable Class
             Debug.Log("Storable Class Loading...", nameof(BootLoader));
@@ -84,6 +85,7 @@ namespace RuniEngine.Booting
 
                 basicDataLoaded = true;
             }
+            Debug.Log("Storable Class Loaded", nameof(BootLoader));
 
             await UniTask.Delay(100);
             SplashScreen.isPlaying = true;
