@@ -1,6 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Data;
+using RuniEngine.Resource;
 using RuniEngine.Splash;
 using System;
 using System.Reflection;
@@ -89,6 +90,10 @@ namespace RuniEngine.Booting
 
             await UniTask.Delay(100);
             SplashScreen.isPlaying = true;
+
+            Debug.Log("Resource Loading...", nameof(BootLoader));
+            await ResourceManager.Refresh();
+            Debug.Log("Resource Loaded", nameof(BootLoader));
 
             allLoaded = true;
         }
