@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RuniEngine.Booting;
 using RuniEngine.Data;
 using RuniEngine.Resource;
+using RuniEngine.Threading;
 using System.Diagnostics;
 using UnityEngine;
 
@@ -127,7 +128,7 @@ namespace RuniEngine
 
 
         [Awaken]
-        public static void Awaken()
+        static void Awaken()
         {
             CustomPlayerLoopSetter.initEvent += Update;
             Application.quitting += Qutting;

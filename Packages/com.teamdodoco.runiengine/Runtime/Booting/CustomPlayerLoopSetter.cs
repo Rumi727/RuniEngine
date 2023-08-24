@@ -20,7 +20,7 @@ namespace RuniEngine.Booting
 #endif
 
         [Awaken]
-        public static void Awaken() => Application.quitting += () => PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+        static void Awaken() => Application.quitting += () => PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
 
         public static void EventRegister(ref PlayerLoopSystem loopSystems)
         {
