@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Resource;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -18,25 +19,29 @@ namespace RuniEngine.Install
 
         public void DrawGUI()
         {
-            if (Directory.Exists(packagePathParent))
+            PackageImportButton("스트리밍 에셋", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName));
+            PackageImportButton("폰트", "Fonts", Path.Combine(assetsResourcePathParent, "Fonts"));
+        }
+
+        public void PackageImportButton(string title, string packagePath, string existsPath)
+        {
+            string allPackagePath = Path.Combine(packagePathParent, packagePath + ".unitypackage");
+            if (!File.Exists(allPackagePath))
             {
-                PackageImportButton("폰트 리소스", "Fonts");
+                EditorGUILayout.HelpBox($"{title} 패키지 리소스를 찾을 수 없습니다!", MessageType.Error);
                 return;
             }
 
-            EditorGUILayout.HelpBox("패키지 리소스를 찾을 수 없습니다!", MessageType.Error);
-        }
-
-        public void PackageImportButton(string title, string packagePath)
-        {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(title, GUILayout.ExpandWidth(false));
+            GUILayout.Label($"{title} 패키지 리소스", GUILayout.ExpandWidth(false));
 
-            if (Directory.Exists(Path.Combine(assetsResourcePathParent, packagePath)))
+            if (Directory.Exists(existsPath))
             {
                 if (GUILayout.Button("임포트 ✓", GUILayout.ExpandWidth(false)))
                 {
-                    AssetDatabase.ImportPackage(Path.Combine(packagePathParent, packagePath + ".unitypackage"), false);
+                    AssetDatabase.ImportPackage(allPackagePath, false);
+                    GUILayout.EndHorizontal();
+
                     return;
                 }
             }
@@ -44,7 +49,9 @@ namespace RuniEngine.Install
             {
                 if (GUILayout.Button("임포트", GUILayout.ExpandWidth(false)))
                 {
-                    AssetDatabase.ImportPackage(Path.Combine(packagePathParent, packagePath + ".unitypackage"), false);
+                    AssetDatabase.ImportPackage(allPackagePath, false);
+                    GUILayout.EndHorizontal();
+
                     return;
                 }
             }
