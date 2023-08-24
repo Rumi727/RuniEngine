@@ -1,7 +1,10 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using RuniEngine.Booting;
+using RuniEngine.Data;
 using RuniEngine.Json;
+using RuniEngine.Threading;
 using System.Collections.Generic;
 using System.IO;
 
@@ -9,19 +12,59 @@ namespace RuniEngine.Resource
 {
     public sealed class LanguageLoader : IResourceElement
     {
-        public static Dictionary<string, Dictionary<string, Dictionary<string, string>>> loadedLanguages = new();
+        [UserData]
+        public sealed class UserData
+        {
+            [JsonProperty] public static string currentLanguage { get; set; } = "en_us";
+        }
+
+
+
+        public static bool isLoaded { get; private set; } = false;
+        public static List<string> languageList { get; private set; } = new();
 
         public string name => "lang";
 
+
+
         [Awaken]
-        public static void Awaken() => ResourceManager.ElementRegister(new LanguageLoader());
+        static void Awaken() => ResourceManager.ElementRegister(new LanguageLoader());
 
-        public void Clear() => tempLanguages.Clear();
 
-        Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempLanguages = new();
+
+        /// <summary>
+        /// string text = loadedLanguages[nameSpace][fileName][key];
+        /// </summary>
+        static Dictionary<string, Dictionary<string, Dictionary<string, string>>> loadedLanguages = new();
+        public static string? GetText(string key, string nameSpace = "", string language = "")
+        {
+            NotMainThreadException.Exception();
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (loadedLanguages.TryGetValue(nameSpace, out var result))
+            {
+                if (result.TryGetValue(language, out var result2))
+                {
+                    result2.TryGetValue(key, out string result3);
+                    return result3;
+                }
+            }
+
+            return null;
+        }
+
+
+
+        public void Clear() => tempLoadedLanguages.Clear();
+
+        readonly Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempLoadedLanguages = new();
+        readonly List<string> tempLanguageTypes = new();
         public async UniTask Refresh(string nameSpacePath, string nameSpace)
         {
+            if (!Kernel.isPlaying)
+
             await UniTask.RunOnThreadPool(Thread);
+            isLoaded = true;
 
             void Thread()
             {
@@ -33,7 +76,7 @@ namespace RuniEngine.Resource
                 for (int i = 0; i < filePaths.Length; i++)
                 {
                     string filePath = filePaths[i];
-                    string fileName = Path.GetFileName(filePath);
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
 
                     Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(filePath);
                     if (lang == null)
@@ -41,14 +84,21 @@ namespace RuniEngine.Resource
 
                     foreach (var item in lang)
                     {
-                        loadedLanguages.TryAdd(nameSpace, new Dictionary<string, Dictionary<string, string>>());
-                        loadedLanguages[nameSpace].TryAdd(fileName, new Dictionary<string, string>());
-                        loadedLanguages[nameSpace][fileName].TryAdd(item.Key, item.Value);
+                        tempLoadedLanguages.TryAdd(nameSpace, new Dictionary<string, Dictionary<string, string>>());
+                        tempLoadedLanguages[nameSpace].TryAdd(fileName, new Dictionary<string, string>());
+                        tempLoadedLanguages[nameSpace][fileName].TryAdd(item.Key, item.Value);
+
+                        if (!tempLanguageTypes.Contains(fileName))
+                            tempLanguageTypes.Add(fileName);
                     }
                 }
             }
         }
 
-        public void Apply() => loadedLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>(tempLanguages);
+        public void Apply()
+        {
+            loadedLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>(tempLoadedLanguages);
+            languageList = new List<string>(tempLanguageTypes);
+        }
     }
 }
