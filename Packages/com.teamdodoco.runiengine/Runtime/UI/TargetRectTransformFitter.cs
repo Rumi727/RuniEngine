@@ -6,8 +6,8 @@ namespace RuniEngine.UI
     [ExecuteAlways]
     public class TargetRectTransformFitter : UIBase
     {
-        public RectTransform? targetRectTransform { get => _rectTargetTransform; set => _rectTargetTransform = value; }
-        [SerializeField, NotNullField] RectTransform? _rectTargetTransform;
+        public RectTransform? targetRectTransform { get => _targetRectTransform; set => _targetRectTransform = value; }
+        [SerializeField, NotNullField] RectTransform? _targetRectTransform;
 
         DrivenRectTransformTracker tracker;
 
