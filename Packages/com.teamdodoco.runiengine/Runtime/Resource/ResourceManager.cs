@@ -21,6 +21,7 @@ namespace RuniEngine.Resource
         }
 
         public const string rootName = "assets";
+        public const string defaultNameSpace = "runi";
 
 
 
@@ -117,6 +118,14 @@ namespace RuniEngine.Resource
             }
 
             allLoadedResources.Clear();
+        }
+
+
+
+        public static void SetDefaultNameSpace(ref string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                value = defaultNameSpace;
         }
     }
 }
