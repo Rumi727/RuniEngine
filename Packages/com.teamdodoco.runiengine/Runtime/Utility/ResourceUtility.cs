@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Booting;
 using RuniEngine.Resource;
 using UnityEngine;
 
@@ -60,6 +61,8 @@ namespace RuniEngine
         {
             get
             {
+                NotPlayModeException.Exception();
+
                 if (_coloredMaterial == null)
                 {
                     Shader shader = Shader.Find("Hidden/Internal-Colored");

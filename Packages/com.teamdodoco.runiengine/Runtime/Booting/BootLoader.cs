@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using RuniEngine.Data;
 using RuniEngine.Resource;
 using RuniEngine.Splash;
+using RuniEngine.Threading;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -16,9 +17,7 @@ namespace RuniEngine.Booting
         {
             get
             {
-                if (!basicDataLoaded)
-                    throw new BasicDataNotLoadedException();
-
+                BasicDataNotLoadedException.Exception();
                 return _projectData;
             }
         }
@@ -28,9 +27,7 @@ namespace RuniEngine.Booting
         {
             get
             {
-                if (!basicDataLoaded)
-                    throw new BasicDataNotLoadedException();
-
+                BasicDataNotLoadedException.Exception();
                 return _userData;
             }
         }
@@ -44,6 +41,9 @@ namespace RuniEngine.Booting
         [RuntimeInitializeOnLoadMethod]
         public static async void Booting()
         {
+            NotPlayModeException.Exception();
+            NotMainThreadException.Exception();
+
 #if UNITY_WEBGL && !UNITY_EDITOR
             //CS0162 접근할 수 없는 코드 경고를 비활성화 하기 위해 변수로 우회합니다
             bool warningDisable = true;
