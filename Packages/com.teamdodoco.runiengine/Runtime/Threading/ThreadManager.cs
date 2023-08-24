@@ -1,7 +1,7 @@
 #nullable enable
 using System.Threading;
 
-namespace RuniEngine
+namespace RuniEngine.Threading
 {
     public static class ThreadManager
     {
