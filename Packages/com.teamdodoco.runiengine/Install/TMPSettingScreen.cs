@@ -12,7 +12,7 @@ namespace RuniEngine.Install
 
         public int sort { get; } = 2;
 
-        TMP_PackageResourceImporter importer = new TMP_PackageResourceImporter();
+        readonly TMP_PackageResourceImporter importer = new TMP_PackageResourceImporter();
         public void DrawGUI() => importer.OnGUI();
     }
 }
