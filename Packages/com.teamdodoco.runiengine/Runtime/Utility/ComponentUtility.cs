@@ -16,7 +16,7 @@ namespace RuniEngine
                         return component.gameObject.AddComponent<T>();
                     else if (mode == GetComponentMode.destroyIfNull)
                     {
-                        UnityEngine.Object.DestroyImmediate(component);
+                        Object.DestroyImmediate(component);
                         return null;
                     }
                 }
@@ -36,7 +36,7 @@ namespace RuniEngine
                         return new T[0];
                     else if (mode == GetComponentsMode.destroyIfNull)
                     {
-                        UnityEngine.Object.DestroyImmediate(component);
+                        Object.DestroyImmediate(component);
                         return null;
                     }
                 }
@@ -55,7 +55,7 @@ namespace RuniEngine
 
                 if (fieldToSave == null && mode == GetComponentInMode.destroyIfNull)
                 {
-                    UnityEngine.Object.DestroyImmediate(component);
+                    Object.DestroyImmediate(component);
                     return null;
                 }
             }
@@ -74,7 +74,7 @@ namespace RuniEngine
                         return new T[0];
                     else if (mode == GetComponentsMode.destroyIfNull)
                     {
-                        UnityEngine.Object.DestroyImmediate(component);
+                        Object.DestroyImmediate(component);
                         return null;
                     }
                 }
@@ -92,7 +92,7 @@ namespace RuniEngine
                 fieldToSave = component.GetComponentInChildren<T>(includeInactive);
                 if (fieldToSave == null && mode == GetComponentInMode.destroyIfNull)
                 {
-                    UnityEngine.Object.DestroyImmediate(component);
+                    Object.DestroyImmediate(component);
                     return null;
                 }
             }
@@ -111,7 +111,7 @@ namespace RuniEngine
                         return new T[0];
                     else if (mode == GetComponentsMode.destroyIfNull)
                     {
-                        UnityEngine.Object.DestroyImmediate(component);
+                        Object.DestroyImmediate(component);
                         return null;
                     }
                 }
