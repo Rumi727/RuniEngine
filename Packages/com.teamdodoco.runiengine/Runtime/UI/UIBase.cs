@@ -42,5 +42,40 @@ namespace RuniEngine.UI
 
         public Graphic? graphic => _graphic = this.GetComponentFieldSave(_graphic, GetComponentMode.none);
         Graphic? _graphic;
+
+
+
+        public RectCorner localCorners
+        {
+            get
+            {
+                return rectTransform.rect;
+            }
+            set
+            {
+                Rect rect = value;
+
+                rectTransform.offsetMin = rect.min;
+                rectTransform.offsetMax = rect.max;
+            }
+        }
+
+        public RectCorner worldCorners
+        {
+            get
+            {
+                rectTransform.GetWorldCorners(worldCornersArray);
+                return new RectCorner(worldCornersArray[0], worldCornersArray[1], worldCornersArray[2], worldCornersArray[3]);
+            }
+            set
+            {
+                Rect rect = value;
+                Matrix4x4 matrix4x = rectTransform.worldToLocalMatrix;
+
+                rectTransform.offsetMin = matrix4x.MultiplyPoint(rect.min);
+                rectTransform.offsetMax = matrix4x.MultiplyPoint(rect.max);
+            }
+        }
+        readonly Vector3[] worldCornersArray = new Vector3[4];
     }
 }
