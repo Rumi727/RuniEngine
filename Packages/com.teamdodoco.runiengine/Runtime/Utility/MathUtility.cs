@@ -3840,5 +3840,31 @@ namespace RuniEngine
         public static decimal Truncate(this decimal value) => Math.Truncate(value);
         public static BigDecimal Truncate(this BigDecimal value) => BigDecimal.Truncate(value);
         #endregion
+
+        #region Plus
+        public static Color32 Plus(this Color32 a, Color32 b) => new Color32((byte)(a.r + b.r), (byte)(a.g + b.g), (byte)(a.b + b.b), (byte)(a.a + b.a));
+        #endregion
+
+        #region Minus
+        public static Color32 Minus(this Color32 a, Color32 b) => new Color32((byte)(a.r - b.r), (byte)(a.g - b.g), (byte)(a.b - b.b), (byte)(a.a - b.a));
+        #endregion
+
+        #region Multiply
+        public static Vector2 Multiply(this Vector2 a, Vector2 b) => new Vector3(a.x * b.x, a.y * b.y);
+        public static Vector3 Multiply(this Vector3 a, Vector3 b) => new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+        public static Vector4 Multiply(this Vector4 a, Vector4 b) => new Vector4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+
+        public static Color Multiply(this Color a, Color b) => new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
+        public static Color32 Multiply(this Color32 a, Color32 b) => new Color32((byte)(a.r * b.r), (byte)(a.g * b.g), (byte)(a.b * b.b), (byte)(a.a * b.a));
+        #endregion
+
+        #region Divide
+        public static Vector2 Divide(this Vector2 a, Vector2 b) => new Vector3(a.x / b.x, a.y / b.y);
+        public static Vector3 Divide(this Vector3 a, Vector3 b) => new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
+        public static Vector4 Divide(this Vector4 a, Vector4 b) => new Vector4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
+
+        public static Color Divide(this Color a, Color b) => new Color(a.r / b.r, a.g / b.g, a.b / b.b, a.a / b.a);
+        public static Color32 Divide(this Color32 a, Color32 b) => new Color32((byte)(a.r / b.r), (byte)(a.g / b.g), (byte)(a.b / b.b), (byte)(a.a / b.a));
+        #endregion
     }
 }
