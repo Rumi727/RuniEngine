@@ -40,6 +40,11 @@ namespace RuniEngine.UI
         }
         RectTransform? _rectTransform;
 
+#pragma warning disable CS8603 // 가능한 null 참조 반환입니다.
+        public RectTransformTool rectTransformTool => _rectTransformTool = this.GetComponentFieldSave(_rectTransformTool);
+#pragma warning restore CS8603 // 가능한 null 참조 반환입니다.
+        RectTransformTool? _rectTransformTool;
+
         public Graphic? graphic => _graphic = this.GetComponentFieldSave(_graphic, GetComponentMode.none);
         Graphic? _graphic;
 
