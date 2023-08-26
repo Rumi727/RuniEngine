@@ -8,11 +8,11 @@ using UnityEditor;
 namespace RuniEngine.Editor.Scene
 {
     [InitializeOnLoad]
-    public static class BuildSceneListChange
+    public static class BuildSceneListChanger
     {
         public static string splashScenePath => SplashScreen.ProjectData.splashScenePath;
 
-        static BuildSceneListChange()
+        static BuildSceneListChanger()
         {
             EditorBuildSettings.sceneListChanged += () => SceneListChanged(true);
             SceneListChanged(true);

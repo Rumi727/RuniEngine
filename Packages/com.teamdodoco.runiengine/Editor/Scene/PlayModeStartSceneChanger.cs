@@ -7,9 +7,9 @@ using RuniEngine.Splash;
 namespace RuniEngine.Editor
 {
     [InitializeOnLoad]
-    public static class PlayModeStartSceneSetting
+    public static class PlayModeStartSceneChanger
     {
-        static PlayModeStartSceneSetting() => SetPlayModeStartScene(true);
+        static PlayModeStartSceneChanger() => SetPlayModeStartScene(true);
 
         static StorableClass? storableClass = null;
         public static void SetPlayModeStartScene(bool loadData)
