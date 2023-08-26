@@ -2,7 +2,8 @@
     "name": "RuniEngine.Editor",
     "rootNamespace": "RuniEngine.Editor",
     "references": [
-        "GUID:eaf38b4531b03a64ab00c7d27abbfe25"
+        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [
         "Editor"
