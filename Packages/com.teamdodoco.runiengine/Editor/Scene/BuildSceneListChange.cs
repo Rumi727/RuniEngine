@@ -22,9 +22,7 @@ namespace RuniEngine.Editor.Scene
         static StorableClass? storableClass = null;
         public static void SceneListChanged(bool loadData)
         {
-            if (Kernel.isPlaying)
-                return;
-            else if (sceneListChangedDisable)
+            if (sceneListChangedDisable || Kernel.isPlaying)
                 return;
 
             try
