@@ -47,7 +47,7 @@ namespace RuniEngine.Editor
                 T addedRectTransformTool = original.AddComponent<T>();
 
                 //수정 사항을 저장합니다
-                EditorUtility.SetDirty(addedRectTransformTool);
+                EditorUtility.SetDirty(original);
 
                 //컴포넌트를 맨 위로 올립니다
                 if (backToTop)
@@ -67,18 +67,21 @@ namespace RuniEngine.Editor
             //오브젝트가 프리팹이 아니라면 평소대로 컴포넌트를 삭제합니다
             if (prefabAssetType == PrefabAssetType.NotAPrefab)
             {
+                GameObject gameObject = component.gameObject;
                 DestroyImmediate(component);
 
                 //수정 사항을 저장합니다
-                EditorUtility.SetDirty(component);
+                EditorUtility.SetDirty(gameObject);
             }
             else if (prefabAssetType != PrefabAssetType.MissingAsset) //오브젝트가 미싱되지 않은 프리팹이라면 프리팹의 오리지널을 가져온후, 그 프리팹에서 컴포넌트를 삭제합니다
             {
                 Component original = PrefabUtility.GetCorrespondingObjectFromOriginalSource(component);
+                GameObject gameObject = original.gameObject;
+
                 DestroyImmediate(original, true);
 
                 //수정 사항을 저장합니다
-                EditorUtility.SetDirty(original);
+                EditorUtility.SetDirty(gameObject);
             }
         }
 
