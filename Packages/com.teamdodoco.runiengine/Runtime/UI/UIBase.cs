@@ -52,10 +52,7 @@ namespace RuniEngine.UI
 
         public RectCorner localCorners
         {
-            get
-            {
-                return rectTransform.rect;
-            }
+            get => rectTransform.rect;
             set
             {
                 Rect rect = value;
