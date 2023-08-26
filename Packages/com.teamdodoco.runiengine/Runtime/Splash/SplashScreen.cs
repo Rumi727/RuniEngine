@@ -14,6 +14,5 @@ namespace RuniEngine.Splash
         }
 
         public static bool isPlaying { get; set; } = false;
-        public static bool isEnd { get; set; } = false;
     }
 }
