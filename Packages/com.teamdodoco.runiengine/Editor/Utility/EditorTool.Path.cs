@@ -5,6 +5,14 @@ namespace RuniEngine.Editor
 {
     public partial class EditorTool
     {
+        public const string packagePath = "Packages/com.teamdodoco.runiengine";
+
+        public const string packageRuntimePath = packagePath + "/Runtime";
+        public const string packageEditorPath = packagePath + "/Editor";
+        public const string packageResourcesPath = packagePath + "/Package Resources";
+
+        public const string assetsResourcePathParent = "Assets/Runi Engine/Resources";
+
         public static string AbsolutePathToRelativePath(string path) => path.Remove(Directory.GetCurrentDirectory().Length + 1);
 
         public static bool PathIsProjectPath(string path)

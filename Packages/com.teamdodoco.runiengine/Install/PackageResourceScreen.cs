@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Editor;
 using RuniEngine.Resource;
 using System.IO;
 using UnityEditor;
@@ -14,18 +15,15 @@ namespace RuniEngine.Install
         public bool headDisable { get; } = false;
         public int sort { get; } = 3;
 
-        const string assetsResourcePathParent = "Assets/Runi Engine/Resources";
-        const string packagePathParent = "Packages/com.teamdodoco.runiengine/Package Resources";
-
         public void DrawGUI()
         {
             PackageImportButton("스트리밍 에셋", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName));
-            PackageImportButton("폰트", "Fonts", Path.Combine(assetsResourcePathParent, "Fonts"));
+            PackageImportButton("폰트", "Fonts", Path.Combine(EditorTool.assetsResourcePathParent, "Fonts"));
         }
 
         public void PackageImportButton(string title, string packagePath, string existsPath)
         {
-            string allPackagePath = Path.Combine(packagePathParent, packagePath + ".unitypackage");
+            string allPackagePath = Path.Combine(EditorTool.packageResourcesPath, packagePath + ".unitypackage");
             if (!File.Exists(allPackagePath))
             {
                 EditorGUILayout.HelpBox($"{title} 패키지 리소스를 찾을 수 없습니다!", MessageType.Error);
