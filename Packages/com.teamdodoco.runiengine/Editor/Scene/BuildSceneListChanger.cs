@@ -29,9 +29,9 @@ namespace RuniEngine.Editor.Scene
             {
                 sceneListChangedDisable = true;
 
-                if (loadData && storableClass == null)
+                if (loadData)
                 {
-                    storableClass = new StorableClass(typeof(SplashScreen.ProjectData));
+                    storableClass ??= new StorableClass(typeof(SplashScreen.ProjectData));
                     storableClass.AutoNameLoad(Kernel.projectDataPath);
                 }
 

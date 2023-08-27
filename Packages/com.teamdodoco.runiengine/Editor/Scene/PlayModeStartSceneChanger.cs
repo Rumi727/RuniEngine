@@ -14,9 +14,9 @@ namespace RuniEngine.Editor
         static StorableClass? storableClass = null;
         public static void SetPlayModeStartScene(bool loadData)
         {
-            if (loadData && storableClass == null)
+            if (loadData)
             {
-                storableClass = new StorableClass(typeof(SplashScreen.ProjectData));
+                storableClass ??= new StorableClass(typeof(SplashScreen.ProjectData));
                 storableClass.AutoNameLoad(Kernel.projectDataPath);
             }
 
