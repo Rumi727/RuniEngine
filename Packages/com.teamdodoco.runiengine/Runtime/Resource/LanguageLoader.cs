@@ -23,7 +23,8 @@ namespace RuniEngine.Resource
         public static bool isLoaded { get; private set; } = false;
         public static List<string> languageList { get; private set; } = new();
 
-        public string name => "lang";
+        public const string name = "lang";
+        string IResourceElement.name => name;
 
 
 
@@ -38,8 +39,28 @@ namespace RuniEngine.Resource
         static Dictionary<string, Dictionary<string, Dictionary<string, string>>> loadedLanguages = new();
         public static string? GetText(string key, string nameSpace = "", string language = "")
         {
+            NotPlayModeException.Exception();
             NotMainThreadException.Exception();
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (string.IsNullOrWhiteSpace(language))
+                language = UserData.currentLanguage;
+
+            if (!isLoaded)
+            {
+                if (ResourceManager.FileExtensionExists(Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name, language),
+                    out string outPath,
+                    ExtensionFilter.textFileFilter))
+                {
+                    Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(outPath);
+                    if (lang != null && lang.TryGetValue(key, out string value))
+                    {
+                        loadedLanguages.TryAdd(nameSpace, new());
+                        loadedLanguages[nameSpace].TryAdd(language, new());
+                        loadedLanguages[nameSpace][language].TryAdd(key, value);
+                    }
+                }
+            }
 
             if (loadedLanguages.TryGetValue(nameSpace, out var result))
             {
