@@ -24,6 +24,15 @@ namespace RuniEngine.Editor
         /// </summary>
         static readonly Dictionary<string, Dictionary<string, string>> loadedLanguages = new();
 
+        public static string TryGetText(string key, string lauguage = "")
+        {
+            string? result = GetText(key, lauguage);
+            if (result == null)
+                return key;
+
+            return result;
+        }
+
         static StorableClass? storableClass;
         public static string? GetText(string key, string language = "")
         {
