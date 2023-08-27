@@ -1,4 +1,7 @@
 {
+    "language.name": "日本語",
+	"language.region": "日本",
+
     "gui.warning": "警告",
     "gui.field_is_null": "このフィールドはNULL値にはできません",
     "gui.folder_exists": "'{path}' パスにフォルダが既に存在します!",

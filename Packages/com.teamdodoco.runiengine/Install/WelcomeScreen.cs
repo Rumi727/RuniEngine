@@ -55,7 +55,32 @@ namespace RuniEngine.Install
                     GUILayout.BeginVertical();
 
                     headStyle ??= new GUIStyle(EditorStyles.boldLabel) { fontSize = 30 };
-                    GUILayout.Label(EditorTool.TryGetText("installer.welcome"), headStyle);
+
+                    {
+                        Rect rect = EditorGUILayout.GetControlRect(false, 40);
+                        Color preColor = GUI.contentColor;
+
+                        Label("ko_kr", 0);
+                        Label("en_us", 100);
+                        Label("ja_jp", 50);
+
+                        GUI.color = preColor;
+
+                        void Label(string language, float yOffset)
+                        {
+                            Rect rect2 = new Rect(new Vector2(rect.x, (rect.y + (timer * 20) + yOffset).Repeat(150)), rect.size);
+                            float dis = (rect2.y - rect.y);
+                            float alpha;
+
+                            if (dis < 0)
+                                alpha = (1 - (dis.Abs() / 50)) * 2;
+                            else
+                                alpha = 1 - (dis.Abs() / 25);
+
+                            GUI.color = new Color(preColor.r, preColor.g, preColor.b, alpha);
+                            GUI.Label(rect2, EditorTool.TryGetText("installer.welcome", language), headStyle);
+                        }
+                    }
 
                     GUILayout.Space(20);
 

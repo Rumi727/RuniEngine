@@ -1,4 +1,7 @@
 {
+    "language.name": "한국어",
+	"language.region": "대한민국",
+
     "gui.warning": "경고",
     "gui.field_is_null": "이 필드는 null 값일 수 없습니다",
     "gui.folder_exists": "'{path}' 경로에 폴더가 이미 존재합니다!",

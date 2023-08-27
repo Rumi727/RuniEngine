@@ -1,5 +1,6 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
+using RuniEngine.Data;
 using RuniEngine.Editor;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace RuniEngine.Install
         {
             stopwatch.Restart();
 
-            minSize = new Vector2(518, 285);
+            minSize = new Vector2(584, 285);
             maxSize = minSize;
 
             scrollPosition = Vector2.zero;
@@ -149,6 +150,7 @@ namespace RuniEngine.Install
         static Vector2 scrollPosition = Vector2.zero;
         static int screenIndex = 0;
         static float musicVolume = 0.5f;
+        static StorableClass? languageStorableClass;
 
         public static void DrawGUI()
         {
@@ -180,9 +182,8 @@ namespace RuniEngine.Install
             {
                 EditorTool.DrawLine(2, 0);
                 GUILayout.Space(4);
-
                 GUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
+                GUILayout.Space(6);
 
                 {
                     {
@@ -235,12 +236,45 @@ namespace RuniEngine.Install
                         }
                         else
                             GUILayout.Label(EditorTool.TryGetText("installer.music_loading"));
+
+                        GUILayout.FlexibleSpace();
+
+                        {
+                            languageStorableClass ??= new StorableClass(typeof(EditorTool.ProjectData));
+                            languageStorableClass.AutoNameLoad(Kernel.projectDataPath);
+
+                            var languageIndex = EditorTool.ProjectData.currentLanguage switch
+                            {
+                                "en_us" => 0,
+                                "ko_kr" => 1,
+                                "ja_jp" => 2,
+                                _ => 0,
+                            };
+
+                            int selectedLanguageIndex = EditorGUILayout.Popup(languageIndex, new string[] {
+                                $"{EditorTool.TryGetText("language.name", "en_us")} ({EditorTool.TryGetText("language.region", "en_us")})",
+                                $"{EditorTool.TryGetText("language.name", "ko_kr")} ({EditorTool.TryGetText("language.region", "ko_kr")})",
+                                $"{EditorTool.TryGetText("language.name", "ja_jp")} ({EditorTool.TryGetText("language.region", "ja_jp")})"
+                            }, GUILayout.Width(120));
+
+                            if (selectedLanguageIndex != languageIndex)
+                            {
+                                EditorTool.ProjectData.currentLanguage = selectedLanguageIndex switch
+                                {
+                                    0 => "en_us",
+                                    1 => "ko_kr",
+                                    2 => "ja_jp",
+                                    _ => "en_us",
+                                };
+
+                                languageStorableClass.AutoNameSave(Kernel.projectDataPath);
+                            }
+                        }
                     }
                 }
 
-                GUILayout.FlexibleSpace();
+                GUILayout.Space(6);
                 GUILayout.EndHorizontal();
-
                 GUILayout.Space(6);
             }
         }

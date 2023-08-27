@@ -1,4 +1,7 @@
 {
+    "language.name": "English",
+	"language.region": "US",
+
     "gui.warning": "Warning",
     "gui.field_is_null": "This field cannot be a null value",
     "gui.folder_exists": "The folder already exists in the '{path}' path!",
