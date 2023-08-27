@@ -150,9 +150,9 @@ namespace RuniEngine.Resource
             for (int i = 0; i < extensionFilter.extensions.Length; i++)
             {
                 string extension = extensionFilter.extensions[i];
-                if (File.Exists(path + "." + extension))
+                if (File.Exists(path + extension))
                 {
-                    outPath = path += "." + extension;
+                    outPath = path + extension;
                     return true;
                 }
             }
