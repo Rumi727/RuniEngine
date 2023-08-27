@@ -59,9 +59,24 @@ namespace RuniEngine.Editor.Inspector
             if (labelShow)
                 guiContent = new GUIContent { text = label };
 
+            SerializedProperty? tps = null;
+
             try
             {
-                SerializedProperty tps = serializedObject.FindProperty(propertyName);
+                tps = serializedObject.FindProperty(propertyName);
+            }
+            catch (ExitGUIException)
+            {
+
+            }
+            catch (Exception)
+            {
+                GUILayout.Label($@"프로퍼티 '{propertyName}'을(를) 인식하지 못했습니다");
+                return null;
+            }
+
+            if (tps != null)
+            {
                 EditorGUI.BeginChangeCheck();
 
                 if (!labelShow)
@@ -71,16 +86,9 @@ namespace RuniEngine.Editor.Inspector
 
                 if (EditorGUI.EndChangeCheck())
                     serializedObject.ApplyModifiedProperties();
-
-                return tps;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-                GUILayout.Label($@"프로퍼티 '{propertyName}'을(를) 인식하지 못했습니다");
             }
 
-            return null;
+            return tps;
         }
 
         public string TargetsToString<TValue>(Func<TTarget, TValue> action)
