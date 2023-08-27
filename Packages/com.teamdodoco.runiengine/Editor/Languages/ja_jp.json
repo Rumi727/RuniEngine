@@ -16,6 +16,7 @@
     "inspector.property_none": "プロパティ「{name}」を認識できませんでした",
     "inspector.target_~": "指定する{target}",
     "inspector.rect_transform": "正方形変換",
+    "inspector.sprite_renderer": "スプライトレンダラー",
 
     "rect_transform.anchored_position": "固定位置",
     "rect_transform.size_delta": "サイズデルタ",

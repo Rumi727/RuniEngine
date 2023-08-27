@@ -16,6 +16,7 @@
     "inspector.property_none": "Property '{name}' not recognized",
     "inspector.target_~": "Target {target}",
     "inspector.rect_transform": "Rect Transform",
+    "inspector.sprite_renderer": "Sprite Renderer",
 
     "rect_transform.anchored_position": "Anchroed Position",
     "rect_transform.size_delta": "Size Delta",
