@@ -29,11 +29,8 @@ namespace RuniEngine.Editor
         {
             if (string.IsNullOrWhiteSpace(language))
             {
-                if (storableClass == null)
-                {
-                    storableClass = new StorableClass(typeof(ProjectData));
-                    storableClass.AutoNameLoad(Kernel.projectDataPath);
-                }
+                storableClass ??= new StorableClass(typeof(ProjectData));
+                storableClass.AutoNameLoad(Kernel.projectDataPath);
 
                 language = ProjectData.currentLanguage;
             }
