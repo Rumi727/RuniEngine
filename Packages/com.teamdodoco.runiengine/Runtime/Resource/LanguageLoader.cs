@@ -32,6 +32,14 @@ namespace RuniEngine.Resource
         static void Awaken() => ResourceManager.ElementRegister(new LanguageLoader());
 
 
+        public static string TryGetText(string key, string nameSpace = "", string language = "")
+        {
+            string? value = GetText(key, nameSpace, language);
+            if (value == null)
+                return key;
+            else
+                return value;
+        }
 
         /// <summary>
         /// string text = loadedLanguages[nameSpace][fileName][key];
