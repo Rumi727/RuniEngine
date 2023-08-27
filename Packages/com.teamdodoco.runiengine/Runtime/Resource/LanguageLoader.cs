@@ -62,6 +62,7 @@ namespace RuniEngine.Resource
         public async UniTask Refresh(string nameSpacePath, string nameSpace)
         {
             if (!Kernel.isPlaying)
+                return;
 
             await UniTask.RunOnThreadPool(Thread);
             isLoaded = true;
