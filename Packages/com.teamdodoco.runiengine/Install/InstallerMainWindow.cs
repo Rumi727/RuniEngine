@@ -218,7 +218,7 @@ namespace RuniEngine.Install
                         if (videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url))
                         {
                             {
-                                GUILayout.Label($"볼륨 {(musicVolume * 100).Floor()}/100");
+                                GUILayout.Label($"{EditorTool.TryGetText("gui.volume")} {(musicVolume * 100).Floor()}/100");
                                 float volume = GUILayout.HorizontalSlider(musicVolume, 0, 1, GUILayout.Width(100));
 
                                 if (musicVolume != volume)
@@ -230,11 +230,11 @@ namespace RuniEngine.Install
 
                             GUILayout.Space(10);
 
-                            if (GUILayout.Button("오디오 리셋"))
+                            if (GUILayout.Button(EditorTool.TryGetText("gui.audio_reset")))
                                 AudioReset();
                         }
                         else
-                            GUILayout.Label("음악 로딩중...");
+                            GUILayout.Label(EditorTool.TryGetText("installer.music_loading"));
                     }
                 }
 

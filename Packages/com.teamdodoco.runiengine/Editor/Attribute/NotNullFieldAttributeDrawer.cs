@@ -20,7 +20,7 @@ namespace RuniEngine.Editor.Attribute
                 position.width *= 0.5f;
                 position.width += 2;
 
-                EditorGUI.HelpBox(position, "이 필드는 null 값일수 없습니다", MessageType.Error);
+                EditorGUI.HelpBox(position, EditorTool.TryGetText("gui.field_is_null"), MessageType.Error);
             }
             else
                 EditorGUI.PropertyField(position, property, label, true);

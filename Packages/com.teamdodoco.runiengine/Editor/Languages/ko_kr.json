@@ -1,0 +1,47 @@
+{
+    "gui.warning": "경고",
+    "gui.field_is_null": "이 필드는 null 값일 수 없습니다",
+    "gui.folder_exists": "'{path}' 경로에 폴더가 이미 존재합니다!",
+    "gui.path": "경로",
+    "gui.volume": "볼륨",
+    "gui.audio_reset": "오디오 리셋",
+    "gui.streaming_assets": "스트리밍 에셋",
+    "gui.font": "폰트",
+
+    "android_build.warning": "안드로이드를 지원하도록 스트리밍 에셋을 압축한 다음 빌드하고 빌드가 완료되면 변경 사항을 되돌립니다.\n프로젝트 규모에 따라 속도가 느려질 수 있으니 주의하시기 바랍니다.\n\n이 작업은 도중에 실행 취소할 수 없습니다. (작업 도중 에디터가 정지됩니다.)\n\n이 작업은 불안정합니다!\n도중에 오류가 발생하면 변경 내용을 취소할 수 없습니다.\n작업을 취소할 수 있도록 git과 같은 시스템을 설정하는 것이 좋습니다.",
+    "android_build.yes": "그래서 뭐! 빨리 빌드나 해!",
+    "android_build.no": "나는 느리거나 불안정한건 싫어",
+    "android_build.cancel": "빌드 취소",
+
+    "inspector.property_none": "프로퍼티 '{name}'을(를) 인식하지 못했습니다",
+    "inspector.target_~": "지정할 {target}",
+    "inspector.rect_transform": "사각 트랜스폼",
+
+    "rect_transform.anchored_position": "고정된 위치",
+    "rect_transform.size_delta": "크기 델타",
+    "rect_transform.offset_min": "최소 오프셋",
+    "rect_transform.offset_max": "최대 오프셋",
+    "rect_transform.local_rect": "로컬 Rect",
+    "rect_transform.world_rect": "월드 Rect",
+
+    "installer.music_loading": "음악 로드 중...",
+
+    "installer.package_resource.label": "기본 리소스 복사",
+    "installer.package_resource.package": "{name} 패키지 리소스",
+    "installer.package_resource.package_none": "{name} 패키지 리소스를 찾을 수 없습니다!",
+    "installer.package_resource.import": "임포트",
+    "installer.package_resource.import_done": "임포트 ✓",
+
+    "installer.project_setting.label": "프로젝트 설정 변경",
+    "installer.project_setting.audio_volume": "오디오 설정의 기본 전역 볼륨 변경",
+    "installer.project_setting.audio_max": "오디오 설정의 최대 가상 | 실제 음성을 최고치로 변경",
+    "installer.project_setting.change": "변경",
+    "installer.project_setting.change_done": "변경 ✓",
+
+    "installer.tmp_setting.label": "TMP 리소스",
+
+    "installer.welcome": "환영합니다!",
+    "installer.welcome.text": "Runi Engine을 사용해 주셔서 감사합니다.",
+    "installer.welcome.text2": "지금부터 엔진의 초기 설정을 시작합니다."
+
+}

@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Editor;
 using System;
 using UnityEngine;
 using UnityEngine.Video;
@@ -9,18 +10,18 @@ namespace RuniEngine.Install
     {
         public InstallerMainWindow? installerMainWindow { get; set; }
 
-        public string label { get; } = "프로젝트 설정 변경";
+        public string label => EditorTool.TryGetText("installer.project_setting.label");
         public bool headDisable { get; } = false;
 
         public int sort { get; } = 1;
 
         public void DrawGUI()
         {
-            AudioListener.volume = SettingChangeButton("오디오 설정의 기본 전역 볼륨 변경", AudioListener.volume, 0.5f);
+            AudioListener.volume = SettingChangeButton("installer.project_setting.audio_volume", AudioListener.volume, 0.5f);
 
             {
                 AudioConfiguration config = AudioSettings.GetConfiguration();
-                SettingChangeButton("오디오 설정의 최대 가상 | 실제 음성을 최고치로 변경", () =>
+                SettingChangeButton("installer.project_setting.audio_max", () =>
                 {
                     config.numVirtualVoices = 4095;
                     config.numRealVoices = 255;
@@ -41,11 +42,11 @@ namespace RuniEngine.Install
         public T? SettingChangeButton<T>(string title, T? currnetValue, T? changeValue, Action? changedAction = null)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(title, GUILayout.ExpandWidth(false));
+            GUILayout.Label(EditorTool.TryGetText(title), GUILayout.ExpandWidth(false));
 
             if (Equals(currnetValue, changeValue))
             {
-                if (GUILayout.Button("변경 ✓", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(EditorTool.TryGetText("installer.project_setting.change_done"), GUILayout.ExpandWidth(false)))
                 {
                     changedAction?.Invoke();
                     return changeValue;
@@ -53,7 +54,7 @@ namespace RuniEngine.Install
             }
             else
             {
-                if (GUILayout.Button("변경", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(EditorTool.TryGetText("installer.project_setting.change"), GUILayout.ExpandWidth(false)))
                 {
                     changedAction?.Invoke();
                     return changeValue;
@@ -75,16 +76,16 @@ namespace RuniEngine.Install
             }
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label(title, GUILayout.ExpandWidth(false));
+            GUILayout.Label(EditorTool.TryGetText(title), GUILayout.ExpandWidth(false));
 
             if (equals)
             {
-                if (GUILayout.Button("변경 ✓", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(EditorTool.TryGetText("installer.project_setting.change_done"), GUILayout.ExpandWidth(false)))
                     changedAction.Invoke();
             }
             else
             {
-                if (GUILayout.Button("변경", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(EditorTool.TryGetText("installer.project_setting.change"), GUILayout.ExpandWidth(false)))
                     changedAction.Invoke();
             }
 

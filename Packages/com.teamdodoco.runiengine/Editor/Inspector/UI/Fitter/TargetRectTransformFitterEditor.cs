@@ -8,9 +8,6 @@ namespace RuniEngine.Editor.Inspector.UI.Fitter
     [CustomEditor(typeof(TargetRectTransformFitter))]
     public class TargetRectTransformFitterEditor : CustomInspectorBase<TargetRectTransformFitter>
     {
-        public override void OnInspectorGUI()
-        {
-            UseProperty("_targetRectTransform");
-        }
+        public override void OnInspectorGUI() => UseProperty("_targetRectTransform", TryGetText("inspector.target_~").Replace("{target}", TryGetText("inspector.rect_transform")));
     }
 }

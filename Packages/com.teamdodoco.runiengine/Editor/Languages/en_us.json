@@ -1,0 +1,45 @@
+{
+    "gui.warning": "Warning",
+    "gui.field_is_null": "This field cannot be a null value",
+    "gui.folder_exists": "The folder already exists in the '{path}' path!",
+    "gui.path": "Path",
+    "gui.volume": "Volume",
+    "gui.audio_reset": "Audio Reset",
+    "gui.streaming_assets": "Streaming Assets",
+    "gui.font": "Fonts",
+
+    "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
+    "android_build.yes": "So what!, build it fast!",
+    "android_build.no": "I hate anything slow or unstable",
+    "android_build.cancel": "Build Cancel",
+
+    "inspector.property_none": "Property '{name}' not recognized",
+    "inspector.target_~": "Target {target}",
+    "inspector.rect_transform": "Rect Transform",
+
+    "rect_transform.anchored_position": "Anchroed Position",
+    "rect_transform.size_delta": "Size Delta",
+    "rect_transform.offset_min": "Offset Min",
+    "rect_transform.offset_max": "Offset Max",
+    "rect_transform.local_rect": "Local Rect",
+    "rect_transform.world_rect": "World Rect",
+
+    "installer.music_loading": "Loading music...",
+    "installer.package_resource.label": "Copy default resources",
+    "installer.package_resource.package": "{name} package resource",
+    "installer.package_resource.package_none": "Package resource {name} not found!",
+    "installer.package_resource.import": "Import",
+    "installer.package_resource.import_done": "Import ✓",
+
+    "installer.project_setting.label": "Change project settings",
+    "installer.project_setting.audio_volume": "Change default global volume in audio settings",
+    "installer.project_setting.audio_max": "Maximum Virtualization of Audio Settings | Change real voice to peak",
+    "installer.project_setting.change": "Change",
+    "installer.project_setting.change_done": "Change ✓",
+
+    "installer.tmp_setting.label": "TMP Resources",
+
+    "installer.welcome": "Welcome!",
+    "installer.welcome.text": "Thank you for using Runi Engine.",
+    "installer.welcome.text2": "From now on, we start the initial setup of the engine."
+}

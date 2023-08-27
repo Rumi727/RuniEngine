@@ -25,15 +25,7 @@ namespace RuniEngine.Editor.Build
         {
             if (!Directory.Exists(Kernel.streamingAssetsPath))
                 return true;
-            else if (!EditorUtility.DisplayDialog("Warning",
-@"Compress the streaming assets to support Android, then build, and revert changes when the build is finished.
-Please note that this may be slow depending on the size of the project.
-
-This operation cannot be undone midway (the editor freezes during operation)
-
-This operation is unstable!
-Changes cannot be undone if an error is made along the way.
-It is recommended to set up a git-like system to make the operation undoable.", "So what!, build it fast!", "I hate anything slow or unstable!"))
+            else if (!EditorUtility.DisplayDialog(EditorTool.TryGetText("gui.warning"), EditorTool.TryGetText("android_build.warning"), EditorTool.TryGetText("android_build.yes"), EditorTool.TryGetText("android_build.no")))
                 return false;
 
             start = true;
@@ -43,7 +35,7 @@ It is recommended to set up a git-like system to make the operation undoable.", 
 
             if (Directory.Exists(tempStreamingAssetsFolderPath))
             {
-                EditorUtility.DisplayDialog("Warning", $"The folder already exists in the '{tempStreamingAssetsFolderPath}' path!", "Build Cancel");
+                EditorUtility.DisplayDialog(EditorTool.TryGetText("gui.warning"), EditorTool.TryGetText("gui.folder_exists").Replace("{path}", tempStreamingAssetsFolderPath), EditorTool.TryGetText("android_build.cancel"));
                 start = false;
 
                 return false;

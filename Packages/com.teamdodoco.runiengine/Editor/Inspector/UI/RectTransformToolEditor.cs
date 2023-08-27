@@ -14,18 +14,18 @@ namespace RuniEngine.Editor.Inspector.UI
             if (target == null)
                 return;
 
-            EditorGUILayout.LabelField("Anchored Position: " + TargetsToString(x => x.rectTransform.anchoredPosition));
-            EditorGUILayout.LabelField("Size Delta: " + TargetsToString(x => x.rectTransform.sizeDelta));
+            EditorGUILayout.LabelField(TryGetText("rect_transform.anchored_position") + ": " + TargetsToString(x => x.rectTransform.anchoredPosition));
+            EditorGUILayout.LabelField(TryGetText("rect_transform.size_delta") + ": " + TargetsToString(x => x.rectTransform.sizeDelta));
 
             Space();
 
-            EditorGUILayout.LabelField("Offset Min: " + TargetsToString(x => x.rectTransform.offsetMin));
-            EditorGUILayout.LabelField("Offset Max: " + TargetsToString(x => x.rectTransform.offsetMax));
+            EditorGUILayout.LabelField(TryGetText("rect_transform.offset_min") + ": " + TargetsToString(x => x.rectTransform.offsetMin));
+            EditorGUILayout.LabelField(TryGetText("rect_transform.offset_max") + ": " + TargetsToString(x => x.rectTransform.offsetMax));
 
             Space();
 
-            EditorGUILayout.LabelField("Local Rect: " + TargetsToString(x => x.rectTransform.rect));
-            EditorGUILayout.LabelField("World Rect: " + TargetsToString(x => x.worldCorners.rect));
+            EditorGUILayout.LabelField(TryGetText("rect_transform.local_rect") + ": " + TargetsToString(x => x.rectTransform.rect));
+            EditorGUILayout.LabelField(TryGetText("rect_transform.world_rect") + ": " + TargetsToString(x => x.worldCorners.rect));
         }
     }
 }

@@ -1,0 +1,45 @@
+{
+    "gui.warning": "警告",
+    "gui.field_is_null": "このフィールドはNULL値にはできません",
+    "gui.folder_exists": "'{path}' パスにフォルダが既に存在します!",
+    "gui.path": "パス",
+    "gui.volume": "ボリューム",
+    "gui.audio_reset": "オーディオリセット",
+    "gui.streaming_assets": "ストリーミングアセット",
+    "gui.font": "フォント",
+
+    "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
+    "android_build.yes": "だから何！ 早くビルドしてください！",
+    "android_build.no": "私は遅いか不安定なのが嫌いです",
+    "android_build.cancel": "ビルドをキャンセル",
+
+    "inspector.property_none": "プロパティ「{name}」を認識できませんでした",
+    "inspector.target_~": "指定する{target}",
+    "inspector.rect_transform": "正方形変換",
+
+    "rect_transform.anchored_position": "固定位置",
+    "rect_transform.size_delta": "サイズデルタ",
+    "rect_transform.offset_min": "最小オフセット",
+    "rect_transform.offset_max": "最大オフセット",
+    "rect_transform.local_rect": "ローカルRect",
+    "rect_transform.world_rect": "ワールドRect",
+
+    "installer.music_loading": "音楽を読み込んでいます...",
+    "installer.package_resource.label": "基本リソースのコピー",
+    "installer.package_resource.package": "{name}パッケージリソース",
+    "installer.package_resource.package_none": "{name}パッケージリソースが見つかりません！",
+    "installer.package_resource.import": "インポート",
+    "installer.package_resource.import_done": "インポート✓",
+
+    "installer.project_setting.label": "プロジェクト設定の変更",
+    "installer.project_setting.audio_volume": "オーディオ設定のデフォルトのグローバルボリュームの変更",
+    "installer.project_setting.audio_max": "オーディオ設定の最大仮想 実際の音声を最高値に変更",
+    "installer.project_setting.change": "変更",
+    "installer.project_setting.change_done": "変更✓",
+
+    "installer.tmp_setting.label": "TMPリソース",
+
+    "installer.welcome": "ようこそ！",
+    "installer.welcome.text": "Runi Engineをご利用いただきありがとうございます。",
+    "installer.welcome.text2": "これからエンジンの初期設定を開始します。"
+}

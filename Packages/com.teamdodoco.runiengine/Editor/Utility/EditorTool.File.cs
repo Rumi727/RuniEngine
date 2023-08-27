@@ -13,7 +13,7 @@ namespace RuniEngine.Editor
 
             path = AssetDatabase.GetAssetPath(assets);
 
-            EditorGUILayout.LabelField("경로: " + path);
+            EditorGUILayout.LabelField(TryGetText("gui.path") + ": " + path);
             isChanged = oldAssets != assets;
         }
     }

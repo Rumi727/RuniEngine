@@ -11,14 +11,14 @@ namespace RuniEngine.Install
     {
         public InstallerMainWindow? installerMainWindow { get; set; }
 
-        public string label { get; } = "기본 리소스 복사";
+        public string label => EditorTool.TryGetText("installer.package_resource.label");
         public bool headDisable { get; } = false;
         public int sort { get; } = 3;
 
         public void DrawGUI()
         {
-            PackageImportButton("스트리밍 에셋", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName));
-            PackageImportButton("폰트", "Fonts", Path.Combine(EditorTool.assetsResourcePathParent, "Fonts"));
+            PackageImportButton(EditorTool.TryGetText("gui.streaming_assets"), Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName));
+            PackageImportButton(EditorTool.TryGetText("gui.font"), "Fonts", Path.Combine(EditorTool.assetsResourcePathParent, "Fonts"));
         }
 
         public void PackageImportButton(string title, string packagePath, string existsPath)
@@ -26,16 +26,16 @@ namespace RuniEngine.Install
             string allPackagePath = Path.Combine(EditorTool.packageResourcesPath, packagePath + ".unitypackage");
             if (!File.Exists(allPackagePath))
             {
-                EditorGUILayout.HelpBox($"{title} 패키지 리소스를 찾을 수 없습니다!", MessageType.Error);
+                EditorGUILayout.HelpBox(EditorTool.TryGetText("installer.package_resource.package_none").Replace("{name}", title), MessageType.Error);
                 return;
             }
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"{title} 패키지 리소스", GUILayout.ExpandWidth(false));
+            GUILayout.Label(EditorTool.TryGetText("installer.package_resource.package").Replace("{name}", title), GUILayout.ExpandWidth(false));
 
             if (Directory.Exists(existsPath))
             {
-                if (GUILayout.Button("임포트 ✓", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(EditorTool.TryGetText("installer.package_resource.import_done"), GUILayout.ExpandWidth(false)))
                 {
                     AssetDatabase.ImportPackage(allPackagePath, false);
                     GUILayout.EndHorizontal();
@@ -45,7 +45,7 @@ namespace RuniEngine.Install
             }
             else
             {
-                if (GUILayout.Button("임포트", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(EditorTool.TryGetText("installer.package_resource.import"), GUILayout.ExpandWidth(false)))
                 {
                     AssetDatabase.ImportPackage(allPackagePath, false);
                     GUILayout.EndHorizontal();

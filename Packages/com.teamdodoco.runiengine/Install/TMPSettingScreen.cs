@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Editor;
 using TMPro;
 
 namespace RuniEngine.Install
@@ -7,7 +8,7 @@ namespace RuniEngine.Install
     {
         public InstallerMainWindow? installerMainWindow { get; set; }
 
-        public string label { get; } = "TMP 리소스";
+        public string label => EditorTool.TryGetText("installer.tmp_setting.label");
         public bool headDisable { get; } = false;
 
         public int sort { get; } = 2;

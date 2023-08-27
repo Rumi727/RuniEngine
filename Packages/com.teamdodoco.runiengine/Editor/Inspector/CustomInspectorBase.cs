@@ -71,7 +71,7 @@ namespace RuniEngine.Editor.Inspector
             }
             catch (Exception)
             {
-                GUILayout.Label($@"프로퍼티 '{propertyName}'을(를) 인식하지 못했습니다");
+                GUILayout.Label(TryGetText("inspector.property_none").Replace("{name}", propertyName));
                 return null;
             }
 
