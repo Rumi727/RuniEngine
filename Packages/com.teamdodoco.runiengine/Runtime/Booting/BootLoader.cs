@@ -48,7 +48,7 @@ namespace RuniEngine.Booting
             //CS0162 접근할 수 없는 코드 경고를 비활성화 하기 위해 변수로 우회합니다
             bool warningDisable = true;
             if (warningDisable)
-                throw new NotSupportedException("SC KRM은 WebGL을 지원하지 않습니다\nSC KRM does not support WebGL");
+                throw new NotSupportedException(LanguageLoader.TryGetText("boot_loader.webgl"));
 #endif
 
             //Path Init

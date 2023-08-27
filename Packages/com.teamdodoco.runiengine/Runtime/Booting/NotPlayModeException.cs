@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Resource;
 using System;
 using System.Diagnostics;
 
@@ -13,7 +14,7 @@ namespace RuniEngine.Booting
                 throw new NotPlayModeException();
         }
 
-        public NotPlayModeException() : base("플레이 모드가 아니면 작업을 진행할 수 없습니다")
+        public NotPlayModeException() : base(LanguageLoader.GetText("exception.not_play_mode"))
         {
             
         }

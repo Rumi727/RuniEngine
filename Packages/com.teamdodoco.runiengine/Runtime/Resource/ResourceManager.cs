@@ -82,7 +82,7 @@ namespace RuniEngine.Resource
                             catch (Exception e)
                             {
                                 Debug.LogException(e);
-                                Debug.LogError($"{type?.Name} 리소스 요소가 \"{nameSpacePath}\" 네임스페이스에 있는 리소스들을 불러오다 예외가 발생 했습니다", nameof(ResourceManager));
+                                Debug.LogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", type?.Name).Replace("{namespace}", nameSpacePath), nameof(ResourceManager));
                             }
                         }
                     }

@@ -25,6 +25,7 @@
     "rect_transform.world_rect": "ワールドRect",
 
     "installer.music_loading": "音楽を読み込んでいます...",
+    
     "installer.package_resource.label": "基本リソースのコピー",
     "installer.package_resource.package": "{name}パッケージリソース",
     "installer.package_resource.package_none": "{name}パッケージリソースが見つかりません！",

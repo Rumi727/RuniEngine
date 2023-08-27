@@ -25,6 +25,7 @@
     "rect_transform.world_rect": "World Rect",
 
     "installer.music_loading": "Loading music...",
+    
     "installer.package_resource.label": "Copy default resources",
     "installer.package_resource.package": "{name} package resource",
     "installer.package_resource.package_none": "Package resource {name} not found!",

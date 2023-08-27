@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Resource;
 using System;
 
 namespace RuniEngine.Booting
@@ -11,7 +12,7 @@ namespace RuniEngine.Booting
                 throw new BasicDataNotLoadedException();
         }
 
-        public BasicDataNotLoadedException() : base("기초 데이터가 로드되지 않은 상태에서 작업을 진행할 수 없습니다")
+        public BasicDataNotLoadedException() : base(LanguageLoader.TryGetText("exception.basic_data_not_loaded"))
         {
 
         }
