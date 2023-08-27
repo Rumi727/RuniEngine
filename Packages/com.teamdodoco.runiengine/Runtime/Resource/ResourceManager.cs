@@ -23,6 +23,8 @@ namespace RuniEngine.Resource
         public const string rootName = "assets";
         public const string defaultNameSpace = "runi";
 
+        public static List<Object> allLoadedResources { get; } = new();
+
 
 
         static List<IResourceElement> allResourceElements { get; } = new List<IResourceElement>();
@@ -95,8 +97,6 @@ namespace RuniEngine.Resource
 
 
 
-        public static List<Object> allLoadedResources { get; } = new();
-
         /// <summary>
         /// 모든 리소스를 삭제합니다
         /// </summary>
@@ -126,6 +126,39 @@ namespace RuniEngine.Resource
         {
             if (string.IsNullOrWhiteSpace(value))
                 value = defaultNameSpace;
+        }
+
+        /// <summary>
+        /// 파일들에 특정 확장자가 있으면 true를 반환합니다
+        /// Returns true if files have a specific extension
+        /// </summary>
+        /// <param name="path">
+        /// 파일의 경로
+        /// Path
+        /// </param>
+        /// <param name="outPath">
+        /// 검색한 확장자를 포함한 전체 경로
+        /// Full path including searched extension
+        /// </param>
+        /// <param name="extensions">
+        /// 확장자 리스트
+        /// extension list
+        /// </param>
+        /// <returns></returns>
+        public static bool FileExtensionExists(string path, out string outPath, ExtensionFilter extensionFilter)
+        {
+            for (int i = 0; i < extensionFilter.extensions.Length; i++)
+            {
+                string extension = extensionFilter.extensions[i];
+                if (File.Exists(path + "." + extension))
+                {
+                    outPath = path += "." + extension;
+                    return true;
+                }
+            }
+
+            outPath = "";
+            return false;
         }
     }
 }
