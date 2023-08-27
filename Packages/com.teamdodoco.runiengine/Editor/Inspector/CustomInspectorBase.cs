@@ -8,9 +8,10 @@ using Object = UnityEngine.Object;
 
 namespace RuniEngine.Editor.Inspector
 {
-    public class CustomInspectorBase<T> : EditorTool where T : Object 
+    public class CustomInspectorBase<TTarget> : EditorTool where TTarget : Object 
     {
-        protected T? editor { get; private set; }
+        protected new TTarget? target { get; private set; }
+        protected new TTarget[]? targets { get; private set; }
 
         [NonSerialized] bool repaint = false;
 
@@ -25,7 +26,8 @@ namespace RuniEngine.Editor.Inspector
                 Repainter();
             }
 
-            editor = (T)target;
+            target = (TTarget)base.target;
+            targets = ConverterUtility.ConvertObjects<TTarget>(base.targets);
         }
 
         /// <summary>
@@ -79,6 +81,27 @@ namespace RuniEngine.Editor.Inspector
             }
 
             return null;
+        }
+
+        public string TargetsToString<TValue>(Func<TTarget, TValue> action)
+        {
+            if (targets == null || targets.Length <= 0)
+                return "null";
+
+            TValue? parentValue = action(targets[0]);
+            for (int i = 1; i < targets.Length; i++)
+            {
+                TValue value = action(targets[i]);
+                if (!Equals(parentValue, value))
+                    return "-";
+
+                parentValue = value;
+            }
+
+            if (parentValue != null)
+                return parentValue.ToString();
+            else
+                return "null";
         }
     }
 }
