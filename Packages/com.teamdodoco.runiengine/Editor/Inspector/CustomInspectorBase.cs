@@ -4,11 +4,15 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace RuniEngine.Editor.Inspector
 {
-    public class CustomInspectorBase : EditorTool
+    public class CustomInspectorBase<T> : EditorTool where T : Object 
     {
-        [System.NonSerialized] bool repaint = false;
+        protected T? editor { get; private set; }
+
+        [NonSerialized] bool repaint = false;
 
         /// <summary>
         /// Please put base.OnEnable() when overriding
@@ -20,6 +24,8 @@ namespace RuniEngine.Editor.Inspector
                 repaint = true;
                 Repainter();
             }
+
+            editor = (T)target;
         }
 
         /// <summary>
