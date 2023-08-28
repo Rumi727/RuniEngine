@@ -24,6 +24,16 @@ namespace RuniEngine.Booting
         }
         internal static StorableClass[] _projectData = null!;
 
+        public static StorableClass[] globalData
+        {
+            get
+            {
+                BasicDataNotLoadedException.Exception();
+                return _globalData;
+            }
+        }
+        internal static StorableClass[] _globalData = null!;
+
         public static bool basicDataLoaded { get; set; } = false;
         public static bool allLoaded { get; set; } = false;
 
@@ -74,12 +84,16 @@ namespace RuniEngine.Booting
             {
                 await UniTask.WhenAll(
                     UniTask.RunOnThreadPool(() => _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>()),
+                    UniTask.RunOnThreadPool(() => _globalData = StorableClassUtility.AutoInitialize<GlobalDataAttribute>()),
                     UniTask.RunOnThreadPool(UserAccountManager.UserDataInit)
                     );
                 if (!Kernel.isPlaying)
                     return;
 
-                await UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectDataPath));
+                await UniTask.WhenAll(
+                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectDataPath)),
+                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_globalData, Kernel.globalDataPath))
+                    );
                 if (!Kernel.isPlaying)
                     return;
 

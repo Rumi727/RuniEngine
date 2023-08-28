@@ -155,6 +155,9 @@ namespace RuniEngine
         {
             ResourceManager.AllDestroy();
 
+            if (BootLoader.basicDataLoaded)
+                StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
+
             if (UserAccountManager.currentAccount != null)
                 UserAccountManager.Logout();
 
