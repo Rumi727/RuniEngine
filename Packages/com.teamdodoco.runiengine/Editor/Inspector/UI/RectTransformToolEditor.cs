@@ -26,6 +26,20 @@ namespace RuniEngine.Editor.Inspector.UI
 
             EditorGUILayout.LabelField(TryGetText("rect_transform.local_rect") + ": " + TargetsToString(x => x.rectTransform.rect));
             EditorGUILayout.LabelField(TryGetText("rect_transform.world_rect") + ": " + TargetsToString(x => x.worldCorners.rect));
+
+            Space();
+
+            if (GUILayout.Button(TryGetText("gui.delete"), GUILayout.ExpandWidth(false)) && targets != null)
+            {
+                for (int i = 0; i < targets.Length; i++)
+                {
+                    RectTransformTool tool = targets[i];
+                    RectTransform rectTransform = tool.rectTransform;
+
+                    DestroyImmediate(tool);
+                    Undo.DestroyObjectImmediate(rectTransform);
+                }
+            }
         }
     }
 }
