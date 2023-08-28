@@ -13,7 +13,7 @@ namespace RuniEngine.Resource
     public sealed class LanguageLoader : IResourceElement
     {
         [UserData]
-        public sealed class UserData
+        public struct UserData
         {
             [JsonProperty] public static string currentLanguage { get; set; } = "en_us";
         }

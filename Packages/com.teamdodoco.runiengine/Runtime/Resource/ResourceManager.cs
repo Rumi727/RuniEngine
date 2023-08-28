@@ -17,7 +17,7 @@ namespace RuniEngine.Resource
     public static class ResourceManager
     {
         [UserData]
-        public sealed class UserData
+        public struct UserData
         {
             [JsonProperty] public static List<string> resourcePacks { get; set; } = new List<string>();
         }

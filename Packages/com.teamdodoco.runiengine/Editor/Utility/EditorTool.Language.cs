@@ -12,7 +12,7 @@ namespace RuniEngine.Editor
     public partial class EditorTool
     {
         [ProjectData]
-        public sealed class ProjectData
+        public struct ProjectData
         {
             [JsonProperty] public static string currentLanguage { get; set; } = "en_us";
         }

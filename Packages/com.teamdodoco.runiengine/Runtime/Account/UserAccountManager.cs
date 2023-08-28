@@ -14,7 +14,7 @@ namespace RuniEngine.Account
     public static class UserAccountManager
     {
         [ProjectData]
-        public sealed class ProjectData
+        public struct ProjectData
         {
             [JsonProperty] public static string loginScenePath { get; set; } = "Packages/com.teamdodoco.runiengine/Runtime/Account/Default Login Scene.unity";
         }
