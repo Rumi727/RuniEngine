@@ -14,7 +14,7 @@ namespace RuniEngine.Editor
             PrefabAssetType prefabAssetType = PrefabUtility.GetPrefabAssetType(gameObject);
             if (prefabAssetType == PrefabAssetType.NotAPrefab) //프리팹이 아니라면 평소대로 컴포넌트를 추가합니다
             {
-                T addedRectTransformTool = gameObject.AddComponent<T>();
+                T addedRectTransformTool = Undo.AddComponent<T>(gameObject);
                 if (backToTop)
                     ComponentBackToTop(addedRectTransformTool);
 
@@ -44,7 +44,7 @@ namespace RuniEngine.Editor
                  * 그 오리지널 프리팹에 컴포넌트를 추가합니다
                  */
                 GameObject original = PrefabUtility.GetCorrespondingObjectFromOriginalSource(gameObject);
-                T addedRectTransformTool = original.AddComponent<T>();
+                T addedRectTransformTool = Undo.AddComponent<T>(original);
 
                 //수정 사항을 저장합니다
                 EditorUtility.SetDirty(original);
@@ -68,7 +68,7 @@ namespace RuniEngine.Editor
             if (prefabAssetType == PrefabAssetType.NotAPrefab)
             {
                 GameObject gameObject = component.gameObject;
-                DestroyImmediate(component);
+                Undo.DestroyObjectImmediate(component);
 
                 //수정 사항을 저장합니다
                 EditorUtility.SetDirty(gameObject);
@@ -78,7 +78,7 @@ namespace RuniEngine.Editor
                 Component original = PrefabUtility.GetCorrespondingObjectFromOriginalSource(component);
                 GameObject gameObject = original.gameObject;
 
-                DestroyImmediate(original, true);
+                Undo.DestroyObjectImmediate(original);
 
                 //수정 사항을 저장합니다
                 EditorUtility.SetDirty(gameObject);
