@@ -83,28 +83,6 @@ namespace RuniEngine
         static string _temporaryCachePath = "";
 
         /// <summary>
-        /// PathTool.Combine(Kernel.persistentDataPath, "User Data")
-        /// </summary>
-        public static string userDataPath
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(_userDataPath))
-                    return _userDataPath;
-                else
-                {
-                    _userDataPath = Path.Combine(persistentDataPath, "User Data");
-
-                    if (!Directory.Exists(_userDataPath))
-                        Directory.CreateDirectory(_userDataPath);
-
-                    return _userDataPath;
-                }
-            }
-        }
-        static string _userDataPath = "";
-
-        /// <summary>
         /// PathTool.Combine(Kernel.persistentDataPath, "Resource Pack")
         /// </summary>
         public static string resourcePackPath
@@ -137,7 +115,6 @@ namespace RuniEngine
             _ = streamingAssetsPath;
             _ = persistentDataPath;
             _ = temporaryCachePath;
-            _ = userDataPath;
             _ = resourcePackPath;
 
             _ = companyName;

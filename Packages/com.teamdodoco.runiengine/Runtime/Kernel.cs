@@ -1,5 +1,6 @@
 #nullable enable
 using Newtonsoft.Json;
+using RuniEngine.Account;
 using RuniEngine.Booting;
 using RuniEngine.Data;
 using RuniEngine.Resource;
@@ -153,7 +154,9 @@ namespace RuniEngine
         static void Qutting()
         {
             ResourceManager.AllDestroy();
-            StorableClassUtility.SaveAll(BootLoader.userData, userDataPath);
+
+            if (UserAccountManager.currentAccount != null)
+                UserAccountManager.Logout();
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.pauseStateChanged -= PauseStateChanged;

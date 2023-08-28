@@ -1,8 +1,6 @@
 {
 	"language.name": "日本語",
-	"language.region": "日本",
-	
-	
+	"language.region": "日本",	
 	
 	"gui.done": "完了",
 	"gui.cancel": "キャンセル",
@@ -85,6 +83,8 @@
 	"exception.not_play_mode": "プレイモードでないと作業を進めることができません",
 	"exception.resource_not_loaded": "リソースがロードされていない状態で操作を続行できません",
 	"exception.not_main_thread": "メインスレッドでのみ作業を進めることができます",
+	"exception.already_logged": "すでにログアウトしています",
+	"exception.logged_out_user_data": "ログアウトした状態でユーザーデータにアクセスできない",
 
 	"boot_loader.webgl": "Runi EngineはWebGLをサポートしていません",
 

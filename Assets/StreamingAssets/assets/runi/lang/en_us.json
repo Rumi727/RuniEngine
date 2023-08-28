@@ -83,6 +83,8 @@
 	"exception.not_play_mode": "You can't proceed unless you're in play mode",
 	"exception.resource_not_loaded": "Operation cannot proceed while the resource is not loaded",
 	"exception.not_main_thread": "Work can only be done on the main thread",
+	"exception.already_logged": "You are already logged out",
+	"exception.logged_out_user_data": "Unable to access user data while logged out",
 
 	"boot_loader.webgl": "Runi Engine does not support WebGL",
 

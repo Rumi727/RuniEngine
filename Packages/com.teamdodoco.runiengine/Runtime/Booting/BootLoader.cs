@@ -1,5 +1,6 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
+using RuniEngine.Account;
 using RuniEngine.Data;
 using RuniEngine.Resource;
 using RuniEngine.Splash;
@@ -22,16 +23,6 @@ namespace RuniEngine.Booting
             }
         }
         internal static StorableClass[] _projectData = null!;
-
-        public static StorableClass[] userData
-        {
-            get
-            {
-                BasicDataNotLoadedException.Exception();
-                return _userData;
-            }
-        }
-        internal static StorableClass[] _userData = null!;
 
         public static bool basicDataLoaded { get; set; } = false;
         public static bool allLoaded { get; set; } = false;
@@ -71,31 +62,42 @@ namespace RuniEngine.Booting
             }
             Debug.Log("Player Loop Setting End", nameof(BootLoader));
 
+            await UniTask.Delay(100);
+            if (!Kernel.isPlaying)
+                return;
+
+            //Splash Screen Play
+            SplashScreen.isPlaying = true;
+
             //Storable Class
             Debug.Log("Storable Class Loading...", nameof(BootLoader));
             {
                 await UniTask.WhenAll(
                     UniTask.RunOnThreadPool(() => _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>()),
-                    UniTask.RunOnThreadPool(() => _userData = StorableClassUtility.AutoInitialize<UserDataAttribute>())
+                    UniTask.RunOnThreadPool(UserAccountManager.UserDataInit)
                     );
+                if (!Kernel.isPlaying)
+                    return;
 
-                await UniTask.WhenAll(
-                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectDataPath)),
-                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_userData, Kernel.userDataPath))
-                    );
+                await UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectDataPath));
+                if (!Kernel.isPlaying)
+                    return;
 
                 basicDataLoaded = true;
             }
             Debug.Log("Storable Class Loaded", nameof(BootLoader));
 
-            await UniTask.Delay(100);
-            SplashScreen.isPlaying = true;
-
             Debug.Log("Resource Loading...", nameof(BootLoader));
             await ResourceManager.Refresh();
             Debug.Log("Resource Loaded", nameof(BootLoader));
 
+            //All Loading End
             allLoaded = true;
+
+            //Splash Screen Stop Wait...
+            await UniTask.WaitUntil(() => !SplashScreen.isPlaying);
+            if (!Kernel.isPlaying)
+                return;
         }
 
         static void AttributeInvoke<T>() where T : Attribute

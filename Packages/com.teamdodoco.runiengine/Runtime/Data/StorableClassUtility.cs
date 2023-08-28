@@ -54,10 +54,7 @@ namespace RuniEngine.Data
         {
             IEnumerator<StorableClass> enumerator = storableObjects.GetEnumerator();
             while (enumerator.MoveNext())
-            {
-                StorableClass storableObject = enumerator.Current;
-                storableObject.Save(Path.Combine(folderPath, storableObject.fullName + ".json"));
-            }
+                enumerator.Current.AutoNameSave(folderPath);
         }
 
         /// <summary>
@@ -69,10 +66,7 @@ namespace RuniEngine.Data
         {
             IEnumerator<StorableClass> enumerator = storableObjects.GetEnumerator();
             while (enumerator.MoveNext())
-            {
-                StorableClass storableObject = enumerator.Current;
-                storableObject.Load(Path.Combine(folderPath, storableObject.fullName + ".json"));
-            }
+                enumerator.Current.AutoNameLoad(folderPath);
         }
     }
 }
