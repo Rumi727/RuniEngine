@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RuniEngine.Booting;
+using RuniEngine.Data;
 using RuniEngine.Threading;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace RuniEngine.Resource
 {
     public static class ResourceManager
     {
+        [UserData]
         public sealed class UserData
         {
             [JsonProperty] public static List<string> resourcePacks { get; set; } = new List<string>();
