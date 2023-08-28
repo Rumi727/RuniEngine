@@ -12,8 +12,8 @@ namespace RuniEngine.Resource
 {
     public sealed class LanguageLoader : IResourceElement
     {
-        [UserData]
-        public struct UserData
+        [GlobalData]
+        public struct GlobalData
         {
             [JsonProperty] public static string currentLanguage { get; set; } = "en_us";
         }
@@ -52,7 +52,7 @@ namespace RuniEngine.Resource
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             if (string.IsNullOrWhiteSpace(language))
-                language = UserData.currentLanguage;
+                language = GlobalData.currentLanguage;
 
             if (!isLoaded)
             {

@@ -16,8 +16,8 @@ namespace RuniEngine.Resource
 {
     public static class ResourceManager
     {
-        [UserData]
-        public struct UserData
+        [GlobalData]
+        public struct GlobalData
         {
             [JsonProperty] public static List<string> resourcePacks { get; set; } = new List<string>();
         }
@@ -48,12 +48,12 @@ namespace RuniEngine.Resource
             UniTask[] cachedUniTasks = new UniTask[resourceElements.Count];
 
             //기본 에셋도 포함시켜야하기 때문에 리소스팩 길이를 1 늘린다
-            for (int i = 0; i < UserData.resourcePacks.Count + 1; i++)
+            for (int i = 0; i < GlobalData.resourcePacks.Count + 1; i++)
             {
                 //현재 인덱스가 리소스팩의 길이를 벗어나면 기본 에셋으로 판정 (반복문이 리소스팩 길이 + 1 까지 반복하기 때문에 가능함)
                 string resourcePack;
-                if (i < UserData.resourcePacks.Count)
-                    resourcePack = UserData.resourcePacks[i];
+                if (i < GlobalData.resourcePacks.Count)
+                    resourcePack = GlobalData.resourcePacks[i];
                 else
                     resourcePack = Kernel.streamingAssetsPath;
 
