@@ -9,6 +9,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.LowLevel;
+using UnityEngine.SceneManagement;
 
 namespace RuniEngine.Booting
 {
@@ -112,6 +113,8 @@ namespace RuniEngine.Booting
             await UniTask.WaitUntil(() => !SplashScreen.isPlaying);
             if (!Kernel.isPlaying)
                 return;
+
+            await SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
         }
 
         static void AttributeInvoke<T>() where T : Attribute
