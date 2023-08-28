@@ -77,6 +77,8 @@ namespace RuniEngine.Account
 
         public static bool Login(UserAccountInfo info, string password)
         {
+            BasicDataNotLoadedException.Exception();
+
             if (currentAccount != null)
                 Logout();
 
@@ -93,6 +95,8 @@ namespace RuniEngine.Account
 
         public static void Logout()
         {
+            BasicDataNotLoadedException.Exception();
+
             if (currentAccount == null)
                 throw LogoutException.AlreadyLoggedException();
 
@@ -106,6 +110,8 @@ namespace RuniEngine.Account
 
         public static void UserDataSave()
         {
+            BasicDataNotLoadedException.Exception();
+
             if (currentAccount == null)
                 throw LogoutException.LoggedOutUserDataException();
 
@@ -114,6 +120,8 @@ namespace RuniEngine.Account
 
         public static void UserDataLoad()
         {
+            BasicDataNotLoadedException.Exception();
+
             if (currentAccount == null)
                 throw LogoutException.LoggedOutUserDataException();
 
