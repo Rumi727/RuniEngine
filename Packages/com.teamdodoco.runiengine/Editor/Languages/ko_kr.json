@@ -21,6 +21,9 @@
     "inspector.target_~": "지정할 {target}",
     "inspector.rect_transform": "사각 트랜스폼",
     "inspector.sprite_renderer": "스프라이트 렌더러",
+    "inspector.ui_ani.disable_lerp_ani": "선형 보간 애니메이션 비활성화",
+    "inspector.ui_ani.use_custom_lerp_speed": "커스텀 애니메이션 속도 사용",
+    "inspector.ui_ani.lerp_speed": "애니메이션 속도",
 
     "rect_transform.anchored_position": "고정된 위치",
     "rect_transform.size_delta": "크기 델타",

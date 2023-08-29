@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace RuniEngine.Editor.Inspector
 {
-    public class CustomInspectorBase<TTarget> : EditorTool where TTarget : Object 
+    public abstract class CustomInspectorBase<TTarget> : EditorTool where TTarget : Object 
     {
         protected new TTarget? target { get; private set; }
         protected new TTarget[]? targets { get; private set; }
@@ -44,11 +44,6 @@ namespace RuniEngine.Editor.Inspector
             }
         }
 
-        public override void OnInspectorGUI()
-        {
-            
-        }
-
 
 
         public SerializedProperty? UseProperty(string propertyName) => InternalUseProperty(propertyName, "", false);
@@ -67,7 +62,7 @@ namespace RuniEngine.Editor.Inspector
             }
             catch (ExitGUIException)
             {
-
+                
             }
             catch (Exception)
             {
@@ -91,23 +86,35 @@ namespace RuniEngine.Editor.Inspector
             return tps;
         }
 
-        public string TargetsToString<TValue>(Func<TTarget, TValue> action)
+        public bool TargetsIsEquals<TValue>(Func<TTarget, TValue> func)
         {
             if (targets == null || targets.Length <= 0)
-                return "null";
+                return true;
 
-            TValue? parentValue = action(targets[0]);
+            TValue? parentValue = func(targets[0]);
             for (int i = 1; i < targets.Length; i++)
             {
-                TValue value = action(targets[i]);
+                TValue value = func(targets[i]);
                 if (!Equals(parentValue, value))
-                    return "-";
+                    return false;
 
                 parentValue = value;
             }
 
-            if (parentValue != null)
-                return parentValue.ToString();
+            return true;
+        }
+
+        public string TargetsToString<TValue>(Func<TTarget, TValue> func)
+        {
+            if (targets == null || targets.Length <= 0)
+                return "null";
+
+            if (!TargetsIsEquals(func))
+                return "-";
+
+            TValue value = func(targets[0]);
+            if (value != null)
+                return value.ToString();
             else
                 return "null";
         }

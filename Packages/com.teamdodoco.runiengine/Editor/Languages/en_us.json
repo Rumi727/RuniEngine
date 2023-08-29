@@ -21,6 +21,9 @@
     "inspector.target_~": "Target {target}",
     "inspector.rect_transform": "Rect Transform",
     "inspector.sprite_renderer": "Sprite Renderer",
+    "inspector.ui_ani.disable_lerp_ani": "Disable linear interpolation animation",
+    "inspector.ui_ani.use_custom_lerp_speed": "Use custom animation speed",
+    "inspector.ui_ani.lerp_speed": "Animation speed",
 
     "rect_transform.anchored_position": "Anchroed Position",
     "rect_transform.size_delta": "Size Delta",

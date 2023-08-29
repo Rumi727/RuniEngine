@@ -21,6 +21,9 @@
     "inspector.target_~": "指定する{target}",
     "inspector.rect_transform": "正方形変換",
     "inspector.sprite_renderer": "スプライトレンダラー",
+    "inspector.ui_ani.disable_lerp_ani": "線形補間アニメーションの無効化",
+    "inspector.ui_ani.use_custom_lerp_speed": "カスタムアニメーション速度を使用する",
+    "inspector.ui_ani.lerp_speed": "アニメーションスピード",
 
     "rect_transform.anchored_position": "固定位置",
     "rect_transform.size_delta": "サイズデルタ",
