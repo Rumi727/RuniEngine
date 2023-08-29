@@ -1,9 +1,10 @@
 #nullable enable
 using RuniEngine.UI;
+using UnityEngine;
 
 namespace RuniEngine.Editor.Inspector.UI
 {
-    public abstract class UIAniBaseEditor<TTarget> : UIBaseEditor<TTarget> where TTarget : UIAniBase
+    public abstract class UIAniBaseEditor<TTarget> : UIBaseEditor<TTarget> where TTarget : Object, IUIAni
     {
         /// <summary>
         /// Please put base.OnDisable() when overriding

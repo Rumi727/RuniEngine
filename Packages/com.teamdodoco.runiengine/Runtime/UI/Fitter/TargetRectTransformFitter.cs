@@ -5,7 +5,7 @@ namespace RuniEngine.UI.Fitter
 {
     [ExecuteAlways]
     [DisallowMultipleComponent]
-    public class TargetRectTransformFitter : FitterBase
+    public class TargetRectTransformFitter : FitterAniBase
     {
         public RectTransform? targetRectTransform { get => _targetRectTransform; set => _targetRectTransform = value; }
         [SerializeField, NotNullField] RectTransform? _targetRectTransform;
@@ -25,37 +25,38 @@ namespace RuniEngine.UI.Fitter
         }
 
         readonly Vector3[] fourCornersArray = new Vector3[4];
-        bool isRefresh = false;
+        RectCorner cachedRectCorner;
         public override void SetDirty()
         {
-            if (isRefresh || targetRectTransform == null)
+            if (targetRectTransform == null)
                 return;
 
-            try
+            targetRectTransform.GetWorldCorners(fourCornersArray);
+            cachedRectCorner = new RectCorner(fourCornersArray[0], fourCornersArray[1], fourCornersArray[2], fourCornersArray[3]);
+
+            base.SetDirty();
+        }
+
+        public override void LayoutUpdate()
+        {
+            if (targetRectTransform == null)
+                return;
+
+            if (!Kernel.isPlaying)
             {
-                isRefresh = true;
-
-                if (!Kernel.isPlaying)
-                {
-                    tracker.Clear();
-                    tracker.Add(this, rectTransform, DrivenTransformProperties.All);
-                }
-
-                targetRectTransform.GetWorldCorners(fourCornersArray);
-                worldCorners = new RectCorner(fourCornersArray[0], fourCornersArray[1], fourCornersArray[2], fourCornersArray[3]);
-
-                rectTransform.position = targetRectTransform.position;
-                rectTransform.localScale = targetRectTransform.localScale;
-                rectTransform.rotation = targetRectTransform.rotation;
-
-                rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                tracker.Clear();
+                tracker.Add(this, rectTransform, DrivenTransformProperties.All);
             }
-            finally
-            {
-                isRefresh = false;
-            }
+
+            worldCorners = worldCorners.Lerp(cachedRectCorner, currentLerpSpeed);
+
+            rectTransform.position = rectTransform.position.Lerp(targetRectTransform.position, currentLerpSpeed);
+            rectTransform.localScale = rectTransform.localScale.Lerp(targetRectTransform.localScale, currentLerpSpeed);
+            rectTransform.rotation = rectTransform.rotation.Lerp(targetRectTransform.rotation, currentLerpSpeed);
+
+            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
         }
     }
 }
