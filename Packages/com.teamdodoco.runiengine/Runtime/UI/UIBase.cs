@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace RuniEngine.UI
 {
     [RequireComponent(typeof(RectTransform))]
-    public class UIBase : UIBehaviour, IUI
+    public abstract class UIBase : UIBehaviour, IUI
     {
         public Canvas? canvas => _canvas = this.GetComponentInParentFieldSave(_canvas, true);
         Canvas? _canvas;
