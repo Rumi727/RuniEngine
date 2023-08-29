@@ -7,6 +7,8 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
+using Quaternion = UnityEngine.Quaternion;
+using RuniEngine.UI;
 
 namespace RuniEngine
 {
@@ -1454,10 +1456,21 @@ namespace RuniEngine
             return new Vector4(current.x + ((target.x - current.x) * t), current.y + ((target.y - current.y) * t), current.z + ((target.z - current.z) * t), current.w + ((target.w - current.w) * t));
         }
 
+        public static Quaternion Lerp(this Quaternion current, Quaternion target, float t)
+        {
+            t = t.Clamp01();
+            return Quaternion.Lerp(current, target, t);
+        }
+
         public static Rect Lerp(this Rect current, Rect target, float t)
         {
             t = t.Clamp01();
             return new Rect(current.x + ((target.x - current.x) * t), current.y + ((target.y - current.y) * t), current.width + ((target.width - current.width) * t), current.height + ((target.height - current.height) * t));
+        }
+        public static RectCorner Lerp(this RectCorner current, RectCorner target, float t)
+        {
+            t = t.Clamp01();
+            return new RectCorner(current.bottomLeft + ((target.bottomLeft - current.bottomLeft) * t), current.topLeft + ((target.topRight - current.topLeft) * t), current.topRight + ((target.topRight - current.topRight) * t), current.bottomRight + ((target.bottomRight - current.bottomRight) * t));
         }
 
         public static Color Lerp(this Color current, Color target, float t)
@@ -1579,7 +1592,10 @@ namespace RuniEngine
         public static Vector3 LerpUnclamped(this Vector3 current, Vector3 target, float t) => new Vector3(current.x + ((target.x - current.x) * t), current.y + ((target.y - current.y) * t), current.z + ((target.z - current.z) * t));
         public static Vector4 LerpUnclamped(this Vector4 current, Vector4 target, float t) => new Vector4(current.x + ((target.x - current.x) * t), current.y + ((target.y - current.y) * t), current.z + ((target.z - current.z) * t), current.w + ((target.w - current.w) * t));
 
+        public static Quaternion LerpUnclamped(this Quaternion current, Quaternion target, float t) => Quaternion.Lerp(current, target, t);
+
         public static Rect LerpUnclamped(this Rect current, Rect target, float t) => new Rect(current.x + ((target.x - current.x) * t), current.y + ((target.y - current.y) * t), current.width + ((target.width - current.width) * t), current.height + ((target.height - current.height) * t));
+        public static RectCorner LerpUnclamped(this RectCorner current, RectCorner target, float t) => new RectCorner(current.bottomLeft + ((target.bottomLeft - current.bottomLeft) * t), current.topLeft + ((target.topRight - current.topLeft) * t), current.topRight + ((target.topRight - current.topRight) * t), current.bottomRight + ((target.bottomRight - current.bottomRight) * t));
 
         public static Color LerpUnclamped(this Color current, Color target, float t) => new Color(current.r + ((target.r - current.r) * t), current.g + ((target.g - current.g) * t), current.b + ((target.b - current.b) * t), current.a + ((target.a - current.a) * t));
         public static Color LerpNoAlphaUnclamped(this Color current, Color target, float t) => new Color(current.r + ((target.r - current.r) * t), current.g + ((target.g - current.g) * t), current.b + ((target.b - current.b) * t), current.a);
@@ -3854,7 +3870,6 @@ namespace RuniEngine
         public static Vector3 Multiply(this Vector3 a, Vector3 b) => new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
         public static Vector4 Multiply(this Vector4 a, Vector4 b) => new Vector4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
 
-        public static Color Multiply(this Color a, Color b) => new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
         public static Color32 Multiply(this Color32 a, Color32 b) => new Color32((byte)(a.r * b.r), (byte)(a.g * b.g), (byte)(a.b * b.b), (byte)(a.a * b.a));
         #endregion
 
