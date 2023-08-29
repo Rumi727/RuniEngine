@@ -104,7 +104,7 @@ namespace RuniEngine.UI.Fitter
             float ySize = LayoutUtility.GetPreferredSize(targetRectTransform, 1);
 
             float aspectRatio = xSize / ySize;
-            if (!float.IsNormal(aspectRatio))
+            if (float.IsNormal(aspectRatio))
                 this.aspectRatio = aspectRatio;
             else
                 this.aspectRatio = 1;
