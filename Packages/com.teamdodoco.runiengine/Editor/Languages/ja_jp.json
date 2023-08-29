@@ -11,6 +11,10 @@
     "gui.streaming_assets": "ストリーミングアセット",
     "gui.font": "フォント",
     "gui.delete": "削除",
+    "gui.offset": "オフセット",
+    "gui.color": "色",
+    "gui.min_size": "最小サイズ",
+    "gui.max_size": "最大サイズ",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -24,6 +28,10 @@
     "inspector.ui_ani.disable_lerp_ani": "線形補間アニメーションの無効化",
     "inspector.ui_ani.use_custom_lerp_speed": "カスタムアニメーション速度を使用する",
     "inspector.ui_ani.lerp_speed": "アニメーションスピード",
+    "inspector.color_animation.use_custom_color": "カスタムカラーの使用",
+    "inspector.better_content_size_fitter.x_size": "Xサイズの変更",
+    "inspector.better_content_size_fitter.y_size": "Yサイズの変更",
+    "inspector.content_aspect_ratio_fitter.aspect_mode": "方向モード",
 
     "rect_transform.anchored_position": "固定位置",
     "rect_transform.size_delta": "サイズデルタ",

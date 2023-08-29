@@ -11,6 +11,10 @@
     "gui.streaming_assets": "Streaming Assets",
     "gui.font": "Fonts",
     "gui.delete": "Delete",
+    "gui.offset": "Offset",
+    "gui.color": "Color",
+    "gui.min_size": "Min Size",
+    "gui.max_size": "Max Size",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -24,6 +28,10 @@
     "inspector.ui_ani.disable_lerp_ani": "Disable linear interpolation animation",
     "inspector.ui_ani.use_custom_lerp_speed": "Use custom animation speed",
     "inspector.ui_ani.lerp_speed": "Animation speed",
+    "inspector.color_animation.use_custom_color": "Use custom colors",
+    "inspector.better_content_size_fitter.x_size": "X size change",
+    "inspector.better_content_size_fitter.y_size": "Y size change",
+    "inspector.content_aspect_ratio_fitter.aspect_mode": "Aspect Mode",
 
     "rect_transform.anchored_position": "Anchroed Position",
     "rect_transform.size_delta": "Size Delta",
