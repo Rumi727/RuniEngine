@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using RuniEngine.Data;
 using RuniEngine.Json;
 using RuniEngine.Resource;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
