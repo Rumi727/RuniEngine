@@ -1,9 +1,8 @@
 #nullable enable
-using RuniEngine.Editor.Inspector.UI.Animating;
 using RuniEngine.UI.Animating;
 using UnityEditor;
 
-namespace RuniEngine.Editor
+namespace RuniEngine.Editor.Inspector.UI.Animating
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(UIAnimationRectTransform))]
