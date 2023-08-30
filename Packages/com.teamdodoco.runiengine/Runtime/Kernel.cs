@@ -172,6 +172,7 @@ namespace RuniEngine
                 UserAccountManager.Logout();
 
 #if UNITY_EDITOR
+            UnityEditor.EditorApplication.update += Update;
             UnityEditor.EditorApplication.pauseStateChanged -= PauseStateChanged;
 #endif
         }

@@ -39,9 +39,25 @@ namespace RuniEngine.UI.Animating
 
             if (Kernel.isPlaying && playOnAwake)
                 Play();
+
+#if UNITY_EDITOR
+            if (!Kernel.isPlaying)
+                UnityEditor.EditorApplication.update += TimeUpdate;
+#endif
         }
 
+#if UNITY_EDITOR
+        protected override void OnDisable() => UnityEditor.EditorApplication.update -= TimeUpdate;
+#endif
+
+
         protected virtual void Update()
+        {
+            if (Kernel.isPlaying)
+                TimeUpdate();
+        }
+
+        public void TimeUpdate()
         {
             if (isPlaying)
             {

@@ -80,21 +80,6 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                         targets[i].Stop();
                 }
 
-                if (!Kernel.isPlaying)
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        if (targets[i].isPlaying)
-                        {
-                            EditorApplication.QueuePlayerLoopUpdate();
-                            SceneView.RepaintAll();
-
-                            Repaint();
-                            break;
-                        }
-                    }
-                }
-
                 GUILayout.EndHorizontal();
             }
         }
