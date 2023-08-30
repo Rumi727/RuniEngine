@@ -146,15 +146,21 @@ namespace RuniEngine.UI.Animating
                 tracker.Clear();
         }
 
+#if UNITY_EDITOR
+        public override void Init(UIAnimator? animator)
+        {
+            base.Init(animator);
+
+            if (!Kernel.isPlaying)
+                tracker.Clear();
+        }
+#endif
 
         public override void LayoutUpdate()
         {
             UIAnimator? animator = this.animator;
             if (animator == null)
                 return;
-
-            if (!Kernel.isPlaying)
-                tracker.Clear();
 
             Vector3 anchoredPosition = rectTransform.anchoredPosition;
             Vector2 sizeDelta = rectTransform.sizeDelta;

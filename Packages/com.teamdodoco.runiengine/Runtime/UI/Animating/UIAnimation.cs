@@ -22,7 +22,7 @@ namespace RuniEngine.UI.Animating
 
         public abstract float length { get; }
 
-        public void Init(UIAnimator? animator) => this.animator = animator;
+        public virtual void Init(UIAnimator? animator) => this.animator = animator;
 
         public abstract void LayoutUpdate();
 
