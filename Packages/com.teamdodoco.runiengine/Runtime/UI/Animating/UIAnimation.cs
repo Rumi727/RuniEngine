@@ -1,7 +1,5 @@
 #nullable enable
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace RuniEngine.UI.Animating
 {

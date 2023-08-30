@@ -23,7 +23,11 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                 EditorGUILayout.Slider(tps, 0, target.length, TryGetText("gui.time"));
 
                 if (EditorGUI.EndChangeCheck())
+                {
                     serializedObject.ApplyModifiedProperties();
+                    for (int i = 0; i < targets.Length; i++)
+                        targets[i].LayoutUpdate();
+                }
             }
             else
                 UseProperty("_time", TryGetText("gui.time"));
@@ -33,6 +37,66 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
             Space();
 
             UseProperty("_animations", TryGetText("inspector.ui_animator.animations"));
+            UseProperty("_playOnAwake", TryGetText("gui.play_on_awake"));
+            UseProperty("_reverse", TryGetText("gui.reverse"));
+
+            Space();
+
+            {
+                EditorGUILayout.BeginHorizontal();
+
+                if (GUILayout.Button(TryGetText("gui.play")))
+                {
+                    for (int i = 0; i < targets.Length; i++)
+                        targets[i].Play();
+                }
+
+                if (GUILayout.Button(TryGetText("gui.reverse")))
+                {
+                    for (int i = 0; i < targets.Length; i++)
+                        targets[i].Reverse();
+                }
+
+                if (!TargetsIsEquals(x => x.isPlaying) || !target.isPlaying)
+                {
+                    if (GUILayout.Button(TryGetText("gui.unpause")))
+                    {
+                        for (int i = 0; i < targets.Length; i++)
+                            targets[i].UnPause();
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button(TryGetText("gui.pause")))
+                    {
+                        for (int i = 0; i < targets.Length; i++)
+                            targets[i].Pause();
+                    }
+                }
+
+                if (GUILayout.Button(TryGetText("gui.stop")))
+                {
+                    for (int i = 0; i < targets.Length; i++)
+                        targets[i].Stop();
+                }
+
+                if (!Kernel.isPlaying)
+                {
+                    for (int i = 0; i < targets.Length; i++)
+                    {
+                        if (targets[i].isPlaying)
+                        {
+                            EditorApplication.QueuePlayerLoopUpdate();
+                            SceneView.RepaintAll();
+
+                            Repaint();
+                            break;
+                        }
+                    }
+                }
+
+                GUILayout.EndHorizontal();
+            }
         }
     }
 }
