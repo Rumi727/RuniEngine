@@ -135,9 +135,19 @@ namespace RuniEngine
             Application.quitting += Qutting;
 
 #if UNITY_EDITOR
+            UnityEditor.EditorApplication.update -= Update;
             UnityEditor.EditorApplication.pauseStateChanged += PauseStateChanged;
 #endif
         }
+
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        static void InitializeOnLoadMethod()
+        {
+            if (!isPlaying)
+                UnityEditor.EditorApplication.update += Update;
+        }
+#endif
 
 #if UNITY_EDITOR
         static void PauseStateChanged(UnityEditor.PauseState pauseState) => deltaTimeStopwatch.Restart();
