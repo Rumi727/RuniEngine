@@ -1,10 +1,12 @@
 #nullable enable
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RuniEngine.UI
 {
     [ExecuteAlways]
     [DisallowMultipleComponent]
+    [RequireComponent(typeof(Graphic))]
     public class AutoColorAnimation : UIAniBase
     {
         public bool useCustomColor { get => _useCustomColor; set => _useCustomColor = value; }
