@@ -158,8 +158,10 @@ namespace RuniEngine.UI.Animating
 
             Vector3 anchoredPosition = rectTransform.anchoredPosition;
             Vector2 sizeDelta = rectTransform.sizeDelta;
-            Vector2 offsetMin = rectTransform.offsetMin;
-            Vector2 offsetMax = rectTransform.offsetMax;
+            float? offsetMinX = null;
+            float? offsetMinY = null;
+            float? offsetMaxX = null;
+            float? offsetMaxY = null;
             Vector2 anchorMin = rectTransform.anchorMin;
             Vector2 anchorMax = rectTransform.anchorMax;
             Vector2 pivot = rectTransform.pivot;
@@ -200,26 +202,26 @@ namespace RuniEngine.UI.Animating
 
             if (mode.HasFlag(UIAnimationRectTransformMode.offsetMinX))
             {
-                offsetMin.x = offsetMinX.Evaluate(animator.time);
+                offsetMinX = this.offsetMinX.Evaluate(animator.time);
                 if (!Kernel.isPlaying)
                     tracker.Add(this, rectTransform, DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.SizeDeltaX);
             }
             if (mode.HasFlag(UIAnimationRectTransformMode.offsetMinY))
             {
-                offsetMin.y = offsetMinY.Evaluate(animator.time);
+                offsetMinY = this.offsetMinY.Evaluate(animator.time);
                 if (!Kernel.isPlaying)
                     tracker.Add(this, rectTransform, DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.SizeDeltaY);
             }
 
             if (mode.HasFlag(UIAnimationRectTransformMode.offsetMaxX))
             {
-                offsetMax.x = offsetMaxX.Evaluate(animator.time);
+                offsetMaxX = this.offsetMaxX.Evaluate(animator.time);
                 if (!Kernel.isPlaying)
                     tracker.Add(this, rectTransform, DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.SizeDeltaX);
             }
             if (mode.HasFlag(UIAnimationRectTransformMode.offsetMaxY))
             {
-                offsetMax.y = offsetMaxY.Evaluate(animator.time);
+                offsetMaxY = this.offsetMaxY.Evaluate(animator.time);
                 if (!Kernel.isPlaying)
                     tracker.Add(this, rectTransform, DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.SizeDeltaY);
             }
@@ -294,8 +296,16 @@ namespace RuniEngine.UI.Animating
 
             rectTransform.anchoredPosition = anchoredPosition;
             rectTransform.sizeDelta = sizeDelta;
-            rectTransform.offsetMin = offsetMin;
-            rectTransform.offsetMax = offsetMax;
+
+            if (offsetMinX != null)
+                rectTransform.offsetMin = new Vector2((float)offsetMinX, rectTransform.offsetMin.y);
+            if (offsetMinY != null)
+                rectTransform.offsetMin = new Vector2(rectTransform.offsetMin.y, (float)offsetMinY);
+            if (offsetMaxX != null)
+                rectTransform.offsetMax = new Vector2((float)offsetMaxX, rectTransform.offsetMax.y);
+            if (offsetMaxY != null)
+                rectTransform.offsetMax = new Vector2(rectTransform.offsetMax.y, (float)offsetMaxY);
+
             rectTransform.anchorMin = anchorMin;
             rectTransform.anchorMax = anchorMax;
             rectTransform.pivot = pivot;
