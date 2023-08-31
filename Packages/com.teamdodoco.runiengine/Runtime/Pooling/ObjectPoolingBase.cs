@@ -28,19 +28,19 @@ namespace RuniEngine.Pooling
 
 
         /// <summary>
-        /// Please put base.OnCreate() when overriding
+        /// Please put <see cref="OnCreate"/> when overriding
         /// </summary>
         public virtual void OnCreate() => IObjectPooling.OnCreateDefault(transform, this);
 
         /// <summary>
-        /// Please put base.Remove() when overriding
+        /// Please put <see cref="Remove"/> when overriding
         /// </summary>
         public virtual void Remove() => IObjectPooling.RemoveDefault(this, this);
 
         public bool IsDestroyed() => this == null;
 
         /// <summary>
-        /// Please put base.ActiveSceneChanged() when overriding
+        /// Please put <see cref="ActiveSceneChanged"/> when overriding
         /// </summary>
         public virtual void ActiveSceneChanged()
         {
@@ -49,7 +49,7 @@ namespace RuniEngine.Pooling
         }
 
         /// <summary>
-        /// Please put base.OnDestroy() when overriding
+        /// Please put <see cref="OnDestroy"/> when overriding
         /// </summary>
         protected virtual void OnDestroy() => SceneManager.activeSceneChanged -= ActiveSceneChanged;
     }
