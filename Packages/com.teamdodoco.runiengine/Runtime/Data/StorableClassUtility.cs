@@ -46,6 +46,13 @@ namespace RuniEngine.Data
         public static void AutoNameLoad(this StorableClass storableObject, string folderPath) => storableObject.Load(Path.Combine(folderPath, storableObject.fullName + ".json"));
 
         /// <summary>
+        /// 모든 저장 가능한 클래스를 기본값으로 되돌립니다
+        /// </summary>
+        /// <param name="storableObjects">저장 가능한 클래스 리스트</param>
+        /// <param name="folderPath">폴더 경로</param>
+        public static void AutoNameSetDefault(this StorableClass storableObject) => storableObject.SetDefault();
+
+        /// <summary>
         /// 모든 저장 가능한 클래스를 저장합니다
         /// </summary>
         /// <param name="storableObjects">저장 가능한 클래스 리스트</param>
@@ -67,6 +74,18 @@ namespace RuniEngine.Data
             IEnumerator<StorableClass> enumerator = storableObjects.GetEnumerator();
             while (enumerator.MoveNext())
                 enumerator.Current.AutoNameLoad(folderPath);
+        }
+
+        /// <summary>
+        /// 모든 저장 가능한 클래스를 기본값으로 되돌립니다
+        /// </summary>
+        /// <param name="storableObjects">저장 가능한 클래스 리스트</param>
+        /// <param name="folderPath">폴더 경로</param>
+        public static void SetDefaultAll(this IEnumerable<StorableClass> storableObjects)
+        {
+            IEnumerator<StorableClass> enumerator = storableObjects.GetEnumerator();
+            while (enumerator.MoveNext())
+                enumerator.Current.AutoNameSetDefault();
         }
     }
 }

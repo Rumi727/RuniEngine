@@ -114,5 +114,14 @@ namespace RuniEngine.Data
                     memberInfo.memberInfo.SetValue(null, memberInfo.defaultValue);
             }
         }
+
+        public void SetDefault()
+        {
+            for (int i = 0; i < memberInfos.Length; i++)
+            {
+                StorableClassMemberInfo<PropertyInfo> memberInfo = memberInfos[i];
+                memberInfo.memberInfo.SetValue(null, memberInfo.defaultValue);
+            }
+        }
     }
 }
