@@ -13,7 +13,7 @@ namespace RuniEngine.UI
 
         public float lerpSpeed { get => _lerpSpeed; set => _lerpSpeed = value; }
 
-        [SerializeField, Range(0, 1)] float _lerpSpeed = 0.2f;
+        [SerializeField, Range(0, 1)] float _lerpSpeed = 0.05f;
 
         public float currentLerpSpeed
         {

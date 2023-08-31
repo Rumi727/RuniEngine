@@ -12,7 +12,7 @@ namespace RuniEngine.UI
         public struct UserData
         {
             [JsonProperty] public static JColor mainColor { get; set; } = new Color32(255, 15, 70, 255);
-            [JsonProperty] public static float defaultLerpAniSpeed { get; set; } = 0.04f; 
+            [JsonProperty] public static float defaultLerpAniSpeed { get; set; } = 0.05f; 
         }
     }
 }
