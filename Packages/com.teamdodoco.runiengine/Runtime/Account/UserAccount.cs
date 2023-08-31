@@ -1,14 +1,26 @@
 #nullable enable
+using RuniEngine.Resource;
 using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using UnityEngine;
 
 namespace RuniEngine.Account
 {
     public sealed class UserAccount : IDisposable
     {
-        public string path => Path.Combine(UserAccountManager.accountsPath, name);
+        public Texture2D? profile
+        {
+            get
+            {
+                if (isDisposed)
+                    throw new ObjectDisposedException(GetType().FullName);
+
+                return _profile;
+            }
+        }
+        public Texture2D? _profile;
 
         public string name
         {
@@ -34,11 +46,15 @@ namespace RuniEngine.Account
         }
         string _hashedPassword;
 
+        public string path => Path.Combine(UserAccountManager.accountsPath, PathUtility.ReplaceInvalidPathChars(name));
+
         public bool isDisposed { get; private set; } = false;
 
-        UserAccount(string name, string hashedPassword)
+        UserAccount(Texture2D? profile, string name, string hashedPassword)
         {
+            _profile = profile;
             _name = name;
+
             _hashedPassword = hashedPassword;
         }
 
@@ -46,7 +62,11 @@ namespace RuniEngine.Account
         {
             if (info.hashedPassword == GetHashedPassword(password))
             {
-                result = new UserAccount(info.name, info.hashedPassword);
+                Texture2D? profile = null;
+                if (ResourceManager.FileExtensionExists(Path.Combine(info.path, "profile"), out string profilePath, ExtensionFilter.pictureFileFilter))
+                    profile = ImageLoader.GetTexture(profilePath);
+
+                result = new UserAccount(profile, info.name, info.hashedPassword);
                 return true;
             }
 

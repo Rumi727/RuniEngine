@@ -1,16 +1,23 @@
 #nullable enable
 using System;
+using System.IO;
 
 namespace RuniEngine.Account
 {
     public readonly struct UserAccountInfo : IEquatable<UserAccountInfo>
     {
+        public string profile { get; }
         public string name { get; }
+
         public string hashedPassword { get; }
 
-        public UserAccountInfo(string name, string hashedPassword)
+        public string path => Path.Combine(UserAccountManager.accountsPath, PathUtility.ReplaceInvalidPathChars(name));
+
+        public UserAccountInfo(string profile, string name, string hashedPassword)
         {
+            this.profile = profile;
             this.name = name;
+
             this.hashedPassword = hashedPassword;
         }
 
