@@ -22,6 +22,7 @@
     "gui.mode": "모드",
     "gui.alpha": "알파",
     "gui.play_on_awake": "활성 상태일 때 재생",
+    "gui.play_on_awake_delay": "활성 상태일 때 재생 지연",
     "gui.play": "재생",
     "gui.pause": "일시정지",
     "gui.unpause": "일시정지 해제",

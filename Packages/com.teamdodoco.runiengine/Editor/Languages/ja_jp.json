@@ -22,6 +22,7 @@
     "gui.mode": "モード",
     "gui.alpha": "アルファ",
     "gui.play_on_awake": "アクティブなときに再生",
+    "gui.play_on_awake_delay": "アクティブ時の再生遅延",
     "gui.play": "遊ぶ",
     "gui.pause": "一時停止",
     "gui.unpause": "一時停止解除",

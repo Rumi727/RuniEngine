@@ -1,4 +1,5 @@
 #nullable enable
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,8 +18,11 @@ namespace RuniEngine.UI.Animating
             get => _time.Clamp(0);
             set
             {
-                _time = value;
-                LayoutUpdate();
+                if (_time != value)
+                {
+                    _time = value;
+                    LayoutUpdate();
+                }
             }
         }
         [SerializeField, Min(0)] float _time = 0;
@@ -33,17 +37,26 @@ namespace RuniEngine.UI.Animating
         public bool playOnAwake { get => _playOnAwake; set => _playOnAwake = value; }
         [SerializeField] bool _playOnAwake = true;
 
-        protected override void OnEnable()
+        public float playOnAwakeDelay { get => _playOnAwakeDelay.Clamp(0); set => _playOnAwakeDelay = value; }
+        [SerializeField, Min(0)] float _playOnAwakeDelay = 0;
+
+        protected override async void OnEnable()
         {
             LayoutUpdate();
-
-            if (Kernel.isPlaying && playOnAwake)
-                Play();
 
 #if UNITY_EDITOR
             if (!Kernel.isPlaying)
                 UnityEditor.EditorApplication.update += TimeUpdate;
 #endif
+
+            if (Kernel.isPlaying && playOnAwake)
+            {
+                await UniTask.Delay((int)(playOnAwakeDelay * 1000));
+                if (!Kernel.isPlaying)
+                    return;
+
+                Play();
+            }
         }
 
 #if UNITY_EDITOR
@@ -62,9 +75,9 @@ namespace RuniEngine.UI.Animating
             if (isPlaying)
             {
                 if (isReverse)
-                    _time -= Kernel.smoothDeltaTime;
+                    _time -= Kernel.deltaTime;
                 else
-                    _time += Kernel.smoothDeltaTime;
+                    _time += Kernel.deltaTime;
 
                 LayoutUpdate();
 

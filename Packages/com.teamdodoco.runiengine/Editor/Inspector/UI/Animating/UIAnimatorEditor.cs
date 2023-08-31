@@ -37,8 +37,17 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
             Space();
 
             UseProperty("_animations", TryGetText("inspector.ui_animator.animations"));
+
+            Space();
+
             UseProperty("_playOnAwake", TryGetText("gui.play_on_awake"));
-            UseProperty("_reverse", TryGetText("gui.reverse"));
+            if (TargetsIsEquals(x => x.playOnAwake))
+            {
+                if (target.playOnAwake)
+                    UseProperty("_playOnAwakeDelay", TryGetText("gui.play_on_awake_delay"));
+            }
+            else
+                UseProperty("_playOnAwakeDelay", TryGetText("gui.play_on_awake_delay"));
 
             Space();
 
