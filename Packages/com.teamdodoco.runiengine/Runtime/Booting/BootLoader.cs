@@ -114,7 +114,7 @@ namespace RuniEngine.Booting
             if (!Kernel.isPlaying)
                 return;
 
-            await SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+            await SceneManager.LoadSceneAsync(2, LoadSceneMode.Single);
         }
 
         static void AttributeInvoke<T>() where T : Attribute
