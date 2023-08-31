@@ -1,6 +1,7 @@
 #nullable enable
 using Newtonsoft.Json;
 using RuniEngine.Data;
+using RuniEngine.Json;
 using UnityEngine;
 
 namespace RuniEngine.UI
@@ -10,8 +11,8 @@ namespace RuniEngine.UI
         [UserData]
         public struct UserData
         {
-            [JsonProperty] public static Color mainColor { get; set; } = new Color32(255, 15, 70, 255);
-            [JsonProperty] public static float defaultLerpAniSpeed { get; set; } = 0.2f; 
+            [JsonProperty] public static JColor mainColor { get; set; } = new Color32(255, 15, 70, 255);
+            [JsonProperty] public static float defaultLerpAniSpeed { get; set; } = 0.04f; 
         }
     }
 }
