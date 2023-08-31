@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RuniEngine.Pooling
 {
-    public class ObjectPoolingBase : MonoBehaviour, IObjectPooling
+    public abstract class ObjectPoolingBase : MonoBehaviour, IObjectPooling
     {
         public string objectKey { get; set; } = string.Empty;
 

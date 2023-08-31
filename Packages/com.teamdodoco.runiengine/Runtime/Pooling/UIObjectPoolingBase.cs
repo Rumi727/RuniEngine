@@ -5,7 +5,7 @@ using System;
 
 namespace RuniEngine.Pooling
 {
-    public class UIObjectPoolingBase : UIBase, IObjectPooling
+    public abstract class UIObjectPoolingBase : UIBase, IObjectPooling
     {
         public string objectKey { get; set; } = string.Empty;
 
