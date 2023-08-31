@@ -1,5 +1,6 @@
 #nullable enable
 using RuniEngine.SceneManagement;
+using RuniEngine.UI;
 using System;
 using UnityEngine;
 
@@ -47,37 +48,12 @@ namespace RuniEngine.Pooling
             ObjectPoolingManager.ObjectRemove(objectPooling.objectKey, monoBehaviour, objectPooling);
             monoBehaviour.name = objectPooling.objectKey;
 
-            monoBehaviour.transform.localPosition = Vector3.zero;
+            /*monoBehaviour.transform.localPosition = Vector3.zero;
 
             monoBehaviour.transform.localEulerAngles = Vector3.zero;
-            monoBehaviour.transform.localScale = Vector3.one;
+            monoBehaviour.transform.localScale = Vector3.one;*/
 
             monoBehaviour.StopAllCoroutines();
-
-            SceneManager.activeSceneChanged -= objectPooling.ActiveSceneChanged;
-            return true;
-        }
-
-        public static bool RemoveDefault(UI.UIBase ui, IObjectPooling objectPooling)
-        {
-            if (!objectPooling.isActived)
-                return false;
-            if (!Kernel.isPlaying)
-                return false;
-
-            objectPooling.removed?.Invoke();
-            objectPooling.removed = null;
-
-            ObjectPoolingManager.ObjectRemove(objectPooling.objectKey, ui, objectPooling);
-
-            ui.name = objectPooling.objectKey;
-
-            ui.rectTransform.anchoredPosition = Vector3.zero;
-
-            ui.rectTransform.localEulerAngles = Vector3.zero;
-            ui.rectTransform.localScale = Vector3.one;
-
-            ui.StopAllCoroutines();
 
             SceneManager.activeSceneChanged -= objectPooling.ActiveSceneChanged;
             return true;

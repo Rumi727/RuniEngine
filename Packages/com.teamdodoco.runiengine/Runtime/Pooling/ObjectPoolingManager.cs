@@ -176,7 +176,7 @@ namespace RuniEngine.Pooling
             BasicDataNotLoadedException.Exception();
 
             monoBehaviour.gameObject.SetActive(false);
-            monoBehaviour.transform.SetParent(instance.transform);
+            monoBehaviour.transform.SetParent(instance.transform, false);
 
             instanceList.Add(new Instance(objectKey, (monoBehaviour, objectPooling)));
             return true;
