@@ -28,6 +28,13 @@
     "gui.unpause": "一時停止解除",
     "gui.stop": "停止",
     "gui.reverse": "巻き戻す",
+    "gui.delete_safety": "安全削除モード（削除するリストが空の値でない場合は削除禁止）",
+    "gui.add": "追加",
+    "gui.remove": "削除",
+    "gui.prefab_key": "プレハブキー",
+    "gui.prefab": "プレハブ",
+    "gui.up": "上る",
+    "gui.down": "下へ",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -119,5 +126,8 @@
 
     "installer.welcome": "ようこそ！",
     "installer.welcome.text": "Runi Engineをご利用いただきありがとうございます。",
-    "installer.welcome.text2": "これからエンジンの初期設定を開始します。"
+    "installer.welcome.text2": "これからエンジンの初期設定を開始します。",
+
+    "project_setting.object_pooling.name": "プレハブリスト",
+    "project_setting.object_pooling.warning": "'Resources'フォルダにあり、IObjectPoolingインタフェースを継承するスクリプトが一番上に含まれているオブジェクトを入れてください"
 }

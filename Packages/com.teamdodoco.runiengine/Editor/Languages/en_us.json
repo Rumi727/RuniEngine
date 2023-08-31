@@ -28,6 +28,13 @@
     "gui.restart": "Unpause",
     "gui.stop": "Stop",
     "gui.reverse": "Reverse",
+    "gui.delete_safety": "Safe delete mode (delete prohibited unless the list to be deleted is empty)",
+    "gui.add": "Add",
+    "gui.remove": "Remove",
+    "gui.prefab_key": "Prefab Key",
+    "gui.prefab": "Prefab",
+    "gui.up": "Up",
+    "gui.down": "Down",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -119,5 +126,8 @@
 
     "installer.welcome": "Welcome!",
     "installer.welcome.text": "Thank you for using Runi Engine.",
-    "installer.welcome.text2": "From now on, we start the initial setup of the engine."
+    "installer.welcome.text2": "From now on, we start the initial setup of the engine.",
+
+    "project_setting.object_pooling.name": "Prefab List",
+    "project_setting.object_pooling.warning": "Please place an object in the 'Resources' folder that contains a script that inherits the IObjectPooling interface at the top."
 }
