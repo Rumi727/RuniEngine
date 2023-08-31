@@ -10,7 +10,7 @@ namespace RuniEngine.Editor
         [MenuItem("Runi Engine/Streaming Assets Export")]
         public static void StreamingAssetsExport()
         {
-            AssetDatabase.ExportPackage(Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName),
+            AssetDatabase.ExportPackage(Path.Combine("Assets", Kernel.streamingAssetsFolderName),
                 Path.Combine(EditorTool.packageResourcesPath, Kernel.streamingAssetsFolderName + ".unitypackage"),
                 ExportPackageOptions.Recurse);
         }

@@ -1,0 +1,5 @@
+{
+  "splashScenePath": "Packages/com.teamdodoco.runiengine/Runtime/Splash/Default Splash Scene.unity",
+  "sceneLoadingScenePath": "Packages/com.teamdodoco.runiengine/Runtime/Scene Management/Scene Load Scene.unity",
+  "startSceneIndex": -1
+}
