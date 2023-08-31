@@ -169,7 +169,7 @@ namespace RuniEngine
                 StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
 
             if (UserAccountManager.currentAccount != null)
-                UserAccountManager.Logout();
+                UserAccountManager.LogoutNoSceneMove();
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.update += Update;

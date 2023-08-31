@@ -1,4 +1,5 @@
 #nullable enable
+using Cysharp.Threading.Tasks;
 using RuniEngine.Resource;
 using System;
 using System.IO;
@@ -58,20 +59,18 @@ namespace RuniEngine.Account
             _hashedPassword = hashedPassword;
         }
 
-        public static bool Create(UserAccountInfo info, string password, out UserAccount? result)
+        public static async UniTask<UserAccount?> Create(UserAccountInfo info, string password)
         {
-            if (info.hashedPassword == GetHashedPassword(password))
+            if (info.hashedPassword == await UniTask.RunOnThreadPool(() => GetHashedPassword(password)))
             {
                 Texture2D? profile = null;
                 if (ResourceManager.FileExtensionExists(Path.Combine(info.path, "profile"), out string profilePath, ExtensionFilter.pictureFileFilter))
-                    profile = ImageLoader.GetTexture(profilePath);
+                    profile = await ImageLoader.GetTextureAsync(profilePath);
 
-                result = new UserAccount(profile, info.name, info.hashedPassword);
-                return true;
+                return new UserAccount(profile, info.name, info.hashedPassword);
             }
 
-            result = null;
-            return false;
+            return null;
         }
 
         public static string GetHashedPassword(string password)

@@ -1,8 +1,10 @@
 #nullable enable
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RuniEngine.Booting;
 using RuniEngine.Data;
 using RuniEngine.Json;
+using RuniEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -74,25 +76,36 @@ namespace RuniEngine.Account
                 accountList = new UserAccountInfo[0];
         }
 
-        public static bool Login(UserAccountInfo info, string password)
+        public static async UniTask<bool> Login(UserAccountInfo info, string password)
         {
             BasicDataNotLoadedException.Exception();
 
             if (currentAccount != null)
-                Logout();
+                LogoutNoSceneMove();
 
-            if (UserAccount.Create(info, password, out UserAccount? result) && result != null)
-            {
-                currentAccount = result;
-                UserDataLoad();
+            UserAccount? account = await UserAccount.Create(info, password);
+            if (account == null)
+                return false;
 
-                return true;
-            }
+            currentAccount = account;
+            UserDataLoad();
 
-            return false;
+            await SceneManager.LoadScene(3);
+            return true;
         }
 
-        public static void Logout()
+        public static async UniTask Logout()
+        {
+            BasicDataNotLoadedException.Exception();
+
+            if (currentAccount == null)
+                throw LogoutException.AlreadyLoggedException();
+
+            await SceneManager.LoadScene(2);
+            LogoutNoSceneMove();
+        }
+
+        public static void LogoutNoSceneMove()
         {
             BasicDataNotLoadedException.Exception();
 
@@ -100,6 +113,7 @@ namespace RuniEngine.Account
                 throw LogoutException.AlreadyLoggedException();
 
             UserDataSave();
+            UserDataSetDefault();
 
             currentAccount.Dispose();
             currentAccount = null;
@@ -125,6 +139,16 @@ namespace RuniEngine.Account
                 throw LogoutException.LoggedOutUserDataException();
 
             StorableClassUtility.LoadAll(_userData, currentAccount.path);
+        }
+
+        public static void UserDataSetDefault()
+        {
+            BasicDataNotLoadedException.Exception();
+
+            if (currentAccount == null)
+                throw LogoutException.LoggedOutUserDataException();
+
+            StorableClassUtility.SetDefaultAll(_userData);
         }
     }
 }
