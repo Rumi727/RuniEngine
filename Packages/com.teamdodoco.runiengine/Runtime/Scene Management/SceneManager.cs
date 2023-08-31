@@ -40,7 +40,7 @@ namespace RuniEngine.SceneManagement
                 await UniTask.NextFrame();
 
                 AsyncOperation asyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneBuildIndex);
-                asyncOperation.allowSceneActivation = false;
+                //asyncOperation.allowSceneActivation = false;
 
                 while (!asyncOperation.isDone || !asyncOperation.allowSceneActivation)
                 {
