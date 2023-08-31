@@ -28,11 +28,17 @@ namespace RuniEngine.Pooling
             [JsonProperty] public static Dictionary<string, string> prefabList { get; set; } = new Dictionary<string, string>();
         }
 
-        static ObjectList objectList { get; } = new ObjectList();
-        class ObjectList
+        static readonly List<Instance> instanceList = new List<Instance>();
+        class Instance
         {
-            public List<string> objectKey = new List<string>();
-            public List<(MonoBehaviour? monoBehaviour, IObjectPooling objectPooling)> objectPooling = new List<(MonoBehaviour?, IObjectPooling)>();
+            public string key = "";
+            public (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) objectPooling;
+
+            public Instance(string key, (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) objectPooling)
+            {
+                this.key = key;
+                this.objectPooling = objectPooling;
+            }
         }
 
 
@@ -75,7 +81,17 @@ namespace RuniEngine.Pooling
         /// </summary>
         /// <param name="objectKey">감지할 오브젝트 키</param>
         /// <returns></returns>
-        public static bool ObjectContains(string objectKey) => objectList.objectKey.Contains(objectKey);
+        public static bool ObjectContains(string objectKey)
+        {
+            for (int i = 0; i < instanceList.Count; i++)
+            {
+                Instance instance = instanceList[i];
+                if (instance.key == objectKey)
+                    return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// 오브젝트를 생성합니다
@@ -90,15 +106,15 @@ namespace RuniEngine.Pooling
             BasicDataNotLoadedException.Exception();
 
             int objectIndex = -1;
-            for (int i = 0; i < objectList.objectKey.Count; i++)
+            for (int i = 0; i < instanceList.Count; i++)
             {
-                if (objectList.objectKey[i] == objectKey)
+                Instance instance = instanceList[i];
+                if (instance.key == objectKey)
                 {
-                    (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) = objectList.objectPooling[i];
+                    (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) = instance.objectPooling;
                     if (monoBehaviour == null)
                     {
-                        objectList.objectKey.RemoveAt(i);
-                        objectList.objectPooling.RemoveAt(i);
+                        instanceList.RemoveAt(i);
 
                         i--;
                         continue;
@@ -114,7 +130,7 @@ namespace RuniEngine.Pooling
 
             if (objectIndex >= 0)
             {
-                (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) = objectList.objectPooling[objectIndex];
+                (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) = instanceList[objectIndex].objectPooling;
                 if (monoBehaviour == null)
                     return (null, null);
 
@@ -122,9 +138,7 @@ namespace RuniEngine.Pooling
                 monoBehaviour.gameObject.SetActive(true);
 
                 objectPooling.objectKey = objectKey;
-
-                objectList.objectKey.RemoveAt(objectIndex);
-                objectList.objectPooling.RemoveAt(objectIndex);
+                instanceList.RemoveAt(objectIndex);
 
                 objectPooling.OnCreate();
                 return (monoBehaviour, objectPooling);
@@ -164,9 +178,7 @@ namespace RuniEngine.Pooling
             monoBehaviour.gameObject.SetActive(false);
             monoBehaviour.transform.SetParent(instance.transform);
 
-            objectList.objectKey.Add(objectKey);
-            objectList.objectPooling.Add((monoBehaviour, objectPooling));
-
+            instanceList.Add(new Instance(objectKey, (monoBehaviour, objectPooling)));
             return true;
         }
     }
