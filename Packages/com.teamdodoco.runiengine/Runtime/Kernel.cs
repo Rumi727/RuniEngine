@@ -4,6 +4,7 @@ using RuniEngine.Account;
 using RuniEngine.Booting;
 using RuniEngine.Data;
 using RuniEngine.Resource;
+using RuniEngine.Tasks;
 using RuniEngine.Threading;
 using System.Diagnostics;
 using UnityEngine;
@@ -170,6 +171,8 @@ namespace RuniEngine
 
             if (UserAccountManager.currentAccount != null)
                 UserAccountManager.LogoutNoSceneMove();
+
+            AsyncTaskManager.AllAsyncTaskCancel();
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.update += Update;
