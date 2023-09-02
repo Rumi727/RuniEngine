@@ -33,5 +33,8 @@ namespace RuniEngine
         }
 
         public static string UrlPathPrefix(this string path) => urlPathPrefix + UnityWebRequest.EscapeURL(path);
+
+        public static string UniformDirectorySeparatorCharacter(this string path) => path.UniformDirectorySeparatorCharacter('\\', '/');
+        public static string UniformDirectorySeparatorCharacter(this string path, char altSeparatorChar, char separatorChar) => path.Replace(altSeparatorChar, separatorChar);
     }
 }
