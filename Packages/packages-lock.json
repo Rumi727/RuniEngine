@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.baracuda.thread-dispatcher": {
-      "version": "https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "d78d8007c6bc56432b1aa9c79fbb351bdeabc26a"
-    },
     "com.coffee.softmask-for-ugui": {
       "version": "https://github.com/mob-sakai/SoftMaskForUGUI.git",
       "depth": 0,
@@ -50,8 +43,7 @@
         "com.ibicha.youtube-player": "2.0.2",
         "com.unity.ugui": "1.0.0",
         "com.unity.textmeshpro": "3.0.6",
-        "com.looooong.asyncimageloader_forked_by_teamdodoko": "727.1.3",
-        "com.baracuda.thread-dispatcher": "5.0.1"
+        "com.looooong.asyncimageloader_forked_by_teamdodoko": "727.1.3"
       }
     },
     "com.unity.burst": {

@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.baracuda.thread-dispatcher": "https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git",
     "com.coffee.softmask-for-ugui": "https://github.com/mob-sakai/SoftMaskForUGUI.git",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.ibicha.youtube-player": "2.0.2",
