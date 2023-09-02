@@ -90,8 +90,8 @@ namespace RuniEngine.Resource
         readonly List<string> tempLanguageTypes = new();
         public async UniTask Refresh(string nameSpacePath, string nameSpace)
         {
-            if (!Kernel.isPlaying)
-                return;
+            NotMainThreadException.Exception();
+            NotPlayModeException.Exception();
 
             await UniTask.RunOnThreadPool(Thread);
             isLoaded = true;
