@@ -37,14 +37,8 @@ namespace RuniEngine.Resource
         {
             NotMainThreadException.Exception();
 
-            TextureMetaData? textureMetaData = JsonManager.JsonRead<TextureMetaData>(path + ".json");
-            if (textureMetaData == null)
-            {
-                textureMetaData = new TextureMetaData();
-                return GetTexture(path, textureMetaData.filterMode, textureMetaData.mipmapUse, textureMetaData.compressionType, textureFormat, hideFlags);
-            }
-
-            return GetTexture(path, FilterMode.Point, true, TextureCompressionQuality.none, textureFormat, hideFlags);
+            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(path + ".json") ?? new TextureMetaData();
+            return GetTexture(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
         }
 
         /// <summary>
@@ -63,7 +57,7 @@ namespace RuniEngine.Resource
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTexture(path, textureMetaData.filterMode, textureMetaData.mipmapUse, textureMetaData.compressionType, textureFormat, hideFlags);
+        public static Texture2D? GetTexture(string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTexture(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 가져옵니다
@@ -81,13 +75,13 @@ namespace RuniEngine.Resource
         /// 텍스쳐 포맷 (png, jpg 파일에서만 작동)
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(string path, FilterMode filterMode, bool mipmapUse, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Texture2D? GetTexture(string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
             if (File.Exists(path))
             {
-                Texture2D texture = new Texture2D(0, 0, textureFormat, mipmapUse, false);
+                Texture2D texture = new Texture2D(0, 0, textureFormat, generateMipmap, false);
                 ResourceManager.allLoadedResources.Add(texture);
 
                 texture.filterMode = filterMode;
@@ -96,7 +90,7 @@ namespace RuniEngine.Resource
                 texture.mipMapBias = -0.5f;
 
                 AsyncImageLoader.LoaderSettings loaderSettings = AsyncImageLoader.LoaderSettings.Default;
-                loaderSettings.generateMipmap = mipmapUse;
+                loaderSettings.generateMipmap = generateMipmap;
                 loaderSettings.logException = true;
 
                 if (!AsyncImageLoader.LoadImage(texture, File.ReadAllBytes(path), loaderSettings))
@@ -137,14 +131,8 @@ namespace RuniEngine.Resource
         {
             NotMainThreadException.Exception();
 
-            TextureMetaData? textureMetaData = JsonManager.JsonRead<TextureMetaData>(path + ".json");
-            if (textureMetaData == null)
-            {
-                textureMetaData = new TextureMetaData();
-                return GetTextureAsync(path, textureMetaData.filterMode, textureMetaData.mipmapUse, textureMetaData.compressionType, textureFormat, hideFlags);
-            }
-
-            return GetTextureAsync(path, FilterMode.Point, true, TextureCompressionQuality.none, textureFormat, hideFlags);
+            TextureMetaData? textureMetaData = JsonManager.JsonRead<TextureMetaData>(path + ".json") ?? new TextureMetaData();
+            return GetTextureAsync(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
         }
 
         /// <summary>
@@ -165,7 +153,7 @@ namespace RuniEngine.Resource
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static UniTask<Texture2D?> GetTextureAsync(string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTextureAsync(path, textureMetaData.filterMode, textureMetaData.mipmapUse, textureMetaData.compressionType, textureFormat, hideFlags);
+        public static UniTask<Texture2D?> GetTextureAsync(string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTextureAsync(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 비동기로 가져옵니다
@@ -185,7 +173,7 @@ namespace RuniEngine.Resource
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static async UniTask<Texture2D?> GetTextureAsync(string path, FilterMode filterMode, bool mipmapUse, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static async UniTask<Texture2D?> GetTextureAsync(string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
@@ -206,7 +194,7 @@ namespace RuniEngine.Resource
                 byte[] textureBytes = www.downloadHandler.data;
 #endif
 
-                Texture2D texture = new Texture2D(0, 0, textureFormat, mipmapUse);
+                Texture2D texture = new Texture2D(0, 0, textureFormat, generateMipmap);
                 ResourceManager.allLoadedResources.Add(texture);
 
                 texture.filterMode = filterMode;
@@ -214,7 +202,7 @@ namespace RuniEngine.Resource
                 texture.mipMapBias = -0.5f;
 
                 AsyncImageLoader.LoaderSettings loaderSettings = AsyncImageLoader.LoaderSettings.Default;
-                loaderSettings.generateMipmap = mipmapUse;
+                loaderSettings.generateMipmap = generateMipmap;
                 loaderSettings.logException = true;
 
                 texture.hideFlags = HideFlags.DontUnloadUnusedAsset;
