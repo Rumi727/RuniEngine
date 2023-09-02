@@ -3,7 +3,8 @@
     "rootNamespace": "RuniEngine",
     "references": [
         "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:e89de4e5a0e0c0b47a8506136f6d550d"
+        "GUID:e89de4e5a0e0c0b47a8506136f6d550d",
+        "GUID:08af652e582824643b56d9fe5a5c0ecd"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
