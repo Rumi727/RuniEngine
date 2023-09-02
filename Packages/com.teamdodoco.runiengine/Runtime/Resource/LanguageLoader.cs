@@ -94,7 +94,6 @@ namespace RuniEngine.Resource
             NotPlayModeException.Exception();
 
             await UniTask.RunOnThreadPool(Thread);
-            isLoaded = true;
 
             void Thread()
             {
@@ -129,6 +128,8 @@ namespace RuniEngine.Resource
         {
             loadedLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>(tempLoadedLanguages);
             languageList = new List<string>(tempLanguageTypes);
+
+            isLoaded = true;
         }
     }
 }
