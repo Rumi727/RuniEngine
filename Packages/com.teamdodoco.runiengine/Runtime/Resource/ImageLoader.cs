@@ -11,10 +11,18 @@ namespace RuniEngine.Resource
 {
     public sealed class ImageLoader : IResourceElement
     {
+        public ImageLoader() => refreshDelegates = new ResourceManager.RefreshDelegate[] { Refresh };
+
+
+
         public const string name = "textures";
         string IResourceElement.name => name;
 
         public const string spriteDefaultTag = "global";
+
+        public ResourceManager.RefreshDelegate[] refreshDelegates { get; }
+
+
 
         #region Get Texture
         /// <summary>

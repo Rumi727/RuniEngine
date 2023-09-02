@@ -12,6 +12,8 @@ namespace RuniEngine.Resource
 {
     public sealed class LanguageLoader : IResourceElement
     {
+        public LanguageLoader() => refreshDelegates = new ResourceManager.RefreshDelegate[] { Refresh };
+
         [GlobalData]
         public struct GlobalData
         {
@@ -23,8 +25,12 @@ namespace RuniEngine.Resource
         public static bool isLoaded { get; private set; } = false;
         public static List<string> languageList { get; private set; } = new();
 
+
+
         public const string name = "lang";
         string IResourceElement.name => name;
+
+        public ResourceManager.RefreshDelegate[] refreshDelegates { get; }
 
 
 

@@ -103,7 +103,11 @@ namespace RuniEngine.Booting
             Debug.Log("Storable Class Loaded", nameof(BootLoader));
 
             Debug.Log("Resource Loading...", nameof(BootLoader));
+
             await ResourceManager.Refresh();
+            if (!Kernel.isPlaying)
+                return;
+
             Debug.Log("Resource Loaded", nameof(BootLoader));
 
             //All Loading End

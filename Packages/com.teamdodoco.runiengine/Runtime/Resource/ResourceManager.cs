@@ -16,6 +16,8 @@ namespace RuniEngine.Resource
 {
     public static class ResourceManager
     {
+        public delegate UniTask RefreshDelegate(string nameSpacePath, string nameSpace);
+
         [GlobalData]
         public struct GlobalData
         {
@@ -79,7 +81,12 @@ namespace RuniEngine.Resource
                                 IResourceElement resourceElement = resourceElements[index];
                                 type = resourceElement.GetType();
 
-                                await resourceElement.Refresh(nameSpacePath, nameSpace);
+                                for (int i = 0; i < resourceElement.refreshDelegates.Length; i++)
+                                {
+                                    await resourceElement.refreshDelegates[i].Invoke(nameSpacePath, nameSpace);
+                                    if (!Kernel.isPlaying)
+                                        return;
+                                }
                             }
                             catch (Exception e)
                             {
@@ -90,6 +97,8 @@ namespace RuniEngine.Resource
                     }
 
                     await UniTask.WhenAll(cachedUniTasks);
+                    if (!Kernel.isPlaying)
+                        return;
                 }
             }
 
