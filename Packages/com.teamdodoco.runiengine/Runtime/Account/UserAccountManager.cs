@@ -14,13 +14,18 @@ namespace RuniEngine.Account
 {
     public static class UserAccountManager
     {
-        [ProjectData]
-        public struct ProjectData
+        public static string accountsPath
         {
-            [JsonProperty] public static string loginScenePath { get; set; } = "Packages/com.teamdodoco.runiengine/Runtime/Account/Default Login Scene.unity";
+            get
+            {
+                string value = Path.Combine(Kernel.persistentDataPath, "Users");
+                if (!Directory.Exists(value))
+                    Directory.CreateDirectory(value);
+
+                return value;
+            }
         }
 
-        public static string accountsPath => Path.Combine(Kernel.persistentDataPath, "Users");
         public static string accountsInfoFilePath => Path.Combine(accountsPath, "accounts.json");
 
         public static UserAccount? currentAccount { get; private set; }
@@ -55,7 +60,7 @@ namespace RuniEngine.Account
 
         public static void ListRefresh()
         {
-            if (File.Exists(accountsPath))
+            if (File.Exists(accountsInfoFilePath))
             {
                 try
                 {
@@ -66,9 +71,6 @@ namespace RuniEngine.Account
                 catch (Exception e)
                 {
                     Debug.LogException(e);
-                }
-                finally
-                {
                     accountList = new UserAccountInfo[0];
                 }
             }

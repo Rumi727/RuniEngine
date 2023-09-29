@@ -6,18 +6,24 @@ namespace RuniEngine.Account
 {
     public readonly struct UserAccountInfo : IEquatable<UserAccountInfo>
     {
-        public string profile { get; }
         public string name { get; }
-
         public string hashedPassword { get; }
 
-        public string path => Path.Combine(UserAccountManager.accountsPath, PathUtility.ReplaceInvalidPathChars(name));
-
-        public UserAccountInfo(string profile, string name, string hashedPassword)
+        public string path
         {
-            this.profile = profile;
-            this.name = name;
+            get
+            {
+                string value = Path.Combine(UserAccountManager.accountsPath, PathUtility.ReplaceInvalidPathChars(name));
+                if (!Directory.Exists(value))
+                    Directory.CreateDirectory(value);
 
+                return value;
+            }
+        }
+
+        public UserAccountInfo(string name, string hashedPassword)
+        {
+            this.name = name;
             this.hashedPassword = hashedPassword;
         }
 

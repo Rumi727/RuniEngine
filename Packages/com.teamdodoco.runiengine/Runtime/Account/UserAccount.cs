@@ -47,7 +47,17 @@ namespace RuniEngine.Account
         }
         string _hashedPassword;
 
-        public string path => Path.Combine(UserAccountManager.accountsPath, PathUtility.ReplaceInvalidPathChars(name));
+        public string path
+        {
+            get
+            {
+                string value = Path.Combine(UserAccountManager.accountsPath, PathUtility.ReplaceInvalidPathChars(name));
+                if (!Directory.Exists(value))
+                    Directory.CreateDirectory(value);
+
+                return value;
+            }
+        }
 
         public bool isDisposed { get; private set; } = false;
 
