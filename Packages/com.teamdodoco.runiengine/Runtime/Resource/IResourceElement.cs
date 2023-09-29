@@ -6,10 +6,6 @@ namespace RuniEngine.Resource
     public interface IResourceElement
     {
         string name { get; }
-        ResourceManager.RefreshDelegate[] refreshDelegates { get; }
-
-        void Clear();
-
-        void Apply();
+        UniTask Load();
     }
 }

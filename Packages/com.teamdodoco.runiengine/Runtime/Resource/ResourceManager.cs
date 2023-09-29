@@ -28,6 +28,7 @@ namespace RuniEngine.Resource
         public const string defaultNameSpace = "runi";
 
         public static List<Object> allLoadedResources { get; } = new();
+        public static SynchronizedCollection<Object> garbages { get; } = new SynchronizedCollection<Object>();
 
 
 
@@ -44,66 +45,66 @@ namespace RuniEngine.Resource
             NotPlayModeException.Exception();
             NotMainThreadException.Exception();
 
-            for (int i = 0; i < resourceElements.Count; i++)
-                resourceElements[i].Clear();
-
             UniTask[] cachedUniTasks = new UniTask[resourceElements.Count];
+            for (int i = 0; i < cachedUniTasks.Length; i++)
+                cachedUniTasks[i] = resourceElements[i].Load();
 
+            await UniTask.WhenAll(cachedUniTasks);
+            if (!Kernel.isPlaying)
+                return;
+
+            GarbageRemoval();
+        }
+
+        public delegate UniTask ResourcePackLoopFunc(string nameSpacePath, string nameSpace);
+        public static async UniTask ResourcePackLoop(ResourcePackLoopFunc func)
+        {
             //기본 에셋도 포함시켜야하기 때문에 리소스팩 길이를 1 늘린다
             for (int i = 0; i < GlobalData.resourcePacks.Count + 1; i++)
             {
                 //현재 인덱스가 리소스팩의 길이를 벗어나면 기본 에셋으로 판정 (반복문이 리소스팩 길이 + 1 까지 반복하기 때문에 가능함)
-                string resourcePack;
+                string path;
                 if (i < GlobalData.resourcePacks.Count)
-                    resourcePack = GlobalData.resourcePacks[i];
+                    path = GlobalData.resourcePacks[i];
                 else
-                    resourcePack = Kernel.streamingAssetsPath;
+                    path = Kernel.streamingAssetsPath;
 
-                string rootPath = Path.Combine(resourcePack, rootName);
-                if (!Directory.Exists(rootPath))
-                    continue;
-
-                string[] paths = Directory.GetDirectories(rootPath);
-                for (int j = 0; j < paths.Length; j++)
+                string[] nameSpaces = Directory.GetDirectories(path);
+                for (int j = 0; j < nameSpaces.Length; j++)
                 {
-                    string path = paths[j];
-                    string nameSpace = Path.GetFileName(path);
-
-                    for (int k = 0; k < resourceElements.Count; k++)
+                    string nameSpacePath = nameSpaces[j];
+                    try
                     {
-                        cachedUniTasks[k] = Method(path, nameSpace, k);
-                        async UniTask Method(string nameSpacePath, string nameSpace, int index)
-                        {
-                            Type? type = null;
-
-                            try
-                            {
-                                IResourceElement resourceElement = resourceElements[index];
-                                type = resourceElement.GetType();
-
-                                for (int i = 0; i < resourceElement.refreshDelegates.Length; i++)
-                                {
-                                    await resourceElement.refreshDelegates[i].Invoke(nameSpacePath, nameSpace);
-                                    if (!Kernel.isPlaying)
-                                        return;
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.LogException(e);
-                                Debug.LogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", type?.Name).Replace("{namespace}", nameSpacePath), nameof(ResourceManager));
-                            }
-                        }
+                        await func.Invoke(nameSpacePath, Path.GetFileName(nameSpacePath));
                     }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                        Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{namespace}", nameSpacePath), nameof(ResourceManager));
+                    }
+                }
+            }
+        }
 
-                    await UniTask.WhenAll(cachedUniTasks);
-                    if (!Kernel.isPlaying)
-                        return;
+        public static void GarbageRemoval()
+        {
+            NotMainThreadException.Exception();
+
+            for (int i = 0; i < garbages.Count; i++)
+                Object.DestroyImmediate(garbages[i]);
+
+            for (int i = 0; i < allLoadedResources.Count; i++)
+            {
+                Object resource = allLoadedResources[i];
+                if (resource == null)
+                {
+                    allLoadedResources.RemoveAt(i);
+                    i--;
                 }
             }
 
-            for (int i = 0; i < resourceElements.Count; i++)
-                resourceElements[i].Apply();
+            garbages.Clear();
+            GC.Collect();
         }
 
 
@@ -113,6 +114,8 @@ namespace RuniEngine.Resource
         /// </summary>
         public static void AllDestroy()
         {
+            GarbageRemoval();
+
             List<Sprite> allLoadedSprite = allLoadedResources.OfType<Sprite>().ToList();
             for (int i = 0; i < allLoadedSprite.Count; i++)
             {

@@ -6,12 +6,40 @@ using UnityEngine.Networking;
 using UnityEngine;
 using RuniEngine.Json;
 using System.Collections.Generic;
+using RuniEngine.Booting;
+using System.Linq;
+using System.Xml.Linq;
+using UnityEngine.UIElements;
+using RuniEngine.Tasks;
 
 namespace RuniEngine.Resource
 {
     public sealed class ImageLoader : IResourceElement
     {
-        public ImageLoader() => refreshDelegates = new ResourceManager.RefreshDelegate[] { Refresh };
+        public static bool isLoaded { get; private set; } = false;
+
+
+
+        /// <summary>
+        /// Texture2D = allTextures[nameSpace][type];
+        /// </summary>
+        static Dictionary<string, Dictionary<string, Texture2D>> packTextures { get; } = new Dictionary<string, Dictionary<string, Texture2D>>();
+        /// <summary>
+        /// Rect = allTextureRects[nameSpace][type][fileName];
+        /// </summary>
+        static Dictionary<string, Dictionary<string, Dictionary<string, Rect>>> packTextureRects { get; } = new Dictionary<string, Dictionary<string, Dictionary<string, Rect>>>();
+        /// <summary>
+        /// string = allTexturePaths[nameSpace][type][fileName];
+        /// </summary>
+        static Dictionary<string, Dictionary<string, Dictionary<string, string>>> packTexturePaths { get; } = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+        /// <summary>
+        /// string = allTexturePaths[nameSpace][type];
+        /// </summary>
+        static Dictionary<string, Dictionary<string, string>> packTextureTypePaths { get; } = new Dictionary<string, Dictionary<string, string>>();
+        /// <summary>
+        /// Sprite = allTextureSprites[nameSpace][type][fileName];
+        /// </summary>
+        static Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, Sprite[]>>>> allTextureSprites { get; } = new Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, Sprite[]>>>>();
 
 
 
@@ -20,7 +48,10 @@ namespace RuniEngine.Resource
 
         public const string spriteDefaultTag = "global";
 
-        public ResourceManager.RefreshDelegate[] refreshDelegates { get; }
+
+
+        [Awaken]
+        static void Awaken() => ResourceManager.ElementRegister(new ImageLoader());
 
 
 
@@ -139,7 +170,7 @@ namespace RuniEngine.Resource
         {
             NotMainThreadException.Exception();
 
-            TextureMetaData? textureMetaData = JsonManager.JsonRead<TextureMetaData>(path + ".json") ?? new TextureMetaData();
+            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(path + ".json") ?? new TextureMetaData();
             return GetTextureAsync(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
         }
 
@@ -348,12 +379,256 @@ namespace RuniEngine.Resource
         }
         #endregion
 
+        public static string SearchTexturePath(string type, string name, string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (packTexturePaths.ContainsKey(nameSpace) && packTexturePaths[nameSpace].ContainsKey(type) && packTexturePaths[nameSpace][type].ContainsKey(name))
+                return packTexturePaths[nameSpace][type][name];
+
+            return "";
+        }
+
+        public static Texture2D? SearchPackTexture(string type, string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (packTextures.ContainsKey(nameSpace) && packTextures[nameSpace].ContainsKey(type))
+                return packTextures[nameSpace][type];
+
+            return null;
+        }
+
+        public static Rect SearchTextureRect(string type, string name, string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (packTextureRects.ContainsKey(nameSpace) && packTextureRects[nameSpace].ContainsKey(type) && packTextureRects[nameSpace][type].ContainsKey(name))
+                return packTextureRects[nameSpace][type][name];
+
+            return Rect.zero;
+        }
+
+        public static Sprite[]? SearchSprites(string type, string name, string nameSpace = "", string tag = spriteDefaultTag)
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (allTextureSprites.ContainsKey(nameSpace) && allTextureSprites[nameSpace].ContainsKey(type) && allTextureSprites[nameSpace][type].ContainsKey(name))
+            {
+                if (allTextureSprites[nameSpace][type][name].ContainsKey(tag))
+                    return allTextureSprites[nameSpace][type][name][tag];
+                else if (allTextureSprites[nameSpace][type][name].ContainsKey(spriteDefaultTag))
+                    return allTextureSprites[nameSpace][type][name][spriteDefaultTag];
+            }
+
+            return null;
+        }
 
 
-        public void Apply() => throw new System.NotImplementedException();
 
-        public UniTask Refresh(string nameSpacePath, string nameSpace) => throw new System.NotImplementedException();
 
-        public void Clear() => throw new System.NotImplementedException();
+        public async UniTask Load()
+        {
+            NotPlayModeException.Exception();
+
+            /// <summary>
+            /// Texture2D = tempTextures[nameSpace][type][name];
+            /// </summary>
+            Dictionary<string, Dictionary<string, Dictionary<string, Texture2D>>> tempTextures = new();
+            packTextureTypePaths.Clear();
+
+            if (ThreadManager.isMainThread)
+                await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(FindTextures));
+            else
+                await ResourceManager.ResourcePackLoop(FindTextures);
+
+            if (ThreadManager.isMainThread)
+                await UniTask.RunOnThreadPool(PackTextures);
+            else
+                await PackTextures();
+
+            if (ThreadManager.isMainThread)
+                await UniTask.RunOnThreadPool(LoadSprite);
+            else
+                await LoadSprite();
+
+            isLoaded = true;
+
+            async UniTask FindTextures(string nameSpacePath, string nameSpace)
+            {
+                foreach (var item in packTextures)
+                    foreach (var item2 in item.Value)
+                        ResourceManager.garbages.Add(item2.Value);
+
+                string rootPath = Path.Combine(nameSpacePath, name);
+                if (!Directory.Exists(rootPath))
+                    return;
+
+                string[] typePaths = Directory.GetDirectories(rootPath, "*", SearchOption.AllDirectories);
+                for (int i = 0; i < typePaths.Length; i++)
+                {
+                    string typePath = typePaths[i];
+                    string localTypePath = typePath.Substring(rootPath.Length + 1);
+
+                    string[] filePaths = DirectoryUtility.GetFiles(typePath, ExtensionFilter.pictureFileFilter);
+                    for (int j = 0; j < filePaths.Length; j++)
+                    {
+                        string filePath = filePaths[i].UniformDirectorySeparatorCharacter();
+                        string fileName = Path.GetFileName(filePath);
+
+                        TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(typePath + ".json") ?? new TextureMetaData();
+                        Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
+                        if (!Kernel.isPlaying)  
+                            return;
+
+                        packTexturePaths.TryAdd(nameSpace, new());
+                        packTexturePaths[nameSpace].TryAdd(localTypePath, new());
+                        packTexturePaths[nameSpace][localTypePath].TryAdd(fileName, filePath);
+
+                        packTextureTypePaths.TryAdd(nameSpace, new());
+                        packTextureTypePaths[nameSpace].TryAdd(localTypePath, typePath);
+
+                        tempTextures.TryAdd(nameSpace, new());
+                        tempTextures[nameSpace].TryAdd(localTypePath, new());
+                        tempTextures[nameSpace][localTypePath].TryAdd(fileName, texture);
+                    }
+                }
+            }
+
+            async UniTask PackTextures()
+            {
+                foreach (var nameSpaces in tempTextures)
+                {
+                    /* packTextureRects */
+                    Dictionary<string, Dictionary<string, Rect>> type_name_rect = new Dictionary<string, Dictionary<string, Rect>>();
+                    /* packTextures */
+                    Dictionary<string, Texture2D> type_texture = new Dictionary<string, Texture2D>();
+
+                    foreach (var types in nameSpaces.Value)
+                    {
+                        string[] textureNames = types.Value.Keys.ToArray();
+                        Texture2D[] textures = types.Value.Values.ToArray();
+                        Texture2D? background = null;
+                        Rect[]? rects = null;
+
+                        TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(packTextureTypePaths[nameSpaces.Key][types.Key] + ".json") ?? new TextureMetaData();
+                        await ThreadDispatcher.Execute(() =>
+                        {
+                            int maxTextureSize = SystemInfo.maxTextureSize;
+                            int padding = 8;
+
+                            int x = 0;
+                            int y = 0;
+                            int width = 1;
+                            int height = 1;
+
+                            string[] textureNames = new string[textures.Length];
+                            foreach (var item in types.Value)
+                            {
+                                x += item.Value.width + 8;
+                                if (x > maxTextureSize)
+                                {
+                                    x = 0;
+                                    y += item.Value.height + 8;
+                                }
+
+                                while (x > width)
+                                    width = x.ClosestPowerOfTwo();
+
+                                if (y > height)
+                                    height = y.ClosestPowerOfTwo();
+                            }
+
+                            background = new Texture2D(maxTextureSize, maxTextureSize, TextureFormat.RGBA32, textureMetaData.generateMipmap);
+                            rects = background.PackTextures(textures, padding, maxTextureSize);
+
+                            background.filterMode = textureMetaData.filterMode;
+                            background.mipMapBias = -0.4f;
+
+                            if (textureMetaData.compressionType != TextureCompressionQuality.none)
+                                background.Compress(textureMetaData.compressionType == TextureCompressionQuality.highQuality);
+                        });
+
+                        ThreadDispatcher.Execute(() =>
+                        {
+                            for (int i = 0; i < textures.Length; i++)
+                                Object.Destroy(textures[i]);
+                        }).Forget();
+
+                        if (background == null || rects == null)
+                            continue;
+
+                        Dictionary<string, Rect> fileName_rect = new Dictionary<string, Rect>();
+                        for (int i = 0; i < rects.Length; i++)
+                            fileName_rect.Add(textureNames[i], rects[i]);
+
+                        /* packTextureRects */ type_name_rect.Add(types.Key, fileName_rect);
+                        /* packTextures */ type_texture.Add(types.Key, background);
+                    }
+
+                    /* packTextureRects */
+                    packTextureRects.Add(nameSpaces.Key, type_name_rect);
+                    /* packTextures */
+                    packTextures.Add(nameSpaces.Key, type_texture);
+                }
+            }
+
+            async UniTask LoadSprite()
+            {
+                foreach (var item in allTextureSprites)
+                    foreach (var item2 in item.Value)
+                        foreach (var item3 in item2.Value)
+                            foreach (var item4 in item3.Value)
+                                for (int i = 0; i < item4.Value.Length; i++)
+                                    ResourceManager.garbages.Add(item4.Value[i]);
+
+                allTextureSprites.Clear();
+
+                foreach (var nameSpace in packTextureRects)
+                {
+                    foreach (var type in nameSpace.Value)
+                    {
+                        foreach (var rects in type.Value)
+                        {
+                            if (!Kernel.isPlaying)
+                                return;
+
+                            Texture2D? background = SearchPackTexture(type.Key, nameSpace.Key);
+                            if (background == null)
+                                continue;
+
+                            Rect rect = rects.Value;
+                            rect = new Rect(rect.x * background.width, rect.y * background.height, rect.width * background.width, rect.height * background.height);
+
+                            Dictionary<string, SpriteMetaData[]> spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(SearchTexturePath(type.Key, rects.Key, nameSpace.Key) + ".json") ?? new Dictionary<string, SpriteMetaData[]>(); ;
+                            if (!spriteMetaDatas.ContainsKey(spriteDefaultTag))
+                                spriteMetaDatas.Add(spriteDefaultTag, new SpriteMetaData[] { new SpriteMetaData() });
+
+                            foreach (var item in spriteMetaDatas)
+                            {
+                                for (int i = 0; i < item.Value.Length; i++)
+                                {
+                                    SpriteMetaData spriteMetaData = item.Value[i];
+                                    if (spriteMetaData == null)
+                                    {
+                                        spriteMetaData = new SpriteMetaData();
+                                        spriteMetaData.RectMinMax(rect.width, rect.height);
+                                        spriteMetaDatas[item.Key][i] = spriteMetaData;
+                                    }
+
+                                    spriteMetaData.rect = new JRect(rect.x + spriteMetaData.rect.x, rect.y + spriteMetaData.rect.y, rect.width - (rect.width - spriteMetaData.rect.width), rect.height - (rect.height - spriteMetaData.rect.height));
+                                }
+                            }
+
+                            Dictionary<string, Sprite[]> sprites = await ThreadDispatcher.Execute(() => GetSprites(background, HideFlags.DontSave, spriteMetaDatas));
+
+                            allTextureSprites.TryAdd(nameSpace.Key, new Dictionary<string, Dictionary<string, Dictionary<string, Sprite[]>>>());
+                            allTextureSprites[nameSpace.Key].TryAdd(type.Key, new Dictionary<string, Dictionary<string, Sprite[]>>());
+                            allTextureSprites[nameSpace.Key][type.Key].TryAdd(rects.Key, sprites);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

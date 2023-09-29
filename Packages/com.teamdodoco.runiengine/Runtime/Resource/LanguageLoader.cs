@@ -12,8 +12,6 @@ namespace RuniEngine.Resource
 {
     public sealed class LanguageLoader : IResourceElement
     {
-        public LanguageLoader() => refreshDelegates = new ResourceManager.RefreshDelegate[] { Refresh };
-
         [GlobalData]
         public struct GlobalData
         {
@@ -27,10 +25,15 @@ namespace RuniEngine.Resource
 
 
 
+        /// <summary>
+        /// string text = loadedLanguages[nameSpace][fileName][key];
+        /// </summary>
+        static Dictionary<string, Dictionary<string, Dictionary<string, string>>> loadedLanguages = new();
+
+
+
         public const string name = "lang";
         string IResourceElement.name => name;
-
-        public ResourceManager.RefreshDelegate[] refreshDelegates { get; }
 
 
 
@@ -47,10 +50,8 @@ namespace RuniEngine.Resource
                 return value;
         }
 
-        /// <summary>
-        /// string text = loadedLanguages[nameSpace][fileName][key];
-        /// </summary>
-        static Dictionary<string, Dictionary<string, Dictionary<string, string>>> loadedLanguages = new();
+
+
         public static string? GetText(string key, string nameSpace = "", string language = "")
         {
             NotPlayModeException.Exception();
@@ -90,20 +91,24 @@ namespace RuniEngine.Resource
 
 
 
-        public void Clear() => tempLoadedLanguages.Clear();
-
-        readonly Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempLoadedLanguages = new();
-        readonly List<string> tempLanguageTypes = new();
-        public async UniTask Refresh(string nameSpacePath, string nameSpace)
+        public async UniTask Load()
         {
             NotPlayModeException.Exception();
 
-            if (ThreadManager.isMainThread)
-                await UniTask.RunOnThreadPool(Thread);
-            else
-                Thread();
+            Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempLoadedLanguages = new();
+            List<string> tempLanguageTypes = new();
 
-            void Thread()
+            if (ThreadManager.isMainThread)
+                await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(Thread));
+            else
+                await ResourceManager.ResourcePackLoop(Thread);
+
+            loadedLanguages = tempLoadedLanguages;
+            languageList = tempLanguageTypes;
+
+            isLoaded = true;
+
+            async UniTask Thread(string nameSpacePath, string nameSpace)
             {
                 string langPath = Path.Combine(nameSpacePath, name);
                 if (!Directory.Exists(langPath))
@@ -129,15 +134,9 @@ namespace RuniEngine.Resource
                             tempLanguageTypes.Add(fileName);
                     }
                 }
+
+                await UniTask.CompletedTask;
             }
-        }
-
-        public void Apply()
-        {
-            loadedLanguages = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>(tempLoadedLanguages);
-            languageList = new List<string>(tempLanguageTypes);
-
-            isLoaded = true;
         }
     }
 }
