@@ -170,7 +170,7 @@ namespace RuniEngine
                 StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
 
             if (UserAccountManager.currentAccount != null)
-                UserAccountManager.LogoutNoSceneMove();
+                UserAccountManager.Logout();
 
             AsyncTaskManager.AllAsyncTaskCancel();
 

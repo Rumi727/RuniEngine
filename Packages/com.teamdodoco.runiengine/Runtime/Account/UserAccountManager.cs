@@ -81,7 +81,7 @@ namespace RuniEngine.Account
             BasicDataNotLoadedException.Exception();
 
             if (currentAccount != null)
-                LogoutNoSceneMove();
+                Logout();
 
             UserAccount? account = await UserAccount.Create(info, password);
             if (account == null)
@@ -94,18 +94,7 @@ namespace RuniEngine.Account
             return true;
         }
 
-        public static async UniTask Logout()
-        {
-            BasicDataNotLoadedException.Exception();
-
-            if (currentAccount == null)
-                throw LogoutException.AlreadyLoggedException();
-
-            await SceneManager.LoadScene(2);
-            LogoutNoSceneMove();
-        }
-
-        public static void LogoutNoSceneMove()
+        public static void Logout()
         {
             BasicDataNotLoadedException.Exception();
 
