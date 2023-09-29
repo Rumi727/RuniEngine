@@ -89,4 +89,8 @@
 	"boot_loader.webgl": "Runi Engine does not support WebGL",
 
 	"resource_manager.throw": "An exception occurred while the {type} resource element was loading resources in the path '{path}'"
+	,
+
+	"thread_manager.lock": "A thread has been locked in class {class}! Beware of deadlocks",
+	"thread_manager.unlock": "Thread lock released on class {class}!"
 }

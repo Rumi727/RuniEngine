@@ -53,6 +53,8 @@
 	"gui.min": "최소",
 	"gui.max": "최대",
 	"gui.restart_on_fail": "실패 시 재시작",
+	"gui.lock": "잠금",
+	"gui.unlock": "잠금 해제",
 	
 	"gui.ago.years": "%value%년 전",
 	"gui.ago.months": "%value%달 전",
@@ -88,5 +90,8 @@
 
 	"boot_loader.webgl": "Runi Engine은 WebGL을 지원하지 않습니다",
 
-	"resource_manager.throw": "{type} 리소스 요소가 '{path}' 경로에 있는 리소스들을 불러오다 예외가 발생 했습니다"
+	"resource_manager.throw": "{type} 리소스 요소가 '{path}' 경로에 있는 리소스들을 불러오다 예외가 발생 했습니다",
+
+	"thread_manager.lock": "{class}クラスでスレッドをロックしました！ デッドロックに注意してください",
+	"thread_manager.unlock": "{class}クラスからスレッドのロックを解除しました！"
 }
