@@ -1,30 +1,31 @@
+#nullable enable
 //Source: https://referencesource.microsoft.com/#System.ServiceModel/System/ServiceModel/SynchronizedCollection.cs
 using System.Threading;
 
 namespace System.Collections.Generic
 {
     [Runtime.InteropServices.ComVisible(false)]
-    public class SynchronizedCollection<T> : IList<T>, IList
+    public class SynchronizedCollection<T> : IList<T?>, IList
     {
-        List<T> items;
+        List<T?> items;
         int sync = 0;
 
-        public SynchronizedCollection() => items = new List<T>();
+        public SynchronizedCollection() => items = new List<T?>();
 
-        public SynchronizedCollection(IEnumerable<T> list)
+        public SynchronizedCollection(IEnumerable<T?>? list)
         {
             if (list == null)
                 throw new ArgumentNullException("list");
-
-            items = new List<T>(list);
+            
+            items = new List<T?>(list);
         }
 
-        public SynchronizedCollection(params T[] list)
+        public SynchronizedCollection(params T?[]? list)
         {
             if (list == null)
                 throw new ArgumentNullException("list");
 
-            items = new List<T>(list);
+            items = new List<T?>(list);
         }
 
         public int Count
@@ -42,9 +43,9 @@ namespace System.Collections.Generic
             }
         }
 
-        protected List<T> Items => items;
+        protected List<T?> Items => items;
 
-        public T this[int index]
+        public T? this[int index]
         {
             get
             {
@@ -79,7 +80,7 @@ namespace System.Collections.Generic
             }
         }
 
-        public void Add(T item)
+        public void Add(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -110,7 +111,7 @@ namespace System.Collections.Generic
             }
         }
 
-        public void CopyTo(T[] array, int index)
+        public void CopyTo(T?[]? array, int index)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -125,7 +126,7 @@ namespace System.Collections.Generic
             }
         }
 
-        public bool Contains(T item)
+        public bool Contains(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -140,7 +141,7 @@ namespace System.Collections.Generic
             }
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<T?> GetEnumerator()
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -155,7 +156,7 @@ namespace System.Collections.Generic
             }
         }
 
-        public int IndexOf(T item)
+        public int IndexOf(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -170,7 +171,7 @@ namespace System.Collections.Generic
             }
         }
 
-        public void Insert(int index, T item)
+        public void Insert(int index, T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -188,7 +189,7 @@ namespace System.Collections.Generic
             }
         }
 
-        int InternalIndexOf(T item)
+        int InternalIndexOf(T? item)
         {
             int count = items.Count;
 
@@ -200,7 +201,7 @@ namespace System.Collections.Generic
             return -1;
         }
 
-        public bool Remove(T item)
+        public bool Remove(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -240,13 +241,13 @@ namespace System.Collections.Generic
 
         protected virtual void ClearItems() => items.Clear();
 
-        protected virtual void InsertItem(int index, T item) => items.Insert(index, item);
+        protected virtual void InsertItem(int index, T? item) => items.Insert(index, item);
 
         protected virtual void RemoveItem(int index) => items.RemoveAt(index);
 
-        protected virtual void SetItem(int index, T item) => items[index] = item;
+        protected virtual void SetItem(int index, T? item) => items[index] = item;
 
-        bool ICollection<T>.IsReadOnly => false;
+        bool ICollection<T?>.IsReadOnly => false;
 
         IEnumerator IEnumerable.GetEnumerator() => ((IList)items).GetEnumerator();
 
@@ -254,7 +255,7 @@ namespace System.Collections.Generic
 
         object ICollection.SyncRoot => sync;
 
-        void ICollection.CopyTo(Array array, int index)
+        void ICollection.CopyTo(Array? array, int index)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
                 Thread.Sleep(1);
@@ -269,13 +270,13 @@ namespace System.Collections.Generic
             }
         }
 
-        object IList.this[int index]
+        object? IList.this[int index]
         {
             get => this[index];
             set
             {
                 VerifyValueType(value);
-                this[index] = (T)value;
+                this[index] = (T?)value;
             }
         }
 
@@ -283,7 +284,7 @@ namespace System.Collections.Generic
 
         bool IList.IsFixedSize => false;
 
-        int IList.Add(object value)
+        int IList.Add(object? value)
         {
             VerifyValueType(value);
 
@@ -292,7 +293,7 @@ namespace System.Collections.Generic
 
             try
             {
-                Add((T)value);
+                Add((T?)value);
                 return Count - 1;
             }
             finally
@@ -301,31 +302,31 @@ namespace System.Collections.Generic
             }
         }
 
-        bool IList.Contains(object value)
+        bool IList.Contains(object? value)
         {
             VerifyValueType(value);
-            return Contains((T)value);
+            return Contains((T?)value);
         }
 
-        int IList.IndexOf(object value)
+        int IList.IndexOf(object? value)
         {
             VerifyValueType(value);
-            return IndexOf((T)value);
+            return IndexOf((T?)value);
         }
 
-        void IList.Insert(int index, object value)
+        void IList.Insert(int index, object? value)
         {
             VerifyValueType(value);
-            Insert(index, (T)value);
+            Insert(index, (T?)value);
         }
 
-        void IList.Remove(object value)
+        void IList.Remove(object? value)
         {
             VerifyValueType(value);
-            Remove((T)value);
+            Remove((T?)value);
         }
 
-        static void VerifyValueType(object value)
+        static void VerifyValueType(object? value)
         {
             if (value == null)
             {
