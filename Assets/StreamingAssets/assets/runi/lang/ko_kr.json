@@ -92,6 +92,6 @@
 
 	"resource_manager.throw": "{type} 리소스 요소가 '{path}' 경로에 있는 리소스들을 불러오다 예외가 발생 했습니다",
 
-	"thread_manager.lock": "{class}クラスでスレッドをロックしました！ デッドロックに注意してください",
-	"thread_manager.unlock": "{class}クラスからスレッドのロックを解除しました！"
+	"thread_manager.lock": "{class} 클래스에서 스레드를 잠궜습니다! 데드락에 주의하세요",
+	"thread_manager.unlock": "{class} 클래스에서 스레드 잠금을 해제했습니다!"
 }
