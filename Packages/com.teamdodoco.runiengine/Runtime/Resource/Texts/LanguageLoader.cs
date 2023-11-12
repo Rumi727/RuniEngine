@@ -55,7 +55,6 @@ namespace RuniEngine.Resource.Texts
         public static string? GetText(string key, string nameSpace = "", string language = "")
         {
             NotPlayModeException.Exception();
-            NotMainThreadException.Exception();
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             if (string.IsNullOrWhiteSpace(language))
