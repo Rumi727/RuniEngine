@@ -41,7 +41,11 @@ namespace RuniEngine.Editor
             if (prefabStage != null)
                 components = prefabStage.FindComponentsOfType<TComponent>();
             else
+#if UNITY_2023_1_OR_NEWER
+                components = Object.FindObjectsByType<TComponent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+#else
                 components = Object.FindObjectsOfType<TComponent>(true);
+#endif
 
             List<TComponentToAdd> results = new List<TComponentToAdd>();
             for (int i = 0; i < components.Length; i++)
