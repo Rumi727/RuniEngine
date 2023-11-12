@@ -96,7 +96,7 @@ namespace RuniEngine.Resource.Sounds
 
             allAudios = tempAllAudios;
 
-            static async UniTask Thread(string nameSpacePath, string nameSpace)
+            async UniTask Thread(string nameSpacePath, string nameSpace)
             {
                 string folderPath = Path.Combine(nameSpacePath, name);
 
@@ -169,8 +169,8 @@ namespace RuniEngine.Resource.Sounds
                             audioMetaDatas.Add(audioMetaData);
                     }
 
-                    allAudios.TryAdd(nameSpace, new Dictionary<string, AudioData>());
-                    allAudios[nameSpace].TryAdd(audioData.Key, new AudioData(audioData.Value.subtitle, audioData.Value.isBGM, audioMetaDatas.ToArray()));
+                    tempAllAudios.TryAdd(nameSpace, new Dictionary<string, AudioData>());
+                    tempAllAudios[nameSpace].TryAdd(audioData.Key, new AudioData(audioData.Value.subtitle, audioData.Value.isBGM, audioMetaDatas.ToArray()));
                 }
             }
         }
