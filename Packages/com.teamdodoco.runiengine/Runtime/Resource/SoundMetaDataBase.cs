@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace RuniEngine.Resource
 {
-    public class SoundMetaData
+    public abstract class SoundMetaDataBase
     {
-        public SoundMetaData(string path, float pitch, float tempo, bool stream, float loopStartTime, AudioClip audioClip)
+        public SoundMetaDataBase(string path, float pitch, float tempo, bool stream, float loopStartTime)
         {
             this.path = path;
 
@@ -15,8 +15,6 @@ namespace RuniEngine.Resource
 
             this.stream = stream;
             this.loopStartTime = loopStartTime;
-
-            this.audioClip = audioClip;
         }
 
         public virtual string path { get; } = "";
@@ -26,7 +24,5 @@ namespace RuniEngine.Resource
 
         public virtual bool stream { get; } = false;
         public virtual float loopStartTime { get; } = 0;
-
-        [JsonIgnore] public AudioClip audioClip { get; }
     }
 }

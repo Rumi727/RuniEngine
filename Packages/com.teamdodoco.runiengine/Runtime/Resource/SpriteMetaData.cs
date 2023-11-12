@@ -3,7 +3,7 @@ using RuniEngine.Json;
 
 namespace RuniEngine.Resource
 {
-    public class SpriteMetaData
+    public sealed class SpriteMetaData
     {
         public JRect rect = new JRect(float.MinValue);
         public JVector2 pivot = new JVector2(0.5f);
