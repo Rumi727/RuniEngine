@@ -386,6 +386,16 @@ namespace RuniEngine.Resource.Images
             return "";
         }
 
+        public static string SearchTextureTypePath(string type, string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (packTextureTypePaths.ContainsKey(nameSpace) && packTextureTypePaths[nameSpace].ContainsKey(type))
+                return packTextureTypePaths[nameSpace][type];
+
+            return "";
+        }
+
         public static Texture2D? SearchPackTexture(string type, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
