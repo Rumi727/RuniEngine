@@ -7,7 +7,7 @@ namespace System.Collections.Generic
     [Runtime.InteropServices.ComVisible(false)]
     public class SynchronizedCollection<T> : IList<T?>, IList
     {
-        List<T?> items;
+        readonly List<T?> items;
         int sync = 0;
 
         public SynchronizedCollection() => items = new List<T?>();
