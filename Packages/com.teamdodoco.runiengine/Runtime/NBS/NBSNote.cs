@@ -7,9 +7,9 @@ namespace RuniEngine.NBS
     public class NBSNote
     {
         public short delayTick { get; } = 0;
-        public List<NBSNoteMetaData> nbsNoteMetaDatas { get; }
+        public NBSNoteMetaData[] nbsNoteMetaDatas { get; }
 
-        public NBSNote(short delayTick, List<NBSNoteMetaData> nbsNoteMetaDatas)
+        public NBSNote(short delayTick, NBSNoteMetaData[] nbsNoteMetaDatas)
         {
             this.delayTick = delayTick;
             this.nbsNoteMetaDatas = nbsNoteMetaDatas;
@@ -22,7 +22,7 @@ namespace RuniEngine.NBS
                 stringBuilder.Append("null");
             else
             {
-                for (int i = 0; i < nbsNoteMetaDatas.Count; i++)
+                for (int i = 0; i < nbsNoteMetaDatas.Length; i++)
                     stringBuilder.Append(nbsNoteMetaDatas[i]);
             }
 

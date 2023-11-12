@@ -81,7 +81,7 @@ namespace RuniEngine.NBS
                     nbsNoteMetaDatas.Add(nbsNoteMetaData);
                 }
 
-                nbsNotes.Add(new NBSNote(tick2, nbsNoteMetaDatas));
+                nbsNotes.Add(new NBSNote(tick2, nbsNoteMetaDatas.ToArray()));
             }
 
             List<NBSLayer> nbsLayers = new List<NBSLayer>();
@@ -107,7 +107,7 @@ namespace RuniEngine.NBS
                 nbsLayers.Add(nbsLayer);
             }
 
-            return new NBSFile(songLength, tickTempo, loopStartTick, nbsNotes, nbsLayers);
+            return new NBSFile(songLength, tickTempo, loopStartTick, nbsNotes.ToArray(), nbsLayers.ToArray());
         }
     }
 }

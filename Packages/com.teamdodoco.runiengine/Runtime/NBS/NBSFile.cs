@@ -11,10 +11,10 @@ namespace RuniEngine.NBS
         //public bool loop { get; set; } = false;
         public short loopStartTick { get; } = 0;
 
-        public List<NBSNote> nbsNotes { get; }
-        public List<NBSLayer> nbsLayers { get; }
+        public NBSNote[] nbsNotes { get; }
+        public NBSLayer[] nbsLayers { get; }
 
-        public NBSFile(short songLength, short tickTempo, short loopStartTick, List<NBSNote> nbsNotes, List<NBSLayer> nbsLayers)
+        public NBSFile(short songLength, short tickTempo, short loopStartTick, NBSNote[] nbsNotes, NBSLayer[] nbsLayers)
         {
             this.songLength = songLength;
             this.tickTempo = tickTempo;
@@ -30,7 +30,7 @@ namespace RuniEngine.NBS
                 stringBuilder.Append("null");
             else
             {
-                for (int i = 0; i < nbsNotes.Count; i++)
+                for (int i = 0; i < nbsNotes.Length; i++)
                     stringBuilder.Append(nbsNotes[i]);
             }
 
@@ -39,7 +39,7 @@ namespace RuniEngine.NBS
                 stringBuilder.Append("null");
             else
             {
-                for (int i = 0; i < nbsLayers.Count; i++)
+                for (int i = 0; i < nbsLayers.Length; i++)
                     stringBuilder.Append(nbsLayers[i]);
             }
 
