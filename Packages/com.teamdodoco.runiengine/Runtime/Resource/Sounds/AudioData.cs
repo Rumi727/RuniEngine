@@ -1,4 +1,6 @@
 #nullable enable
+using Newtonsoft.Json;
+
 namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioData : SoundData
@@ -9,7 +11,7 @@ namespace RuniEngine.Resource.Sounds
             this.audios = audios;
         }
 
-        public override SoundMetaDataBase[] sounds { get; }
+        [JsonIgnore] public override SoundMetaDataBase[] sounds { get; }
         public AudioMetaData[] audios { get; }
     }
 }

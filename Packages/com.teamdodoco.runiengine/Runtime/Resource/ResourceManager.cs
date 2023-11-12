@@ -70,6 +70,8 @@ namespace RuniEngine.Resource
                 else
                     path = Kernel.streamingAssetsPath;
 
+                path = Path.Combine(path, rootName);
+
                 string[] nameSpaces = Directory.GetDirectories(path);
                 for (int j = 0; j < nameSpaces.Length; j++)
                 {

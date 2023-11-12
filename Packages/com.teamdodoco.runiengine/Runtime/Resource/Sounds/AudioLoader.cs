@@ -115,6 +115,9 @@ namespace RuniEngine.Resource.Sounds
                         AudioMetaData? audioMetaData = audioData.Value.audios[i];
                         string audioPath = Path.Combine(folderPath, audioMetaData.path);
 
+                        if (!ResourceManager.FileExtensionExists(audioPath, out audioPath, ExtensionFilter.musicFileFilter))
+                            continue;
+
                         AudioType audioType;
                         switch (Path.GetExtension(audioPath))
                         {
