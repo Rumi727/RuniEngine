@@ -1,5 +1,5 @@
 #nullable enable
-namespace RuniEngine.Resource
+namespace RuniEngine.Resource.Images
 {
     public enum TextureCompressionQuality
     {

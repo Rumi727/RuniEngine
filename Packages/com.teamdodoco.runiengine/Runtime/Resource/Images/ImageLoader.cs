@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using RuniEngine.Booting;
 using System.Linq;
 
-namespace RuniEngine.Resource
+namespace RuniEngine.Resource.Images
 {
     public sealed class ImageLoader : IResourceElement
     {

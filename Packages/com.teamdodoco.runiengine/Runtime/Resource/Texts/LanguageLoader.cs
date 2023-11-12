@@ -8,7 +8,7 @@ using RuniEngine.Threading;
 using System.Collections.Generic;
 using System.IO;
 
-namespace RuniEngine.Resource
+namespace RuniEngine.Resource.Texts
 {
     public sealed class LanguageLoader : IResourceElement
     {

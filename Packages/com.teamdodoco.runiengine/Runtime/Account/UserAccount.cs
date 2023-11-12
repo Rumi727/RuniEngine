@@ -1,6 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Resource;
+using RuniEngine.Resource.Images;
 using System;
 using System.IO;
 using System.Security.Cryptography;

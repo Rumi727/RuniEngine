@@ -1,7 +1,7 @@
 #nullable enable
 using RuniEngine.Json;
 
-namespace RuniEngine.Resource
+namespace RuniEngine.Resource.Images
 {
     public sealed class SpriteMetaData
     {

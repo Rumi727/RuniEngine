@@ -1,7 +1,7 @@
 #nullable enable
 using UnityEngine;
 
-namespace RuniEngine.Resource
+namespace RuniEngine.Resource.Images
 {
     public struct TextureMetaData
     {

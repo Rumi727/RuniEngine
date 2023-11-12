@@ -1,8 +1,7 @@
 #nullable enable
-using Newtonsoft.Json;
 using UnityEngine;
 
-namespace RuniEngine.Resource
+namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioMetaData : SoundMetaDataBase
     {

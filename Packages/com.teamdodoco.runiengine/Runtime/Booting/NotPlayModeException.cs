@@ -1,5 +1,5 @@
 #nullable enable
-using RuniEngine.Resource;
+using RuniEngine.Resource.Texts;
 using System;
 using System.Diagnostics;
 

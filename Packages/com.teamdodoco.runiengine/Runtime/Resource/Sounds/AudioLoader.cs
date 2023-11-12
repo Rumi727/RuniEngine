@@ -9,7 +9,7 @@ using UnityEngine;
 using RuniEngine.Json;
 using System.Linq;
 
-namespace RuniEngine.Resource
+namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioLoader : IResourceElement
     {
