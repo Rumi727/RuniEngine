@@ -51,6 +51,9 @@ namespace RuniEngine.Account
         {
             get
             {
+                if (isDisposed)
+                    throw new ObjectDisposedException(GetType().FullName);
+
                 string value = Path.Combine(UserAccountManager.accountsPath, PathUtility.ReplaceInvalidPathChars(name));
                 if (!Directory.Exists(value))
                     Directory.CreateDirectory(value);
