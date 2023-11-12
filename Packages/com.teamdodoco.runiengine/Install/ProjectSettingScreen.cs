@@ -17,7 +17,7 @@ namespace RuniEngine.Install
 
         public void DrawGUI()
         {
-            AudioListener.volume = SettingChangeButton("installer.project_setting.audio_volume", AudioListener.volume, 0.5f);
+            AudioListener.volume = SettingChangeButton("installer.project_setting.audio_volume", AudioListener.volume, 1f);
 
             {
                 AudioConfiguration config = AudioSettings.GetConfiguration();
