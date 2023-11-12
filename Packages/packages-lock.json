@@ -33,6 +33,16 @@
       },
       "hash": "7cb549c8b6ae95e7845df8a8faa59c0eae2fa5c8"
     },
+    "com.singularitygroup.hotreload": {
+      "version": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.8",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.unitywebrequest": "1.0.0"
+      },
+      "hash": "ff60e352632357969bf3ff54ce63c8c4ba171566"
+    },
     "com.teamdodoco.runiengine": {
       "version": "file:com.teamdodoco.runiengine",
       "depth": 0,
