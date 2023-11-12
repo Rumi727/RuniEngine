@@ -4,6 +4,9 @@ using System;
 
 namespace RuniEngine.Account
 {
+    /// <summary>
+    /// 로그아웃 관련 예외
+    /// </summary>
     public class LogoutException : Exception
     {
         /// <returns><see cref="LogoutException"/> 이미 로그아웃되었습니다</returns>
