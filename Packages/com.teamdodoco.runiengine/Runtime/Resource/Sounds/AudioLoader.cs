@@ -34,67 +34,46 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static async UniTask<AudioClip?> GetAudio(string path, bool pathExtensionUse = false, bool stream = false, HideFlags hideFlags = HideFlags.DontSave)
+        public static AudioData? SearchAudioData(string path, string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (allAudios.TryGetValue(nameSpace, out var value) && value.TryGetValue(path, out AudioData value2))
+                return value2;
+
+            return null;
+        }
+
+
+
+        public static async UniTask<AudioClip?> GetAudio(string path, AudioType type, bool stream = false, HideFlags hideFlags = HideFlags.DontSave)
         {
 #if !((UNITY_STANDALONE_LINUX && !UNITY_EDITOR) || UNITY_EDITOR_LINUX)
             NotMainThreadException.Exception();
-            if (pathExtensionUse)
-                path = PathUtility.GetPathWithExtension(path);
 
-
-            AudioClip? audioClip = await GetFile(".ogg", AudioType.OGGVORBIS);
-            if (audioClip == null)
-                audioClip = await GetFile(".mp3", AudioType.MPEG);
-            if (audioClip == null)
-                audioClip = await GetFile(".mp2", AudioType.MPEG);
-            if (audioClip == null)
-                audioClip = await GetFile(".wav", AudioType.WAV);
-            if (audioClip == null)
-                audioClip = await GetFile(".aif", AudioType.AIFF);
-            if (audioClip == null)
-                audioClip = await GetFile(".xm", AudioType.XM);
-            if (audioClip == null)
-                audioClip = await GetFile(".mod", AudioType.MOD);
-            if (audioClip == null)
-                audioClip = await GetFile(".it", AudioType.IT);
-            if (audioClip == null)
-                audioClip = await GetFile(".vag", AudioType.VAG);
-            if (audioClip == null)
-                audioClip = await GetFile(".xma", AudioType.XMA);
-            if (audioClip == null)
-                audioClip = await GetFile(".s3m", AudioType.S3M);
-
-            return audioClip;
-
-            async UniTask<AudioClip?> GetFile(string extension, AudioType type)
+            if (File.Exists(path))
             {
-                if (File.Exists(path + extension))
-                {
-                    using UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip((path + extension).UrlPathPrefix(), type);
-                    DownloadHandlerAudioClip downloadHandlerAudioClip = (DownloadHandlerAudioClip)www.downloadHandler;
-                    downloadHandlerAudioClip.streamAudio = stream;
+                using UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path.UrlPathPrefix(), type);
+                DownloadHandlerAudioClip downloadHandlerAudioClip = (DownloadHandlerAudioClip)www.downloadHandler;
+                downloadHandlerAudioClip.streamAudio = stream;
 
-                    await www.SendWebRequest();
+                await www.SendWebRequest();
 
-                    if (!Kernel.isPlaying)
-                        return null;
+                if (!Kernel.isPlaying)
+                    return null;
 
-                    if (www.result != UnityWebRequest.Result.Success)
-                        Debug.LogError(www.error);
+                if (www.result != UnityWebRequest.Result.Success)
+                    Debug.LogError(www.error);
 
-                    AudioClip audioClip = DownloadHandlerAudioClip.GetContent(www);
-                    audioClip.name = Path.GetFileNameWithoutExtension(path);
-                    audioClip.hideFlags = hideFlags;
+                AudioClip audioClip = DownloadHandlerAudioClip.GetContent(www);
+                audioClip.name = Path.GetFileNameWithoutExtension(path);
+                audioClip.hideFlags = hideFlags;
 
-                    ResourceManager.allLoadedResources.Add(audioClip);
-                    return audioClip;
-                }
-
-                return null;
+                ResourceManager.allLoadedResources.Add(audioClip);
+                return audioClip;
             }
-#else
-            return null;
 #endif
+            return null;
         }
 
 
@@ -136,7 +115,47 @@ namespace RuniEngine.Resource.Sounds
                         AudioMetaData? audioMetaData = audioData.Value.audios[i];
                         string audioPath = Path.Combine(folderPath, audioMetaData.path);
 
-                        AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, false, audioMetaData.stream));
+                        AudioType audioType;
+                        switch (Path.GetExtension(audioPath))
+                        {
+                            case ".ogg":
+                                audioType = AudioType.OGGVORBIS;
+                                break;
+                            case ".mp3":
+                                audioType = AudioType.MPEG;
+                                break;
+                            case ".mp2":
+                                audioType = AudioType.MPEG;
+                                break;
+                            case ".wav":
+                                audioType = AudioType.WAV;
+                                break;
+                            case ".aiff":
+                                audioType = AudioType.AIFF;
+                                break;
+                            case ".xm":
+                                audioType = AudioType.XM;
+                                break;
+                            case ".mod":
+                                audioType = AudioType.MOD;
+                                break;
+                            case ".it":
+                                audioType = AudioType.IT;
+                                break;
+                            case ".vag":
+                                audioType = AudioType.VAG;
+                                break;
+                            case ".xma":
+                                audioType = AudioType.XMA;
+                                break;
+                            case ".s3m":
+                                audioType = AudioType.S3M;
+                                break;
+                            default:
+                                continue;
+                        }
+
+                        AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType, audioMetaData.stream));
                         if (!Kernel.isPlaying)
                             return;
 
