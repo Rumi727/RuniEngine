@@ -118,45 +118,21 @@ namespace RuniEngine.Resource.Sounds
                         if (!ResourceManager.FileExtensionExists(audioPath, out audioPath, ExtensionFilter.musicFileFilter))
                             continue;
 
-                        AudioType audioType;
-                        switch (Path.GetExtension(audioPath))
+                        AudioType audioType = Path.GetExtension(audioPath) switch
                         {
-                            case ".ogg":
-                                audioType = AudioType.OGGVORBIS;
-                                break;
-                            case ".mp3":
-                                audioType = AudioType.MPEG;
-                                break;
-                            case ".mp2":
-                                audioType = AudioType.MPEG;
-                                break;
-                            case ".wav":
-                                audioType = AudioType.WAV;
-                                break;
-                            case ".aiff":
-                                audioType = AudioType.AIFF;
-                                break;
-                            case ".xm":
-                                audioType = AudioType.XM;
-                                break;
-                            case ".mod":
-                                audioType = AudioType.MOD;
-                                break;
-                            case ".it":
-                                audioType = AudioType.IT;
-                                break;
-                            case ".vag":
-                                audioType = AudioType.VAG;
-                                break;
-                            case ".xma":
-                                audioType = AudioType.XMA;
-                                break;
-                            case ".s3m":
-                                audioType = AudioType.S3M;
-                                break;
-                            default:
-                                continue;
-                        }
+                            ".ogg" => AudioType.OGGVORBIS,
+                            ".mp3" => AudioType.MPEG,
+                            ".mp2" => AudioType.MPEG,
+                            ".wav" => AudioType.WAV,
+                            ".aiff" => AudioType.AIFF,
+                            ".xm" => AudioType.XM,
+                            ".mod" => AudioType.MOD,
+                            ".it" => AudioType.IT,
+                            ".vag" => AudioType.VAG,
+                            ".xma" => AudioType.XMA,
+                            ".s3m" => AudioType.S3M,
+                            _ => AudioType.UNKNOWN,
+                        };
 
                         AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType, audioMetaData.stream));
                         if (!Kernel.isPlaying)
