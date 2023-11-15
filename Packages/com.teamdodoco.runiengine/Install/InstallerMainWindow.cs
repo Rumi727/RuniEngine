@@ -187,7 +187,7 @@ namespace RuniEngine.Install
 
                 {
                     {
-                        GUI.enabled = screenIndex > 0;
+                        EditorGUI.BeginDisabledGroup(screenIndex <= 0);
 
                         if (GUILayout.Button("<"))
                         {
@@ -195,13 +195,13 @@ namespace RuniEngine.Install
                             scrollPosition = Vector2.zero;
                         }
 
-                        GUI.enabled = true;
+                        EditorGUI.EndDisabledGroup();
                     }
 
                     GUILayout.Label($"{screenIndex + 1}/{installerScreens.Count}");
 
                     {
-                        GUI.enabled = screenIndex < installerScreens.Count - 1;
+                        EditorGUI.BeginDisabledGroup(screenIndex >= installerScreens.Count - 1);
 
                         if (GUILayout.Button(">"))
                         {
@@ -209,7 +209,7 @@ namespace RuniEngine.Install
                             scrollPosition = Vector2.zero;
                         }
 
-                        GUI.enabled = true;
+                        EditorGUI.EndDisabledGroup();
                     }
 
                     if (!Kernel.isPlaying)

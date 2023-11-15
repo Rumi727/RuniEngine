@@ -9,11 +9,9 @@ namespace RuniEngine.Editor.Attribute
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            bool preGUIEnabled = GUI.enabled;
-
-            GUI.enabled = false;
+            EditorGUI.BeginDisabledGroup(true);
             EditorGUI.PropertyField(position, property, label, true);
-            GUI.enabled = preGUIEnabled;
+            EditorGUI.EndDisabledGroup();
         }
     }
 }
