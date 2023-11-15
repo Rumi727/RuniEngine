@@ -3797,8 +3797,8 @@ namespace RuniEngine
         public static decimal Repeat(this decimal t, decimal length) => (t - ((t / length).Floor() * length)).Clamp(0, length);
         public static BigInteger Repeat(this BigInteger t, BigInteger length) => (t - ((BigInteger)((BigDecimal)t / (BigDecimal)length).Floor() * length)).Clamp(0, length);
         public static BigDecimal Repeat(this BigDecimal t, BigDecimal length) => (t - ((t / length).Floor() * length)).Clamp(0, length);
-        public static nint Repeat(this nint t, nint length) => (t - ((t / length) * length)).Clamp(0, length);
-        public static nuint Repeat(this nuint t, nuint length) => (t - ((t / length) * length)).Clamp(0, length);
+        public static nint Repeat(this nint t, nint length) => (t - ((nint)((float)t / length) * length)).Clamp(0, length);
+        public static nuint Repeat(this nuint t, nuint length) => (t - ((nuint)((float)t / length) * length)).Clamp(0, length);
         #endregion
 
         #region Repeat While
