@@ -35,6 +35,9 @@
     "gui.prefab": "Prefab",
     "gui.up": "Up",
     "gui.down": "Down",
+    "gui.namespace": "Namespace",
+    "gui.key": "Key",
+    "gui.name": "Name",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",

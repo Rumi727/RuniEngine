@@ -53,6 +53,9 @@
 	"gui.min": "最小",
 	"gui.max": "最大",
 	"gui.restart_on_fail": "失敗した場合の再起動",
+	"gui.namespace": "名前空間",
+	"gui.key": "キー",
+    "gui.name": "名前",
 	
 	"gui.ago.years": "%value%年前",
 	"gui.ago.months": "%value%ヶ月前",

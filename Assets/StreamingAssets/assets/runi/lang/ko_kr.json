@@ -55,6 +55,9 @@
 	"gui.restart_on_fail": "실패 시 재시작",
 	"gui.lock": "잠금",
 	"gui.unlock": "잠금 해제",
+	"gui.namespace": "네임스페이스",
+	"gui.key": "키",
+    "gui.name": "이름",
 	
 	"gui.ago.years": "%value%년 전",
 	"gui.ago.months": "%value%달 전",

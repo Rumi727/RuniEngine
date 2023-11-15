@@ -53,6 +53,9 @@
 	"gui.min": "Min",
 	"gui.max": "Max",
 	"gui.restart_on_fail": "Restart On Fail",
+	"gui.namespace": "Namespace",
+	"gui.key": "Key",
+    "gui.name": "Name",
 	
 	"gui.ago.years": "%value%y ago",
 	"gui.ago.months": "%value%m ago",
