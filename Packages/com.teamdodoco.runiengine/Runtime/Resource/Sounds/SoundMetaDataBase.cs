@@ -4,7 +4,7 @@ namespace RuniEngine.Resource.Sounds
 {
     public abstract class SoundMetaDataBase
     {
-        public SoundMetaDataBase(string path, float pitch, float tempo, bool stream, float loopStartTime)
+        public SoundMetaDataBase(string path, double pitch, double tempo, bool stream, double loopStartTime, double loopOffsetTime)
         {
             this.path = path;
 
@@ -12,15 +12,19 @@ namespace RuniEngine.Resource.Sounds
             this.tempo = tempo;
 
             this.stream = stream;
+
             this.loopStartTime = loopStartTime;
+            this.loopOffsetTime = loopOffsetTime;
         }
 
         public virtual string path { get; } = "";
 
-        public virtual float pitch { get; } = 1;
-        public virtual float tempo { get; } = 1;
+        public virtual double pitch { get; } = 1;
+        public virtual double tempo { get; } = 1;
 
         public virtual bool stream { get; } = false;
-        public virtual float loopStartTime { get; } = 0;
+
+        public virtual double loopStartTime { get; } = 0;
+        public virtual double loopOffsetTime { get; } = 0;
     }
 }
