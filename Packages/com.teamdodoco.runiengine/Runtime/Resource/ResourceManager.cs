@@ -247,5 +247,45 @@ namespace RuniEngine.Resource
                 return "";
             }
         }
+
+        /// <summary>
+        /// 리소스팩에서 네임스페이스 리스트를 가져옵니다
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetNameSpaces()
+        {
+            if (BootLoader.basicDataLoaded)
+            {
+                IEnumerable<string> nameSpaces = new string[0];
+
+                //기본 에셋도 포함시켜야하기 때문에 리소스팩 길이를 1 늘린다
+                for (int i = 0; i < GlobalData.resourcePacks.Count + 1; i++)
+                {
+                    //현재 인덱스가 리소스팩의 길이를 벗어나면 기본 에셋으로 판정 (반복문이 리소스팩 길이 + 1 까지 반복하기 때문에 가능함)
+                    string path;
+                    if (i < GlobalData.resourcePacks.Count)
+                        path = GlobalData.resourcePacks[i];
+                    else
+                        path = Kernel.streamingAssetsPath;
+
+                    nameSpaces = nameSpaces.Union(GetResult(path));
+                }
+
+                return nameSpaces.ToArray();
+            }
+            else
+                return GetResult(Kernel.streamingAssetsPath);
+
+            static string[] GetResult(string path)
+            {
+                path = Path.Combine(path, rootName);
+
+                string[] nameSpaces = Directory.GetDirectories(path);
+                for (int j = 0; j < nameSpaces.Length; j++)
+                    nameSpaces[j] = Path.GetFileName(nameSpaces[j]);
+
+                return nameSpaces;
+            }
+        }
     }
 }
