@@ -46,45 +46,10 @@ namespace RuniEngine.Editor.Inspector
 
 
 
-        public SerializedProperty? UseProperty(string propertyName) => InternalUseProperty(propertyName, "", false);
-        public SerializedProperty? UseProperty(string propertyName, string label) => InternalUseProperty(propertyName, label, true);
-        SerializedProperty? InternalUseProperty(string propertyName, string label, bool labelShow)
-        {
-            GUIContent? guiContent = null;
-            if (labelShow)
-                guiContent = new GUIContent { text = label };
+        public SerializedProperty? UseProperty(string propertyName) => UseProperty(serializedObject, propertyName);
+        public SerializedProperty? UseProperty(string propertyName, string label) => UseProperty(serializedObject, propertyName, label);
 
-            SerializedProperty? tps = null;
 
-            try
-            {
-                tps = serializedObject.FindProperty(propertyName);
-            }
-            catch (ExitGUIException)
-            {
-                
-            }
-            catch (Exception)
-            {
-                GUILayout.Label(TryGetText("inspector.property_none").Replace("{name}", propertyName));
-                return null;
-            }
-
-            if (tps != null)
-            {
-                EditorGUI.BeginChangeCheck();
-
-                if (!labelShow)
-                    EditorGUILayout.PropertyField(tps, true);
-                else
-                    EditorGUILayout.PropertyField(tps, guiContent, true);
-
-                if (EditorGUI.EndChangeCheck())
-                    serializedObject.ApplyModifiedProperties();
-            }
-
-            return tps;
-        }
 
         public bool TargetsIsEquals<TValue>(Func<TTarget, TValue> func)
         {
