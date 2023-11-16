@@ -194,88 +194,15 @@ namespace RuniEngine.Sounds
                     {
                         for (int i = 0; i < data.Length; i += channels)
                         {
-                            //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
-                            if (this.channels > 2)
-                            {
-                                //정상적으로 재생되지 않을 확률이 높음
-                                for (int j = 0; j < channels; j++)
-                                    data[i + j] = GetSample(i, channels) * volume;
-                            }
-                            else if (this.channels == 2) //현재 재생중인 오디오 채널이 2일때
-                            {
-                                //현재 시스템 채널이 1 보다 크다면 스테레오로 재생
-                                if (channels > 1)
-                                {
-                                    if (!spatial)
-                                    {
-                                        float left = GetSample(i, 0);
-                                        float right = GetSample(i, 1);
-                                        float leftStereo = -panStereo.Clamp(-1, 0);
-                                        float rightStereo = panStereo.Clamp(0, 1);
+                            int index;
+                            if (tempo > 0)
+                                index = (int)(currentIndex + i);
+                            else
+                                index = (int)(currentIndex - i);
 
-                                        data[i] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * volume * 1f.Lerp(0.5f, panStereo.Abs());
-                                        data[i + 1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * volume * 1f.Lerp(0.5f, panStereo.Abs());
-                                    }
-                                    else
-                                    {
-                                        float left = GetSample(i, 0);
-                                        float right = GetSample(i, 1);
-
-                                        data[i] = left * volume;
-                                        data[i + 1] = right * volume;
-                                    }
-                                }
-                                else //현재 시스템 채널이 1 이하라면 모노로 재생
-                                {
-                                    /* 
-                                     * 오디오 품질이 구려진다
-                                     * 왜 그런지는 알 것 같은데 해결 방법을 ㅁ?ㄹ
-                                     * 애초에 지금 템포도 구현을 잘못해놔서 이상해지지만 구현을 제대로 하기에는 너무 어렵다
-                                     * 나중에 오디오 재생 다시 설계해봐야할 듯?
-                                     * 그 나중에가 언제가 될진 모르겠지만...
-                                     */
-                                    float left = GetSample(i, 0);
-                                    float right = GetSample(i, 1);
-
-                                    data[i] = (left + right) * 0.5f * volume;
-                                }
-                            }
-                            else if (this.channels < 2) //현재 재생중인 오디오의 채널이 2 보다 작다면 변환 없이 재생
-                            {
-                                for (int j = 0; j < channels; j++)
-                                    data[i + j] = GetSample(i, 0) * volume / channels;
-                            }
-
-                            float GetSample(int i, int j)
-                            {
-                                int sampleIndex;
-                                if (tempo > 0)
-                                    sampleIndex = (int)currentIndex + i + j;
-                                else
-                                    sampleIndex = (int)currentIndex - i + j;
-
-                                if (loop)
-                                    sampleIndex = loopStartIndex + sampleIndex.Repeat(samples.Length - 1 - loopStartIndex);
-
-                                if (sampleIndex >= 0 && sampleIndex < samples.Length)
-                                {
-                                    float sample = samples[sampleIndex];
-
-                                    //루프
-                                    if (loop)
-                                    {
-                                        int rawLoopOffsetSampleIndex = sampleIndex - (samples.Length - 1 - loopOffsetIndex);
-                                        int loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(samples.Length - 1 - loopStartIndex); ;
-
-                                        if (rawLoopOffsetSampleIndex >= 0 && loopOffsetSampleIndex >= 0 && loopOffsetSampleIndex < samples.Length)
-                                            sample += samples[loopOffsetSampleIndex];
-                                    }
-
-                                    return sample;
-                                }
-
-                                return 0;
-                            }
+                            float[] value = GetAudioSample(samples, index, channels, this.channels, volume, loop, loopStartIndex, loopOffsetIndex, spatial, panStereo);
+                            for (int j = 0; j < channels; j++)
+                                data[i + j] = value[j];
                         }
                     }
 
@@ -288,14 +215,14 @@ namespace RuniEngine.Sounds
 
                         if (loop)
                         {
-                            if (currentIndex >= samples.Length)
+                            if (tempo > 0 && currentIndex >= samples.Length)
                             {
-                                currentIndex = loopStartIndex + loopOffsetIndex;
+                                currentIndex -= samples.Length - 1 + loopStartIndex + loopOffsetIndex;
                                 LoopedEventInvoke();
                             }
-                            else if (currentIndex < loopStartIndex + loopOffsetIndex)
+                            else if (tempo < 0 && currentIndex < loopStartIndex + loopOffsetIndex)
                             {
-                                currentIndex = samples.Length - 1;
+                                currentIndex += samples.Length - 1;
                                 LoopedEventInvoke();
                             }
                         }
@@ -310,6 +237,91 @@ namespace RuniEngine.Sounds
             }
 
             base.OnAudioFilterRead(data, channels);
+        }
+
+        public static float[] GetAudioSample(float[] samples, int index, int channels, int audioChannels, float volume, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, float panStereo)
+        {
+            float[] data = new float[channels];
+
+            //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
+            if (audioChannels > 2)
+            {
+                //정상적으로 재생되지 않을 확률이 높음
+                for (int j = 0; j < channels; j++)
+                    data[j] = GetSample(channels) * volume;
+            }
+            else if (audioChannels == 2) //현재 재생중인 오디오 채널이 2일때
+            {
+                //현재 시스템 채널이 1 보다 크다면 스테레오로 재생
+                if (channels > 1)
+                {
+                    if (!spatial)
+                    {
+                        float left = GetSample(0);
+                        float right = GetSample(1);
+                        float leftStereo = -panStereo.Clamp(-1, 0);
+                        float rightStereo = panStereo.Clamp(0, 1);
+
+                        data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * volume * 1f.Lerp(0.5f, panStereo.Abs());
+                        data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * volume * 1f.Lerp(0.5f, panStereo.Abs());
+                    }
+                    else
+                    {
+                        float left = GetSample(0);
+                        float right = GetSample(1);
+
+                        data[0] = left * volume;
+                        data[1] = right * volume;
+                    }
+                }
+                else //현재 시스템 채널이 1 이하라면 모노로 재생
+                {
+                    /* 
+                     * 오디오 품질이 구려진다
+                     * 왜 그런지는 알 것 같은데 해결 방법을 ㅁ?ㄹ
+                     * 애초에 지금 템포도 구현을 잘못해놔서 이상해지지만 구현을 제대로 하기에는 너무 어렵다
+                     * 나중에 오디오 재생 다시 설계해봐야할 듯?
+                     * 그 나중에가 언제가 될진 모르겠지만...
+                     */
+                    float left = GetSample(0);
+                    float right = GetSample(1);
+
+                    data[0] = (left + right) * 0.5f * volume;
+                }
+            }
+            else if (audioChannels < 2) //현재 재생중인 오디오의 채널이 2 보다 작다면 변환 없이 재생
+            {
+                for (int j = 0; j < channels; j++)
+                    data[j] = GetSample(0) * volume / channels;
+            }
+
+            float GetSample(int i)
+            {
+                int sampleIndex = index + i;
+                if (loop)
+                    sampleIndex = loopStartIndex + sampleIndex.Repeat(samples.Length - 1 - loopStartIndex);
+                
+                if (sampleIndex >= 0 && sampleIndex < samples.Length)
+                {
+                    float sample = samples[sampleIndex];
+
+                    //루프
+                    if (loop)
+                    {
+                        int rawLoopOffsetSampleIndex = sampleIndex - (samples.Length - 1 - loopOffsetIndex);
+                        int loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(samples.Length - 1 - loopStartIndex); ;
+
+                        if (rawLoopOffsetSampleIndex >= 0 && loopOffsetSampleIndex >= 0 && loopOffsetSampleIndex < samples.Length)
+                            sample += samples[loopOffsetSampleIndex];
+                    }
+
+                    return sample;
+                }
+
+                return 0;
+            }
+
+            return data;
         }
     }
 }
