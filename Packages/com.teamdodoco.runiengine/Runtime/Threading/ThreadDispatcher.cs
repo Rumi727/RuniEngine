@@ -25,7 +25,7 @@ namespace RuniEngine.Threading
         {
             stopwatch.Restart();
 
-            while (scheduledTasks.TryDequeue(out Action action) && stopwatch.Elapsed.TotalMilliseconds < allotedTime)
+            while (stopwatch.Elapsed.TotalMilliseconds < allotedTime && scheduledTasks.TryDequeue(out Action action))
                 action();
         }
 
