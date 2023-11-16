@@ -3,7 +3,6 @@ using RuniEngine.Resource;
 using System;
 using UnityEditor;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace RuniEngine.Editor
 {
