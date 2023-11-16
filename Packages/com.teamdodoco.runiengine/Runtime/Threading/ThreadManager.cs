@@ -19,7 +19,7 @@ namespace RuniEngine.Threading
         {
             //Debug.ForceLog(LanguageLoader.TryGetText("thread_manager.lock").Replace("{class}", Debug.NameOfCallingClass()));
 
-            while (Interlocked.CompareExchange(ref location, 1, 0) == 0)
+            while (Interlocked.CompareExchange(ref location, 1, 0) != 0)
                 Thread.Yield();
         }
 
