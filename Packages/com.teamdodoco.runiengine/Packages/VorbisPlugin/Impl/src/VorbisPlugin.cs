@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+using Cysharp.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace OggVorbis
 {
@@ -153,6 +154,58 @@ namespace OggVorbis
                     out short channels,
                     out int frequency,
                     maxSamplesToRead);
+                NativeErrorException.ThrowExceptionIfNecessary(returnCode);
+                float[] pcm = new float[pcmLength];
+                Marshal.Copy(pcmPtr, pcm, 0, pcmLength);
+                audioClip = UnityEngine.AudioClip.Create(audioClipName, pcmLength / channels, channels, frequency, false);
+                audioClip.SetData(pcm, 0);
+            }
+            finally
+            {
+                returnCode = NativeBridge.FreeSamplesArrayNativeMemory(ref pcmPtr);
+                NativeErrorException.ThrowExceptionIfNecessary(returnCode);
+            }
+            return audioClip;
+        }
+        public static async UniTask<UnityEngine.AudioClip> ToAudioClipAsync(byte[] bytes, string audioClipName, int maxSamplesToRead = 1024)
+        {
+            if (bytes == null)
+            {
+                throw new System.ArgumentNullException(nameof(bytes));
+            }
+            if (bytes.Length < 10)
+            {
+                throw new System.ArgumentException(nameof(bytes));
+            }
+            if (string.IsNullOrWhiteSpace(audioClipName))
+            {
+                throw new System.ArgumentException("Please provide an audio clip name");
+            }
+            if (maxSamplesToRead <= 0)
+            {
+                throw new System.ArgumentOutOfRangeException(nameof(maxSamplesToRead));
+            }
+            int returnCode = 0;
+            System.IntPtr pcmPtr = System.IntPtr.Zero;
+            UnityEngine.AudioClip audioClip = null;
+            try
+            {
+                int pcmLength = 0;
+                short channels = 0;
+                int frequency = 0;
+
+                await UniTask.RunOnThreadPool(() =>
+                {
+                    returnCode = NativeBridge.ReadAllPcmDataFromMemory(
+                    bytes,
+                    bytes.Length,
+                    out pcmPtr,
+                    out pcmLength,
+                    out channels,
+                    out frequency,
+                    maxSamplesToRead);
+                });
+
                 NativeErrorException.ThrowExceptionIfNecessary(returnCode);
                 float[] pcm = new float[pcmLength];
                 Marshal.Copy(pcmPtr, pcm, 0, pcmLength);
