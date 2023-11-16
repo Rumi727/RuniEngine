@@ -181,14 +181,14 @@ namespace RuniEngine.Sounds
             {
                 ThreadManager.Lock(ref onAudioFilterReadLock);
                 
-                if (isPlaying && !isPaused && realTempo != 0 && soundMetaData != null)
+                if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null)
                 {
                     double currentIndex = currentSampleIndex;
                     float volume = (float)this.volume;
                     bool loop = this.loop;
 
-                    int loopStartIndex = (int)(soundMetaData.loopStartTime / channels / AudioLoader.systemFrequency);
-                    int loopOffsetIndex = (int)(soundMetaData.loopOffsetTime / channels / AudioLoader.systemFrequency);
+                    int loopStartIndex = audioMetaData.loopStartIndex * channels;
+                    int loopOffsetIndex = audioMetaData.loopOffsetIndex * channels;
 
                     if (realPitch > 0)
                     {
@@ -215,16 +215,22 @@ namespace RuniEngine.Sounds
 
                         if (loop)
                         {
-                            if (tempo > 0 && currentIndex >= samples.Length)
+                            bool isLooped = false;
+
+                            while (tempo > 0 && currentIndex >= samples.Length)
                             {
-                                currentIndex -= samples.Length - 1 + loopStartIndex + loopOffsetIndex;
-                                LoopedEventInvoke();
+                                currentIndex -= samples.Length - 1 - (loopStartIndex + loopOffsetIndex);
+                                isLooped = true;
                             }
-                            else if (tempo < 0 && currentIndex < loopStartIndex + loopOffsetIndex)
+
+                            while (tempo < 0 && currentIndex < loopStartIndex)
                             {
-                                currentIndex += samples.Length - 1;
-                                LoopedEventInvoke();
+                                currentIndex += samples.Length - 1 - (loopStartIndex + loopOffsetIndex);
+                                isLooped = true;
                             }
+
+                            if (isLooped)
+                                LoopedEventInvoke();
                         }
                     }
 
@@ -299,7 +305,7 @@ namespace RuniEngine.Sounds
             {
                 int sampleIndex = index + i;
                 if (loop)
-                    sampleIndex = loopStartIndex + sampleIndex.Repeat(samples.Length - 1 - loopStartIndex);
+                    sampleIndex = sampleIndex.Repeat(samples.Length - 1);
                 
                 if (sampleIndex >= 0 && sampleIndex < samples.Length)
                 {
@@ -310,7 +316,7 @@ namespace RuniEngine.Sounds
                     {
                         int rawLoopOffsetSampleIndex = sampleIndex - (samples.Length - 1 - loopOffsetIndex);
                         int loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(samples.Length - 1 - loopStartIndex); ;
-
+                        
                         if (rawLoopOffsetSampleIndex >= 0 && loopOffsetSampleIndex >= 0 && loopOffsetSampleIndex < samples.Length)
                             sample += samples[loopOffsetSampleIndex];
                     }
