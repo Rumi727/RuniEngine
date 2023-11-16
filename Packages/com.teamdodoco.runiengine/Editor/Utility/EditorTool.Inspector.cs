@@ -102,7 +102,7 @@ namespace RuniEngine.Editor
                 return true;
 
             TValue? parentValue = default;
-            for (int i = 1; i < targets.Length; i++)
+            for (int i = 0; i < targets.Length; i++)
             {
                 TTarget? target = targets[i];
                 if (target == null)
@@ -112,7 +112,7 @@ namespace RuniEngine.Editor
                 break;
             }
 
-            for (int i = 1; i < targets.Length; i++)
+            for (int i = 0; i < targets.Length; i++)
             {
                 TTarget? target = targets[i];
                 if (target == null)
