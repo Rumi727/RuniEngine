@@ -1,17 +1,17 @@
 #nullable enable
-using UnityEditor;
+using UnityEngine;
 
 namespace RuniEngine.Editor
 {
     public partial class EditorTool
     {
-        public static void Space() => EditorGUILayout.Space();
-        public static void Space(int width) => EditorGUILayout.Space(width);
+        public static void Space() => GUILayout.Space(10);
+        public static void Space(int width) => GUILayout.Space(width);
 
         public static void TabSpace(int tab)
         {
             if (tab > 0)
-                EditorGUILayout.Space(30 * tab);
+                GUILayout.Space(30 * tab);
         }
     }
 }
