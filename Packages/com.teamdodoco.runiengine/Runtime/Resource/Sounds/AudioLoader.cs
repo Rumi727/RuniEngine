@@ -86,7 +86,7 @@ namespace RuniEngine.Resource.Sounds
 #if !((UNITY_STANDALONE_LINUX && !UNITY_EDITOR) || UNITY_EDITOR_LINUX)
             if (File.Exists(path))
             {
-                if (type == AudioType.OGGVORBIS)
+                if (type == AudioType.OGGVORBIS && !stream)
                     return await VorbisPlugin.ToAudioClipAsync(await File.ReadAllBytesAsync(path), Path.GetFileNameWithoutExtension(path));
 
                 NotMainThreadException.Exception();
