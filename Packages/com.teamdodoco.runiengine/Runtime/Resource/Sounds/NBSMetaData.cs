@@ -10,6 +10,6 @@ namespace RuniEngine.Resource.Sounds
 
         [JsonIgnore] public override double loopStartTime => nbsFile.loopStartTick / 20d;
 
-        public NBSFile nbsFile { get; }
+        [JsonIgnore] public NBSFile nbsFile { get; }
     }
 }
