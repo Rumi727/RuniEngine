@@ -217,7 +217,7 @@ namespace RuniEngine.Resource.Sounds
                                     return;
 
                                 if (audioClip != null)
-                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartTime, audioMetaData.loopOffsetTime, audioClip);
+                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
 
                                 if (audioMetaData != null)
                                     audioMetaDatas.Add(audioMetaData);
