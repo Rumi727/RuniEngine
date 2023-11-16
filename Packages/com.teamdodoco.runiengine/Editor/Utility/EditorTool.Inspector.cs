@@ -96,7 +96,7 @@ namespace RuniEngine.Editor
 
 
 
-        public static bool TargetsIsEquals<TTarget, TValue>(TTarget?[]? targets, Func<TTarget, TValue> func)
+        public static bool TargetsIsEquals<TTarget, TValue>(Func<TTarget, TValue> func, params TTarget?[]? targets)
         {
             if (targets == null || targets.Length <= 0)
                 return true;
@@ -128,12 +128,12 @@ namespace RuniEngine.Editor
             return true;
         }
 
-        public static string TargetsToString<TTarget, TValue>(TTarget?[]? targets, Func<TTarget, TValue> func)
+        public static string TargetsToString<TTarget, TValue>(Func<TTarget, TValue> func, params TTarget?[]? targets)
         {
             if (targets == null || targets.Length <= 0)
                 return "null";
 
-            if (!TargetsIsEquals(targets, func))
+            if (!TargetsIsEquals(func, targets))
                 return "-";
 
             TValue? value = default;

@@ -51,8 +51,8 @@ namespace RuniEngine.Editor.Inspector
 
 
 
-        public bool TargetsIsEquals<TValue>(Func<TTarget, TValue> func) => TargetsIsEquals(targets, func);
+        public bool TargetsIsEquals<TValue>(Func<TTarget, TValue> func) => TargetsIsEquals(func, targets);
 
-        public string TargetsToString<TValue>(Func<TTarget, TValue> func) => TargetsToString(targets, func);
+        public string TargetsToString<TValue>(Func<TTarget, TValue> func) => TargetsToString(func, targets);
     }
 }
