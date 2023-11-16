@@ -26,7 +26,11 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                 {
                     serializedObject.ApplyModifiedProperties();
                     for (int i = 0; i < targets.Length; i++)
-                        targets[i].LayoutUpdate();
+                    {
+                        UIAnimator? value = targets[i];
+                        if (value != null)
+                            value.LayoutUpdate();
+                    }
                 }
             }
             else
@@ -57,13 +61,21 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                 if (GUILayout.Button(TryGetText("gui.play")))
                 {
                     for (int i = 0; i < targets.Length; i++)
-                        targets[i].Play();
+                    {
+                        UIAnimator? value = targets[i];
+                        if (value != null)
+                            value.Play();
+                    }
                 }
 
                 if (GUILayout.Button(TryGetText("gui.reverse")))
                 {
                     for (int i = 0; i < targets.Length; i++)
-                        targets[i].Reverse();
+                    {
+                        UIAnimator? value = targets[i];
+                        if (value != null)
+                            value.Reverse();
+                    }
                 }
 
                 if (!TargetsIsEquals(x => x.isPlaying) || !target.isPlaying)
@@ -71,7 +83,11 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                     if (GUILayout.Button(TryGetText("gui.unpause")))
                     {
                         for (int i = 0; i < targets.Length; i++)
-                            targets[i].UnPause();
+                        {
+                            UIAnimator? value = targets[i];
+                            if (value != null)
+                                value.UnPause();
+                        }
                     }
                 }
                 else
@@ -79,14 +95,22 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                     if (GUILayout.Button(TryGetText("gui.pause")))
                     {
                         for (int i = 0; i < targets.Length; i++)
-                            targets[i].Pause();
+                        {
+                            UIAnimator? value = targets[i];
+                            if (value != null)
+                                value.Pause();
+                        }
                     }
                 }
 
                 if (GUILayout.Button(TryGetText("gui.stop")))
                 {
                     for (int i = 0; i < targets.Length; i++)
-                        targets[i].Stop();
+                    {
+                        UIAnimator? value = targets[i];
+                        if (value != null)
+                            value.Stop();
+                    }
                 }
 
                 GUILayout.EndHorizontal();

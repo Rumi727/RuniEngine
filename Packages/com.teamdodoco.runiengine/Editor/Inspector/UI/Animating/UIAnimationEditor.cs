@@ -27,7 +27,9 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
 
                 for (int i = 0; i < targets.Length; i++)
                 {
-                    UIAnimation target = targets[i];
+                    UIAnimation? target = targets[i];
+                    if (target == null)
+                        continue;
 
                     if (target.animator != null)
                     {

@@ -33,7 +33,10 @@ namespace RuniEngine.Editor.Inspector.UI
             {
                 for (int i = 0; i < targets.Length; i++)
                 {
-                    RectTransformTool tool = targets[i];
+                    RectTransformTool? tool = targets[i];
+                    if (tool == null)
+                        continue;
+
                     RectTransform rectTransform = tool.rectTransform;
 
                     DestroyImmediate(tool);
