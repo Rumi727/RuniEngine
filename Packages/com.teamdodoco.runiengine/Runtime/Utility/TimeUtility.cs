@@ -47,7 +47,7 @@ namespace RuniEngine
         /// <returns></returns>
         public static string ToTime(this float second, bool decimalShow = true, bool minuteAlwayShow = false, bool hourAlwayShow = false, bool dayAlwayShow = false)
         {
-            if (!double.IsNormal(second))
+            if (!double.IsNormal(second) && second != 0)
                 return "--:--";
 
             return ToString(TimeSpan.FromSeconds(second), decimalShow, minuteAlwayShow, hourAlwayShow, dayAlwayShow);
@@ -64,7 +64,7 @@ namespace RuniEngine
         /// <returns></returns>
         public static string ToTime(this double second, bool decimalShow = true, bool minuteAlwayShow = false, bool hourAlwayShow = false, bool dayAlwayShow = false)
         {
-            if (!double.IsNormal(second))
+            if (!double.IsNormal(second) && second != 0)
                 return "--:--";
 
             return ToString(TimeSpan.FromSeconds(second), decimalShow, minuteAlwayShow, hourAlwayShow, dayAlwayShow);
