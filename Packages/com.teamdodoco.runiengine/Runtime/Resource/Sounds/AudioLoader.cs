@@ -101,7 +101,10 @@ namespace RuniEngine.Resource.Sounds
                     return null;
 
                 if (www.result != UnityWebRequest.Result.Success)
+                {
                     Debug.LogError(www.error);
+                    return null;
+                }
 
                 AudioClip audioClip = DownloadHandlerAudioClip.GetContent(www);
                 audioClip.name = Path.GetFileNameWithoutExtension(path);
