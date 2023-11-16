@@ -3,6 +3,7 @@ using RuniEngine.Resource;
 using System;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace RuniEngine.Editor
 {
@@ -92,5 +93,64 @@ namespace RuniEngine.Editor
 
         public static string UsePropertyAndDrawNameSpace(SerializedObject serializedObject, string propertyName, string nameSpace) => UsePropertyAndDrawNameSpace(serializedObject, propertyName, nameSpace);
         public static string UsePropertyAndDrawNameSpace(SerializedObject serializedObject, string propertyName, string label, string nameSpace) => UsePropertyAndDrawStringArray(serializedObject, propertyName, label, nameSpace, ResourceManager.GetNameSpaces());
+
+
+
+        public static bool TargetsIsEquals<TTarget, TValue>(TTarget?[]? targets, Func<TTarget, TValue> func)
+        {
+            if (targets == null || targets.Length <= 0)
+                return true;
+
+            TValue? parentValue = default;
+            for (int i = 1; i < targets.Length; i++)
+            {
+                TTarget? target = targets[i];
+                if (target == null)
+                    continue;
+
+                parentValue = func(target);
+                break;
+            }
+
+            for (int i = 1; i < targets.Length; i++)
+            {
+                TTarget? target = targets[i];
+                if (target == null)
+                    continue;
+
+                TValue value = func(target);
+                if (!Equals(parentValue, value))
+                    return false;
+
+                parentValue = value;
+            }
+
+            return true;
+        }
+
+        public static string TargetsToString<TTarget, TValue>(TTarget?[]? targets, Func<TTarget, TValue> func)
+        {
+            if (targets == null || targets.Length <= 0)
+                return "null";
+
+            if (!TargetsIsEquals(targets, func))
+                return "-";
+
+            TValue? value = default;
+            for (int i = 1; i < targets.Length; i++)
+            {
+                TTarget? target = targets[i];
+                if (target == null)
+                    continue;
+
+                value = func(target);
+                break;
+            }
+
+            if (value != null)
+                return value.ToString();
+            else
+                return "null";
+        }
     }
 }

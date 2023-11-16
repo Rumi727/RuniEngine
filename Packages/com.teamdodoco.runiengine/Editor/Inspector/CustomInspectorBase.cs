@@ -51,37 +51,8 @@ namespace RuniEngine.Editor.Inspector
 
 
 
-        public bool TargetsIsEquals<TValue>(Func<TTarget, TValue> func)
-        {
-            if (targets == null || targets.Length <= 0)
-                return true;
+        public bool TargetsIsEquals<TValue>(Func<TTarget, TValue> func) => TargetsIsEquals(targets, func);
 
-            TValue? parentValue = func(targets[0]);
-            for (int i = 1; i < targets.Length; i++)
-            {
-                TValue value = func(targets[i]);
-                if (!Equals(parentValue, value))
-                    return false;
-
-                parentValue = value;
-            }
-
-            return true;
-        }
-
-        public string TargetsToString<TValue>(Func<TTarget, TValue> func)
-        {
-            if (targets == null || targets.Length <= 0)
-                return "null";
-
-            if (!TargetsIsEquals(func))
-                return "-";
-
-            TValue value = func(targets[0]);
-            if (value != null)
-                return value.ToString();
-            else
-                return "null";
-        }
+        public string TargetsToString<TValue>(Func<TTarget, TValue> func) => TargetsToString(targets, func);
     }
 }
