@@ -486,7 +486,9 @@ namespace RuniEngine.Resource.Images
                 if (!Directory.Exists(rootPath))
                     return;
 
+                List<UniTask> tasks = new List<UniTask>();
                 string[] typePaths = Directory.GetDirectories(rootPath, "*", SearchOption.AllDirectories);
+
                 for (int i = 0; i < typePaths.Length; i++)
                 {
                     string typePath = typePaths[i];
@@ -495,26 +497,34 @@ namespace RuniEngine.Resource.Images
                     string[] filePaths = DirectoryUtility.GetFiles(typePath, ExtensionFilter.pictureFileFilter);
                     for (int j = 0; j < filePaths.Length; j++)
                     {
-                        string filePath = filePaths[i].UniformDirectorySeparatorCharacter();
-                        string fileName = Path.GetFileName(filePath);
+                        tasks.Add(Task());
 
-                        TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(typePath + ".json") ?? new TextureMetaData();
-                        Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
-                        if (!Kernel.isPlaying)  
-                            return;
+                        //병렬 로드
+                        async UniTask Task()
+                        {
+                            string filePath = filePaths[i].UniformDirectorySeparatorCharacter();
+                            string fileName = Path.GetFileName(filePath);
 
-                        tempPackTexturePaths.TryAdd(nameSpace, new());
-                        tempPackTexturePaths[nameSpace].TryAdd(localTypePath, new());
-                        tempPackTexturePaths[nameSpace][localTypePath].TryAdd(fileName, filePath);
+                            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(typePath + ".json") ?? new TextureMetaData();
+                            Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
+                            if (!Kernel.isPlaying)
+                                return;
 
-                        tempPackTextureTypePaths.TryAdd(nameSpace, new());
-                        tempPackTextureTypePaths[nameSpace].TryAdd(localTypePath, typePath);
+                            tempPackTexturePaths.TryAdd(nameSpace, new());
+                            tempPackTexturePaths[nameSpace].TryAdd(localTypePath, new());
+                            tempPackTexturePaths[nameSpace][localTypePath].TryAdd(fileName, filePath);
 
-                        tempTextures.TryAdd(nameSpace, new());
-                        tempTextures[nameSpace].TryAdd(localTypePath, new());
-                        tempTextures[nameSpace][localTypePath].TryAdd(fileName, texture);
+                            tempPackTextureTypePaths.TryAdd(nameSpace, new());
+                            tempPackTextureTypePaths[nameSpace].TryAdd(localTypePath, typePath);
+
+                            tempTextures.TryAdd(nameSpace, new());
+                            tempTextures[nameSpace].TryAdd(localTypePath, new());
+                            tempTextures[nameSpace][localTypePath].TryAdd(fileName, texture);
+                        }
                     }
                 }
+
+                await UniTask.WhenAll(tasks);
             }
 
             async UniTask PackTextures()
@@ -597,6 +607,8 @@ namespace RuniEngine.Resource.Images
 
             async UniTask LoadSprite()
             {
+                List<UniTask> tasks = new List<UniTask>();
+
                 foreach (var nameSpace in tempPackTextureRects)
                 {
                     foreach (var type in nameSpace.Value)
@@ -606,41 +618,48 @@ namespace RuniEngine.Resource.Images
                             if (!Kernel.isPlaying)
                                 return;
 
-                            Texture2D? background = SearchPackTexture(type.Key, nameSpace.Key);
-                            if (background == null)
-                                continue;
+                            tasks.Add(Task());
 
-                            Rect rect = rects.Value;
-                            rect = new Rect(rect.x * background.width, rect.y * background.height, rect.width * background.width, rect.height * background.height);
-
-                            Dictionary<string, SpriteMetaData[]> spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(SearchTexturePath(type.Key, rects.Key, nameSpace.Key) + ".json") ?? new Dictionary<string, SpriteMetaData[]>(); ;
-                            if (!spriteMetaDatas.ContainsKey(spriteDefaultTag))
-                                spriteMetaDatas.Add(spriteDefaultTag, new SpriteMetaData[] { new SpriteMetaData() });
-
-                            foreach (var item in spriteMetaDatas)
+                            async UniTask Task()
                             {
-                                for (int i = 0; i < item.Value.Length; i++)
+                                Texture2D? background = SearchPackTexture(type.Key, nameSpace.Key);
+                                if (background == null)
+                                    return;
+
+                                Rect rect = rects.Value;
+                                rect = new Rect(rect.x * background.width, rect.y * background.height, rect.width * background.width, rect.height * background.height);
+
+                                Dictionary<string, SpriteMetaData[]> spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(SearchTexturePath(type.Key, rects.Key, nameSpace.Key) + ".json") ?? new Dictionary<string, SpriteMetaData[]>(); ;
+                                if (!spriteMetaDatas.ContainsKey(spriteDefaultTag))
+                                    spriteMetaDatas.Add(spriteDefaultTag, new SpriteMetaData[] { new SpriteMetaData() });
+
+                                foreach (var item in spriteMetaDatas)
                                 {
-                                    SpriteMetaData spriteMetaData = item.Value[i];
-                                    if (spriteMetaData == null)
+                                    for (int i = 0; i < item.Value.Length; i++)
                                     {
-                                        spriteMetaData = new SpriteMetaData();
-                                        spriteMetaData.RectMinMax(rect.width, rect.height);
-                                        spriteMetaDatas[item.Key][i] = spriteMetaData;
+                                        SpriteMetaData spriteMetaData = item.Value[i];
+                                        if (spriteMetaData == null)
+                                        {
+                                            spriteMetaData = new SpriteMetaData();
+                                            spriteMetaData.RectMinMax(rect.width, rect.height);
+                                            spriteMetaDatas[item.Key][i] = spriteMetaData;
+                                        }
+
+                                        spriteMetaData.rect = new JRect(rect.x + spriteMetaData.rect.x, rect.y + spriteMetaData.rect.y, rect.width - (rect.width - spriteMetaData.rect.width), rect.height - (rect.height - spriteMetaData.rect.height));
                                     }
-
-                                    spriteMetaData.rect = new JRect(rect.x + spriteMetaData.rect.x, rect.y + spriteMetaData.rect.y, rect.width - (rect.width - spriteMetaData.rect.width), rect.height - (rect.height - spriteMetaData.rect.height));
                                 }
+
+                                Dictionary<string, Sprite[]> sprites = await ThreadDispatcher.Execute(() => GetSprites(background, HideFlags.DontSave, spriteMetaDatas));
+
+                                tempAllTextureSprites.TryAdd(nameSpace.Key, new Dictionary<string, Dictionary<string, Dictionary<string, Sprite[]>>>());
+                                tempAllTextureSprites[nameSpace.Key].TryAdd(type.Key, new Dictionary<string, Dictionary<string, Sprite[]>>());
+                                tempAllTextureSprites[nameSpace.Key][type.Key].TryAdd(rects.Key, sprites);
                             }
-
-                            Dictionary<string, Sprite[]> sprites = await ThreadDispatcher.Execute(() => GetSprites(background, HideFlags.DontSave, spriteMetaDatas));
-
-                            tempAllTextureSprites.TryAdd(nameSpace.Key, new Dictionary<string, Dictionary<string, Dictionary<string, Sprite[]>>>());
-                            tempAllTextureSprites[nameSpace.Key].TryAdd(type.Key, new Dictionary<string, Dictionary<string, Sprite[]>>());
-                            tempAllTextureSprites[nameSpace.Key][type.Key].TryAdd(rects.Key, sprites);
                         }
                     }
                 }
+
+                await UniTask.WhenAll(tasks);
             }
         }
     }
