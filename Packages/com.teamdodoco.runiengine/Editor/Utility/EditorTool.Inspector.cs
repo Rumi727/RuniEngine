@@ -151,5 +151,42 @@ namespace RuniEngine.Editor
             else
                 return "null";
         }
+
+        public static void TargetsSetValue<TTarget, TValue>(Func<TTarget, TValue> getValueFunc, Func<TTarget, TValue> drawGUIFunc, Action<TTarget, TValue> setValueFunc, params TTarget?[]? targets)
+        {
+            if (targets == null || targets.Length <= 0)
+                return;
+
+            TTarget? target = targets[0];
+            for (int i = 0; i < targets.Length; i++)
+            {
+                TTarget? target2 = targets[i];
+                if (target2 == null)
+                    continue;
+
+                target = target2;
+                break;
+            }
+
+            if (target == null)
+                return;
+
+            EditorGUI.showMixedValue = !TargetsIsEquals(getValueFunc, targets);
+            EditorGUI.BeginChangeCheck();
+
+            TValue value = drawGUIFunc(target);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                for (int i = 0; i < targets.Length; i++)
+                {
+                    TTarget? target2 = targets[i];
+                    if (target2 != null)
+                        setValueFunc(target2, value);
+                }
+            }
+
+            EditorGUI.showMixedValue = false;
+        }
     }
 }
