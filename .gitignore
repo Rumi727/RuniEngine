@@ -82,3 +82,7 @@ crashlytics-build.properties
 /[Aa]ssets/TextMesh Pro.meta
 
 /[Aa]ssets/~RumiEngineInstalled~
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/audios.json
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/audios.json.meta
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/audios/*
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/audios.meta
