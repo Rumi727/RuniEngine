@@ -38,6 +38,17 @@
     "gui.namespace": "名前空間",
     "gui.key": "キー",
     "gui.name": "名前",
+    "gui.pitch": "ピッチ",
+    "gui.tempo": "テンポ",
+    "gui.min_distance": "最小距離",
+    "gui.max_distance": "最大距離",
+    "gui.spatial": "空間的な",
+    "gui.loop": "ループ",
+    "gui.stereo": "ステレオ",
+    "gui.mono": "モノ",
+    "gui.tick": "チック",
+    "gui.index": "インデックス",
+    "gui.refresh": "リフレッシュ",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -58,6 +69,7 @@
     "inspector.better_content_size_fitter.y_size": "Yサイズの変更",
     "inspector.content_aspect_ratio_fitter.aspect_mode": "方向モード",
     "inspector.ui_animator.animations": "アニメーション要素",
+    "inspector.sound_player_base.pan_stereo": "パンステレオ",
 
     "undo.modified_~": "変更された{object}",
 

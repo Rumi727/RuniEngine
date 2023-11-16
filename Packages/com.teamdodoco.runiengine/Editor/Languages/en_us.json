@@ -38,6 +38,17 @@
     "gui.namespace": "Namespace",
     "gui.key": "Key",
     "gui.name": "Name",
+    "gui.pitch": "Pitch",
+    "gui.tempo": "Tempo",
+    "gui.min_distance": "Min Distance",
+    "gui.max_distance": "Max Distance",
+    "gui.spatial": "Spatial",
+    "gui.loop": "Loop",
+    "gui.stereo": "Stereo",
+    "gui.mono": "Mono",
+    "gui.tick": "Tick",
+    "gui.index": "Index",
+    "gui.refresh": "Refresh",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -58,6 +69,7 @@
     "inspector.better_content_size_fitter.y_size": "Y size change",
     "inspector.content_aspect_ratio_fitter.aspect_mode": "Aspect Mode",
     "inspector.ui_animator.animations": "Animation Elements",
+    "inspector.sound_player_base.pan_stereo": "Pan Stereo",
 
     "undo.modified_~": "Modified {object}",
 
