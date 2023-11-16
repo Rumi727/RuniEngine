@@ -8,12 +8,19 @@ using UnityEngine.Networking;
 using UnityEngine;
 using RuniEngine.Json;
 using System.Linq;
+using System.Threading;
 
 namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioLoader : IResourceElement
     {
         public static bool isLoaded { get; private set; } = false;
+
+        public static int systemFrequency { get => Interlocked.Add(ref _systemFrequency, 0); }
+        static int _systemFrequency = 4800;
+
+        public static int systemChannels { get => Interlocked.Add(ref _systemChannels, 0); }
+        static int _systemChannels = 2;
 
 
 
@@ -30,9 +37,36 @@ namespace RuniEngine.Resource.Sounds
 
 
         [Awaken]
-        static void Awaken() => ResourceManager.ElementRegister(new AudioLoader());
-
-
+        static void Awaken()
+        {
+            ResourceManager.ElementRegister(new AudioLoader());
+            Interlocked.Exchange(ref _systemFrequency, AudioSettings.outputSampleRate);
+            
+            switch (AudioSettings.speakerMode)
+            {
+                case AudioSpeakerMode.Mono:
+                    Interlocked.Exchange(ref _systemChannels, 1);
+                    break;
+                case AudioSpeakerMode.Stereo:
+                    Interlocked.Exchange(ref _systemChannels, 2);
+                    break;
+                case AudioSpeakerMode.Quad:
+                    Interlocked.Exchange(ref _systemChannels, 4);
+                    break;
+                case AudioSpeakerMode.Surround:
+                    Interlocked.Exchange(ref _systemChannels, 5);
+                    break;
+                case AudioSpeakerMode.Mode5point1:
+                    Interlocked.Exchange(ref _systemChannels, 6);
+                    break;
+                case AudioSpeakerMode.Mode7point1:
+                    Interlocked.Exchange(ref _systemChannels, 8);
+                    break;
+                case AudioSpeakerMode.Prologic:
+                    Interlocked.Exchange(ref _systemChannels, 2);
+                    break;
+            }
+        }
 
         public static AudioData? SearchAudioData(string path, string nameSpace = "")
         {
@@ -74,6 +108,30 @@ namespace RuniEngine.Resource.Sounds
             }
 #endif
             return null;
+        }
+
+
+
+        public static string[] GetSoundDataKeys(string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (Kernel.isPlaying && BootLoader.allLoaded)
+            {
+                if (allAudios.ContainsKey(nameSpace))
+                    return allAudios[nameSpace].Keys.ToArray();
+                else
+                    return new string[0];
+            }
+            else
+            {
+                string path = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
+                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(path + ".json");
+                if (audioDatas != null)
+                    return audioDatas.Keys.ToArray();
+                else
+                    return new string[0];
+            }
         }
 
 
@@ -139,7 +197,7 @@ namespace RuniEngine.Resource.Sounds
                             return;
 
                         if (audioClip != null)
-                            audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartTime, audioClip);
+                            audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartTime, audioMetaData.loopOffsetTime, audioClip);
 
                         if (audioMetaData != null)
                             audioMetaDatas.Add(audioMetaData);

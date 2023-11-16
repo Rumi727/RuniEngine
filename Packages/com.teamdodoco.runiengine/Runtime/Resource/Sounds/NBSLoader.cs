@@ -7,6 +7,7 @@ using System.IO;
 using UnityEngine;
 using RuniEngine.Json;
 using RuniEngine.NBS;
+using System.Linq;
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -49,6 +50,31 @@ namespace RuniEngine.Resource.Sounds
 
 
 
+
+        public static string[] GetSoundDataKeys(string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (Kernel.isPlaying && BootLoader.allLoaded)
+            {
+                if (allNBSes.ContainsKey(nameSpace))
+                    return allNBSes[nameSpace].Keys.ToArray();
+                else
+                    return new string[0];
+            }
+            else
+            {
+                string path = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
+                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(path + ".json");
+                if (nbsDatas != null)
+                    return nbsDatas.Keys.ToArray();
+                else
+                    return new string[0];
+            }
+        }
+
+
+
         public async UniTask Load()
         {
             NotPlayModeException.Exception();
@@ -85,7 +111,7 @@ namespace RuniEngine.Resource.Sounds
                             return;
 
                         if (nbsFile != null)
-                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsMetaData.loopStartTime, nbsFile);
+                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsMetaData.loopStartTime, nbsMetaData.loopOffsetTime, nbsFile);
 
                         if (nbsMetaData != null)
                             nbsMetaDatas.Add(nbsMetaData);
