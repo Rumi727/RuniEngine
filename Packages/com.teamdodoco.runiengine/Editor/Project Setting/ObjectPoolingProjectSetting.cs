@@ -108,7 +108,7 @@ namespace RuniEngine.Editor.ProjectSetting
                     string text = EditorTool.TryGetText("gui.prefab_key");
                     Vector2 size = EditorStyles.label.CalcSize(new GUIContent(text));
 
-                    GUI.Label(new Rect(rect.x, rect.y, size.x, height), text);
+                    GUI.Label(new Rect(rect.x, rect.y, size.x + 3, height), text);
 
                     rect.x += size.x + 3;
                     size.x = initWidth - size.x;
@@ -144,7 +144,7 @@ namespace RuniEngine.Editor.ProjectSetting
                             string text = EditorTool.TryGetText("gui.prefab");
                             size = EditorStyles.label.CalcSize(new GUIContent(text));
 
-                            GUI.Label(new Rect(rect.x, rect.y, size.x, height), text);
+                            GUI.Label(new Rect(rect.x, rect.y, size.x + 3, height), text);
                         }
 
                         rect.x += size.x + 3;
