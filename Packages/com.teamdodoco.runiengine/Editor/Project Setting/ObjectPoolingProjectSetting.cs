@@ -11,6 +11,7 @@ using UnityEngine.UIElements;
 using RuniEngine.Pooling;
 using RuniEngine.Data;
 using UnityEditorInternal;
+using System;
 
 namespace RuniEngine.Editor.ProjectSetting
 {
@@ -65,11 +66,16 @@ namespace RuniEngine.Editor.ProjectSetting
 
             reorderableList.onRemoveCallback = x =>
             {
-                for (int i = 0; i < x.selectedIndices.Count; i++)
+                if (x.selectedIndices.Count > 0)
                 {
-                    int index = x.selectedIndices[i];
-                    prefabObject.RemoveAt(index.Clamp(0, x.list.Count - 1));
+                    for (int i = 0; i < x.selectedIndices.Count; i++)
+                    {
+                        int index = x.selectedIndices[i];
+                        prefabObject.RemoveAt(index.Clamp(0, x.list.Count - 1));
+                    }
                 }
+                else
+                    prefabObject.RemoveAt(x.list.Count - 1);
 
                 isChanged = true;
             };
