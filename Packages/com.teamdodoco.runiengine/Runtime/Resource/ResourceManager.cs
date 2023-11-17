@@ -83,7 +83,7 @@ namespace RuniEngine.Resource
                     catch (Exception e)
                     {
                         Debug.LogException(e);
-                        Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{namespace}", nameSpacePath), nameof(ResourceManager));
+                        Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{namespace}", nameSpacePath).Replace("{path}", nameSpacePath), nameof(ResourceManager));
                     }
                 }
             }
