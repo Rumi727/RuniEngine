@@ -62,13 +62,6 @@ namespace RuniEngine.Sounds
 
 
 
-        private void OnEnable()
-        {
-            Play();
-        }
-
-
-
         void Update()
         {
             if (audioSource == null)
