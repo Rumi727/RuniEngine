@@ -106,8 +106,8 @@ namespace RuniEngine.Sounds
 
                 audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
 
-                AudioClip audioClip = audioMetaData.audioClip;
-                if (audioClip.loadType != AudioClipLoadType.DecompressOnLoad)
+                AudioClip? audioClip = audioMetaData.audioClip;
+                if (audioClip == null || audioClip.loadType != AudioClipLoadType.DecompressOnLoad)
                     return;
 
                 _samples = new float[audioClip.samples * audioClip.channels];
