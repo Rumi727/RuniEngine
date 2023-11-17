@@ -70,8 +70,12 @@ namespace RuniEngine.Editor
 
             EditorGUI.BeginChangeCheck();
 
+            bool mixed = EditorGUI.showMixedValue;
+
             SerializedProperty? serializedProperty = UseProperty(serializedObject, propertyName, "");
             usePropertyChanged = EditorGUI.EndChangeCheck();
+
+            EditorGUI.showMixedValue = mixed;
 
             index = EditorGUILayout.Popup(Array.IndexOf(array, value), array, GUILayout.MinWidth(0));
 
