@@ -86,3 +86,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/assets/runi/audios.json.meta
 /[Aa]ssets/[Ss]treamingAssets/assets/runi/audios/*
 /[Aa]ssets/[Ss]treamingAssets/assets/runi/audios.meta
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/nbses.json
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/nbses.json.meta
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/nbses/*
+/[Aa]ssets/[Ss]treamingAssets/assets/runi/nbses.meta
