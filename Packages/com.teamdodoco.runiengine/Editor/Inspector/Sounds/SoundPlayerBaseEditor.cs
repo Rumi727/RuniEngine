@@ -98,7 +98,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             TargetsSetValue(x => x.volume, x =>
             {
                 GUILayout.Label(TryGetText("gui.volume"), GUILayout.ExpandWidth(false));
-                return EditorGUILayout.Slider((float)x.volume, 0, 3);
+                return EditorGUILayout.Slider((float)x.volume, 0, 2);
             }, (x, y) => x.volume = y, targets);
 
             Space();

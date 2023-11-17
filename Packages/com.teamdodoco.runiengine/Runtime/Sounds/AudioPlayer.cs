@@ -39,8 +39,8 @@ namespace RuniEngine.Sounds
 
         public override double time
         {
-            get => currentSampleIndex / channels.Clamp(1, 2) / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
-            set => currentSampleIndex = value * channels.Clamp(1, 2) * (frequency != 0 ? frequency : AudioLoader.systemFrequency);
+            get => currentSampleIndex / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
+            set => currentSampleIndex = value * (frequency != 0 ? frequency : AudioLoader.systemFrequency);
         }
 
         public double currentSampleIndex
@@ -183,27 +183,30 @@ namespace RuniEngine.Sounds
                     float volume = (float)this.volume;
                     bool loop = this.loop;
 
-                    int loopStartIndex = audioMetaData.loopStartIndex * channels;
-                    int loopOffsetIndex = audioMetaData.loopOffsetIndex * channels;
+                    int loopStartIndex = audioMetaData.loopStartIndex;
+                    int loopOffsetIndex = audioMetaData.loopOffsetIndex;
 
+                    int audioChannels = this.channels;
+                    int samplesLength = samples.Length / audioChannels;
+                    
                     if (realPitch > 0)
                     {
                         for (int i = 0; i < data.Length; i += channels)
                         {
                             int index;
                             if (tempo > 0)
-                                index = (int)(currentIndex + i);
+                                index = (int)((currentIndex * audioChannels) + i);
                             else
-                                index = (int)(currentIndex - i);
+                                index = (int)((currentIndex * audioChannels) - i);
 
-                            float[] value = GetAudioSample(samples, index, channels, this.channels, volume, loop, loopStartIndex, loopOffsetIndex, spatial, panStereo);
+                            float[] value = GetAudioSample(samples, index, channels, audioChannels, volume, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
                             for (int j = 0; j < channels; j++)
                                 data[i + j] = value[j];
                         }
                     }
 
                     {
-                        double value = data.Length * (realTempo / (realPitch != 0 ? realPitch : 1));
+                        double value = data.Length / audioChannels * (realTempo / (realPitch != 0 ? realPitch : 1));
                         currentIndex += value;
 
                         if (value == value.Floor())
@@ -213,15 +216,15 @@ namespace RuniEngine.Sounds
                         {
                             bool isLooped = false;
 
-                            while (tempo > 0 && currentIndex >= samples.Length)
+                            while (tempo > 0 && currentIndex >= samplesLength)
                             {
-                                currentIndex -= samples.Length - 1 - (loopStartIndex + loopOffsetIndex);
+                                currentIndex -= samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
                                 isLooped = true;
                             }
 
-                            while (tempo < 0 && currentIndex < loopStartIndex)
+                            while (tempo < 0 && currentIndex < loopStartIndex + loopOffsetIndex)
                             {
-                                currentIndex += samples.Length - 1 - (loopStartIndex + loopOffsetIndex);
+                                currentIndex += samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
                                 isLooped = true;
                             }
 
@@ -241,6 +244,9 @@ namespace RuniEngine.Sounds
             base.OnAudioFilterRead(data, channels);
         }
 
+        /// <summary>
+        /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
+        /// </summary>
         public static float[] GetAudioSample(float[] samples, int index, int channels, int audioChannels, float volume, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, float panStereo)
         {
             float[] data = new float[channels];
@@ -248,14 +254,18 @@ namespace RuniEngine.Sounds
             //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
             if (audioChannels > 2)
             {
-                //정상적으로 재생되지 않을 확률이 높음
-                for (int j = 0; j < channels; j++)
-                    data[j] = GetSample(channels) * volume;
+                for (int i = 0; i < channels; i++)
+                    data[i] = GetSample(channels) * volume;
             }
             else if (audioChannels == 2) //현재 재생중인 오디오 채널이 2일때
             {
                 //현재 시스템 채널이 1 보다 크다면 스테레오로 재생
-                if (channels > 1)
+                if (channels > 2)
+                {
+                    for (int i = 0; i < channels; i++)
+                        data[i] = GetSample(channels) * volume;
+                }
+                else if (channels == 2)
                 {
                     if (!spatial)
                     {
@@ -278,23 +288,24 @@ namespace RuniEngine.Sounds
                 }
                 else //현재 시스템 채널이 1 이하라면 모노로 재생
                 {
-                    /* 
-                     * 오디오 품질이 구려진다
-                     * 왜 그런지는 알 것 같은데 해결 방법을 ㅁ?ㄹ
-                     * 애초에 지금 템포도 구현을 잘못해놔서 이상해지지만 구현을 제대로 하기에는 너무 어렵다
-                     * 나중에 오디오 재생 다시 설계해봐야할 듯?
-                     * 그 나중에가 언제가 될진 모르겠지만...
-                     */
                     float left = GetSample(0);
                     float right = GetSample(1);
 
-                    data[0] = (left + right) * 0.5f * volume;
+                    data[0] = (left + right) * 0.66666666666666f * volume;
                 }
             }
             else if (audioChannels < 2) //현재 재생중인 오디오의 채널이 2 보다 작다면 변환 없이 재생
             {
-                for (int j = 0; j < channels; j++)
-                    data[j] = GetSample(0) * volume / channels;
+                /* 
+                 * 오디오 품질이 구려진다
+                 * 왜 그런지는 알 것 같은데 해결 방법을 ㅁ?ㄹ
+                 * 애초에 지금 템포도 구현을 잘못해놔서 이상해지지만 구현을 제대로 하기에는 너무 어렵다
+                 * 나중에 오디오 재생 다시 설계해봐야할 듯?
+                 * 그 나중에가 언제가 될진 모르겠지만...
+                 */
+
+                for (int i = 0; i < channels; i++)
+                    data[i] = GetSample(0) * volume / channels;
             }
 
             float GetSample(int i)
@@ -311,7 +322,7 @@ namespace RuniEngine.Sounds
                     if (loop)
                     {
                         int rawLoopOffsetSampleIndex = sampleIndex - (samples.Length - 1 - loopOffsetIndex);
-                        int loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(samples.Length - 1 - loopStartIndex); ;
+                        int loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(samples.Length - 1 - loopStartIndex);
                         
                         if (rawLoopOffsetSampleIndex >= 0 && loopOffsetSampleIndex >= 0 && loopOffsetSampleIndex < samples.Length)
                             sample += samples[loopOffsetSampleIndex];
