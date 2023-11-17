@@ -126,6 +126,9 @@ namespace RuniEngine.Sounds
 
         public override void Play()
         {
+            if (!isActiveAndEnabled)
+                return;
+
             Stop();
             Refresh();
 

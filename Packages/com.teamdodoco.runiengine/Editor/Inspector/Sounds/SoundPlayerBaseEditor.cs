@@ -223,7 +223,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             GUILayout.BeginHorizontal();
 
             EditorGUI.showMixedValue = mixed;
-            EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
+            EditorGUI.BeginDisabledGroup(!Kernel.isPlaying || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
 
             EditorGUI.BeginChangeCheck();
             float value = EditorGUILayout.Slider((float)target.time, 0, (float)target.length);
@@ -261,7 +261,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             //재생
             {
-                EditorGUI.BeginDisabledGroup(disable);
+                EditorGUI.BeginDisabledGroup(disable || (!target.isActiveAndEnabled && TargetsIsEquals(x => x.isActiveAndEnabled, targets)));
 
                 if (GUILayout.Button(TryGetText("gui.play")))
                 {
@@ -310,7 +310,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             //정지
             {
-                EditorGUI.BeginDisabledGroup(disable);
+                EditorGUI.BeginDisabledGroup(disable || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
 
                 if (GUILayout.Button(TryGetText("gui.stop")))
                 {
