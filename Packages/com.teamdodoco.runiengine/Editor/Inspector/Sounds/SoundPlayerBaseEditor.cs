@@ -22,13 +22,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             EditorGUI.BeginChangeCheck();
 
-            EditorGUI.showMixedValue = !TargetsIsEquals(x => x.nameSpace, targets);
-            UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace);
-            EditorGUI.showMixedValue = false;
-
-            EditorGUI.showMixedValue = !TargetsIsEquals(x => x.key, targets);
-            UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, AudioLoader.GetSoundDataKeys());
-            EditorGUI.showMixedValue = false;
+            TargetsSetValue(x => x.nameSpace, x => UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace), (x, y) => x.nameSpace = y, targets);
+            TargetsSetValue(x => x.key, x => UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, AudioLoader.GetSoundDataKeys(x.nameSpace)), (x, y) => x.key = y, targets);
 
             DrawLine();
 
