@@ -37,8 +37,15 @@ namespace RuniEngine.Editor
         {
             if (string.IsNullOrWhiteSpace(language))
             {
-                storableClass ??= new StorableClass(typeof(ProjectData));
-                storableClass.AutoNameLoad(Kernel.projectDataPath);
+                /* 
+                 * 원래 에디터 모드에서는 저장 가능한 클래스는 null이 아니여도 외부에서 값이 바뀔 수 있으니 항상 불러와야하나
+                 * 이 클래스는 외부에서 값을 바꿀 이유가 전혀 없기 때문에 최적화를 위해서 예외로 null 값일때만 불러오게 설정
+                 */
+                if (storableClass == null)
+                {
+                    storableClass = new StorableClass(typeof(ProjectData));
+                    storableClass.AutoNameLoad(Kernel.projectDataPath);
+                }
 
                 language = ProjectData.currentLanguage;
             }
@@ -55,7 +62,7 @@ namespace RuniEngine.Editor
                 {
                     loadedLanguages.TryAdd(language, new());
                     loadedLanguages[language].TryAdd(key, value);
-
+                    
                     return value;
                 }
             }
