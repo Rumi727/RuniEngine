@@ -68,6 +68,11 @@
     "gui.tick": "チック",
     "gui.index": "インデックス",
     "gui.refresh": "リフレッシュ",
+    "gui.subtitle": "字幕",
+    "gui.list_count": "リストの長さ",
+	"gui.previously": "以前",
+	"gui.next": "次に",
+    "gui.stream": "ストリーム",
 	
 	"gui.ago.years": "%value%年前",
 	"gui.ago.months": "%value%ヶ月前",

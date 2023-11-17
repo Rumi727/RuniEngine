@@ -49,6 +49,12 @@
     "gui.tick": "チック",
     "gui.index": "インデックス",
     "gui.refresh": "リフレッシュ",
+    "gui.subtitle": "字幕",
+    "gui.list_count": "リストの長さ",
+    "gui.screen_index": "スクリーンインデックス",
+	"gui.previously": "以前",
+	"gui.next": "次に",
+    "gui.stream": "ストリーム",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -144,5 +150,20 @@
     "installer.welcome.text2": "これからエンジンの初期設定を開始します。",
 
     "project_setting.object_pooling.name": "プレハブリスト",
-    "project_setting.object_pooling.warning": "'Resources'フォルダにあり、IObjectPoolingインタフェースを継承するスクリプトが一番上に含まれているオブジェクトを入れてください"
+    "project_setting.object_pooling.warning": "'Resources'フォルダにあり、IObjectPoolingインタフェースを継承するスクリプトが一番上に含まれているオブジェクトを入れてください",
+
+    "project_setting.audio.name": "オーディオリスト",
+    "project_setting.audio.audios_folder_create": "audios フォルダの作成",
+    "project_setting.audio.audios_file_create": "audios.jsonファイルの作成",
+    "project_setting.audio.audios_folder_delete": "audios フォルダーの削除",
+    "project_setting.audio.audios_file_delete": "audios.jsonファイルの削除",
+    "project_setting.audio.loop_start_index": "ループ開始インデックス",
+    "project_setting.audio.loop_offset_index": "ループオフセットインデックス",
+
+    "project_setting.nbs.name": "NBSリスト",
+    "project_setting.nbs.nbses_folder_create": "nbses フォルダの作成",
+    "project_setting.nbs.nbses_file_create": "nbses.jsonファイルの作成",
+    "project_setting.nbs.nbses_folder_delete": "nbses フォルダーの削除",
+    "project_setting.nbs.nbses_file_delete": "nbses.jsonファイルの削除",
+    "project_setting.nbs.loop_offset_tick": "ループオフセットティック"
 }

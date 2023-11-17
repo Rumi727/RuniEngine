@@ -68,6 +68,11 @@
     "gui.tick": "Tick",
     "gui.index": "Index",
     "gui.refresh": "Refresh",
+    "gui.subtitle": "Subtitle",
+    "gui.list_count": "List Length",
+	"gui.previously": "Previously",
+	"gui.next": "Next",
+    "gui.stream": "Stream",
 	
 	"gui.ago.years": "%value%y ago",
 	"gui.ago.months": "%value%m ago",

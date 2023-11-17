@@ -49,6 +49,12 @@
     "gui.tick": "Tick",
     "gui.index": "Index",
     "gui.refresh": "Refresh",
+    "gui.subtitle": "Subtitle",
+    "gui.list_count": "List Length",
+    "gui.screen_index": "Screen Index",
+	"gui.previously": "Previously",
+	"gui.next": "Next",
+    "gui.stream": "Stream",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -144,5 +150,20 @@
     "installer.welcome.text2": "From now on, we start the initial setup of the engine.",
 
     "project_setting.object_pooling.name": "Prefab List",
-    "project_setting.object_pooling.warning": "Please place an object in the 'Resources' folder that contains a script that inherits the IObjectPooling interface at the top."
+    "project_setting.object_pooling.warning": "Please place an object in the 'Resources' folder that contains a script that inherits the IObjectPooling interface at the top.",
+
+    "project_setting.audio.name": "Audio List",
+    "project_setting.audio.audios_folder_create": "Create audios folder",
+    "project_setting.audio.audios_file_create": "Create the audios.json file",
+    "project_setting.audio.audios_folder_delete": "Delete the audios folder",
+    "project_setting.audio.audios_file_delete": "Delete the audios.json file",
+    "project_setting.audio.loop_start_index": "Loop Start Index",
+    "project_setting.audio.loop_offset_index": "Loop Offset Index",
+
+    "project_setting.nbs.name": "NBS List",
+    "project_setting.nbs.nbses_folder_create": "Create nbses folder",
+    "project_setting.nbs.nbses_file_create": "Create the nbses.json file",
+    "project_setting.nbs.nbses_folder_delete": "Delete the nbses folder",
+    "project_setting.nbs.nbses_file_delete": "Delete the nbses.json File",
+    "project_setting.nbs.loop_offset_tick": "Loop Offset Tick"
 }

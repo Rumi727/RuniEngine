@@ -17,6 +17,9 @@ namespace RuniEngine.Resource
         readonly static ExtensionFilter _musicFileFilter = new ExtensionFilter(".ogg", ".mp3", ".mp2", ".wav", ".aif", ".xm", ".mod", ".it", ".vag", ".xma", ".s3m");
         public static ExtensionFilter musicFileFilter => _musicFileFilter;
 
+        readonly static ExtensionFilter _nbsFileFilter = new ExtensionFilter(".nbs");
+        public static ExtensionFilter nbsFileFilter => _nbsFileFilter;
+
         readonly static ExtensionFilter _videoFileFilter = new ExtensionFilter(".asf", ".avi", ".dv", ".m4v", ".mov", ".mp4", ".mpg", ".mpeg", ".ogv", ".vp8", ".webm", ".wmv");
         public static ExtensionFilter videoFileFilter => _videoFileFilter;
 
