@@ -21,16 +21,18 @@ namespace RuniEngine.Editor
             EditorGUILayout.EndHorizontal();
         }
 
-        public static int DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, false, Vector2.zero, tab, tab2, deleteSafety, (int index) => list[index].Equals(default(T)), displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
-        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, Vector2 scrollViewPos, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, true, scrollViewPos, tab, tab2, deleteSafety, (int index) => list[index].Equals(default(T)), displayRestrictions, displayRestrictionsIndex);
-        public static int DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, false, Vector2.zero, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
-        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, Vector2 scrollViewPos, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, true, scrollViewPos, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex);
-        public static int DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, false, Vector2.zero, tab, tab2, deleteSafety, (int index) => list[index].Equals(type.GetDefaultValue()), displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
-        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, Vector2 scrollViewPos, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, true, scrollViewPos, tab, tab2, deleteSafety, (int index) => list[index].Equals(type.GetDefaultValue()), displayRestrictions, displayRestrictionsIndex);
-        public static int DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, false, Vector2.zero, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
-        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, Vector2 scrollViewPos, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, true, scrollViewPos, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex);
-        static (Vector2 scrollViewPos, int displayRestrictionsIndex) InternalDrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, bool scrollView, Vector2 scrollViewPos, int tab, int tab2, bool deleteSafety, DrawRawListDefaultValueFunc defaultValueFunc, int displayRestrictions, int displayRestrictionsIndex)
+        public static int DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, false, Vector2.zero, out isChanged, tab, tab2, deleteSafety, (int index) => list[index].Equals(default(T)), displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
+        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, Vector2 scrollViewPos, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, true, scrollViewPos, out isChanged, tab, tab2, deleteSafety, (int index) => list[index].Equals(default(T)), displayRestrictions, displayRestrictionsIndex);
+        public static int DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, false, Vector2.zero, out isChanged, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
+        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList<T>(IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, Vector2 scrollViewPos, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(typeof(T), list, label, topFunc, true, scrollViewPos, out isChanged, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex);
+        public static int DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, false, Vector2.zero, out isChanged, tab, tab2, deleteSafety, (int index) => list[index].Equals(type.GetDefaultValue()), displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
+        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, Vector2 scrollViewPos, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, true, scrollViewPos, out isChanged, tab, tab2, deleteSafety, (int index) => list[index].Equals(type.GetDefaultValue()), displayRestrictions, displayRestrictionsIndex);
+        public static int DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, false, Vector2.zero, out isChanged, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
+        public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, DrawRawListDefaultValueFunc defaultValueFunc, Vector2 scrollViewPos, out bool isChanged, int tab = 0, int tab2 = 0, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(type, list, label, topFunc, true, scrollViewPos, out isChanged, tab, tab2, deleteSafety, defaultValueFunc, displayRestrictions, displayRestrictionsIndex);
+        static (Vector2 scrollViewPos, int displayRestrictionsIndex) InternalDrawRawList(Type type, IList list, string label, DrawRawListFunc topFunc, bool scrollView, Vector2 scrollViewPos, out bool isChanged, int tab, int tab2, bool deleteSafety, DrawRawListDefaultValueFunc defaultValueFunc, int displayRestrictions, int displayRestrictionsIndex)
         {
+            isChanged = false;
+
             //GUI
             {
                 EditorGUILayout.BeginHorizontal();
@@ -38,6 +40,8 @@ namespace RuniEngine.Editor
                 TabSpace(tab);
 
                 {
+                    EditorGUI.BeginChangeCheck();
+
                     int count = EditorGUILayout.IntField(TryGetText("gui.list_count"), list.Count, GUILayout.Height(21));
                     //변수 설정
                     if (count < 0)
@@ -63,6 +67,8 @@ namespace RuniEngine.Editor
                                 count++;
                         }
                     }
+
+                    isChanged = isChanged || EditorGUI.EndChangeCheck();
                 }
 
                 {
@@ -72,6 +78,8 @@ namespace RuniEngine.Editor
                             ((IBeatValuePairList)list).Add();
                         else*/
                             list.Add(type.GetDefaultValueNotNull());
+
+                        isChanged = isChanged || true;
                     }
                 }
 
@@ -79,7 +87,10 @@ namespace RuniEngine.Editor
                     EditorGUI.BeginDisabledGroup(deleteSafety && (list.Count <= 0 || list[list.Count - 1] != null && !defaultValueFunc.Invoke(list.Count - 1)));
 
                     if (GUILayout.Button(TryGetText("gui.remove"), GUILayout.ExpandWidth(false)) && list.Count > 0)
+                    {
                         list.RemoveAt(list.Count - 1);
+                        isChanged = isChanged || true;
+                    }
 
                     EditorGUI.EndDisabledGroup();
                 }
@@ -90,6 +101,8 @@ namespace RuniEngine.Editor
                 TabSpace(tab);
 
                 {
+                    EditorGUI.BeginChangeCheck();
+
                     int count = EditorGUILayout.IntField(TryGetText("gui.screen_index"), displayRestrictionsIndex, GUILayout.Height(21));
                     //변수 설정
                     if (count < 0)
@@ -110,6 +123,8 @@ namespace RuniEngine.Editor
                                 count++;
                         }
                     }
+
+                    isChanged = isChanged || EditorGUI.EndChangeCheck();
                 }
 
                 {
@@ -151,7 +166,11 @@ namespace RuniEngine.Editor
                 EditorGUILayout.EndHorizontal();
 
                 if (topFunc != null)
+                {
+                    EditorGUI.BeginChangeCheck();
                     list[i] = topFunc.Invoke(list[i]);
+                    isChanged = isChanged || EditorGUI.EndChangeCheck();
+                }
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.Space();
@@ -163,6 +182,8 @@ namespace RuniEngine.Editor
                             ((IBeatValuePairList)list).Insert(i + 1);
                         else*/
                             list.Insert(i + 1, type.GetDefaultValueNotNull());
+
+                        isChanged = isChanged || true;
                     }
                 }
 
@@ -170,7 +191,10 @@ namespace RuniEngine.Editor
                     EditorGUI.BeginDisabledGroup(deleteSafety && list[i] != null && !defaultValueFunc.Invoke(i));
 
                     if (GUILayout.Button(TryGetText("gui.remove"), GUILayout.ExpandWidth(false)))
+                    {
                         list.RemoveAt(i);
+                        isChanged = isChanged || true;
+                    }
 
                     EditorGUI.EndDisabledGroup();
                 }
@@ -179,7 +203,10 @@ namespace RuniEngine.Editor
                     EditorGUI.BeginDisabledGroup(i - 1 < 0);
 
                     if (GUILayout.Button(TryGetText("gui.previously"), GUILayout.ExpandWidth(false)))
+                    {
                         list.Move(i, i - 1);
+                        isChanged = isChanged || true;
+                    }
 
                     EditorGUI.EndDisabledGroup();
                 }
@@ -188,7 +215,10 @@ namespace RuniEngine.Editor
                     EditorGUI.BeginDisabledGroup(i + 1 >= list.Count);
 
                     if (GUILayout.Button(TryGetText("gui.next"), GUILayout.ExpandWidth(false)))
+                    {
                         list.Move(i, i + 1);
+                        isChanged = isChanged || true;
+                    }
 
                     EditorGUI.EndDisabledGroup();
                 }
