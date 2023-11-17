@@ -46,10 +46,13 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static NBSFile? GetNBSFile(string path) => NBSManager.ReadNBSFile(path);
+        public static NBSFile? GetNBSFile(string path)
+        {
+            if (File.Exists(path))
+                return NBSManager.ReadNBSFile(path);
 
-
-
+            return null;
+        }
 
         public static string[] GetSoundDataKeys(string nameSpace = "")
         {
@@ -106,7 +109,7 @@ namespace RuniEngine.Resource.Sounds
                         NBSMetaData? nbsMetaData = nbsData.Value.nbses[i];
                         string nbsPath = Path.Combine(folderPath, nbsMetaData.path);
 
-                        NBSFile? nbsFile = GetNBSFile(nbsPath);
+                        NBSFile? nbsFile = GetNBSFile(nbsPath + ".nbs");
                         if (!Kernel.isPlaying)
                             return;
 
