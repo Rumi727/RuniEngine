@@ -14,6 +14,14 @@ UI는 [osu!lazer](https://github.com/ppy/osu)에서 영감을 받았습니다
 
 ## 사용한 패키지와 DLL, 오픈 소스 출처
 
+### 필수
+- [UniTask](https://github.com/Cysharp/UniTask)
+- [YoutubePlayer](https://github.com/iBicha/UnityYoutubePlayer)
+- [Asynchronous Image Loader (Forked by TEAM Dodoko)](https://github.com/Rumi727/UnityAsyncImageLoader)
+  - ``https://github.com/Rumi727/UnityAsyncImageLoader.git`` 링크를 사용해서 설치하세요
+  - [원본](https://github.com/Looooong/UnityAsyncImageLoader)
+- [UI Soft Mask](https://github.com/mob-sakai/SoftMaskForUGUI)
+### 내장됨
 - [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons)
 - [BigDecimal](https://github.com/AdamWhiteHat/BigDecimal)
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib)
