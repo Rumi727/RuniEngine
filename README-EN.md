@@ -14,7 +14,22 @@ UI inspired by [osu!lazer](https://github.com/ppy/osu)
 
 ## Packages and DLLs used, open source sources
 
+### Required
+- [UniTask](https://github.com/Cysharp/UniTask)
+- [YoutubePlayer](https://github.com/iBicha/UnityYoutubePlayer)
+- [Asynchronous Image Loader (Forked by TEAM Dodoko)](https://github.com/Rumi727/UnityAsyncImageLoader)
+  - ``https://github.com/Rumi727/UnityAsyncImageLoader.git`` 링크를 사용해서 설치하세요
+  - [Original](https://github.com/Looooong/UnityAsyncImageLoader)
+- [UI Soft Mask](https://github.com/mob-sakai/SoftMaskForUGUI)
+### Built-in
 - [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons)
+- [BigDecimal](https://github.com/AdamWhiteHat/BigDecimal)
+- [SharpZipLib](https://github.com/icsharpcode/SharpZipLib)
+- [VorbisPlugin](https://github.com/gindemit/unity-project-vorbis)
+  - Added ToAudioClipAsync method to [VorbisPlugin.cs](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/src/VorbisPlugin.cs) file to load audio asynchronously and added UniTask package dependency to [assembly](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/VorbisPluginImpl.asmdef).
+
+I may have been stupid and left out some sources...
+If so, please post it in the issue.
 
 ## Source of icons used
 
