@@ -185,9 +185,9 @@ namespace RuniEngine.Sounds
                             else
                                 index = (int)((currentIndex * audioChannels) - i);
 
-                            float[] value = GetAudioSample(datas, index, channels, audioChannels, volume, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
+                            float[] value = GetAudioSample(datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
                             for (int j = 0; j < channels; j++)
-                                data[i + j] = value[j];
+                                data[i + j] = value[j] * volume;
                         }
                     }
 
@@ -233,7 +233,7 @@ namespace RuniEngine.Sounds
         /// <summary>
         /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
         /// </summary>
-        public static float[] GetAudioSample(float[] samples, int index, int channels, int audioChannels, float volume, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, float panStereo)
+        public static float[] GetAudioSample(float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, float panStereo)
         {
             float[] data = new float[channels];
 
@@ -241,7 +241,7 @@ namespace RuniEngine.Sounds
             if (audioChannels > 2)
             {
                 for (int i = 0; i < channels; i++)
-                    data[i] = GetSample(channels) * volume;
+                    data[i] = GetSample(channels);
             }
             else if (audioChannels == 2) //현재 재생중인 오디오 채널이 2일때
             {
@@ -249,7 +249,7 @@ namespace RuniEngine.Sounds
                 if (channels > 2)
                 {
                     for (int i = 0; i < channels; i++)
-                        data[i] = GetSample(channels) * volume;
+                        data[i] = GetSample(channels);
                 }
                 else if (channels == 2)
                 {
@@ -260,16 +260,16 @@ namespace RuniEngine.Sounds
                         float leftStereo = -panStereo.Clamp(-1, 0);
                         float rightStereo = panStereo.Clamp(0, 1);
 
-                        data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * volume * 1f.Lerp(0.5f, panStereo.Abs());
-                        data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * volume * 1f.Lerp(0.5f, panStereo.Abs());
+                        data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, panStereo.Abs());
+                        data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, panStereo.Abs());
                     }
                     else
                     {
                         float left = GetSample(0);
                         float right = GetSample(1);
 
-                        data[0] = left * volume;
-                        data[1] = right * volume;
+                        data[0] = left;
+                        data[1] = right;
                     }
                 }
                 else //현재 시스템 채널이 1 이하라면 모노로 재생
@@ -277,7 +277,7 @@ namespace RuniEngine.Sounds
                     float left = GetSample(0);
                     float right = GetSample(1);
 
-                    data[0] = (left + right) * 0.66666666666666f * volume;
+                    data[0] = (left + right) * 0.66666666666666f;
                 }
             }
             else if (audioChannels < 2) //현재 재생중인 오디오의 채널이 2 보다 작다면 변환 없이 재생
@@ -291,7 +291,7 @@ namespace RuniEngine.Sounds
                  */
 
                 for (int i = 0; i < channels; i++)
-                    data[i] = GetSample(0) * volume / channels;
+                    data[i] = GetSample(0) / channels;
             }
 
             float GetSample(int i)
