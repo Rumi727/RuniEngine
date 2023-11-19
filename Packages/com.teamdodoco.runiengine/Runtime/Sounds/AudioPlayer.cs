@@ -102,7 +102,7 @@ namespace RuniEngine.Sounds
 
 
 
-        public override void Refresh()
+        public override bool Refresh()
         {
             try
             {
@@ -110,11 +110,11 @@ namespace RuniEngine.Sounds
 
                 AudioData? audioData = AudioLoader.SearchAudioData(key, nameSpace);
                 if (audioData == null || audioData.audios.Length <= 0)
-                    return;
+                    return false;
 
                 AudioMetaData? audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
                 if (audioMetaData == null || audioMetaData.datas == null)
-                    return;
+                    return false;
 
                 this.audioData = audioData;
                 this.audioMetaData = audioMetaData;
@@ -123,6 +123,8 @@ namespace RuniEngine.Sounds
             {
                 ThreadManager.Unlock(ref onAudioFilterReadLock);
             }
+
+            return true;
         }
 
         public override void Play()
@@ -131,7 +133,8 @@ namespace RuniEngine.Sounds
                 return;
 
             Stop();
-            Refresh();
+            if (!Refresh())
+                return;
 
             if (audioSource != null)
             {
