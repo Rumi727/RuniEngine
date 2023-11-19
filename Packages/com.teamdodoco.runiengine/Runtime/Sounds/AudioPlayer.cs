@@ -63,6 +63,13 @@ namespace RuniEngine.Sounds
 
         public override double length => audioMetaData != null ? audioMetaData.length : 0;
 
+        public double spatialStereo
+        {
+            get => Interlocked.CompareExchange(ref _spatialStereo, 0, 0);
+            set => Interlocked.Exchange(ref _spatialStereo, value);
+        }
+        double _spatialStereo;
+
 
 
         bool isDisposable = false;
@@ -71,7 +78,7 @@ namespace RuniEngine.Sounds
 
         void Update()
         {
-            if (audioSource == null)
+            if (audioSource == null || AudioLoader.audioListener == null)
                 return;
             
             {
@@ -95,6 +102,9 @@ namespace RuniEngine.Sounds
                 audioSource.clip = null;
                 audioSource.Play();
             }
+
+            if (spatial)
+                spatialStereo = (Quaternion.Inverse(AudioLoader.audioListener.transform.rotation) * (transform.position - AudioLoader.audioListener.transform.position)).x / (transform.position - AudioLoader.audioListener.transform.position).magnitude;
 
             if (isDisposable && !loop && datas != null && (currentSampleIndex < 0 || currentSampleIndex >= datas.Length))
                 Remove();
@@ -161,6 +171,8 @@ namespace RuniEngine.Sounds
                 audioData = null;
                 audioMetaData = null;
 
+                spatialStereo = 0;
+
                 Interlocked.Exchange(ref _currentSampleIndex, 0);
             }
             finally
@@ -206,7 +218,7 @@ namespace RuniEngine.Sounds
                             else
                                 index = (int)((currentIndex * audioChannels) - i);
 
-                            GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
+                            GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo, spatialStereo);
                             for (int j = 0; j < channels; j++)
                                 data[i + j] = tempData[j] * volume;
                         }
@@ -254,7 +266,7 @@ namespace RuniEngine.Sounds
         /// <summary>
         /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
         /// </summary>
-        public static void GetAudioSample(ref float[] data, float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo)
+        public static void GetAudioSample(ref float[] data, float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo, double spatialStereo)
         {
             //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
             if (audioChannels > 2)
@@ -307,8 +319,11 @@ namespace RuniEngine.Sounds
                 }
                 else
                 {
-                    data[0] = left;
-                    data[1] = right;
+                    float leftStereo = (float)-spatialStereo.Clamp(-1, 0);
+                    float rightStereo = (float)spatialStereo.Clamp(0, 1);
+
+                    data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
+                    data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
                 }
             }
 
