@@ -7,7 +7,6 @@ using RuniEngine.Resource.Sounds;
 using RuniEngine.Threading;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UnityEngine;
 
 using Random = UnityEngine.Random;
@@ -106,7 +105,7 @@ namespace RuniEngine.Sounds
             
             if (!isPaused && realTempo != 0)
             {
-                _tick += Kernel.deltaTimeDouble * (nbsFile.tickTempo * 0.01f) * realTempo.Abs();
+                _tick += Kernel.deltaTimeDouble * (nbsFile.tickTempo * 0.01f) * realTempo;
 
                 Loop();
                 SetIndex();
@@ -373,14 +372,14 @@ namespace RuniEngine.Sounds
 
                 for (int j = 0; j < audioPlayer.channels; j++)
                 {
-                    audioPlayer.audioSource.GetOutputData(tempDatas, j + 1);
+                    audioPlayer.audioSource.GetOutputData(tempDatas, j);
 
                     for (int k = 0; k < tempDatas.Length; k++)
                         audioDatas[k] += tempDatas[k] / audioPlayer.channels;
                 }
             }
 
-            OnAudioFilterRead(audioDatas, 1);
+            OnAudioFilterRead(audioDatas, AudioLoader.systemChannels);
         }
     }
 }
