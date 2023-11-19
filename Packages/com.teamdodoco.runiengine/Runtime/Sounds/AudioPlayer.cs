@@ -172,11 +172,15 @@ namespace RuniEngine.Sounds
 
 
         [NonSerialized] int onAudioFilterReadLock = 0;
+        [NonSerialized] float[] tempData = new float[0];
         protected override void OnAudioFilterRead(float[] data, int channels)
         {
             try
             {
                 ThreadManager.Lock(ref onAudioFilterReadLock);
+
+                if (tempData.Length != AudioLoader.systemChannels)
+                    tempData = new float[AudioLoader.systemChannels];
                 
                 if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
                 {
@@ -202,9 +206,9 @@ namespace RuniEngine.Sounds
                             else
                                 index = (int)((currentIndex * audioChannels) - i);
 
-                            float[] value = GetAudioSample(datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
+                            GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
                             for (int j = 0; j < channels; j++)
-                                data[i + j] = value[j] * volume;
+                                data[i + j] = tempData[j] * volume;
                         }
                     }
 
@@ -250,10 +254,8 @@ namespace RuniEngine.Sounds
         /// <summary>
         /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
         /// </summary>
-        public static float[] GetAudioSample(float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo)
+        public static void GetAudioSample(ref float[] data, float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo)
         {
-            float[] data = new float[channels];
-
             //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
             if (audioChannels > 2)
             {
@@ -336,7 +338,7 @@ namespace RuniEngine.Sounds
                 return 0;
             }
 
-            return data;
+            return;
         }
 
         public static AudioPlayer? PlayAudio(string key, string nameSpace = "", double volume = 1, bool loop = false, double pitch = 1, double tempo = 1, double panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
