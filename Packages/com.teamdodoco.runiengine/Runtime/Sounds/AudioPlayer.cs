@@ -219,7 +219,7 @@ namespace RuniEngine.Sounds
                         }
                     }
 
-                    currentSampleIndex = currentIndex;
+                    Interlocked.Exchange(ref _currentSampleIndex, currentIndex);
                 }
             }
             finally
