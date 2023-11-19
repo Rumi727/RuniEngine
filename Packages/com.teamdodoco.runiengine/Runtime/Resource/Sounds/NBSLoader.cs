@@ -117,7 +117,7 @@ namespace RuniEngine.Resource.Sounds
                             return;
 
                         if (nbsFile != null)
-                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsMetaData.loopOffsetTick, nbsFile);
+                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsFile);
 
                         if (nbsMetaData != null)
                             nbsMetaDatas.Add(nbsMetaData);
