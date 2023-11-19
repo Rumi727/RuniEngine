@@ -164,6 +164,8 @@ namespace RuniEngine.Sounds
                 if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
                 {
                     double currentIndex = currentSampleIndex;
+                    double tempo = realTempo;
+                    double pitch = realPitch;
                     float volume = (float)this.volume;
                     bool loop = this.loop;
 
@@ -173,7 +175,7 @@ namespace RuniEngine.Sounds
                     int audioChannels = this.channels;
                     int samplesLength = datas.Length / audioChannels;
                     
-                    if (realPitch > 0)
+                    if (pitch > 0)
                     {
                         for (int i = 0; i < data.Length; i += channels)
                         {
@@ -190,7 +192,7 @@ namespace RuniEngine.Sounds
                     }
 
                     {
-                        double value = data.Length / audioChannels * (realTempo / (realPitch != 0 ? realPitch : 1));
+                        double value = data.Length / audioChannels * (tempo / (pitch != 0 ? pitch : 1));
                         currentIndex += value;
 
                         if (value == value.Floor())
