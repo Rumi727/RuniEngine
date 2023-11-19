@@ -23,6 +23,19 @@ namespace RuniEngine.Resource.Sounds
         public static int systemChannels { get => Interlocked.Add(ref _systemChannels, 0); }
         static int _systemChannels = 2;
 
+        public static AudioListener? audioListener
+        {
+            get
+            {
+                if (_audioListener == null || _audioListener.isActiveAndEnabled)
+                    _audioListener = Object.FindFirstObjectByType<AudioListener>();
+
+                return _audioListener;
+            }
+        }
+
+        static AudioListener? _audioListener;
+
 
 
         /// <summary>
