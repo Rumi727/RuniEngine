@@ -134,6 +134,7 @@ namespace RuniEngine.Sounds
             this.nbsData = nbsData;
             this.nbsMetaData = nbsMetaData;
 
+            _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - tick).Abs()).index;
             return true;
         }
 
