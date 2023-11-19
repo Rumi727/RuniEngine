@@ -1,3 +1,6 @@
 {
-  "prefabList": {}
+  "prefabList": {
+    "audio_player.prefab": "Prefab/Audio Player",
+    "nbs_player.prefab": "Prefab/NBS Player"
+  }
 }
