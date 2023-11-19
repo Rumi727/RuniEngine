@@ -65,7 +65,7 @@ namespace RuniEngine.Sounds
 
 
 
-        bool isPrefab = false;
+        bool isDisposable = false;
 
 
 
@@ -96,7 +96,7 @@ namespace RuniEngine.Sounds
                 audioSource.Play();
             }
 
-            if (isPrefab && !loop && datas != null && (currentSampleIndex < 0 || currentSampleIndex >= datas.Length))
+            if (isDisposable && !loop && datas != null && (currentSampleIndex < 0 || currentSampleIndex >= datas.Length))
                 Remove();
         }
 
@@ -370,7 +370,7 @@ namespace RuniEngine.Sounds
 
             audioPlayer.transform.localPosition = position;
 
-            audioPlayer.isPrefab = true;
+            audioPlayer.isDisposable = true;
             audioPlayer.Play();
 
             return audioPlayer;
