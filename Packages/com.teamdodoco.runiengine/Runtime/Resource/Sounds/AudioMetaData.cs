@@ -1,6 +1,5 @@
 #nullable enable
 using Newtonsoft.Json;
-using RuniEngine.NBS;
 using UnityEngine;
 
 namespace RuniEngine.Resource.Sounds
@@ -13,11 +12,31 @@ namespace RuniEngine.Resource.Sounds
             this.loopOffsetIndex = loopOffsetIndex;
 
             this.audioClip = audioClip;
+            if (audioClip != null)
+            {
+                if (audioClip.loadType == AudioClipLoadType.DecompressOnLoad)
+                {
+                    datas = new float[audioClip.samples * audioClip.channels];
+                    audioClip.GetData(datas, 0);
+                }
+
+                frequency = audioClip.frequency;
+                channels = audioClip.channels;
+
+                length = audioClip.length;
+            }
         }
 
         public int loopStartIndex { get; } = 0;
         public int loopOffsetIndex { get; } = 0;
 
         [JsonIgnore] public AudioClip? audioClip { get; }
+
+        [JsonIgnore] public float[]? datas { get; }
+
+        [JsonIgnore] public int frequency { get; }
+        [JsonIgnore] public int channels { get; }
+
+        [JsonIgnore] public float length { get; }
     }
 }
