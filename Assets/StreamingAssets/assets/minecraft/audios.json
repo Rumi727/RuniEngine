@@ -1,0 +1,226 @@
+{
+  "block.note_block.banjo": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/banjo",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.bass": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/bass",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.bassdrum": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/bd",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.bell": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/bell",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.bit": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/bit",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.cow_bell": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/cow_bell",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.didgeridoo": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/didgeridoo",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.flute": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/flute",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.guitar": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/guitar",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.harp": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/harp",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.hat": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/hat",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.chime": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/icechime",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.iron_xylophone": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/iron_xylophone",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.pling": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/pling",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.snare": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/snare",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  },
+  "block.note_block.xylobone": {
+    "audios": [
+      {
+        "loopStartIndex": 0,
+        "loopOffsetIndex": 0,
+        "path": "note/xylobone",
+        "pitch": 1.0,
+        "tempo": 1.0,
+        "stream": false
+      }
+    ],
+    "subtitle": "",
+    "isBGM": false
+  }
+}
