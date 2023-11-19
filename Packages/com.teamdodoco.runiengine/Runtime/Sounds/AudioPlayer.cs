@@ -1,4 +1,7 @@
 #nullable enable
+using RuniEngine.Booting;
+using RuniEngine.Pooling;
+using RuniEngine.Resource;
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Threading;
 using System;
@@ -12,6 +15,10 @@ namespace RuniEngine.Sounds
     [RequireComponent(typeof(AudioSource))]
     public sealed class AudioPlayer : SoundPlayerBase
     {
+        public override string objectKey => "audio_player.prefab";
+
+
+
         readonly AudioSource? _audioSource;
         public AudioSource? audioSource => this.GetComponentFieldSave(_audioSource);
 
@@ -58,6 +65,10 @@ namespace RuniEngine.Sounds
 
 
 
+        bool isPrefab = false;
+
+
+
         void Update()
         {
             if (audioSource == null)
@@ -71,8 +82,6 @@ namespace RuniEngine.Sounds
                     audioSource.pitch = 1;
             }
 
-            audioSource.volume = 1;
-            //audioSource.panStereo = panStereo;
             audioSource.spatialBlend = spatial ? 1 : 0;
 
             audioSource.minDistance = minDistance;
@@ -86,6 +95,9 @@ namespace RuniEngine.Sounds
                 audioSource.clip = null;
                 audioSource.Play();
             }
+
+            if (isPrefab && !loop && datas != null && (currentSampleIndex < 0 || currentSampleIndex >= datas.Length))
+                Remove();
         }
 
 
@@ -202,7 +214,7 @@ namespace RuniEngine.Sounds
                         {
                             bool isLooped = false;
 
-                            while (tempo > 0 && currentIndex >= samplesLength)
+                            while (tempo >= 0 && currentIndex >= samplesLength)
                             {
                                 currentIndex -= samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
                                 isLooped = true;
@@ -321,6 +333,44 @@ namespace RuniEngine.Sounds
             }
 
             return data;
+        }
+
+        public static AudioPlayer? PlayAudio(string key, string nameSpace = "", double volume = 1, bool loop = false, double pitch = 1, double tempo = 1, double panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
+
+        public static AudioPlayer? PlayAudio(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
+
+        static AudioPlayer? InternalPlayAudio(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
+        {
+            NotMainThreadException.Exception();
+            NotPlayModeException.Exception();
+            ResourceDataNotLoadedException.Exception();
+
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            AudioPlayer? audioPlayer = (AudioPlayer?)ObjectPoolingManager.ObjectCreate("audio_player.prefab", parent).monoBehaviour;
+            if (audioPlayer == null)
+                return null;
+
+            audioPlayer.key = key;
+            audioPlayer.nameSpace = nameSpace;
+
+            audioPlayer.volume = volume;
+            audioPlayer.loop = loop;
+            audioPlayer.pitch = pitch;
+            audioPlayer.tempo = tempo;
+
+            audioPlayer.panStereo = panStereo;
+            audioPlayer.spatial = spatial;
+
+            audioPlayer.minDistance = minDistance;
+            audioPlayer.maxDistance = maxDistance;
+
+            audioPlayer.transform.localPosition = position;
+
+            audioPlayer.isPrefab = true;
+            audioPlayer.Play();
+
+            return audioPlayer;
         }
     }
 }
