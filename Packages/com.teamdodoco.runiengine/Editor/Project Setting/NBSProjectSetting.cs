@@ -95,7 +95,6 @@ namespace RuniEngine.Editor.ProjectSetting
                                 bool stream = metaData.stream;
                                 double pitch = metaData.pitch;
                                 double tempo = metaData.tempo;
-                                int loopOffsetTick = metaData.loopOffsetTick;
 
                                 {
                                     EditorGUILayout.BeginHorizontal();
@@ -160,17 +159,17 @@ namespace RuniEngine.Editor.ProjectSetting
                                     stream = EditorGUILayout.Toggle(stream, GUILayout.Width(20));
 
                                     EditorGUILayout.EndHorizontal();
-                                    EditorGUILayout.BeginHorizontal();
+                                    /*EditorGUILayout.BeginHorizontal();
 
                                     GUILayout.Label(EditorTool.TryGetText("project_setting.nbs.loop_offset_tick"), GUILayout.ExpandWidth(false));
                                     loopOffsetTick = EditorGUILayout.IntField(loopOffsetTick).Clamp(0);
 
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
-                                    EditorGUILayout.EndHorizontal();
+                                    EditorGUILayout.EndHorizontal();*/
                                 }
 
-                                return new NBSMetaData(nbsPath, pitch, tempo, stream, loopOffsetTick, null);
-                            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new NBSMetaData("", 1, 1, false, 0, null)), out bool isListChanged, deleteSafety2);
+                                return new NBSMetaData(nbsPath, pitch, tempo, stream, null);
+                            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new NBSMetaData("", 1, 1, false, null)), out bool isListChanged, deleteSafety2);
 
                             isChanged = isChanged || isListChanged;
                         }
