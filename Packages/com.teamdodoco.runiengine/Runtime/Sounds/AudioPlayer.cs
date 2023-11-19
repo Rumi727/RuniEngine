@@ -25,16 +25,13 @@ namespace RuniEngine.Sounds
 
 
 
-        public float[] samples => _samples;
-        [NonSerialized] float[] _samples = new float[0];
+        public float[]? datas => audioMetaData?.datas;
 
 
 
-        public int frequency => _frequency;
-        int _frequency = 0;
+        public int frequency => audioMetaData != null ? audioMetaData.frequency : 0;
 
-        public int channels => _channels;
-        int _channels = 0;
+        public int channels => audioMetaData != null ? audioMetaData.channels : 0;
 
 
         public override double time
@@ -57,8 +54,7 @@ namespace RuniEngine.Sounds
         }
         double _currentSampleIndex;
 
-        public override double length => _length;
-        double _length = 0;
+        public override double length => audioMetaData != null ? audioMetaData.length : 0;
 
 
 
@@ -100,23 +96,16 @@ namespace RuniEngine.Sounds
             {
                 ThreadManager.Lock(ref onAudioFilterReadLock);
 
-                audioData = AudioLoader.SearchAudioData(key, nameSpace);
+                AudioData? audioData = AudioLoader.SearchAudioData(key, nameSpace);
                 if (audioData == null || audioData.audios.Length <= 0)
                     return;
 
-                audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
-
-                AudioClip? audioClip = audioMetaData.audioClip;
-                if (audioClip == null || audioClip.loadType != AudioClipLoadType.DecompressOnLoad)
+                AudioMetaData? audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
+                if (audioMetaData == null || audioMetaData.datas == null)
                     return;
 
-                _samples = new float[audioClip.samples * audioClip.channels];
-                audioClip.GetData(samples, 0);
-
-                _frequency = audioClip.frequency;
-                _channels = audioClip.channels;
-
-                _length = audioClip.length;
+                this.audioData = audioData;
+                this.audioMetaData = audioMetaData;
             }
             finally
             {
@@ -155,11 +144,6 @@ namespace RuniEngine.Sounds
                 audioData = null;
                 audioMetaData = null;
 
-                _frequency = 0;
-                _channels = 0;
-
-                _length = 0;
-
                 Interlocked.Exchange(ref _currentSampleIndex, 0);
             }
             finally
@@ -177,7 +161,7 @@ namespace RuniEngine.Sounds
             {
                 ThreadManager.Lock(ref onAudioFilterReadLock);
                 
-                if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null)
+                if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
                 {
                     double currentIndex = currentSampleIndex;
                     float volume = (float)this.volume;
@@ -187,7 +171,7 @@ namespace RuniEngine.Sounds
                     int loopOffsetIndex = audioMetaData.loopOffsetIndex;
 
                     int audioChannels = this.channels;
-                    int samplesLength = samples.Length / audioChannels;
+                    int samplesLength = datas.Length / audioChannels;
                     
                     if (realPitch > 0)
                     {
@@ -199,7 +183,7 @@ namespace RuniEngine.Sounds
                             else
                                 index = (int)((currentIndex * audioChannels) - i);
 
-                            float[] value = GetAudioSample(samples, index, channels, audioChannels, volume, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
+                            float[] value = GetAudioSample(datas, index, channels, audioChannels, volume, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo);
                             for (int j = 0; j < channels; j++)
                                 data[i + j] = value[j];
                         }
