@@ -1,5 +1,4 @@
 #nullable enable
-using RuniEngine.Resource.Sounds;
 using RuniEngine.Sounds;
 using System;
 using System.Reflection;
@@ -8,7 +7,7 @@ using UnityEngine;
 
 namespace RuniEngine.Editor.Inspector.Sounds
 {
-    public class SoundPlayerBaseEditor : CustomInspectorBase<SoundPlayerBase>
+    public abstract class SoundPlayerBaseEditor : CustomInspectorBase<SoundPlayerBase>
     {
         static Type? _audioFilterGUIType;
         public static Type audioFilterGUIType => _audioFilterGUIType ??= editorAssembly.GetType("UnityEditor.AudioFilterGUI");
@@ -45,8 +44,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             EditorGUI.BeginChangeCheck();
 
-            TargetsSetValue(x => x.nameSpace, x => UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace), (x, y) => x.nameSpace = y, targets);
-            TargetsSetValue(x => x.key, x => UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, AudioLoader.GetSoundDataKeys(x.nameSpace)), (x, y) => x.key = y, targets);
+            NameSpaceKeyGUI();
 
             DrawLine();
 
@@ -75,6 +73,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
                     EditorUtility.SetDirty(targets[i]);
             }
         }
+
+        protected abstract void NameSpaceKeyGUI();
 
         protected virtual void VolumePitchTempoGUI()
         {
