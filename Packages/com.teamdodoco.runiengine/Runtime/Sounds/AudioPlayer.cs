@@ -266,7 +266,7 @@ namespace RuniEngine.Sounds
                 if (channels >= 2)
                 {
                     for (int i = 0; i < channels; i++)
-                        data[i] = GetSample(channels);
+                        data[i] = GetSample(i);
                 }
                 else //현재 시스템 채널이 1 이하라면 모노로 재생
                 {
