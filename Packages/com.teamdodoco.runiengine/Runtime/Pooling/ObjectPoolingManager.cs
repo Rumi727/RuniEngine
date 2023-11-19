@@ -15,7 +15,12 @@ namespace RuniEngine.Pooling
             get
             {
                 if (_instance == null)
+                {
                     _instance = Instantiate(ResourceUtility.emptyRectTransform);
+                    DontDestroyOnLoad(_instance);
+
+                    _instance.name = "Object Pool";
+                }
 
                 return _instance;
             }
