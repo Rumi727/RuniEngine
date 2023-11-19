@@ -90,7 +90,7 @@ namespace RuniEngine.Resource.Sounds
 
             allNBSes = tempAllNBSes;
 
-            static async UniTask Thread(string nameSpacePath, string nameSpace)
+            async UniTask Thread(string nameSpacePath, string nameSpace)
             {
                 string folderPath = Path.Combine(nameSpacePath, name);
 
@@ -109,7 +109,10 @@ namespace RuniEngine.Resource.Sounds
                         NBSMetaData? nbsMetaData = nbsData.Value.nbses[i];
                         string nbsPath = Path.Combine(folderPath, nbsMetaData.path);
 
-                        NBSFile? nbsFile = GetNBSFile(nbsPath + ".nbs");
+                        if (!ResourceManager.FileExtensionExists(nbsPath, out nbsPath, ExtensionFilter.nbsFileFilter))
+                            return;
+                        
+                        NBSFile? nbsFile = GetNBSFile(nbsPath);
                         if (!Kernel.isPlaying)
                             return;
 
@@ -120,8 +123,8 @@ namespace RuniEngine.Resource.Sounds
                             nbsMetaDatas.Add(nbsMetaData);
                     }
 
-                    allNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
-                    allNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
+                    tempAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
+                    tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
                 }
 
                 await UniTask.CompletedTask;
