@@ -136,6 +136,8 @@ namespace RuniEngine.Sounds
             if (!Refresh())
                 return;
 
+            Update();
+
             if (audioSource != null)
             {
                 audioSource.clip = null;
@@ -261,31 +263,10 @@ namespace RuniEngine.Sounds
             else if (audioChannels == 2) //현재 재생중인 오디오 채널이 2일때
             {
                 //현재 시스템 채널이 1 보다 크다면 스테레오로 재생
-                if (channels > 2)
+                if (channels >= 2)
                 {
                     for (int i = 0; i < channels; i++)
                         data[i] = GetSample(channels);
-                }
-                else if (channels == 2)
-                {
-                    if (!spatial)
-                    {
-                        float left = GetSample(0);
-                        float right = GetSample(1);
-                        float leftStereo = (float)-panStereo.Clamp(-1, 0);
-                        float rightStereo = (float)panStereo.Clamp(0, 1);
-
-                        data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
-                        data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
-                    }
-                    else
-                    {
-                        float left = GetSample(0);
-                        float right = GetSample(1);
-
-                        data[0] = left;
-                        data[1] = right;
-                    }
                 }
                 else //현재 시스템 채널이 1 이하라면 모노로 재생
                 {
@@ -307,6 +288,26 @@ namespace RuniEngine.Sounds
 
                 for (int i = 0; i < channels; i++)
                     data[i] = GetSample(0) / channels;
+            }
+
+            if (channels >= 2)
+            {
+                float left = data[0];
+                float right = data[1];
+
+                if (!spatial)
+                {
+                    float leftStereo = (float)-panStereo.Clamp(-1, 0);
+                    float rightStereo = (float)panStereo.Clamp(0, 1);
+
+                    data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
+                    data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
+                }
+                else
+                {
+                    data[0] = left;
+                    data[1] = right;
+                }
             }
 
             float GetSample(int i)
