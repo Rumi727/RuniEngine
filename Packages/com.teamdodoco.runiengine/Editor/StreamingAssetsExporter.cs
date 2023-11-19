@@ -13,7 +13,8 @@ namespace RuniEngine.Editor
             string[] path = new string[]
             {
                 Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, "runi"),
-                Path.Combine("Assets", Kernel.streamingAssetsFolderName, "projectData", "runi")
+                Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, "minecraft"),
+                Path.Combine("Assets", Kernel.streamingAssetsFolderName, "projectData")
             };
 
             AssetDatabase.ExportPackage(path,
