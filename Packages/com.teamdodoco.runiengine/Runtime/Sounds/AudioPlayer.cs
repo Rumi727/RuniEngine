@@ -233,7 +233,7 @@ namespace RuniEngine.Sounds
         /// <summary>
         /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
         /// </summary>
-        public static float[] GetAudioSample(float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, float panStereo)
+        public static float[] GetAudioSample(float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo)
         {
             float[] data = new float[channels];
 
@@ -257,11 +257,11 @@ namespace RuniEngine.Sounds
                     {
                         float left = GetSample(0);
                         float right = GetSample(1);
-                        float leftStereo = -panStereo.Clamp(-1, 0);
-                        float rightStereo = panStereo.Clamp(0, 1);
+                        float leftStereo = (float)-panStereo.Clamp(-1, 0);
+                        float rightStereo = (float)panStereo.Clamp(0, 1);
 
-                        data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, panStereo.Abs());
-                        data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, panStereo.Abs());
+                        data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
+                        data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
                     }
                     else
                     {

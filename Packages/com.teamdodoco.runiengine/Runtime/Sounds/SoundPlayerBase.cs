@@ -98,23 +98,25 @@ namespace RuniEngine.Sounds
 
 
 
-        public float minDistance { get => _minDistance; set => _minDistance = value; }
-        [SerializeField, Range(0, 32)] float _minDistance = 0;
-
-        public float maxDistance { get => _maxDistance; set => _maxDistance = value; }
-        [SerializeField, Range(0, 32)] float _maxDistance = 16;
-
-        public float panStereo
+        public double panStereo
         {
             get => Interlocked.CompareExchange(ref _panStereo, 0, 0);
             set => Interlocked.Exchange(ref _panStereo, value);
         }
-        [SerializeField, Range(-1, 1)] float _panStereo = 0;
+        [SerializeField, Range(-1, 1)] double _panStereo = 0;
 
 
 
         public bool spatial { get => _spatial; set => _spatial = value; }
         [SerializeField] bool _spatial = false;
+
+
+
+        public float minDistance { get => _minDistance; set => _minDistance = value; }
+        [SerializeField, Range(0, 32)] float _minDistance = 0;
+
+        public float maxDistance { get => _maxDistance; set => _maxDistance = value; }
+        [SerializeField, Range(0, 32)] float _maxDistance = 16;
 
 
 

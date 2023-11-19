@@ -148,7 +148,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                     TargetsSetValue(x => x.panStereo, x =>
                     {
                         GUILayout.Label(TryGetText("inspector.sound_player_base.pan_stereo"), GUILayout.ExpandWidth(false));
-                        return EditorGUILayout.Slider(x.panStereo, -1, 1);
+                        return EditorGUILayout.Slider((float)x.panStereo, -1, 1);
                     }, (x, y) => x.panStereo = y, targets);
 
                     Space();
@@ -167,7 +167,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 TargetsSetValue(x => x.panStereo, x =>
                 {
                     GUILayout.Label(TryGetText("inspector.sound_player_base.pan_stereo"), GUILayout.ExpandWidth(false));
-                    return EditorGUILayout.Slider(x.panStereo, -1, 1);
+                    return EditorGUILayout.Slider((float)x.panStereo, -1, 1);
                 }, (x, y) => x.panStereo = y, targets);
             }
 
