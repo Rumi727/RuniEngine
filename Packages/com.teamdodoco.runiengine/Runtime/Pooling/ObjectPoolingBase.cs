@@ -7,7 +7,7 @@ namespace RuniEngine.Pooling
 {
     public abstract class ObjectPoolingBase : MonoBehaviour, IObjectPooling
     {
-        public string objectKey { get; set; } = string.Empty;
+        public virtual string objectKey { get; set; } = string.Empty;
 
         public bool isRemoved => !isActived;
 
