@@ -53,5 +53,5 @@ MonoBehaviour:
   _volume: 1
   _panStereo: 0
   _spatial: 0
-  _minDistance: 0
+  _minDistance: 1
   _maxDistance: 16
