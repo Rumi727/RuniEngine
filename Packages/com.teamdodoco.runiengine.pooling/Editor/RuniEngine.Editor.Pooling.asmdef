@@ -1,0 +1,18 @@
+{
+    "name": "RuniEngine.Editor.Pooling",
+    "rootNamespace": "RuniEngine.Editor",
+    "references": [
+        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
+        "GUID:33d28b00c078f314fa38a6a00f3b508a",
+        "GUID:d19976c8233edf14ba31681d949961c5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

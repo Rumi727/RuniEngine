@@ -11,8 +11,6 @@
     "com.unity.modules.ui": "1.0.0",
     "com.unity.modules.uielements": "1.0.0",
     "com.unity.modules.imgui": "1.0.0",
-    "com.unity.modules.audio": "1.0.0",
-    "com.unity.modules.unitywebrequestaudio": "1.0.0",
     "com.unity.modules.video": "1.0.0",
     "com.cysharp.unitask": "2.3.3",
     "com.coffee.softmask-for-ugui": "1.0.2",

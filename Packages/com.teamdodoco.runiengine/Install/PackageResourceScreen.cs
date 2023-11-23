@@ -17,13 +17,14 @@ namespace RuniEngine.Install
 
         public void DrawGUI()
         {
-            PackageImportButton(EditorTool.TryGetText("gui.streaming_assets"), Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName));
-            PackageImportButton(EditorTool.TryGetText("gui.font"), "Fonts", Path.Combine(EditorTool.assetsResourcePathParent, "Fonts"));
+            PackageImportButton(EditorTool.TryGetText("gui.streaming_assets"), EditorTool.packagePath, Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "runi"));
+            PackageImportButton(EditorTool.TryGetText("gui.streaming_assets") + " (NBS)", EditorTool.packagePath + ".nbs", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "minecraft"));
+            PackageImportButton(EditorTool.TryGetText("gui.font"), EditorTool.packagePath, "Fonts", Path.Combine(EditorTool.assetsResourcePathParent, "Fonts"));
         }
 
-        public void PackageImportButton(string title, string packagePath, string existsPath)
+        public void PackageImportButton(string title, string packagePath, string path, string existsPath)
         {
-            string allPackagePath = Path.Combine(EditorTool.packageResourcesPath, packagePath + ".unitypackage");
+            string allPackagePath = Path.Combine(packagePath, EditorTool.packageResourcesPath, path + ".unitypackage");
             if (!File.Exists(allPackagePath))
             {
                 EditorGUILayout.HelpBox(EditorTool.TryGetText("installer.package_resource.package_none").Replace("{name}", title), MessageType.Error);

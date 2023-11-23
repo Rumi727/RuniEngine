@@ -1,0 +1,19 @@
+{
+    "name": "RuniEngine.NBS",
+    "rootNamespace": "RuniEngine",
+    "references": [
+        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
+        "GUID:c518712db64a12047921fb83a0a2e7d8",
+        "GUID:33d28b00c078f314fa38a6a00f3b508a",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

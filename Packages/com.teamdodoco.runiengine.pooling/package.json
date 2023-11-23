@@ -1,0 +1,20 @@
+{
+  "name": "com.teamdodoco.runiengine.pooling",
+  "version": "0.0.0",
+  "author": {
+    "name": "Rumi"
+  },
+  "unity": "2021.1",
+  "displayName": "Runi Engine Object Pooling",
+  "description": "This is a package that adds pooling-related scripts",
+  "dependencies": {
+    "com.teamdodoco.runiengine": "0.0.0"
+  },
+  "keywords": [
+    "Runi",
+    "Runi Engine",
+    "Engine",
+    "NBS"
+  ],
+  "license": "MIT"
+}
