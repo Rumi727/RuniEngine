@@ -7,9 +7,9 @@ namespace RuniEngine.Editor
     {
         public const string packagePath = "Packages/com.teamdodoco.runiengine";
 
-        public const string packageRuntimePath = packagePath + "/Runtime";
-        public const string packageEditorPath = packagePath + "/Editor";
-        public const string packageResourcesPath = packagePath + "/Package Resources";
+        public const string packageRuntimePath = "Runtime";
+        public const string packageEditorPath = "Editor";
+        public const string packageResourcesPath = "Package Resources";
 
         public const string assetsResourcePathParent = "Assets/Runi Engine/Resources";
 

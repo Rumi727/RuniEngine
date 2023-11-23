@@ -51,8 +51,6 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.uielements": "1.0.0",
         "com.unity.modules.imgui": "1.0.0",
-        "com.unity.modules.audio": "1.0.0",
-        "com.unity.modules.unitywebrequestaudio": "1.0.0",
         "com.unity.modules.video": "1.0.0",
         "com.cysharp.unitask": "2.3.3",
         "com.coffee.softmask-for-ugui": "1.0.2",
@@ -61,6 +59,35 @@
         "com.unity.textmeshpro": "3.0.6",
         "com.looooong.asyncimageloader_forked_by_teamdodoko": "727.1.3",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
+    },
+    "com.teamdodoco.runiengine.nbs": {
+      "version": "file:com.teamdodoco.runiengine.nbs",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.teamdodoco.runiengine": "0.0.0",
+        "com.teamdodoco.runiengine.sounds": "0.0.0"
+      }
+    },
+    "com.teamdodoco.runiengine.pooling": {
+      "version": "file:com.teamdodoco.runiengine.pooling",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.teamdodoco.runiengine": "0.0.0"
+      }
+    },
+    "com.teamdodoco.runiengine.sounds": {
+      "version": "file:com.teamdodoco.runiengine.sounds",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.modules.audio": "1.0.0",
+        "com.unity.modules.unitywebrequestaudio": "1.0.0",
+        "com.cysharp.unitask": "2.3.3",
+        "com.teamdodoco.runiengine": "0.0.0",
+        "com.teamdodoco.runiengine.pooling": "0.0.0"
       }
     },
     "com.unity.ai.navigation": {

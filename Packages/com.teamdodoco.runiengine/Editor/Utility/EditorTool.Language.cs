@@ -16,7 +16,7 @@ namespace RuniEngine.Editor
             [JsonProperty] public static string currentLanguage { get; set; } = "en_us";
         }
 
-        public const string packageLanguagePath = packageEditorPath + "/Languages";
+        public const string packageLanguagePath = packagePath + "/" + packageEditorPath + "/Languages";
 
         /// <summary>
         /// value = loadedLanguages[language][key];

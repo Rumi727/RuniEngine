@@ -1,6 +1,5 @@
 #nullable enable
 using RuniEngine.Resource;
-using RuniEngine.Splash;
 using System.IO;
 using UnityEditor;
 
@@ -8,17 +7,17 @@ namespace RuniEngine.Editor
 {
     public static class StreamingAssetsExporter
     {
-        [MenuItem("Runi Engine/Streaming Assets Export")]
+        [MenuItem("Runi Engine/Streaming Assets Export (NBS)")]
         public static void StreamingAssetsExport()
         {
             {
                 string[] path = new string[]
                 {
-                    Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, "runi", "lang")
+                    Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, "minecraft")
                 };
 
                 AssetDatabase.ExportPackage(path,
-                    Path.Combine(EditorTool.packagePath, EditorTool.packageResourcesPath, Kernel.streamingAssetsFolderName + ".unitypackage"),
+                    Path.Combine(EditorTool.packagePath + ".nbs", EditorTool.packageResourcesPath, Kernel.streamingAssetsFolderName + ".unitypackage"),
                     ExportPackageOptions.Recurse);
             }
         }
