@@ -102,6 +102,9 @@ namespace RuniEngine.Booting
             }
             Debug.Log("Storable Class Loaded", nameof(BootLoader));
 
+            //Awaken Invoke
+            AttributeInvoke<StartenAttribute>();
+
             Debug.Log("Resource Loading...", nameof(BootLoader));
 
             await ResourceManager.Refresh();
