@@ -113,7 +113,7 @@ namespace RuniEngine.Sounds
 
 
         public float minDistance { get => _minDistance; set => _minDistance = value; }
-        [SerializeField, Range(0, 32)] float _minDistance = 0;
+        [SerializeField, Range(0, 32)] float _minDistance = 1;
 
         public float maxDistance { get => _maxDistance; set => _maxDistance = value; }
         [SerializeField, Range(0, 32)] float _maxDistance = 16;
