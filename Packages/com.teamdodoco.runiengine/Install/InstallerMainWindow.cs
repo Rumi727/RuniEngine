@@ -15,10 +15,11 @@ namespace RuniEngine.Install
 {
     public sealed class InstallerMainWindow : EditorWindow
     {
+        public static InstallerMainWindow? instance;
         public static VideoPlayer? videoPlayer;
 
         public Texture2D? logoTexture;
-        public Stopwatch stopwatch = new Stopwatch();
+        public static Stopwatch stopwatch = new Stopwatch();
 
 
 
@@ -59,12 +60,14 @@ namespace RuniEngine.Install
         {
             stopwatch.Restart();
 
-            minSize = new Vector2(584, 285);
+            minSize = new Vector2(584, 298);
             maxSize = minSize;
 
             scrollPosition = Vector2.zero;
             screenIndex = 0;
             musicVolume = 0.5f;
+
+            instance = this;
 
             for (int i = 0; i < installerScreens.Count; i++)
                 installerScreens[i].installerMainWindow = this;
@@ -87,8 +90,6 @@ namespace RuniEngine.Install
         }
 
         void OnGUI() => DrawGUI();
-
-
 
         [MenuItem("Runi Engine/Show Installer")]
         public static void ShowInstallerWindow()
@@ -165,7 +166,20 @@ namespace RuniEngine.Install
 
                     if (!screen.headDisable)
                     {
-                        GUILayout.Label(screen.label, headStyle);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(55);
+
+                        GUILayout.BeginVertical();
+                        GUILayout.Space(13);
+
+                        EditorGUILayout.LabelField(screen.label, headStyle);
+
+                        GUILayout.Space(13);
+                        GUILayout.EndVertical();
+
+
+                        GUILayout.EndHorizontal();
+
                         EditorTool.DrawLine(2, 0);
                     }
 
@@ -177,6 +191,8 @@ namespace RuniEngine.Install
                     }
                 }
             }
+
+            DrawLogo();
 
             //Button
             {
@@ -277,6 +293,53 @@ namespace RuniEngine.Install
                 GUILayout.EndHorizontal();
                 GUILayout.Space(6);
             }
+        }
+
+        static Vector2 pos = new Vector2(114, 77);
+        static float rotation = 0;
+        static float size = 100;
+        public static void DrawLogo()
+        {
+            float timer = (float)stopwatch.Elapsed.TotalSeconds;
+            float lastRotation = rotation;
+
+            if (screenIndex == 0)
+            {
+                pos = pos.Lerp(new Vector2(Screen.width * 0.5f - 178, Screen.height * 0.5f - 65.5f), 0.01f);
+                size = size.Lerp(100, 0.01f);
+
+                rotation = rotation.LerpAngle((timer * 64).Repeat(360), 0.01f);
+            }
+            else if (screenIndex >= 0 && screenIndex < installerScreens.Count && installerScreens[screenIndex].headDisable)
+            {
+                pos = pos.Lerp(new Vector2(7, -42), 0.03f);
+                size = size.Lerp(38, 0.03f);
+
+                rotation = rotation.LerpAngle(0, 0.02f);
+            }
+            else
+            {
+                pos = pos.Lerp(new Vector2(7, 5), 0.03f);
+                size = size.Lerp(38, 0.03f);
+
+                rotation = rotation.LerpAngle(0, 0.02f);
+            }
+
+
+            GUI.BeginGroup(new Rect(0, 0, Screen.width, Screen.height));
+
+            Rect rect = new Rect(pos, new Vector2(size, size));
+
+            Matrix4x4 matrix = GUI.matrix;
+            GUIUtility.RotateAroundPivot(rotation, rect.center);
+
+            GUI.DrawTexture(rect, instance != null ? instance.logoTexture : null);
+
+            GUI.matrix = matrix;
+            GUI.EndGroup();
+
+            if (instance != null && lastRotation != rotation)
+                instance.Repaint();
         }
     }
 }
