@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace RuniEngine.Pooling
 {
-    public sealed class ObjectPoolingManager : MonoBehaviour
+    public static class ObjectPoolingManager
     {
         public static Transform instance
         {
@@ -16,8 +16,8 @@ namespace RuniEngine.Pooling
             {
                 if (_instance == null)
                 {
-                    _instance = Instantiate(ResourceUtility.emptyRectTransform);
-                    DontDestroyOnLoad(_instance);
+                    _instance = Object.Instantiate(ResourceUtility.emptyRectTransform);
+                    Object.DontDestroyOnLoad(_instance);
 
                     _instance.name = "Object Pool";
                 }
@@ -73,7 +73,7 @@ namespace RuniEngine.Pooling
             NotPlayModeException.Exception();
             BasicDataNotLoadedException.Exception();
 
-            MonoBehaviour? instantiate = Instantiate(monoBehaviour, instance.transform);
+            MonoBehaviour? instantiate = Object.Instantiate(monoBehaviour, instance.transform);
             if (instantiate is not IObjectPooling objectPooling)
                 return;
 
@@ -154,7 +154,7 @@ namespace RuniEngine.Pooling
                 if (gameObject == null)
                     return (null, null);
 
-                if (!Instantiate(gameObject, parent).TryGetComponent<IObjectPooling>(out IObjectPooling? objectPooling))
+                if (!Object.Instantiate(gameObject, parent).TryGetComponent<IObjectPooling>(out IObjectPooling? objectPooling))
                     return (null, null);
 
                 MonoBehaviour monoBehaviour = (MonoBehaviour)objectPooling;
