@@ -212,7 +212,6 @@ namespace RuniEngine.Resource.Images
         public static async UniTask<Texture2D?> GetTextureAsync(string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
-
             if (File.Exists(path))
             {
 #if (UNITY_STANDALONE_LINUX && !UNITY_EDITOR) || UNITY_EDITOR_LINUX
@@ -230,7 +229,7 @@ namespace RuniEngine.Resource.Images
                 byte[] textureBytes = www.downloadHandler.data;
 #endif
 
-                Texture2D texture = new Texture2D(0, 0, textureFormat, generateMipmap);
+                Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap);
                 ResourceManager.allLoadedResources.Add(texture);
 
                 texture.filterMode = filterMode;
@@ -241,14 +240,14 @@ namespace RuniEngine.Resource.Images
                 loaderSettings.generateMipmap = generateMipmap;
                 loaderSettings.logException = true;
 
-                texture.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
+                texture.hideFlags = HideFlags.DontSave;
+                
                 if (!await AsyncImageLoader.LoadImageAsync(texture, textureBytes, loaderSettings) || !Kernel.isPlaying)
                 {
                     Object.DestroyImmediate(texture);
                     return null;
                 }
-
+                
                 ResourceManager.allLoadedResources.Add(texture);
 
                 texture.hideFlags = hideFlags;
@@ -453,15 +452,24 @@ namespace RuniEngine.Resource.Images
             else
                 await ResourceManager.ResourcePackLoop(FindTextures);
 
+            if (!Kernel.isPlaying)
+                return;
+
             if (ThreadManager.isMainThread)
                 await UniTask.RunOnThreadPool(PackTextures);
             else
                 await PackTextures();
 
+            if (!Kernel.isPlaying)
+                return;
+
             if (ThreadManager.isMainThread)
                 await UniTask.RunOnThreadPool(LoadSprite);
             else
                 await LoadSprite();
+
+            if (!Kernel.isPlaying)
+                return;
 
             foreach (var item2 in from item in packTextures from item2 in item.Value select item2)
                 ResourceManager.garbages.Add(item2.Value);
@@ -507,7 +515,7 @@ namespace RuniEngine.Resource.Images
 
                             TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(typePath + ".json") ?? new TextureMetaData();
                             Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
-                            if (!Kernel.isPlaying)
+                            if (!Kernel.isPlaying || texture == null)
                                 return;
 
                             tempPackTexturePaths.TryAdd(nameSpace, new());
@@ -525,6 +533,8 @@ namespace RuniEngine.Resource.Images
                 }
 
                 await UniTask.WhenAll(tasks);
+                if (!Kernel.isPlaying)
+                    return;
             }
 
             async UniTask PackTextures()
@@ -564,11 +574,8 @@ namespace RuniEngine.Resource.Images
                                     y += item.Value.height + 8;
                                 }
 
-                                while (x > width)
-                                    width = x.ClosestPowerOfTwo();
-
-                                if (y > height)
-                                    height = y.ClosestPowerOfTwo();
+                                width = width.ClosestPowerOfTwo();
+                                height = height.ClosestPowerOfTwo();
                             }
 
                             background = new Texture2D(maxTextureSize, maxTextureSize, TextureFormat.RGBA32, textureMetaData.generateMipmap);
@@ -580,6 +587,9 @@ namespace RuniEngine.Resource.Images
                             if (textureMetaData.compressionType != TextureCompressionQuality.none)
                                 background.Compress(textureMetaData.compressionType == TextureCompressionQuality.highQuality);
                         });
+
+                        if (!Kernel.isPlaying)
+                            return;
 
                         ThreadDispatcher.Execute(() =>
                         {
@@ -660,6 +670,8 @@ namespace RuniEngine.Resource.Images
                 }
 
                 await UniTask.WhenAll(tasks);
+                if (!Kernel.isPlaying)
+                    return;
             }
         }
     }
