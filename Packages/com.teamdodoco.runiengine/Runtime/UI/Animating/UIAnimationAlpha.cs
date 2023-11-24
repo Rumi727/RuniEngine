@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RuniEngine.UI.Animating
 {
+    [DisallowMultipleComponent]
     [RequireComponent(typeof(CanvasGroup))]
     public class UIAnimationAlpha : UIAnimation
     {
