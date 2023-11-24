@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RuniEngine.UI.Animating
 {
+    [DisallowMultipleComponent]
     public class UIAnimationRectTransform : UIAnimation
     {
         DrivenRectTransformTracker tracker;

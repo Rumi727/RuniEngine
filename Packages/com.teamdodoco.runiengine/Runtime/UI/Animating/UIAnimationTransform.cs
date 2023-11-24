@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RuniEngine.UI.Animating
 {
+    [DisallowMultipleComponent]
     public class UIAnimationTransform : UIAnimation
     {
         public UIAnimationTransformMode mode => _mode;
