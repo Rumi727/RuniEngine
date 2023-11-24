@@ -6,9 +6,9 @@ namespace RuniEngine.Splash
 {
     public sealed class DefaultSplashAni : MonoBehaviour
     {
-        [SerializeField, NotNullField] Animator? logo;
+        [SerializeField, NotNullField] Animator? animator;
 
-        [SerializeField] int mainLayer = 0;
+        [SerializeField] int layer = 0;
         [SerializeField] string startParameter = "Start";
         [SerializeField] string endParameter = "End";
 
@@ -22,35 +22,35 @@ namespace RuniEngine.Splash
 
         void Update()
         {
-            if (logo == null)
+            if (animator == null)
                 return;
 
-            AnimatorStateInfo currentState = logo.GetCurrentAnimatorStateInfo(mainLayer);
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(layer);
 
-            bool start = logo.GetBool(startHash);
-            bool end = logo.GetBool(endHash);
+            bool start = animator.GetBool(startHash);
+            bool end = animator.GetBool(endHash);
 
             if (SplashScreen.isPlaying)
             {
                 if (start && currentState.normalizedTime >= 1 && BootLoader.allLoaded)
                 {
-                    logo.SetBool(startHash, false);
-                    logo.SetBool(endHash, true);
+                    animator.SetBool(startHash, false);
+                    animator.SetBool(endHash, true);
                 }
                 else if (end && currentState.normalizedTime >= 1)
                 {
                     SplashScreen.isPlaying = false;
 
-                    logo.SetBool(startHash, false);
-                    logo.SetBool(endHash, false);
+                    animator.SetBool(startHash, false);
+                    animator.SetBool(endHash, false);
                 }
                 else if (!start && !end)
-                    logo.SetBool(startHash, true);
+                    animator.SetBool(startHash, true);
             }
             else if (start || end)
             {
-                logo.SetBool(startHash, false);
-                logo.SetBool(endHash, false);
+                animator.SetBool(startHash, false);
+                animator.SetBool(endHash, false);
             }
         }
     }
