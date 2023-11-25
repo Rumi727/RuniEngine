@@ -57,10 +57,19 @@
         "com.unity.ugui": "1.0.0",
         "com.unity.textmeshpro": "3.0.6",
         "com.unity.nuget.newtonsoft-json": "3.2.1",
-        "com.looooong.asyncimageloader_forked_by_teamdodoco": "727.1.4",
         "com.cysharp.unitask": "2.3.3",
         "com.coffee.softmask-for-ugui": "1.0.2",
         "com.ibicha.youtube-player": "2.0.2"
+      }
+    },
+    "com.teamdodoco.runiengine.images": {
+      "version": "file:com.teamdodoco.runiengine.images",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.cysharp.unitask": "2.3.3",
+        "com.teamdodoco.runiengine": "0.0.0",
+        "com.looooong.asyncimageloader_forked_by_teamdodoco": "727.1.4"
       }
     },
     "com.teamdodoco.runiengine.nbs": {
@@ -69,7 +78,8 @@
       "source": "embedded",
       "dependencies": {
         "com.teamdodoco.runiengine": "0.0.0",
-        "com.teamdodoco.runiengine.sounds": "0.0.0"
+        "com.teamdodoco.runiengine.sounds": "0.0.0",
+        "com.teamdodoco.runiengine.pooling": "0.0.0"
       }
     },
     "com.teamdodoco.runiengine.pooling": {
