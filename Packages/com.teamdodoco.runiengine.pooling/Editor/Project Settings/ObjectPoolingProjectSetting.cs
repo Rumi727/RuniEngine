@@ -132,58 +132,57 @@ namespace RuniEngine.Editor.ProjectSetting
                  * GameObject 형식이여야해서 이런 소용돌이가 나오게 된것
                 */
                 {
-                    //문자열(경로)을 프리팹으로 변환
-                    GameObject? gameObject = null;
-                    GameObject? loadedGameObject = Resources.Load<GameObject>(item.Value);
-                    IObjectPooling? objectPooling = null;
-                    MonoBehaviour? monoBehaviour = null;
+                    Vector2 size;
+                    Vector2 textSize;
+                    {
+                        string text = EditorTool.TryGetText("gui.prefab");
+                        textSize = EditorStyles.label.CalcSize(new GUIContent(text));
+
+                        GUI.Label(new Rect(rect.x, rect.y, textSize.x + 3, height), text);
+                    }
+
+                    rect.x += textSize.x + 3;
+                    size.x = initWidth - textSize.x;
+                    size.x *= 0.6f;
+                    size.x -= 1.5f;
 
                     {
-                        Vector2 size;
-                        {
-                            string text = EditorTool.TryGetText("gui.prefab");
-                            size = EditorStyles.label.CalcSize(new GUIContent(text));
-
-                            GUI.Label(new Rect(rect.x, rect.y, size.x + 3, height), text);
-                        }
-
-                        rect.x += size.x + 3;
-                        size.x = initWidth - size.x;
-
                         EditorGUI.BeginChangeCheck();
-
-                        loadedGameObject = (GameObject)EditorGUI.ObjectField(new Rect(rect.x, rect.y, size.x, height), loadedGameObject, typeof(GameObject), true);
+                        string assetsPath = EditorGUI.TextField(new Rect(rect.x, rect.y, size.x, height), item.Value);
 
                         if (EditorGUI.EndChangeCheck())
+                        {
+                            prefabObject[index] = new KeyValuePair<string, string>(key, assetsPath);
                             isChanged = true;
+                        }
                     }
 
-                    if (loadedGameObject != null)
+                    rect.x += size.x + 3;
+                    size.x = initWidth - textSize.x;
+                    size.x *= 0.4f;
+                    size.x -= 1.5f;
+
+                    //문자열(경로)을 프리팹으로 변환
                     {
-                        if (loadedGameObject.TryGetComponent(out objectPooling))
-                            monoBehaviour = (MonoBehaviour?)objectPooling;
+                        EditorGUI.BeginChangeCheck();
+                        GameObject? gameObject = (GameObject)EditorGUI.ObjectField(new Rect(rect.x, rect.y, size.x, height), Resources.Load<GameObject>(item.Value), typeof(GameObject), false);
+
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            string assetsPath = AssetDatabase.GetAssetPath(Resources.Load<GameObject>(item.Value));
+                            if (assetsPath.Contains("Resources/"))
+                            {
+                                assetsPath = assetsPath.Substring(assetsPath.IndexOf("Resources/") + 10);
+                                assetsPath = assetsPath.Remove(assetsPath.LastIndexOf("."));
+
+                                prefabObject[index] = new KeyValuePair<string, string>(key, assetsPath);
+                            }
+                            else
+                                prefabObject[index] = new KeyValuePair<string, string>(key, string.Empty);
+
+                            isChanged = true;
+                        }
                     }
-
-                    if (monoBehaviour != null && objectPooling != null)
-                        gameObject = monoBehaviour.gameObject;
-
-                    /*
-                     * 변경한 프리팹이 리소스 폴더에 있지 않은경우 
-                     * 저장은 되지만 프리팹을 감지할수 없기때문에 
-                     * 조건문으로 경고를 표시해주고
-                     * 경로가 중첩되는 현상을 대비하기 위해 경로를 빈 문자열로 변경해줌
-                     */
-
-                    string assetsPath = AssetDatabase.GetAssetPath(gameObject);
-                    if (assetsPath.Contains("Resources/"))
-                    {
-                        assetsPath = assetsPath.Substring(assetsPath.IndexOf("Resources/") + 10);
-                        assetsPath = assetsPath.Remove(assetsPath.LastIndexOf("."));
-
-                        prefabObject[index] = new KeyValuePair<string, string>(key, assetsPath);
-                    }
-                    else
-                        prefabObject[index] = new KeyValuePair<string, string>(key, string.Empty);
                 }
             };
 
