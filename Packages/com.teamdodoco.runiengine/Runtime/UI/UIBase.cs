@@ -74,8 +74,15 @@ namespace RuniEngine.UI
                 Rect rect = value;
                 Matrix4x4 matrix4x = rectTransform.worldToLocalMatrix;
 
-                rectTransform.offsetMin = matrix4x.MultiplyPoint(rect.min);
-                rectTransform.offsetMax = matrix4x.MultiplyPoint(rect.max);
+                Vector2 position = matrix4x.MultiplyVector(rect.min);
+                Vector2 size = (Vector2)matrix4x.MultiplyVector(rect.max) - position;
+
+                {
+                    Vector2 temp = (position + size.Multiply(rectTransform.pivot)).Multiply(rectTransform.lossyScale);
+                    rectTransform.position = new Vector3(temp.x, temp.y, rectTransform.position.z);
+                }
+
+                rectTransform.sizeDelta = size;
             }
         }
         readonly Vector3[] worldCornersArray = new Vector3[4];
