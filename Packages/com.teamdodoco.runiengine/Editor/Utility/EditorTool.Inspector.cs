@@ -140,7 +140,7 @@ namespace RuniEngine.Editor
                 return "-";
 
             TValue? value = default;
-            for (int i = 1; i < targets.Length; i++)
+            for (int i = 0; i < targets.Length; i++)
             {
                 TTarget? target = targets[i];
                 if (target == null)

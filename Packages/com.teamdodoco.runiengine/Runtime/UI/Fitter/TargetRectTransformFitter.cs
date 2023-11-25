@@ -26,12 +26,20 @@ namespace RuniEngine.UI.Fitter
 
         readonly Vector3[] fourCornersArray = new Vector3[4];
         RectCorner cachedRectCorner;
+        float lerpZPosition = 0;
+        RectCorner lerpWorldCorners;
+        Quaternion lerpRotation;
         public override void SetDirty()
         {
             if (targetRectTransform == null)
                 return;
 
+            Quaternion temp = targetRectTransform.rotation;
+
+            targetRectTransform.rotation = Quaternion.identity;
             targetRectTransform.GetWorldCorners(fourCornersArray);
+            targetRectTransform.rotation = temp;
+
             cachedRectCorner = new RectCorner(fourCornersArray[0], fourCornersArray[1], fourCornersArray[2], fourCornersArray[3]);
 
             base.SetDirty();
@@ -48,15 +56,22 @@ namespace RuniEngine.UI.Fitter
                 tracker.Add(this, rectTransform, DrivenTransformProperties.All);
             }
 
-            worldCorners = worldCorners.Lerp(cachedRectCorner, currentLerpSpeed);
+            lerpZPosition = lerpZPosition.Lerp(targetRectTransform.position.z, currentLerpSpeed);
+            rectTransform.position = new Vector3(rectTransform.position.x, rectTransform.position.y, lerpZPosition);
 
-            rectTransform.position = rectTransform.position.Lerp(targetRectTransform.position, currentLerpSpeed);
-            rectTransform.localScale = rectTransform.localScale.Lerp(targetRectTransform.localScale, currentLerpSpeed);
-            rectTransform.rotation = rectTransform.rotation.Lerp(targetRectTransform.rotation, currentLerpSpeed);
+            rectTransform.rotation = Quaternion.identity;
+            rectTransform.localScale = Vector3.one;
+            
+            rectTransform.anchorMin = new Vector2(0f, 0f);
+            rectTransform.anchorMax = new Vector2(0f, 0f);
 
-            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            rectTransform.pivot = rectTransform.pivot.Lerp(targetRectTransform.pivot, currentLerpSpeed);
+
+            lerpWorldCorners = lerpWorldCorners.Lerp(cachedRectCorner, currentLerpSpeed);
+            worldCorners = lerpWorldCorners;
+
+            lerpRotation = lerpRotation.Lerp(targetRectTransform.rotation, currentLerpSpeed);
+            rectTransform.rotation = lerpRotation;
         }
     }
 }

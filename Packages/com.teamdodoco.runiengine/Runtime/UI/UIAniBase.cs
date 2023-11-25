@@ -5,7 +5,7 @@ namespace RuniEngine.UI
 {
     public abstract class UIAniBase : UIBase, IUIAni
     {
-        public bool disableLerpAni { get => _disableLerpAni; set => disableLerpAni = value; }
+        public bool disableLerpAni { get => _disableLerpAni; set => _disableLerpAni = value; }
         [SerializeField] bool _disableLerpAni = false;
 
         public bool useCustomLerpSpeed { get => _useCustomLerpSpeed; set => _useCustomLerpSpeed = value; }
@@ -34,7 +34,15 @@ namespace RuniEngine.UI
         /// <summary>
         /// Please put <see cref="OnEnable"/> when overriding
         /// </summary>
-        protected override void OnEnable() => SetDirty();
+        protected override void OnEnable()
+        {
+            bool temp = disableLerpAni;
+            disableLerpAni = true;
+
+            SetDirty();
+
+            disableLerpAni = temp;
+        }
 
         /// <summary>
         /// Please put <see cref="OnRectTransformDimensionsChange"/> when overriding
