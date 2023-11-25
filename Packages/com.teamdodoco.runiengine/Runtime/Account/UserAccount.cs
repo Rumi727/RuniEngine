@@ -1,7 +1,6 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Resource;
-using RuniEngine.Resource.Images;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -12,7 +11,7 @@ namespace RuniEngine.Account
 {
     public sealed class UserAccount : IDisposable
     {
-        public Texture2D? profile
+        public string profile
         {
             get
             {
@@ -22,7 +21,7 @@ namespace RuniEngine.Account
                 return _profile;
             }
         }
-        public Texture2D? _profile;
+        public string _profile;
 
         public string name
         {
@@ -65,7 +64,7 @@ namespace RuniEngine.Account
 
         public bool isDisposed { get; private set; } = false;
 
-        UserAccount(Texture2D? profile, string name, string hashedPassword)
+        UserAccount(string profile, string name, string hashedPassword)
         {
             _profile = profile;
             _name = name;
@@ -77,9 +76,9 @@ namespace RuniEngine.Account
         {
             if (info.hashedPassword == await UniTask.RunOnThreadPool(() => GetHashedPassword(password)))
             {
-                Texture2D? profile = null;
+                string profile = "";
                 if (ResourceManager.FileExtensionExists(Path.Combine(info.path, "profile"), out string profilePath, ExtensionFilter.pictureFileFilter))
-                    profile = await ImageLoader.GetTextureAsync(profilePath);
+                    profile = profilePath;
 
                 return new UserAccount(profile, info.name, info.hashedPassword);
             }

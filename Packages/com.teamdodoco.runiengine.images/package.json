@@ -1,0 +1,24 @@
+{
+  "name": "com.teamdodoco.runiengine.images",
+  "version": "0.0.0",
+  "author": {
+    "name": "Rumi"
+  },
+  "unity": "2021.1",
+  "displayName": "Runi Engine Images",
+  "description": "This is a package that adds image-related scripts",
+  "dependencies": {
+    "com.cysharp.unitask": "2.3.3",
+    "com.teamdodoco.runiengine": "0.0.0",
+    "com.looooong.asyncimageloader_forked_by_teamdodoco": "727.1.4"
+  },
+  "keywords": [
+    "Runi",
+    "Runi Engine",
+    "Engine",
+    "Image",
+    "Texture",
+    "Sprite"
+  ],
+  "license": "MIT"
+}
