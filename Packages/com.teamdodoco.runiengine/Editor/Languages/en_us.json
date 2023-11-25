@@ -77,6 +77,8 @@
     "inspector.ui_animator.animations": "Animation Elements",
     "inspector.sound_player_base.pan_stereo": "Pan Stereo",
 
+    "inspector.target_rect_transform_fitter_editor.warning": "If the rotation and size of the current object are adjusted at the same time, its characteristics will prevent it from fitting properly to the target object.",
+
     "undo.modified_~": "Modified {object}",
 
     "transform.position": "Position",

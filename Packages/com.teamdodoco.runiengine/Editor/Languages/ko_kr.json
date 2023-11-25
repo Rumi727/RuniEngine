@@ -77,6 +77,8 @@
     "inspector.ui_animator.animations": "애니메이션 요소",
     "inspector.ui_animation.animator": "UI 애니메이터",
     "inspector.sound_player_base.pan_stereo": "팬 스테레오",
+    
+    "inspector.target_rect_transform_fitter_editor.warning": "현재 오브젝트의 회전과 크기가 동시에 조절된다면 그 특성으로 인해 정상적으로 타겟 오브젝트에 맞추지 못하게 됩니다",
 
     "undo.modified_~": "수정된 {object}",
 

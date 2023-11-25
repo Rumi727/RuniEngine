@@ -77,6 +77,8 @@
     "inspector.ui_animator.animations": "アニメーション要素",
     "inspector.sound_player_base.pan_stereo": "パンステレオ",
 
+    "inspector.target_rect_transform_fitter_editor.warning": "現在のオブジェクトの回転とサイズが同時に調整されると、その特性により通常はターゲットオブジェクトに合わせることができなくなります。",
+
     "undo.modified_~": "変更された{object}",
 
     "transform.position": "座標",
