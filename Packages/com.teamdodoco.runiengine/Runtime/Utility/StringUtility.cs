@@ -9,6 +9,11 @@ namespace RuniEngine
 {
     public static class StringUtility
     {
+        static readonly StringBuilder stringBuilder = new StringBuilder();
+
+        public const char quotedChar = '"';
+        public const char anotherQuotedChar = '\'';
+
         public static string ConstEnvironmentVariable(this string value)
         {
             value = value.Replace("%DataPath%", Application.dataPath);
@@ -328,5 +333,32 @@ namespace RuniEngine
         }
 
         public static string ToSummaryString(this Exception e) => $"{e.GetType().Name}: {e.Message}\n\n{e.StackTrace.Substring(5)}";
+
+        readonly static List<string> quotedTextsResult = new List<string>();
+        public static string[] GetQuotedTexts(this string text)
+        {
+            stringBuilder.Clear();
+            quotedTextsResult.Clear();
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                if (c == '\\')
+                {
+                    i++;
+                    continue;
+                }
+
+                if (c == quotedChar || c == anotherQuotedChar)
+                {
+                    quotedTextsResult.Add(stringBuilder.ToString());
+                    stringBuilder.Clear();
+                }
+                else
+                    stringBuilder.Append(c);
+            }
+
+            return quotedTextsResult.ToArray();
+        }
     }
 }
