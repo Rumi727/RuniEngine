@@ -155,7 +155,6 @@ namespace RuniEngine
 #endif
 
         static readonly Stopwatch deltaTimeStopwatch = Stopwatch.StartNew();
-        static float lastUnscaledDeltaTime = fps60second;
         public static void Update()
         {
             TimeUpdate();

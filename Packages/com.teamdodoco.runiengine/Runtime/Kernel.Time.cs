@@ -51,6 +51,7 @@ namespace RuniEngine
             deltaTimeDouble = realDeltaTime * gameSpeed;
             fpsDeltaTimeDouble = deltaTimeDouble * VideoManager.standardFPS;
 
+            float lastUnscaledDeltaTime = unscaledDeltaTime;
             unscaledDeltaTime = (float)realDeltaTime;
             fpsUnscaledDeltaTime = (float)(unscaledDeltaTime * VideoManager.standardFPS);
 
@@ -70,8 +71,6 @@ namespace RuniEngine
 
                 fpsSmoothDeltaTime = (float)(smoothDeltaTime * VideoManager.standardFPS);
                 fpsUnscaledSmoothDeltaTime = (float)(unscaledSmoothDeltaTime * VideoManager.standardFPS);
-
-                lastUnscaledDeltaTime = unscaledSmoothDeltaTime;
             }
         }
     }
