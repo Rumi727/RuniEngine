@@ -12,15 +12,18 @@ using Random = UnityEngine.Random;
 
 namespace RuniEngine.Sounds
 {
-    [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(AudioSource)), RequireComponent(typeof(AudioLowPassFilter))]
     public sealed class AudioPlayer : SoundPlayerBase
     {
         public override string objectKey => "audio_player.prefab";
 
 
 
-        readonly AudioSource? _audioSource;
-        public AudioSource? audioSource => this.GetComponentFieldSave(_audioSource);
+        AudioSource? _audioSource;
+        public AudioSource? audioSource => _audioSource = this.GetComponentFieldSave(_audioSource);
+
+        AudioLowPassFilter? _audioLowPassFilter;
+        public AudioLowPassFilter? audioLowPassFilter => _audioLowPassFilter = this.GetComponentFieldSave(_audioLowPassFilter);
 
 
 
@@ -43,23 +46,27 @@ namespace RuniEngine.Sounds
 
         public override double time
         {
-            get => currentSampleIndex / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
-            set => currentSampleIndex = value * (frequency != 0 ? frequency : AudioLoader.systemFrequency);
+            get => sampleIndex / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
+            set => sampleIndex = value * (frequency != 0 ? frequency : AudioLoader.systemFrequency);
         }
 
-        public double currentSampleIndex
+        public double sampleIndex
         {
-            get => Interlocked.CompareExchange(ref _currentSampleIndex, 0, 0);
+            get => Interlocked.CompareExchange(ref _sampleIndex, 0, 0);
             set
             {
-                if (currentSampleIndex != value)
+                if (sampleIndex != value)
                 {
-                    Interlocked.Exchange(ref _currentSampleIndex, value);
+                    Interlocked.Exchange(ref _sampleIndex, value);
+                    Interlocked.Exchange(ref realSampleIndex, value);
+
+                    Interlocked.Exchange(ref tempoAdjustmentIndex, 0);
+
                     TimeChangedEventInvoke();
                 }
             }
         }
-        double _currentSampleIndex;
+        double _sampleIndex;
 
         public override double length => audioMetaData != null ? audioMetaData.length : 0;
 
@@ -78,7 +85,7 @@ namespace RuniEngine.Sounds
 
         void Update()
         {
-            if (audioSource == null || AudioLoader.audioListener == null)
+            if (audioSource == null || AudioLoader.audioListener == null || audioLowPassFilter == null)
                 return;
             
             {
@@ -94,6 +101,15 @@ namespace RuniEngine.Sounds
             audioSource.minDistance = minDistance;
             audioSource.maxDistance = maxDistance;
 
+            //매 프레임 시간 보정
+            if (!isPaused)
+            {
+                double index = Interlocked.CompareExchange(ref _sampleIndex, 0, 0);
+                index += Kernel.deltaTime * frequency * realTempo;
+
+                Interlocked.Exchange(ref _sampleIndex, index);
+            }
+
             if (isPlaying && (!audioSource.enabled || !audioSource.isPlaying || audioSource.clip != null))
             {
                 audioSource.enabled = true;
@@ -106,7 +122,7 @@ namespace RuniEngine.Sounds
             if (spatial)
                 spatialStereo = (Quaternion.Inverse(AudioLoader.audioListener.transform.rotation) * (transform.position - AudioLoader.audioListener.transform.position)).x / (transform.position - AudioLoader.audioListener.transform.position).magnitude;
 
-            if (isDisposable && !loop && datas != null && (currentSampleIndex < 0 || currentSampleIndex >= datas.Length))
+            if (isDisposable && !loop && datas != null && (sampleIndex < 0 || sampleIndex >= datas.Length))
                 Remove();
         }
 
@@ -173,7 +189,8 @@ namespace RuniEngine.Sounds
 
                 spatialStereo = 0;
 
-                Interlocked.Exchange(ref _currentSampleIndex, 0);
+                Interlocked.Exchange(ref _sampleIndex, 0);
+                Interlocked.Exchange(ref realSampleIndex, 0);
             }
             finally
             {
@@ -185,6 +202,8 @@ namespace RuniEngine.Sounds
 
         [NonSerialized] int onAudioFilterReadLock = 0;
         [NonSerialized] float[] tempData = new float[0];
+        [NonSerialized] double tempoAdjustmentIndex = 0;
+        [NonSerialized] double realSampleIndex = 0;
         protected override void OnAudioFilterRead(float[] data, int channels)
         {
             try
@@ -196,7 +215,8 @@ namespace RuniEngine.Sounds
                 
                 if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
                 {
-                    double currentIndex = currentSampleIndex;
+                    double sampleIndex = this.sampleIndex;
+                    double realSampleIndex = Interlocked.CompareExchange(ref this.realSampleIndex, 0, 0);
                     double tempo = realTempo;
                     double pitch = realPitch;
                     float volume = (float)this.volume;
@@ -214,36 +234,65 @@ namespace RuniEngine.Sounds
                         {
                             int index;
                             if (tempo > 0)
-                                index = (int)((currentIndex * audioChannels) + i);
+                                index = (int)((realSampleIndex * audioChannels) + i);
                             else
-                                index = (int)((currentIndex * audioChannels) - i);
+                                index = (int)((realSampleIndex * audioChannels) - i);
 
                             GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo, spatialStereo);
                             for (int j = 0; j < channels; j++)
-                                data[i + j] = tempData[j] * volume;
+                                data[i + j] += tempData[j] * volume;
                         }
                     }
 
+                    //시간 조정
                     {
-                        double value = data.Length / audioChannels * (tempo / (pitch != 0 ? pitch : 1));
-                        currentIndex += value;
+                        {
+                            double value = data.Length / audioChannels;
+                            double pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
 
-                        if (value == value.Floor())
-                            currentIndex = currentIndex.Round();
+                            //sampleIndex += value * pitchDivideTempo;
+                            realSampleIndex += value * tempo.Sign();
+
+                            //템포
+                            tempoAdjustmentIndex += value;
+
+                            double condition = 2048 * (pitch != 0 ? pitch : 1);
+                            while (tempoAdjustmentIndex >= condition)
+                            {
+                                realSampleIndex -= value * (1 - pitchDivideTempo.Abs()) * (condition / value) * tempo.Sign();
+                                sampleIndex = realSampleIndex;
+
+                                tempoAdjustmentIndex -= condition;
+                            }
+
+                            if (value == value.Floor())
+                            {
+                                sampleIndex = sampleIndex.Round();
+                                realSampleIndex = realSampleIndex.Round();
+                            }
+                        }
 
                         if (loop)
                         {
                             bool isLooped = false;
 
-                            while (tempo >= 0 && currentIndex >= samplesLength)
+                            while (tempo >= 0 && realSampleIndex >= samplesLength)
                             {
-                                currentIndex -= samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+                                double value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+
+                                sampleIndex -= value;
+                                realSampleIndex -= value;
+
                                 isLooped = true;
                             }
 
-                            while (tempo < 0 && currentIndex < loopStartIndex + loopOffsetIndex)
+                            while (tempo < 0 && realSampleIndex < loopStartIndex + loopOffsetIndex)
                             {
-                                currentIndex += samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+                                double value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+
+                                sampleIndex += value;
+                                realSampleIndex += value;
+
                                 isLooped = true;
                             }
 
@@ -252,7 +301,8 @@ namespace RuniEngine.Sounds
                         }
                     }
 
-                    Interlocked.Exchange(ref _currentSampleIndex, currentIndex);
+                    Interlocked.Exchange(ref _sampleIndex, sampleIndex);
+                    Interlocked.Exchange(ref this.realSampleIndex, realSampleIndex);
                 }
             }
             finally
