@@ -1,4 +1,5 @@
 #nullable enable
+using PlasticGui;
 using RuniEngine.Booting;
 using RuniEngine.Pooling;
 using RuniEngine.Resource;
@@ -85,9 +86,26 @@ namespace RuniEngine.Sounds
 
         void Update()
         {
+            VarRefresh();
+            
+            //매 프레임 시간 보정
+            if (isPlaying && !isPaused)
+            {
+                long index = sampleIndex;
+                index += (long)(Kernel.deltaTimeDouble * frequency * realTempo);
+
+                Interlocked.Exchange(ref _sampleIndex, index);
+            }
+
+            if (isDisposable && !loop && datas != null && (sampleIndex < 0 || sampleIndex >= datas.Length))
+                Remove();
+        }
+
+        void VarRefresh()
+        {
             if (audioSource == null || AudioLoader.audioListener == null || audioLowPassFilter == null)
                 return;
-            
+
             {
                 float pitch = (float)realPitch * ((float)frequency / AudioLoader.systemFrequency) * ((float)channels / AudioLoader.systemChannels);
                 if (pitch != 0)
@@ -101,15 +119,6 @@ namespace RuniEngine.Sounds
             audioSource.minDistance = minDistance;
             audioSource.maxDistance = maxDistance;
 
-            //매 프레임 시간 보정
-            if (!isPaused)
-            {
-                long index = sampleIndex;
-                index += (long)(Kernel.deltaTimeDouble * frequency * realTempo);
-                
-                Interlocked.Exchange(ref _sampleIndex, index);
-            }
-
             if (isPlaying && (!audioSource.enabled || !audioSource.isPlaying || audioSource.clip != null))
             {
                 audioSource.enabled = true;
@@ -121,9 +130,6 @@ namespace RuniEngine.Sounds
 
             if (spatial)
                 spatialStereo = (Quaternion.Inverse(AudioLoader.audioListener.transform.rotation) * (transform.position - AudioLoader.audioListener.transform.position)).x / (transform.position - AudioLoader.audioListener.transform.position).magnitude;
-
-            if (isDisposable && !loop && datas != null && (sampleIndex < 0 || sampleIndex >= datas.Length))
-                Remove();
         }
 
 
@@ -161,8 +167,8 @@ namespace RuniEngine.Sounds
             Stop();
             if (!Refresh())
                 return;
-
-            Update();
+            
+            VarRefresh();
 
             if (tempo < 0 && audioMetaData != null && audioMetaData.datas != null)
             {
@@ -438,10 +444,10 @@ namespace RuniEngine.Sounds
             audioPlayer.maxDistance = maxDistance;
 
             audioPlayer.transform.localPosition = position;
-
+            
             audioPlayer.isDisposable = true;
             audioPlayer.Play();
-
+            
             return audioPlayer;
         }
     }
