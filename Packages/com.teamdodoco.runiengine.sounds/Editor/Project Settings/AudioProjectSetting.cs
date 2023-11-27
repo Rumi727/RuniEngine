@@ -31,10 +31,7 @@ namespace RuniEngine.Editor.ProjectSetting
 
         public static void DrawGUI(ref string nameSpace, ref bool deleteSafety, ref int displayRestrictionsIndex)
         {
-            //왜 그런진 모르겠는데 이렇게 라벨 길이 설정 안해주면 클릭 인식 지랄남
-            float labelWidth = EditorGUIUtility.labelWidth;
-            EditorGUIUtility.labelWidth = 150;
-
+            EditorTool.BeginFieldWidth(10);
             EditorTool.DeleteSafety(ref deleteSafety);
 
             nameSpace = EditorTool.DrawNameSpace(EditorTool.TryGetText("gui.namespace"), nameSpace);
@@ -76,11 +73,21 @@ namespace RuniEngine.Editor.ProjectSetting
                         KeyValuePair<string?, AudioData?> pair = (KeyValuePair<string?, AudioData?>)x;
                         EditorGUI.BeginChangeCheck();
 
-                        string key = EditorGUILayout.TextField(EditorTool.TryGetText("gui.key"), pair.Key);
-                        string subtitle = EditorGUILayout.TextField(EditorTool.TryGetText("gui.subtitle"), pair.Value?.subtitle);
-                        bool isBGM = EditorGUILayout.Toggle("is BGM", pair.Value != null && pair.Value.isBGM);
+                        string key;
+                        string subtitle;
+                        bool isBGM;
 
-                        isChanged = isChanged || EditorGUI.EndChangeCheck();
+                        {
+                            EditorTool.BeginLabelWidth(50);
+                            EditorGUI.BeginChangeCheck();
+
+                            key = EditorGUILayout.TextField(EditorTool.TryGetText("gui.key"), pair.Key);
+                            subtitle = EditorGUILayout.TextField(EditorTool.TryGetText("gui.subtitle"), pair.Value?.subtitle);
+                            isBGM = EditorGUILayout.Toggle("is BGM", pair.Value != null && pair.Value.isBGM);
+
+                            isChanged = isChanged || EditorGUI.EndChangeCheck();
+                            EditorTool.EndLabelWidth();
+                        }
 
                         List<AudioMetaData>? metaDatas = null;
                         if (pair.Value != null)
@@ -100,12 +107,15 @@ namespace RuniEngine.Editor.ProjectSetting
 
                                 {
                                     EditorGUILayout.BeginHorizontal();
-                                    GUILayout.Label(EditorTool.TryGetText("gui.path"), GUILayout.ExpandWidth(false));
+                                    string label = EditorTool.TryGetText("gui.path");
 
-
+                                    EditorTool.BeginLabelWidth(label);
                                     EditorGUI.BeginChangeCheck();
-                                    audioPath = EditorGUILayout.TextField(audioPath);
+
+                                    audioPath = EditorGUILayout.TextField(label, audioPath);
+
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
+                                    EditorTool.EndLabelWidth();
 
                                     //GUI
                                     {
@@ -123,10 +133,10 @@ namespace RuniEngine.Editor.ProjectSetting
                                         if (audioPath != "")
                                         {
                                             audioClip = AssetDatabase.LoadAssetAtPath<DefaultAsset>(assetPathAndName + Path.GetExtension(outPath));
-                                            audioClip = (DefaultAsset)EditorGUILayout.ObjectField(audioClip, typeof(DefaultAsset), false);
+                                            audioClip = (DefaultAsset)EditorGUILayout.ObjectField(audioClip, typeof(DefaultAsset), false, GUILayout.Width(100));
                                         }
                                         else
-                                            audioClip = (DefaultAsset)EditorGUILayout.ObjectField(null, typeof(DefaultAsset), false);
+                                            audioClip = (DefaultAsset)EditorGUILayout.ObjectField(null, typeof(DefaultAsset), false, GUILayout.Width(100));
 
                                         isChanged = isChanged || EditorGUI.EndChangeCheck();
 
@@ -148,26 +158,51 @@ namespace RuniEngine.Editor.ProjectSetting
                                     EditorGUILayout.BeginHorizontal();
                                     EditorGUI.BeginChangeCheck();
 
-                                    GUILayout.Label(EditorTool.TryGetText("gui.pitch"), GUILayout.ExpandWidth(false));
-                                    pitch = EditorGUILayout.DoubleField(pitch);
+                                    {
+                                        string label = EditorTool.TryGetText("gui.pitch");
+                                        EditorTool.BeginLabelWidth(label);
 
-                                    GUILayout.Label(EditorTool.TryGetText("gui.tempo"), GUILayout.ExpandWidth(false));
-                                    tempo = EditorGUILayout.DoubleField(tempo);
+                                        pitch = EditorGUILayout.DoubleField(label, pitch);
+                                        EditorTool.EndLabelWidth();
+                                    }
+
+                                    {
+                                        string label = EditorTool.TryGetText("gui.tempo");
+                                        EditorTool.BeginLabelWidth(label);
+
+                                        tempo = EditorGUILayout.DoubleField(label, tempo);
+                                        EditorTool.EndLabelWidth();
+                                    }
 
                                     if (metaData.stream)
                                         tempo = tempo.Clamp(0);
 
-                                    GUILayout.Label(EditorTool.TryGetText("gui.stream"), GUILayout.ExpandWidth(false));
-                                    stream = EditorGUILayout.Toggle(stream, GUILayout.Width(20));
+                                    {
+                                        string label = EditorTool.TryGetText("gui.stream");
+                                        EditorTool.BeginLabelWidth(label);
+
+                                        stream = EditorGUILayout.Toggle(label, stream, GUILayout.Width(EditorGUIUtility.labelWidth + 18));
+                                        EditorTool.EndLabelWidth();
+                                    }
 
                                     EditorGUILayout.EndHorizontal();
                                     EditorGUILayout.BeginHorizontal();
 
-                                    GUILayout.Label(EditorTool.TryGetText("project_setting.audio.loop_start_index"), GUILayout.ExpandWidth(false));
-                                    loopStartIndex = EditorGUILayout.IntField(loopStartIndex).Clamp(0);
+                                    {
+                                        string label = EditorTool.TryGetText("project_setting.audio.loop_start_index");
+                                        EditorTool.BeginLabelWidth(label);
 
-                                    GUILayout.Label(EditorTool.TryGetText("project_setting.audio.loop_offset_index"), GUILayout.ExpandWidth(false));
-                                    loopOffsetIndex = EditorGUILayout.IntField(loopOffsetIndex).Clamp(0);
+                                        loopStartIndex = EditorGUILayout.IntField(label, loopStartIndex).Clamp(0);
+                                        EditorTool.EndLabelWidth();
+                                    }
+
+                                    {
+                                        string label = EditorTool.TryGetText("project_setting.audio.loop_offset_index");
+                                        EditorTool.BeginLabelWidth(label);
+
+                                        loopOffsetIndex = EditorGUILayout.IntField(label, loopOffsetIndex).Clamp(0);
+                                        EditorTool.EndLabelWidth();
+                                    }
 
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
                                     EditorGUILayout.EndHorizontal();
@@ -201,7 +236,7 @@ namespace RuniEngine.Editor.ProjectSetting
                 }
             }
 
-            EditorGUIUtility.labelWidth = labelWidth;
+            EditorTool.EndFieldWidth();
         }
 
         class AudioDataEqualityComparer : IEqualityComparer<KeyValuePair<string?, AudioData?>>

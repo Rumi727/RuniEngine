@@ -1,6 +1,7 @@
 #nullable enable
 using RuniEngine.Resource;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -191,6 +192,48 @@ namespace RuniEngine.Editor
             }
 
             EditorGUI.showMixedValue = false;
+        }
+
+        public static void BeginLabelWidth(string label) => BeginLabelWidth(new GUIContent(label));
+        public static void BeginLabelWidth(GUIContent label) => BeginLabelWidth(label, EditorStyles.label);
+        public static void BeginLabelWidth(string label, GUIStyle style) => BeginLabelWidth(new GUIContent(label), style);
+        public static void BeginLabelWidth(GUIContent label, GUIStyle style) => EditorGUIUtility.labelWidth = GetLabelXSize(label) + 2;
+
+        static Queue<float> labelWidthQueue = new Queue<float>();
+        public static void BeginLabelWidth(float width)
+        {
+            labelWidthQueue.Enqueue(width);
+            EditorGUIUtility.labelWidth = width;
+        }
+
+        public static void EndLabelWidth()
+        {
+            if (labelWidthQueue.TryDequeue(out float result))
+                EditorGUIUtility.labelWidth = result;
+            else
+                EditorGUIUtility.labelWidth = 0;
+        }
+
+        public static float GetLabelXSize(string label) => GetLabelXSize(new GUIContent(label));
+        public static float GetLabelXSize(GUIContent label) => GetLabelXSize(label, EditorStyles.label);
+        public static float GetLabelXSize(string label, GUIStyle style) => GetLabelXSize(new GUIContent(label), style);
+        public static float GetLabelXSize(GUIContent label, GUIStyle style) => style.CalcSize(label).x;
+
+
+
+        static Queue<float> fieldWidthQueue = new Queue<float>();
+        public static void BeginFieldWidth(float width)
+        {
+            fieldWidthQueue.Enqueue(width);
+            EditorGUIUtility.fieldWidth = width;
+        }
+
+        public static void EndFieldWidth()
+        {
+            if (fieldWidthQueue.TryDequeue(out float result))
+                EditorGUIUtility.fieldWidth = result;
+            else
+                EditorGUIUtility.fieldWidth = 0;
         }
     }
 }

@@ -28,7 +28,7 @@
     "gui.unpause": "一時停止解除",
     "gui.stop": "停止",
     "gui.reverse": "巻き戻す",
-    "gui.delete_safety": "安全削除モード（削除するリストが空の値でない場合は削除禁止）",
+    "gui.delete_safety": "安全削除モード",
     "gui.add": "追加",
     "gui.remove": "削除",
     "gui.prefab_key": "プレハブキー",
