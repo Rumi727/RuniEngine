@@ -180,6 +180,9 @@ namespace RuniEngine.Sounds
 
             if (audioSource != null)
             {
+                audioSource.enabled = true;
+                audioSource.Stop();
+
                 audioSource.clip = null;
                 audioSource.Play();
             }
