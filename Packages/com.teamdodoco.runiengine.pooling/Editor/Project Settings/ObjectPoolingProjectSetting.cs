@@ -52,7 +52,7 @@ namespace RuniEngine.Editor.ProjectSetting
             reorderableList ??= new ReorderableList(null, typeof(KeyValuePair<string, string>), true, true, true, true)
             {
                 drawHeaderCallback = static (Rect rect) => GUI.Label(rect, EditorTool.TryGetText("project_setting.object_pooling.name")),
-                elementHeight = (height + 8.5f) * 2,
+                elementHeight = (height + 8f) * 2,
                 multiSelect = true
             };
 
@@ -105,20 +105,17 @@ namespace RuniEngine.Editor.ProjectSetting
 
                 string key;
                 {
-                    string text = EditorTool.TryGetText("gui.prefab_key");
-                    Vector2 size = EditorStyles.label.CalcSize(new GUIContent(text));
+                    string label = EditorTool.TryGetText("gui.prefab_key");
 
-                    GUI.Label(new Rect(rect.x, rect.y, size.x + 3, height), text);
-
-                    rect.x += size.x + 3;
-                    size.x = initWidth - size.x;
-
+                    EditorTool.BeginLabelWidth(label);
                     EditorGUI.BeginChangeCheck();
 
-                    key = GUI.TextField(new Rect(rect.x, rect.y, size.x, height), item.Key);
+                    key = EditorGUI.TextField(new Rect(rect.x, rect.y, initWidth, height), label, item.Key);
 
                     if (EditorGUI.EndChangeCheck())
                         isChanged = true;
+
+                    EditorTool.EndLabelWidth();
                 }
 
                 rect.x = initX;
@@ -133,22 +130,17 @@ namespace RuniEngine.Editor.ProjectSetting
                 */
                 {
                     Vector2 size;
-                    Vector2 textSize;
-                    {
-                        string text = EditorTool.TryGetText("gui.prefab");
-                        textSize = EditorStyles.label.CalcSize(new GUIContent(text));
 
-                        GUI.Label(new Rect(rect.x, rect.y, textSize.x + 3, height), text);
-                    }
-
-                    rect.x += textSize.x + 3;
-                    size.x = initWidth - textSize.x;
+                    size.x = initWidth;
                     size.x *= 0.6f;
                     size.x -= 1.5f;
 
                     {
+                        string label = EditorTool.TryGetText("gui.prefab");
+                        EditorTool.BeginLabelWidth(label);
+
                         EditorGUI.BeginChangeCheck();
-                        string assetsPath = EditorGUI.TextField(new Rect(rect.x, rect.y, size.x, height), item.Value);
+                        string assetsPath = EditorGUI.TextField(new Rect(rect.x, rect.y, size.x, height), label, item.Value);
 
                         if (EditorGUI.EndChangeCheck())
                         {
@@ -157,8 +149,10 @@ namespace RuniEngine.Editor.ProjectSetting
                         }
                     }
 
+                    EditorTool.EndLabelWidth();
+
                     rect.x += size.x + 3;
-                    size.x = initWidth - textSize.x;
+                    size.x = initWidth;
                     size.x *= 0.4f;
                     size.x -= 1.5f;
 
@@ -167,9 +161,9 @@ namespace RuniEngine.Editor.ProjectSetting
                         EditorGUI.BeginChangeCheck();
                         GameObject? gameObject = (GameObject)EditorGUI.ObjectField(new Rect(rect.x, rect.y, size.x, height), Resources.Load<GameObject>(item.Value), typeof(GameObject), false);
 
-                        if (EditorGUI.EndChangeCheck())
+                        if (EditorGUI.EndChangeCheck() && gameObject != null)
                         {
-                            string assetsPath = AssetDatabase.GetAssetPath(Resources.Load<GameObject>(item.Value));
+                            string assetsPath = AssetDatabase.GetAssetPath(gameObject);
                             if (assetsPath.Contains("Resources/"))
                             {
                                 assetsPath = assetsPath.Substring(assetsPath.IndexOf("Resources/") + 10);

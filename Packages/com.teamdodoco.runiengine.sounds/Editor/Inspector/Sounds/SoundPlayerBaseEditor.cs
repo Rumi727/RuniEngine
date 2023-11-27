@@ -86,37 +86,59 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 return;
 
             GUILayout.BeginHorizontal();
+            BeginFieldWidth(40);
 
             TargetsSetValue(x => x.loop, x =>
             {
-                GUILayout.Label(TryGetText("gui.loop"), GUILayout.ExpandWidth(false));
-                return EditorGUILayout.Toggle(x.loop, GUILayout.Width(17));
+                string label = TryGetText("gui.loop");
+                BeginLabelWidth(label);
+
+                bool result = EditorGUILayout.Toggle(label, x.loop, GUILayout.Width(EditorGUIUtility.labelWidth + 17));
+                EndLabelWidth();
+
+                return result;
             }, (x, y) => x.loop = y, targets);
 
             Space();
 
             TargetsSetValue(x => x.volume, x =>
             {
-                GUILayout.Label(TryGetText("gui.volume"), GUILayout.ExpandWidth(false));
-                return EditorGUILayout.Slider((float)x.volume, 0, 2);
+                string label = TryGetText("gui.volume");
+                BeginLabelWidth(label);
+
+                float result = EditorGUILayout.Slider(label, (float)x.volume, 0, 2);
+                EndLabelWidth();
+
+                return result;
             }, (x, y) => x.volume = y, targets);
 
             Space();
 
             TargetsSetValue(x => x.pitch, x =>
             {
-                GUILayout.Label(TryGetText("gui.pitch"), GUILayout.ExpandWidth(false));
-                return EditorGUILayout.Slider((float)x.pitch, 0, 3);
+                string label = TryGetText("gui.pitch");
+                BeginLabelWidth(label);
+
+                float result = EditorGUILayout.Slider(label, (float)x.pitch, 0, 3);
+                EndLabelWidth();
+
+                return result;
             }, (x, y) => x.pitch = y, targets);
 
             Space();
 
             TargetsSetValue(x => x.tempo, x =>
             {
-                GUILayout.Label(TryGetText("gui.tempo"), GUILayout.ExpandWidth(false));
-                return EditorGUILayout.Slider((float)x.tempo, -3, 3);
+                string label = TryGetText("gui.tempo");
+                BeginLabelWidth(label);
+
+                float result = EditorGUILayout.Slider(label, (float)x.tempo, -3, 3);
+                EndLabelWidth();
+
+                return result;
             }, (x, y) => x.tempo = y, targets);
 
+            EndFieldWidth();
             GUILayout.EndHorizontal();
         }
 
@@ -130,13 +152,19 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 return;
 
             GUILayout.BeginHorizontal();
+            BeginFieldWidth(40);
 
             bool spatialMixed = !TargetsIsEquals(x => x.spatial, targets);
 
             TargetsSetValue(x => x.spatial, x =>
             {
-                GUILayout.Label(TryGetText("gui.spatial"), GUILayout.ExpandWidth(false));
-                return EditorGUILayout.Toggle(x.spatial, GUILayout.Width(17));
+                string label = TryGetText("gui.spatial");
+                BeginLabelWidth(label);
+
+                bool result = EditorGUILayout.Toggle(label, x.spatial, GUILayout.Width(EditorGUIUtility.labelWidth + 15));
+                EndLabelWidth();
+
+                return result;
             }, (x, y) => x.spatial = y, targets);
 
             Space();
@@ -147,8 +175,13 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     TargetsSetValue(x => x.panStereo, x =>
                     {
-                        GUILayout.Label(TryGetText("inspector.sound_player_base.pan_stereo"), GUILayout.ExpandWidth(false));
-                        return EditorGUILayout.Slider((float)x.panStereo, -1, 1);
+                        string label = TryGetText("inspector.sound_player_base.pan_stereo");
+                        BeginLabelWidth(label);
+
+                        float result = EditorGUILayout.Slider(label, (float)x.volume, -1, 1);
+                        EndLabelWidth();
+
+                        return result;
                     }, (x, y) => x.panStereo = y, targets);
 
                     Space();
@@ -171,6 +204,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 }, (x, y) => x.panStereo = y, targets);
             }
 
+            EndFieldWidth();
             GUILayout.EndHorizontal();
         }
 

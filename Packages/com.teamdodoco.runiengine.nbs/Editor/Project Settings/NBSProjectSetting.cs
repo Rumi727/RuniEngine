@@ -31,10 +31,7 @@ namespace RuniEngine.Editor.ProjectSetting
 
         public static void DrawGUI(ref string nameSpace, ref bool deleteSafety, ref int displayRestrictionsIndex)
         {
-            //왜 그런진 모르겠는데 이렇게 라벨 길이 설정 안해주면 클릭 인식 지랄남
-            float labelWidth = EditorGUIUtility.labelWidth;
-            EditorGUIUtility.labelWidth = 150;
-
+            EditorTool.BeginFieldWidth(10);
             EditorTool.DeleteSafety(ref deleteSafety);
 
             nameSpace = EditorTool.DrawNameSpace(EditorTool.TryGetText("gui.namespace"), nameSpace);
@@ -74,13 +71,22 @@ namespace RuniEngine.Editor.ProjectSetting
                     displayRestrictionsIndex = EditorTool.DrawRawList(nbsDatas, "", x =>
                     {
                         KeyValuePair<string?, NBSData?> pair = (KeyValuePair<string?, NBSData?>)x;
-                        EditorGUI.BeginChangeCheck();
 
-                        string key = EditorGUILayout.TextField(EditorTool.TryGetText("gui.key"), pair.Key);
-                        string subtitle = EditorGUILayout.TextField(EditorTool.TryGetText("gui.subtitle"), pair.Value?.subtitle);
-                        bool isBGM = EditorGUILayout.Toggle("is BGM", pair.Value != null && pair.Value.isBGM);
+                        string key;
+                        string subtitle;
+                        bool isBGM;
 
-                        isChanged = isChanged || EditorGUI.EndChangeCheck();
+                        {
+                            EditorTool.BeginLabelWidth(50);
+                            EditorGUI.BeginChangeCheck();
+
+                            key = EditorGUILayout.TextField(EditorTool.TryGetText("gui.key"), pair.Key);
+                            subtitle = EditorGUILayout.TextField(EditorTool.TryGetText("gui.subtitle"), pair.Value?.subtitle);
+                            isBGM = EditorGUILayout.Toggle("is BGM", pair.Value != null && pair.Value.isBGM);
+
+                            isChanged = isChanged || EditorGUI.EndChangeCheck();
+                            EditorTool.EndLabelWidth();
+                        }
 
                         List<NBSMetaData>? metaDatas = null;
                         if (pair.Value != null)
@@ -98,12 +104,15 @@ namespace RuniEngine.Editor.ProjectSetting
 
                                 {
                                     EditorGUILayout.BeginHorizontal();
-                                    GUILayout.Label(EditorTool.TryGetText("gui.path"), GUILayout.ExpandWidth(false));
+                                    string label = EditorTool.TryGetText("gui.path");
 
-
+                                    EditorTool.BeginLabelWidth(label);
                                     EditorGUI.BeginChangeCheck();
-                                    nbsPath = EditorGUILayout.TextField(nbsPath);
+
+                                    nbsPath = EditorGUILayout.TextField(label, nbsPath);
+
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
+                                    EditorTool.EndLabelWidth();
 
                                     //GUI
                                     {
@@ -117,26 +126,31 @@ namespace RuniEngine.Editor.ProjectSetting
 
                                         EditorGUI.BeginChangeCheck();
 
-                                        DefaultAsset nbsClip;
+                                        DefaultAsset? nbsClip;
                                         if (nbsPath != "")
                                         {
                                             nbsClip = AssetDatabase.LoadAssetAtPath<DefaultAsset>(assetPathAndName + Path.GetExtension(outPath));
-                                            nbsClip = (DefaultAsset)EditorGUILayout.ObjectField(nbsClip, typeof(DefaultAsset), false);
+                                            nbsClip = (DefaultAsset?)EditorGUILayout.ObjectField(nbsClip, typeof(DefaultAsset), false, GUILayout.Width(100));
                                         }
                                         else
-                                            nbsClip = (DefaultAsset)EditorGUILayout.ObjectField(null, typeof(DefaultAsset), false);
+                                            nbsClip = (DefaultAsset?)EditorGUILayout.ObjectField(null, typeof(DefaultAsset), false, GUILayout.Width(100));
 
                                         isChanged = isChanged || EditorGUI.EndChangeCheck();
 
-                                        string changedAssetPathAneName = AssetDatabase.GetAssetPath(nbsClip).Replace(assetPath + "/", "");
-                                        for (int k = 0; k < ExtensionFilter.nbsFileFilter.extensions.Length; k++)
+                                        if (nbsClip != null)
                                         {
-                                            if (Path.GetExtension(changedAssetPathAneName) == ExtensionFilter.nbsFileFilter.extensions[k])
+                                            string changedAssetPathAneName = AssetDatabase.GetAssetPath(nbsClip).Replace(assetPath + "/", "");
+                                            for (int k = 0; k < ExtensionFilter.nbsFileFilter.extensions.Length; k++)
                                             {
-                                                nbsPath = PathUtility.GetPathWithExtension(changedAssetPathAneName).Replace("\\", "/");
-                                                continue;
+                                                if (Path.GetExtension(changedAssetPathAneName) == ExtensionFilter.nbsFileFilter.extensions[k])
+                                                {
+                                                    nbsPath = PathUtility.GetPathWithExtension(changedAssetPathAneName).Replace("\\", "/");
+                                                    break;
+                                                }
                                             }
                                         }
+                                        else
+                                            nbsPath = "";
                                     }
 
                                     EditorGUILayout.EndHorizontal();
@@ -146,26 +160,35 @@ namespace RuniEngine.Editor.ProjectSetting
                                     EditorGUILayout.BeginHorizontal();
                                     EditorGUI.BeginChangeCheck();
 
-                                    GUILayout.Label(EditorTool.TryGetText("gui.pitch"), GUILayout.ExpandWidth(false));
-                                    pitch = EditorGUILayout.DoubleField(pitch);
+                                    {
+                                        string label = EditorTool.TryGetText("gui.pitch");
+                                        EditorTool.BeginLabelWidth(label);
 
-                                    GUILayout.Label(EditorTool.TryGetText("gui.tempo"), GUILayout.ExpandWidth(false));
-                                    tempo = EditorGUILayout.DoubleField(tempo);
+                                        pitch = EditorGUILayout.DoubleField(label, pitch);
+                                        EditorTool.EndLabelWidth();
+                                    }
+
+                                    {
+                                        string label = EditorTool.TryGetText("gui.tempo");
+                                        EditorTool.BeginLabelWidth(label);
+
+                                        tempo = EditorGUILayout.DoubleField(label, tempo);
+                                        EditorTool.EndLabelWidth();
+                                    }
 
                                     if (metaData.stream)
                                         tempo = tempo.Clamp(0);
 
-                                    GUILayout.Label(EditorTool.TryGetText("gui.stream"), GUILayout.ExpandWidth(false));
-                                    stream = EditorGUILayout.Toggle(stream, GUILayout.Width(20));
+                                    {
+                                        string label = EditorTool.TryGetText("gui.stream");
+                                        EditorTool.BeginLabelWidth(label);
 
-                                    EditorGUILayout.EndHorizontal();
-                                    /*EditorGUILayout.BeginHorizontal();
-
-                                    GUILayout.Label(EditorTool.TryGetText("project_setting.nbs.loop_offset_tick"), GUILayout.ExpandWidth(false));
-                                    loopOffsetTick = EditorGUILayout.IntField(loopOffsetTick).Clamp(0);
+                                        stream = EditorGUILayout.Toggle(label, stream, GUILayout.Width(EditorGUIUtility.labelWidth + 18));
+                                        EditorTool.EndLabelWidth();
+                                    }
 
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
-                                    EditorGUILayout.EndHorizontal();*/
+                                    EditorGUILayout.EndHorizontal();
                                 }
 
                                 return new NBSMetaData(nbsPath, pitch, tempo, stream, null);
@@ -196,7 +219,7 @@ namespace RuniEngine.Editor.ProjectSetting
                 }
             }
 
-            EditorGUIUtility.labelWidth = labelWidth;
+            EditorTool.EndFieldWidth();
         }
 
         class NBSDataEqualityComparer : IEqualityComparer<KeyValuePair<string?, NBSData?>>

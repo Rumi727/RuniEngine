@@ -28,7 +28,7 @@
     "gui.restart": "Unpause",
     "gui.stop": "Stop",
     "gui.reverse": "Reverse",
-    "gui.delete_safety": "Safe delete mode (delete prohibited unless the list to be deleted is empty)",
+    "gui.delete_safety": "Safe delete mode",
     "gui.add": "Add",
     "gui.remove": "Remove",
     "gui.prefab_key": "Prefab Key",

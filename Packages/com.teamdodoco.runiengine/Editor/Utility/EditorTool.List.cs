@@ -15,10 +15,7 @@ namespace RuniEngine.Editor
         public static void DeleteSafety(ref bool value)
         {
             EditorGUILayout.BeginHorizontal();
-
-            EditorGUILayout.LabelField(TryGetText("gui.delete_safety"), GUILayout.Width(330));
-            value = EditorGUILayout.Toggle(value);
-
+            value = EditorGUILayout.Toggle(TryGetText("gui.delete_safety"), value);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -33,6 +30,8 @@ namespace RuniEngine.Editor
 
                 //GUI
                 {
+                    BeginLabelWidth(100);
+
                     {
                         EditorGUILayout.BeginHorizontal();
                         {
@@ -135,6 +134,8 @@ namespace RuniEngine.Editor
 
                         EditorGUILayout.EndHorizontal();
                     }
+
+                    EndLabelWidth();
                 }
 
                 //List

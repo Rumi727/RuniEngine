@@ -32,7 +32,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             base.TimeSliderGUI(() =>
             {
                 EditorGUI.BeginChangeCheck();
-                double value = EditorGUILayout.DoubleField(target.currentSampleIndex, GUILayout.Width(75));
+                double value = EditorGUILayout.DoubleField(target.sampleIndex, GUILayout.Width(75));
 
                 if (EditorGUI.EndChangeCheck())
                 {
@@ -40,7 +40,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                     {
                         AudioPlayer? target2 = (AudioPlayer?)targets[i];
                         if (target2 != null)
-                            target2.currentSampleIndex = value;
+                            target2.sampleIndex = value;
                     }
                 }
 
