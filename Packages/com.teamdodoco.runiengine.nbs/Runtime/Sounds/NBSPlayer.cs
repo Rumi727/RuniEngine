@@ -329,7 +329,7 @@ namespace RuniEngine.Sounds
                     isLooped = true;
                 }
 
-                while (tempo < 0)
+                while (tempo < 0 && tick < 0)
                 {
                     _tick += tickLength - nbsMetaData.loopStartTick;
                     isLooped = true;
