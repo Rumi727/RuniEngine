@@ -105,7 +105,7 @@ namespace RuniEngine.Sounds
             if (!isPaused)
             {
                 double index = Interlocked.CompareExchange(ref _sampleIndex, 0, 0);
-                index += Kernel.deltaTime * frequency * realTempo;
+                index += Kernel.deltaTimeDouble * frequency * realTempo;
 
                 Interlocked.Exchange(ref _sampleIndex, index);
             }
