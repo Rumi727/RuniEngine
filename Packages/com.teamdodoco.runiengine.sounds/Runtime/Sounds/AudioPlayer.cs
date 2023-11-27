@@ -164,6 +164,14 @@ namespace RuniEngine.Sounds
 
             Update();
 
+            if (tempo < 0 && audioMetaData != null && audioMetaData.datas != null)
+            {
+                int value = audioMetaData.datas.Length / audioMetaData.channels;
+
+                Interlocked.Exchange(ref _sampleIndex, value);
+                Interlocked.Exchange(ref realSampleIndex, value);
+            }
+
             if (audioSource != null)
             {
                 audioSource.clip = null;
