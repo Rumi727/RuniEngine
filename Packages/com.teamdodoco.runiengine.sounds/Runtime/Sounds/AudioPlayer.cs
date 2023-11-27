@@ -46,13 +46,13 @@ namespace RuniEngine.Sounds
 
         public override double time
         {
-            get => sampleIndex / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
-            set => sampleIndex = value * (frequency != 0 ? frequency : AudioLoader.systemFrequency);
+            get => (double)sampleIndex / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
+            set => sampleIndex = (long)(value * (frequency != 0 ? frequency : AudioLoader.systemFrequency));
         }
 
-        public double sampleIndex
+        public long sampleIndex
         {
-            get => Interlocked.CompareExchange(ref _sampleIndex, 0, 0);
+            get => Interlocked.Read(ref _sampleIndex);
             set
             {
                 if (sampleIndex != value)
@@ -66,7 +66,7 @@ namespace RuniEngine.Sounds
                 }
             }
         }
-        double _sampleIndex;
+        long _sampleIndex;
 
         public override double length => audioMetaData != null ? audioMetaData.length : 0;
 
@@ -104,9 +104,9 @@ namespace RuniEngine.Sounds
             //매 프레임 시간 보정
             if (!isPaused)
             {
-                double index = Interlocked.CompareExchange(ref _sampleIndex, 0, 0);
-                index += Kernel.deltaTimeDouble * frequency * realTempo;
-
+                long index = sampleIndex;
+                index += (long)(Kernel.deltaTimeDouble * frequency * realTempo);
+                
                 Interlocked.Exchange(ref _sampleIndex, index);
             }
 
@@ -211,7 +211,7 @@ namespace RuniEngine.Sounds
         [NonSerialized] int onAudioFilterReadLock = 0;
         [NonSerialized] float[] tempData = new float[0];
         [NonSerialized] double tempoAdjustmentIndex = 0;
-        [NonSerialized] double realSampleIndex = 0;
+        [NonSerialized] long realSampleIndex = 0;
         protected override void OnAudioFilterRead(float[] data, int channels)
         {
             try
@@ -223,8 +223,8 @@ namespace RuniEngine.Sounds
                 
                 if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
                 {
-                    double sampleIndex = this.sampleIndex;
-                    double realSampleIndex = Interlocked.CompareExchange(ref this.realSampleIndex, 0, 0);
+                    long sampleIndex = this.sampleIndex;
+                    long realSampleIndex = Interlocked.Read(ref this.realSampleIndex);
                     double tempo = realTempo;
                     double pitch = realPitch;
                     float volume = (float)this.volume;
@@ -258,8 +258,7 @@ namespace RuniEngine.Sounds
                             double value = data.Length / audioChannels;
                             double pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
 
-                            //sampleIndex += value * pitchDivideTempo;
-                            realSampleIndex += value * tempo.Sign();
+                            realSampleIndex += (long)(value * tempo.Sign());
 
                             //템포
                             tempoAdjustmentIndex += value;
@@ -267,16 +266,10 @@ namespace RuniEngine.Sounds
                             double condition = 2048 * (pitch != 0 ? pitch : 1);
                             while (tempoAdjustmentIndex >= condition)
                             {
-                                realSampleIndex -= value * (1 - pitchDivideTempo.Abs()) * (condition / value) * tempo.Sign();
+                                realSampleIndex -= (long)(value * (1 - pitchDivideTempo.Abs()) * (condition / value) * tempo.Sign());
                                 sampleIndex = realSampleIndex;
 
                                 tempoAdjustmentIndex -= condition;
-                            }
-
-                            if (value == value.Floor())
-                            {
-                                sampleIndex = sampleIndex.Round();
-                                realSampleIndex = realSampleIndex.Round();
                             }
                         }
 
@@ -286,7 +279,7 @@ namespace RuniEngine.Sounds
 
                             while (tempo >= 0 && realSampleIndex >= samplesLength)
                             {
-                                double value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+                                long value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
 
                                 sampleIndex -= value;
                                 realSampleIndex -= value;
@@ -296,7 +289,7 @@ namespace RuniEngine.Sounds
 
                             while (tempo < 0 && realSampleIndex < loopStartIndex + loopOffsetIndex)
                             {
-                                double value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+                                long value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
 
                                 sampleIndex += value;
                                 realSampleIndex += value;
