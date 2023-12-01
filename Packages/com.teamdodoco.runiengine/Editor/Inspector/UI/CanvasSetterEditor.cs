@@ -2,6 +2,7 @@
 using RuniEngine.Editor.Inspector.UI;
 using RuniEngine.UI;
 using UnityEditor;
+using UnityEngine;
 
 namespace RuniEngine.Editor
 {
@@ -54,6 +55,23 @@ namespace RuniEngine.Editor
                     CanvasSetter? canvasSetter = targets[i];
                     if (canvasSetter != null)
                         canvasSetter.SetDirty();
+                }
+            }
+
+            DrawLine();
+
+            if (GUILayout.Button(TryGetText("gui.delete"), GUILayout.ExpandWidth(false)) && targets != null)
+            {
+                for (int i = 0; i < targets.Length; i++)
+                {
+                    CanvasSetter? tool = targets[i];
+                    if (tool == null)
+                        continue;
+
+                    Canvas? canvas = tool.canvas;
+
+                    DestroyImmediate(tool);
+                    Undo.DestroyObjectImmediate(canvas);
                 }
             }
         }
