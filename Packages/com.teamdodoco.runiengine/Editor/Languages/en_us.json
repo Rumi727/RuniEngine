@@ -86,6 +86,16 @@
     "inspector.content_aspect_ratio_fitter.aspect_mode": "Aspect Mode",
     "inspector.ui_animator.animations": "Animation Elements",
     "inspector.sound_player_base.pan_stereo": "Pan Stereo",
+    "inspector.canvas_setter.disableScreenArea": "Disable Screen Area",
+    "inspector.canvas_setter.worldRenderMode": "World Render Mode",
+    "inspector.canvas_setter.planeDistance": "Plane Distance",
+    "inspector.canvas_setter.areaOffset": "Area Offset",
+    "inspector.canvas_setter.globalScreenPositionMultiple": "Global Screen Position Multiple",
+    "inspector.canvas_setter.globalScreenAreaMultiple": "Global Screen Area Multiple",
+    "inspector.canvas_setter.disableUISize": "Disable UI Size",
+    "inspector.canvas_setter.uiSize": "UI Size",
+    "inspector.canvas_setter.alwaysVisible": "Always Visible",
+    "inspector.canvas_setter.alwaysVisible.tooltip": "Enabling this variable will ensure that scene visibility is always enabled in the editor.\nThis property has no runtime effect.",
 
     "inspector.target_rect_transform_fitter_editor.warning": "If the rotation and size of the current object are adjusted at the same time, its characteristics will prevent it from fitting properly to the target object.",
 
