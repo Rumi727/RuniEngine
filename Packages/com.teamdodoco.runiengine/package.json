@@ -4,7 +4,7 @@
   "author": {
     "name": "Rumi"
   },
-  "unity": "2021.1",
+  "unity": "2023.2",
   "displayName": "Runi Engine",
   "description": "Unity-only universal kernel system that everyone will use",
   "dependencies": {
@@ -14,10 +14,9 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.unitywebrequest": "1.0.0",
-    "com.unity.ugui": "1.0.0",
-    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.ugui": "2.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
-    "com.cysharp.unitask": "2.3.3",
+    "com.cysharp.unitask": "2.5.0",
     "com.coffee.softmask-for-ugui": "1.0.2",
     "com.ibicha.youtube-player": "2.0.2"
   },
@@ -26,5 +25,6 @@
     "Runi Engine",
     "Engine"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "unityRelease": "1f1"
 }
