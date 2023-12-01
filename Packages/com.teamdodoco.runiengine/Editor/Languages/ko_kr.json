@@ -99,6 +99,7 @@
     "inspector.canvas_setter.alwaysVisible.tooltip": "이 변수를 활성화 하면 에디터에서 씬 가시성이 항상 활성화 됩니다.\n이 프로퍼티는 런타임에 영향을 미치지 않습니다.",
     
     "inspector.target_rect_transform_fitter_editor.warning": "현재 오브젝트의 회전과 크기가 동시에 조절된다면 그 특성으로 인해 정상적으로 타겟 오브젝트에 맞추지 못하게 됩니다",
+    "inspector.canvas_setter_editor.error": "CanvasSetter 컴포넌트가 UI 크기를 변경하기 때문에 CanvasScaler 컴포넌트를 사용하면 안됩니다\nUI 크기를 비활성화하거나 CanvasScaler 컴포넌트를 제거하세요",
 
     "undo.modified_~": "수정된 {object}",
 
