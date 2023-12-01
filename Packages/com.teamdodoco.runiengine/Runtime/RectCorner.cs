@@ -1,8 +1,10 @@
 #nullable enable
+using System;
 using UnityEngine;
 
 namespace RuniEngine
 {
+    [Serializable]
     public struct RectCorner
     {
         public Rect rect
@@ -19,10 +21,10 @@ namespace RuniEngine
             }
         }
 
-        public Vector2 bottomLeft { get; set; }
-        public Vector2 topLeft { get; set; }
-        public Vector2 topRight { get; set; }
-        public Vector2 bottomRight { get; set; }
+        [FieldName("gui.bottom_left")] public Vector2 bottomLeft;
+        [FieldName("gui.top_left")] public Vector2 topLeft;
+        [FieldName("gui.top_right")] public Vector2 topRight;
+        [FieldName("gui.bottom_right")] public Vector2 bottomRight;
 
 
 

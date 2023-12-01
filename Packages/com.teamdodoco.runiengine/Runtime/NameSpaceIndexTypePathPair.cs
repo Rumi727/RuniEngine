@@ -5,13 +5,14 @@ using System.IO;
 
 namespace RuniEngine
 {
+    [Serializable]
     public struct NameSpaceIndexTypePathPair : IEquatable<NameSpaceIndexTypePathPair>
     {
-        public string type;
-        public string path;
-        public string nameSpace;
+        [FieldName("gui.type")] public string type;
+        [FieldName("gui.path")] public string path;
+        [FieldName("gui.nameSpace")] public string nameSpace;
 
-        public int index;
+        [FieldName("gui.index")] public int index;
 
         public NameSpaceIndexTypePathPair(string type, string path)
         {

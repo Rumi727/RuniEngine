@@ -3,10 +3,11 @@ using System;
 
 namespace RuniEngine
 {
+    [Serializable]
     public struct ReplaceOldNewPair : IEquatable<ReplaceOldNewPair>
     {
-        public string replaceOld;
-        public string replaceNew;
+        [FieldName("gui.old_replace")] public string replaceOld;
+        [FieldName("gui.new_replace")] public string replaceNew;
 
         public ReplaceOldNewPair(string replaceOld, string replaceNew)
         {

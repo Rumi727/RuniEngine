@@ -4,10 +4,11 @@ using System;
 
 namespace RuniEngine
 {
+    [Serializable]
     public struct NameSpacePathPair : IEquatable<NameSpacePathPair>
     {
-        public string path;
-        public string nameSpace;
+        [FieldName("gui.path")] public string path;
+        [FieldName("gui.nameSpace")] public string nameSpace;
 
         public NameSpacePathPair(string path)
         {
