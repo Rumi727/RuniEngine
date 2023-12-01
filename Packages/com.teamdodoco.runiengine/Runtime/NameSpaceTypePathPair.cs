@@ -5,11 +5,12 @@ using System.IO;
 
 namespace RuniEngine
 {
+    [Serializable]
     public struct NameSpaceTypePathPair : IEquatable<NameSpaceTypePathPair>
     {
-        public string type;
-        public string path;
-        public string nameSpace;
+        [FieldName("gui.type")] public string type;
+        [FieldName("gui.path")] public string path;
+        [FieldName("gui.namespace")] public string nameSpace;
 
         public NameSpaceTypePathPair(string type, string path)
         {

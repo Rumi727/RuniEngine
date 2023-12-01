@@ -4,12 +4,13 @@ using System;
 
 namespace RuniEngine
 {
+    [Serializable]
     public struct NameSpacePathReplacePair : IEquatable<NameSpacePathReplacePair>
     {
-        public string path;
-        public string nameSpace;
+        [FieldName("gui.path")] public string path;
+        [FieldName("gui.nameSpace")] public string nameSpace;
 
-        public ReplaceOldNewPair[] replaces;
+        [FieldName("gui.replaces")] public ReplaceOldNewPair[] replaces;
 
         public NameSpacePathReplacePair(string path)
         {
