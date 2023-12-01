@@ -86,6 +86,16 @@
     "inspector.content_aspect_ratio_fitter.aspect_mode": "方向モード",
     "inspector.ui_animator.animations": "アニメーション要素",
     "inspector.sound_player_base.pan_stereo": "パンステレオ",
+    "inspector.canvas_setter.disableScreenArea": "画面領域を無効にする",
+    "inspector.canvas_setter.worldRenderMode": "ワールドレンダーモード",
+    "inspector.canvas_setter.planeDistance": "平面距離",
+    "inspector.canvas_setter.areaOffset": "領域オフセット",
+    "inspector.canvas_setter.globalScreenPositionMultiple": "画面位置の倍数",
+    "inspector.canvas_setter.globalScreenAreaMultiple": "画面領域の倍数",
+    "inspector.canvas_setter.disableUISize": "UIサイズを無効にする",
+    "inspector.canvas_setter.uiSize": "UIサイズ",
+    "inspector.canvas_setter.alwaysVisible": "いつも見える",
+    "inspector.canvas_setter.alwaysVisible.tooltip": "この変数を有効にすると、エディタでシーンの可視性が常に有効になります。\nこのプロパティはランタイムには影響しません。",
 
     "inspector.target_rect_transform_fitter_editor.warning": "現在のオブジェクトの回転とサイズが同時に調整されると、その特性により通常はターゲットオブジェクトに合わせることができなくなります。",
 

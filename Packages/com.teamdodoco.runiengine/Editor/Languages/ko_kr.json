@@ -87,6 +87,16 @@
     "inspector.ui_animator.animations": "애니메이션 요소",
     "inspector.ui_animation.animator": "UI 애니메이터",
     "inspector.sound_player_base.pan_stereo": "팬 스테레오",
+    "inspector.canvas_setter.disableScreenArea": "화면 영역 비활성화",
+    "inspector.canvas_setter.worldRenderMode": "월드 렌더 모드",
+    "inspector.canvas_setter.planeDistance": "평면 거리",
+    "inspector.canvas_setter.areaOffset": "영역 오프셋",
+    "inspector.canvas_setter.globalScreenPositionMultiple": "화면 위치 배수",
+    "inspector.canvas_setter.globalScreenAreaMultiple": "화면 영역 배수",
+    "inspector.canvas_setter.disableUISize": "UI 크기 비활성화",
+    "inspector.canvas_setter.uiSize": "UI 크기",
+    "inspector.canvas_setter.alwaysVisible": "항상 보이게",
+    "inspector.canvas_setter.alwaysVisible.tooltip": "이 변수를 활성화 하면 에디터에서 씬 가시성이 항상 활성화 됩니다.\n이 프로퍼티는 런타임에 영향을 미치지 않습니다.",
     
     "inspector.target_rect_transform_fitter_editor.warning": "현재 오브젝트의 회전과 크기가 동시에 조절된다면 그 특성으로 인해 정상적으로 타겟 오브젝트에 맞추지 못하게 됩니다",
 

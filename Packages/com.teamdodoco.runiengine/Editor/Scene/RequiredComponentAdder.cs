@@ -27,7 +27,8 @@ namespace RuniEngine.Editor
                 hierarchyChangedDisable = true;
 
                 PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
-                AddComponent<RectTransform, RectTransformTool>(prefabStage);
+                AddComponent<RectTransform, RectTransformTool>(prefabStage, true);
+                AddComponent<Canvas, CanvasSetter>(prefabStage, false);
             }
             finally
             {
@@ -35,7 +36,7 @@ namespace RuniEngine.Editor
             }
         }
 
-        public static TComponentToAdd[] AddComponent<TComponent, TComponentToAdd>(PrefabStage prefabStage) where TComponent : Component where TComponentToAdd : Behaviour
+        public static TComponentToAdd[] AddComponent<TComponent, TComponentToAdd>(PrefabStage prefabStage, bool backToTop) where TComponent : Component where TComponentToAdd : Behaviour
         {
             TComponent[] components;
             if (prefabStage != null)
@@ -54,7 +55,7 @@ namespace RuniEngine.Editor
 
                 if (!component.TryGetComponent<TComponentToAdd>(out TComponentToAdd? componentToAdd))
                 {
-                    TComponentToAdd? addedComponent = EditorTool.AddComponentCompatibleWithPrefab<TComponentToAdd>(component.gameObject, true);
+                    TComponentToAdd? addedComponent = EditorTool.AddComponentCompatibleWithPrefab<TComponentToAdd>(component.gameObject, backToTop);
                     if (addedComponent != null)
                         results.Add(addedComponent);
                 }
