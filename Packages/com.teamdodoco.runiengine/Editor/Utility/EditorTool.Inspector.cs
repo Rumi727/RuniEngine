@@ -197,9 +197,9 @@ namespace RuniEngine.Editor
         public static void BeginLabelWidth(string label) => BeginLabelWidth(new GUIContent(label));
         public static void BeginLabelWidth(GUIContent label) => BeginLabelWidth(label, EditorStyles.label);
         public static void BeginLabelWidth(string label, GUIStyle style) => BeginLabelWidth(new GUIContent(label), style);
-        public static void BeginLabelWidth(GUIContent label, GUIStyle style) => EditorGUIUtility.labelWidth = GetLabelXSize(label) + 2;
+        public static void BeginLabelWidth(GUIContent label, GUIStyle style) => EditorGUIUtility.labelWidth = GetLabelXSize(label, style) + 2;
 
-        static Queue<float> labelWidthQueue = new Queue<float>();
+        static readonly Queue<float> labelWidthQueue = new Queue<float>();
         public static void BeginLabelWidth(float width)
         {
             labelWidthQueue.Enqueue(width);
@@ -221,7 +221,7 @@ namespace RuniEngine.Editor
 
 
 
-        static Queue<float> fieldWidthQueue = new Queue<float>();
+        static readonly Queue<float> fieldWidthQueue = new Queue<float>();
         public static void BeginFieldWidth(float width)
         {
             fieldWidthQueue.Enqueue(width);
