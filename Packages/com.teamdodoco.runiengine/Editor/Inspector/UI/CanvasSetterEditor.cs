@@ -3,6 +3,7 @@ using RuniEngine.Editor.Inspector.UI;
 using RuniEngine.UI;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RuniEngine.Editor
 {
@@ -42,7 +43,15 @@ namespace RuniEngine.Editor
 
             UseProperty("_disableUISize", TryGetText("inspector.canvas_setter.disableUISize"));
             if (!target.disableUISize || mixed)
+            {
                 UseProperty("_uiSize", TryGetText("inspector.canvas_setter.uiSize"));
+
+                if (!mixed && target.GetComponent<CanvasScaler>() != null)
+                {
+                    Space();
+                    EditorGUILayout.HelpBox(TryGetText("inspector.canvas_setter_editor.error"), MessageType.Error);
+                }
+            }
 
             DrawLine();
 

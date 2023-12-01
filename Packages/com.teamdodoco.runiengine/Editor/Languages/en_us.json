@@ -98,6 +98,7 @@
     "inspector.canvas_setter.alwaysVisible.tooltip": "Enabling this variable will ensure that scene visibility is always enabled in the editor.\nThis property has no runtime effect.",
 
     "inspector.target_rect_transform_fitter_editor.warning": "If the rotation and size of the current object are adjusted at the same time, its characteristics will prevent it from fitting properly to the target object.",
+    "inspector.canvas_setter_editor.error": "You should not use CanvasScaler component because CanvasSetter component changes UI size\nDisable UI size or remove CanvasScaler component",
 
     "undo.modified_~": "Modified {object}",
 

@@ -98,6 +98,7 @@
     "inspector.canvas_setter.alwaysVisible.tooltip": "この変数を有効にすると、エディタでシーンの可視性が常に有効になります。\nこのプロパティはランタイムには影響しません。",
 
     "inspector.target_rect_transform_fitter_editor.warning": "現在のオブジェクトの回転とサイズが同時に調整されると、その特性により通常はターゲットオブジェクトに合わせることができなくなります。",
+    "inspector.canvas_setter_editor.error": "CanvasSetterコンポーネントはUIサイズを変更するため、CanvasScalerコンポーネントを使用しないでください\nUIサイズを無効にするか、CanvasScalerコンポーネントを削除してください",
 
     "undo.modified_~": "変更された{object}",
 
