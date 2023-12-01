@@ -1,6 +1,6 @@
 {
     "language.name": "English",
-	"language.region": "US",
+    "language.region": "US",
 
     "gui.warning": "Warning",
     "gui.field_is_null": "This field cannot be a null value",
@@ -52,9 +52,11 @@
     "gui.subtitle": "Subtitle",
     "gui.list_count": "List Length",
     "gui.screen_index": "Screen Index",
-	"gui.previously": "Previously",
-	"gui.next": "Next",
+    "gui.previously": "Previously",
+    "gui.next": "Next",
     "gui.stream": "Stream",
+    "gui.min": "Min",
+    "gui.max": "Max",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
