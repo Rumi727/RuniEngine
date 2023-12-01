@@ -1,7 +1,7 @@
 #nullable enable
 using UnityEngine;
 
-namespace RuniEngine.UI
+namespace RuniEngine
 {
     public struct RectCorner
     {
