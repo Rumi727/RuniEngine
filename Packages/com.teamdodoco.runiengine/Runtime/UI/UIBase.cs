@@ -78,7 +78,7 @@ namespace RuniEngine.UI
                 Vector2 size = (Vector2)matrix4x.MultiplyVector(rect.max) - position;
 
                 {
-                    Vector2 temp = (position + size.Multiply(rectTransform.pivot)).Multiply(rectTransform.lossyScale);
+                    Vector2 temp = (position + (size * rectTransform.pivot)) * rectTransform.lossyScale;
                     rectTransform.position = new Vector3(temp.x, temp.y, rectTransform.position.z);
                 }
 

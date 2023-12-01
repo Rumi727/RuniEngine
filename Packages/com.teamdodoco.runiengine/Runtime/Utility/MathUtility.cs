@@ -4872,7 +4872,6 @@ namespace RuniEngine
         #endregion
 
         #region Multiply
-        public static Vector2 Multiply(this Vector2 a, Vector2 b) => new Vector3(a.x * b.x, a.y * b.y);
         public static Vector3 Multiply(this Vector3 a, Vector3 b) => new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
         public static Vector4 Multiply(this Vector4 a, Vector4 b) => new Vector4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
 
