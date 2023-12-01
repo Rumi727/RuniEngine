@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace RuniEngine
 {
-    [AttributeUsage(AttributeTargets.Field)]
     public sealed class FieldNameAttribute : PropertyAttribute
     {
         public FieldNameAttribute(string name) => this.name = name;
