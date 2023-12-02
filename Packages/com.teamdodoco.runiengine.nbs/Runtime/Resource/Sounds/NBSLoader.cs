@@ -31,11 +31,10 @@ namespace RuniEngine.Resource.Sounds
 
 
         [Awaken]
-        static void Awaken()
-        {
-            ResourceManager.ElementRegister(new NBSLoader());
-            ObjectPoolingManager.ProjectData.prefabList.TryAdd("nbs_player.prefab", "Prefab/NBS Player");
-        }
+        static void Awaken() => ResourceManager.ElementRegister(new NBSLoader());
+
+        [Starten]
+        static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("nbs_player.prefab", "Prefab/NBS Player");
 
         public static NBSData? SearchNBSData(string path, string nameSpace = "")
         {

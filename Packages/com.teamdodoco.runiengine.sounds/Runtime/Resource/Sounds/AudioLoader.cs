@@ -81,9 +81,10 @@ namespace RuniEngine.Resource.Sounds
                     Interlocked.Exchange(ref _systemChannels, 2);
                     break;
             }
-
-            ObjectPoolingManager.ProjectData.prefabList.TryAdd("audio_player.prefab", "Prefab/Audio Player");
         }
+
+        [Starten]
+        static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("audio_player.prefab", "Prefab/Audio Player");
 
         public static AudioData? SearchAudioData(string path, string nameSpace = "")
         {
