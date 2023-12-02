@@ -42,9 +42,6 @@ namespace RuniEngine.Editor.ProjectSetting
         public static StorableClass? objectPoolingProjectSetting = null;
         public static void DrawGUI(ref ReorderableList? reorderableList)
         {
-            if (objectPoolingProjectSetting == null)
-                return;
-
             List<KeyValuePair<string, string>> prefabObject = ObjectPoolingManager.ProjectData.prefabList.ToList();
             float height = EditorStyles.textField.CalcSize(new GUIContent()).y;
             bool isChanged = false;
@@ -191,7 +188,7 @@ namespace RuniEngine.Editor.ProjectSetting
                 ObjectPoolingManager.ProjectData.prefabList = prefabObject.ToDictionary(x => x.Key, x => x.Value);
 
             //플레이 모드가 아니면 변경한 리스트의 데이터를 잃어버리지 않게 파일로 저장
-            if (isChanged && !Kernel.isPlaying)
+            if (isChanged && !Kernel.isPlaying && objectPoolingProjectSetting != null)
                 StorableClassUtility.AutoNameSave(objectPoolingProjectSetting, Kernel.projectDataPath);
         }
 
