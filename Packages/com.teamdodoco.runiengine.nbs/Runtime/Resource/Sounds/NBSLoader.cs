@@ -8,6 +8,7 @@ using UnityEngine;
 using RuniEngine.Json;
 using RuniEngine.NBS;
 using System.Linq;
+using RuniEngine.Pooling;
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -30,9 +31,11 @@ namespace RuniEngine.Resource.Sounds
 
 
         [Awaken]
-        static void Awaken() => ResourceManager.ElementRegister(new NBSLoader());
-
-
+        static void Awaken()
+        {
+            ResourceManager.ElementRegister(new NBSLoader());
+            ObjectPoolingManager.ProjectData.prefabList.TryAdd("nbs_player.prefab", "Prefab/NBS Player");
+        }
 
         public static NBSData? SearchNBSData(string path, string nameSpace = "")
         {
