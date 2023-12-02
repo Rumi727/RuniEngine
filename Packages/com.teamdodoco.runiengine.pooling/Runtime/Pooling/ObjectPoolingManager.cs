@@ -10,6 +10,14 @@ namespace RuniEngine.Pooling
 {
     public static class ObjectPoolingManager
     {
+        [ProjectData]
+        public struct ProjectData
+        {
+            [JsonProperty] public static Dictionary<string, string> prefabList { get; set; } = new Dictionary<string, string>();
+        }
+
+
+
         public static Transform instance
         {
             get
@@ -27,11 +35,7 @@ namespace RuniEngine.Pooling
         }
         static Transform? _instance;
 
-        [ProjectData]
-        public struct ProjectData
-        {
-            [JsonProperty] public static Dictionary<string, string> prefabList { get; set; } = new Dictionary<string, string>();
-        }
+        
 
         static readonly List<Instance> instanceList = new List<Instance>();
         class Instance
