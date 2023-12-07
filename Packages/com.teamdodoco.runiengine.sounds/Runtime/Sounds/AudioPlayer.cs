@@ -104,7 +104,7 @@ namespace RuniEngine.Sounds
             //루프
             if (loop)
             {
-                float loopStartTime = audioMetaData.loopStartIndex / frequency;
+                float loopStartTime = (float)audioMetaData.loopStartIndex / frequency;
                 bool isLooped = false;
 
                 while (tempo >= 0 && time >= length)
