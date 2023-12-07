@@ -284,12 +284,15 @@ namespace RuniEngine.Sounds
             base.Stop();
 
             if (audioSource != null)
+            {
                 audioSource.Stop();
+                audioSource.clip = null;
+            }
 
             audioData = null;
             audioMetaData = null;
 
-            time = 0;
+            _time = 0;
         }
 
         protected override void OnAudioFilterRead(float[] data, int channels)
