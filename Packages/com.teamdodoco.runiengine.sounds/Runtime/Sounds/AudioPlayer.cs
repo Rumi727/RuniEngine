@@ -54,7 +54,23 @@ namespace RuniEngine.Sounds
                 }
             }
         }
-        [NonSerialized] double _time;
+        [NonSerialized] double _time = 0;
+
+        public int timeSamples
+        {
+            get => audioSource != null ? audioSource.timeSamples : 0;
+            set
+            {
+                if (timeSamples != value)
+                {
+                    _time = value / frequency;
+                    if (audioSource != null)
+                        audioSource.timeSamples = value;
+
+                    TimeChangedEventInvoke();
+                }
+            }
+        }
 
         public override double length => audioMetaData != null ? audioMetaData.length : 0;
 
@@ -90,7 +106,7 @@ namespace RuniEngine.Sounds
                         float result = (float)((1 - pitchDivideTempo.Abs()) * pitch * condition * tempo.Sign());
                         
                         audioSource.time = (audioSource.time - result).Clamp(0, (float)length - 0.01f);
-                        _time = audioSource.time;
+                        _time = (double)audioSource.timeSamples / frequency;
 
                         tempoAdjustmentTime -= condition;
                     }
@@ -132,7 +148,7 @@ namespace RuniEngine.Sounds
 
         void VarRefresh()
         {
-            if (audioSource == null || AudioLoader.audioListener == null)
+            if (audioSource == null)
                 return;
 
             if (audioSource.bypassEffects)
