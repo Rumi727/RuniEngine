@@ -95,6 +95,8 @@ namespace RuniEngine.Sounds
                         tempoAdjustmentTime -= condition;
                     }
                 }
+                else
+                    tempoAdjustmentTime = 0;
             }
             else
                 tempoAdjustmentTime = 0;
@@ -150,6 +152,8 @@ namespace RuniEngine.Sounds
             }
 
             audioSource.loop = false;
+            audioSource.panStereo = panStereo;
+
             audioSource.spatialBlend = spatial ? 1 : 0;
 
             audioSource.minDistance = minDistance;
