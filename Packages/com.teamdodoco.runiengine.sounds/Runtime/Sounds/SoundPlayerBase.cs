@@ -47,7 +47,7 @@ namespace RuniEngine.Sounds
         public bool isPlaying => Interlocked.Add(ref _isPlaying, 0) != 0;
         [NonSerialized] int _isPlaying = 0;
 
-        public bool isPaused
+        public virtual bool isPaused
         {
             get => Interlocked.Add(ref _isPaused, 0) != 0;
             set => Interlocked.Exchange(ref _isPaused, value ? 1 : 0);
