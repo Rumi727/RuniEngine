@@ -76,6 +76,24 @@ namespace RuniEngine.Sounds
 
 
 
+        public override bool isPaused
+        {
+            get => base.isPaused;
+            set
+            {
+                base.isPaused = value;
+                if (base.isPaused != value && audioSource != null)
+                {
+                    if (base.isPaused)
+                        audioSource.Pause();
+                    else
+                        audioSource.UnPause();
+                }
+            }
+        }
+
+
+
         bool isDisposable = false;
 
 
