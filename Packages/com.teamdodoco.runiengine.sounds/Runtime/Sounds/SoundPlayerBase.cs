@@ -69,41 +69,41 @@ namespace RuniEngine.Sounds
 
 
 
-        public double pitch
+        public float pitch
         {
             get => Interlocked.CompareExchange(ref _pitch, 0, 0).Clamp(0);
             set => Interlocked.Exchange(ref _pitch, value.Clamp(0));
         }
-        [SerializeField, Range(0, 3)] double _pitch = 1;
+        [SerializeField, Range(0, 3)] float _pitch = 1;
 
-        public virtual double realPitch => pitch * (soundMetaData != null ? soundMetaData.pitch : 1);
+        public virtual float realPitch => pitch * (soundMetaData != null ? soundMetaData.pitch : 1);
 
-        public double tempo
+        public float tempo
         {
             get => Interlocked.CompareExchange(ref _tempo, 0, 0);
             set => Interlocked.Exchange(ref _tempo, value);
         }
-        [SerializeField, Range(-3, 3)] double _tempo = 1;
+        [SerializeField, Range(-3, 3)] float _tempo = 1;
 
         public virtual double realTempo => tempo * (soundMetaData != null ? soundMetaData.tempo : 1);
 
 
 
-        public double volume
+        public float volume
         {
             get => Interlocked.CompareExchange(ref _volume, 0, 0);
             set => Interlocked.Exchange(ref _volume, value);
         }
-        [SerializeField, Range(0, 2)] double _volume = 1;
+        [SerializeField, Range(0, 2)] float _volume = 1;
 
 
 
-        public double panStereo
+        public float panStereo
         {
             get => Interlocked.CompareExchange(ref _panStereo, 0, 0);
             set => Interlocked.Exchange(ref _panStereo, value);
         }
-        [SerializeField, Range(-1, 1)] double _panStereo = 0;
+        [SerializeField, Range(-1, 1)] float _panStereo = 0;
 
 
 
@@ -199,6 +199,9 @@ namespace RuniEngine.Sounds
         {
             base.Remove();
             Stop();
+
+            key = "";
+            nameSpace = "";
 
             time = 0;
             loop = false;

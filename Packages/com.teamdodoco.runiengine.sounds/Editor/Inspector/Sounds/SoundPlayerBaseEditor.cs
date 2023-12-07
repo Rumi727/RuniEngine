@@ -284,8 +284,10 @@ namespace RuniEngine.Editor.Inspector.Sounds
             EditorGUI.showMixedValue = mixed;
             EditorGUI.BeginDisabledGroup(!Kernel.isPlaying || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
 
+            BeginFieldWidth(60);
             EditorGUI.BeginChangeCheck();
             float value = EditorGUILayout.Slider((float)target.time, 0, (float)target.length);
+            EndFieldWidth();
 
             if (EditorGUI.EndChangeCheck())
             {
