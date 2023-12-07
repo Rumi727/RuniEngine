@@ -101,7 +101,12 @@ namespace RuniEngine.Sounds
         void Update()
         {
             if (nbsFile == null)
+            {
+                if (isDisposable)
+                    Remove();
+
                 return;
+            }
             
             if (!isPaused && realTempo != 0)
             {
@@ -111,6 +116,9 @@ namespace RuniEngine.Sounds
                 SetIndex();
                 GetAudioDataToMonoAndInvoke();
             }
+
+            if (isDisposable && (tick < 0 || tick > tickLength))
+                Remove();
         }
 
 
@@ -164,11 +172,11 @@ namespace RuniEngine.Sounds
 
 
 
-        public static NBSPlayer? PlayNBS(string key, string nameSpace = "", double volume = 1, bool loop = false, double pitch = 1, double tempo = 1, double panStereo = 0, Transform? parent = null) => InternalPlayNBS(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
+        public static NBSPlayer? PlayNBS(string key, string nameSpace = "", float volume = 1, bool loop = false, float pitch = 1, float tempo = 1, float panStereo = 0, Transform? parent = null) => InternalPlayNBS(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
 
-        public static NBSPlayer? PlayNBS(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayNBS(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
+        public static NBSPlayer? PlayNBS(string key, string nameSpace, float volume, bool loop, float pitch, float tempo, float panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayNBS(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
 
-        static NBSPlayer? InternalPlayNBS(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
+        static NBSPlayer? InternalPlayNBS(string key, string nameSpace, float volume, bool loop, float pitch, float tempo, float panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
@@ -248,9 +256,9 @@ namespace RuniEngine.Sounds
                 else if (nbsLayer.layerLock != 2 && allLayerLock)
                     continue;
 
-                double pitch = 2d.Pow((nbsNoteMetaData.key - 45) * 0.0833333333) * 1.059463.Pow(nbsNoteMetaData.pitch * 0.01);
-                double volume = nbsNoteMetaData.velocity * 0.01 * (nbsLayer.layerVolume * 0.01);
-                double panStereo = ((nbsNoteMetaData.panning - 100) * 0.01) + ((nbsLayer.layerStereo - 100) * 0.01);
+                float pitch = 2f.Pow((nbsNoteMetaData.key - 45) * 0.0833333333f) * 1.059463f.Pow(nbsNoteMetaData.pitch * 0.01f);
+                float volume = nbsNoteMetaData.velocity * 0.01f * (nbsLayer.layerVolume * 0.01f);
+                float panStereo = ((nbsNoteMetaData.panning - 100) * 0.01f) + ((nbsLayer.layerStereo - 100) * 0.01f);
                 
                 string blockType = "block.note_block.";
                 switch (nbsNoteMetaData.instrument)
@@ -307,9 +315,9 @@ namespace RuniEngine.Sounds
 
                 AudioPlayer? audioPlayer;
                 if (spatial)
-                    audioPlayer = AudioPlayer.PlayAudio(blockType, "minecraft", volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform, Vector3.zero, minDistance, maxDistance);
+                    audioPlayer = AudioPlayer.PlayAudio(blockType, "nbs", volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform, Vector3.zero, minDistance, maxDistance);
                 else
-                    audioPlayer = AudioPlayer.PlayAudio(blockType, "minecraft", volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform);
+                    audioPlayer = AudioPlayer.PlayAudio(blockType, "nbs", volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform);
 
                 allPlayingAudios.Add(audioPlayer);
             }
@@ -340,8 +348,6 @@ namespace RuniEngine.Sounds
                     _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - _tick).Abs()).index;
                     LoopedEventInvoke();
                 }
-                else if (isDisposable)
-                    Remove();
             }
         }
 

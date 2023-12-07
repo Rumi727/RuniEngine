@@ -99,8 +99,8 @@ namespace RuniEngine.Editor.ProjectSetting
                                 NBSMetaData metaData = (NBSMetaData)y;
                                 string nbsPath = metaData.path;
                                 bool stream = metaData.stream;
-                                double pitch = metaData.pitch;
-                                double tempo = metaData.tempo;
+                                float pitch = metaData.pitch;
+                                float tempo = metaData.tempo;
 
                                 {
                                     EditorGUILayout.BeginHorizontal();
@@ -164,7 +164,7 @@ namespace RuniEngine.Editor.ProjectSetting
                                         string label = EditorTool.TryGetText("gui.pitch");
                                         EditorTool.BeginLabelWidth(label);
 
-                                        pitch = EditorGUILayout.DoubleField(label, pitch);
+                                        pitch = EditorGUILayout.FloatField(label, pitch);
                                         EditorTool.EndLabelWidth();
                                     }
 
@@ -172,7 +172,7 @@ namespace RuniEngine.Editor.ProjectSetting
                                         string label = EditorTool.TryGetText("gui.tempo");
                                         EditorTool.BeginLabelWidth(label);
 
-                                        tempo = EditorGUILayout.DoubleField(label, tempo);
+                                        tempo = EditorGUILayout.FloatField(label, tempo);
                                         EditorTool.EndLabelWidth();
                                     }
 

@@ -4,7 +4,7 @@ namespace RuniEngine.Resource.Sounds
 {
     public abstract class SoundMetaDataBase
     {
-        public SoundMetaDataBase(string path, double pitch, double tempo, bool stream)
+        public SoundMetaDataBase(string path, float pitch, float tempo, bool stream)
         {
             this.path = path;
 
@@ -16,8 +16,8 @@ namespace RuniEngine.Resource.Sounds
 
         public virtual string path { get; } = "";
 
-        public virtual double pitch { get; } = 1;
-        public virtual double tempo { get; } = 1;
+        public virtual float pitch { get; } = 1;
+        public virtual float tempo { get; } = 1;
 
         public virtual bool stream { get; } = false;
     }
