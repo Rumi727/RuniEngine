@@ -17,6 +17,7 @@ namespace RuniEngine.Resource.Sounds
                 channels = audioClip.channels;
 
                 length = audioClip.length;
+                samples = audioClip.samples;
             }
         }
 
@@ -28,5 +29,6 @@ namespace RuniEngine.Resource.Sounds
         [JsonIgnore] public int channels { get; }
 
         [JsonIgnore] public float length { get; }
+        [JsonIgnore] public int samples { get; }
     }
 }

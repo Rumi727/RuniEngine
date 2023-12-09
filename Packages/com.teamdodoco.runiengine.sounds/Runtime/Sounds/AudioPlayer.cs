@@ -41,38 +41,29 @@ namespace RuniEngine.Sounds
 
         public override double time
         {
-            get => _time;
-            set
-            {
-                if (_time != value)
-                {
-                    _time = value;
-                    if (audioSource != null)
-                        audioSource.time = (float)value.Clamp(0, length - 0.01f);
-                    
-                    TimeChangedEventInvoke();
-                }
-            }
+            get => frequency != 0 ? (double)timeSamples / frequency : 0;
+            set => timeSamples = (int)(value * frequency);
         }
-        [NonSerialized] double _time = 0;
 
         public int timeSamples
         {
-            get => audioSource != null && audioSource.clip != null ? audioSource.timeSamples : 0;
+            get => _timeSamples;
             set
             {
-                if (timeSamples != value)
+                if (_timeSamples != value)
                 {
-                    _time = value / frequency;
+                    _timeSamples = value;
                     if (audioSource != null)
-                        audioSource.timeSamples = value;
+                        audioSource.timeSamples = value.Clamp(0, samples);
 
                     TimeChangedEventInvoke();
                 }
             }
         }
+        [NonSerialized] int _timeSamples = 0;
 
         public override double length => audioMetaData != null ? audioMetaData.length : 0;
+        public int samples => audioMetaData != null ? audioMetaData.samples : 0;
 
 
 
@@ -109,13 +100,13 @@ namespace RuniEngine.Sounds
             //시간 보정
             if (isPlaying && !isPaused)
             {
-                double value = Kernel.deltaTime;
-                _time += value * tempo;
+                int value = (int)(frequency * Kernel.deltaTimeDouble);
+                _timeSamples += (int)(value * tempo);
 
                 //템포
-                if (audioSource.isPlaying && time >= 0 && time <= length - 0.01f)
+                if (audioSource.isPlaying && timeSamples >= 0 && timeSamples <= samples)
                 {
-                    const double condition = 2048d / 48000d;
+                    const int condition = 2048;
                     double pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
                     
                     tempoAdjustmentTime += value;
@@ -123,8 +114,8 @@ namespace RuniEngine.Sounds
                     {
                         float result = (float)((1 - pitchDivideTempo.Abs()) * pitch * condition * tempo.Sign());
                         
-                        audioSource.time = (audioSource.time - result).Clamp(0, (float)length - 0.01f);
-                        _time = (double)audioSource.timeSamples / frequency;
+                        audioSource.timeSamples = (int)(audioSource.timeSamples - result).Clamp(0, samples);
+                        _timeSamples = audioSource.timeSamples;
 
                         tempoAdjustmentTime -= condition;
                     }
@@ -138,29 +129,29 @@ namespace RuniEngine.Sounds
             //루프
             if (loop)
             {
-                float loopStartTime = (float)audioMetaData.loopStartIndex / frequency;
+                int loopStartIndex = audioMetaData.loopStartIndex;
                 bool isLooped = false;
 
-                while (tempo >= 0 && time >= length)
+                while (tempo >= 0 && timeSamples >= samples)
                 {
-                    _time -= length - loopStartTime;
+                    _timeSamples -= samples - loopStartIndex;
                     isLooped = true;
                 }
 
-                while (tempo < 0 && time < loopStartTime)
+                while (tempo < 0 && timeSamples < loopStartIndex)
                 {
-                    _time += length - loopStartTime;
+                    _timeSamples += samples - loopStartIndex;
                     isLooped = true;
                 }
 
                 if (isLooped)
                 {
-                    audioSource.time = (float)time;
+                    audioSource.timeSamples = timeSamples;
                     LoopedEventInvoke();
                 }
             }
 
-            if (isDisposable && !loop && (time < 0 || time > length))
+            if (isDisposable && !loop && (timeSamples < 0 || timeSamples > samples))
                 Remove();
         }
 
@@ -204,7 +195,7 @@ namespace RuniEngine.Sounds
                         audioSource.Stop();
                         audioSource.Play();
 
-                        audioSource.time = (float)time.Clamp(0, length - 0.01f);
+                        audioSource.timeSamples = timeSamples.Clamp(0, samples);
                     }
 
                     if (time >= 0 && time < length - 0.01f && !audioSource.isPlaying)
@@ -217,7 +208,7 @@ namespace RuniEngine.Sounds
                             audioSource.Stop();
                             audioSource.Play();
 
-                            audioSource.time = (float)time.Clamp(0, length - 0.01f);
+                            audioSource.timeSamples = timeSamples.Clamp(0, samples);
                         }
                     }
                 }
@@ -252,7 +243,7 @@ namespace RuniEngine.Sounds
             audioSource.Stop();
             audioSource.Play();
 
-            audioSource.time = (float)time.Clamp(0, length - 0.01f);
+            audioSource.timeSamples = timeSamples.Clamp(0, samples);
 
             return true;
         }
@@ -274,7 +265,7 @@ namespace RuniEngine.Sounds
             audioSource.Play();
 
             if (tempo < 0 && audioMetaData != null)
-                audioSource.time = (float)length - 0.01f;
+                audioSource.timeSamples = samples;
 
             base.Play();
         }
@@ -292,7 +283,7 @@ namespace RuniEngine.Sounds
             audioData = null;
             audioMetaData = null;
 
-            _time = 0;
+            _timeSamples = 0;
         }
 
         protected override void OnAudioFilterRead(float[] data, int channels)
