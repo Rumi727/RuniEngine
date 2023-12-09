@@ -6,8 +6,8 @@ namespace RuniEngine
     [Serializable]
     public struct ReplaceOldNewPair : IEquatable<ReplaceOldNewPair>
     {
-        [FieldName("gui.old_replace")] public string replaceOld;
-        [FieldName("gui.new_replace")] public string replaceNew;
+        [FieldName("gui.replace.old")] public string replaceOld;
+        [FieldName("gui.replace.new")] public string replaceNew;
 
         public ReplaceOldNewPair(string replaceOld, string replaceNew)
         {
