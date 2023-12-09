@@ -58,7 +58,7 @@ namespace RuniEngine.Sounds
 
         public int timeSamples
         {
-            get => audioSource != null ? audioSource.timeSamples : 0;
+            get => audioSource != null && audioSource.clip != null ? audioSource.timeSamples : 0;
             set
             {
                 if (timeSamples != value)
