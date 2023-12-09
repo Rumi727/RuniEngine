@@ -14,9 +14,9 @@ namespace RuniEngine.Editor
 
 
 
-        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName) => InternalUseProperty(serializedObject, propertyName, "", false);
-        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string label) => InternalUseProperty(serializedObject, propertyName, label, true);
-        static SerializedProperty? InternalUseProperty(SerializedObject serializedObject, string propertyName, string label, bool labelShow)
+        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, "", false, options);
+        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string label, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, label, true, options);
+        static SerializedProperty? InternalUseProperty(SerializedObject serializedObject, string propertyName, string label, bool labelShow, params GUILayoutOption[] options)
         {
             GUIContent? guiContent = null;
             if (labelShow)
@@ -43,9 +43,9 @@ namespace RuniEngine.Editor
                 EditorGUI.BeginChangeCheck();
 
                 if (!labelShow)
-                    EditorGUILayout.PropertyField(tps, true);
+                    EditorGUILayout.PropertyField(tps, true, options);
                 else
-                    EditorGUILayout.PropertyField(tps, guiContent, true);
+                    EditorGUILayout.PropertyField(tps, guiContent, true, options);
 
                 if (EditorGUI.EndChangeCheck())
                     serializedObject.ApplyModifiedProperties();
