@@ -102,7 +102,7 @@ namespace RuniEngine.Sounds
             {
                 int value = (int)(frequency * Kernel.deltaTimeDouble);
                 _timeSamples += (int)(value * tempo);
-
+                
                 //템포
                 if (audioSource.isPlaying && timeSamples >= 0 && timeSamples <= samples)
                 {
@@ -146,7 +146,9 @@ namespace RuniEngine.Sounds
 
                 if (isLooped)
                 {
-                    audioSource.timeSamples = timeSamples;
+                    if (loopStartIndex != 0 || timeSamples.Abs() > 1024)
+                        audioSource.timeSamples = timeSamples;
+
                     LoopedEventInvoke();
                 }
             }
