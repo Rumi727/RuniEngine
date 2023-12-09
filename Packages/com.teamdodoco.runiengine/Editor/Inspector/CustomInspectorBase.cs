@@ -2,7 +2,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEditor;
-
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace RuniEngine.Editor.Inspector
@@ -45,8 +45,8 @@ namespace RuniEngine.Editor.Inspector
 
 
 
-        public SerializedProperty? UseProperty(string propertyName) => UseProperty(serializedObject, propertyName);
-        public SerializedProperty? UseProperty(string propertyName, string label) => UseProperty(serializedObject, propertyName, label);
+        public SerializedProperty? UseProperty(string propertyName, params GUILayoutOption[] options) => UseProperty(serializedObject, propertyName, options);
+        public SerializedProperty? UseProperty(string propertyName, string label, params GUILayoutOption[] options) => UseProperty(serializedObject, propertyName, label, options);
 
 
 
