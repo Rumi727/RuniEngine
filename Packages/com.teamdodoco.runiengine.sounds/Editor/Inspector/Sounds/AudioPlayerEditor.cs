@@ -45,6 +45,10 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             base.OnInspectorGUI();
 
+            AudioPlayer audioPlayer = (AudioPlayer)target;
+            if (audioPlayer.audioSource == null || audioPlayer.audioSource.bypassEffects)
+                return;
+
             object[] monos = new object[] { target };
             if ((bool)audioUtilHasAudioCallbackMethod.Invoke(null, monos) && ((int)audioUtilGetCustomFilterChannelCountMethod.Invoke(null, monos)) > 0)
             {
