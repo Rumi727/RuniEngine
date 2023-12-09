@@ -55,55 +55,44 @@ namespace RuniEngine.Editor.Inspector.Sounds
             GUILayout.BeginHorizontal();
             BeginFieldWidth(40);
 
-            TargetsSetValue(x => x.loop, x =>
             {
                 string label = TryGetText("gui.loop");
+
                 BeginLabelWidth(label);
-
-                bool result = EditorGUILayout.Toggle(label, x.loop, GUILayout.Width(EditorGUIUtility.labelWidth + 17));
+                UseProperty(serializedObject, "_loop", label, GUILayout.Width(EditorGUIUtility.labelWidth + 17));
                 EndLabelWidth();
-
-                return result;
-            }, (x, y) => x.loop = y, targets);
+            }
 
             Space();
 
-            TargetsSetValue(x => x.volume, x =>
+            //Not Thread Safe
             {
                 string label = TryGetText("gui.volume");
+
                 BeginLabelWidth(label);
-
-                float result = EditorGUILayout.Slider(label, (float)x.volume, 0, 2);
+                UseProperty(serializedObject, "_volume", label);
                 EndLabelWidth();
-
-                return result;
-            }, (x, y) => x.volume = y, targets);
+            }
 
             Space();
 
-            TargetsSetValue(x => x.pitch, x =>
             {
                 string label = TryGetText("gui.pitch");
+
                 BeginLabelWidth(label);
-
-                float result = EditorGUILayout.Slider(label, (float)x.pitch, 0, 3);
+                UseProperty(serializedObject, "_pitch", label);
                 EndLabelWidth();
-
-                return result;
-            }, (x, y) => x.pitch = y, targets);
+            }
 
             Space();
 
-            TargetsSetValue(x => x.tempo, x =>
             {
                 string label = TryGetText("gui.tempo");
+
                 BeginLabelWidth(label);
-
-                float result = EditorGUILayout.Slider(label, (float)x.tempo, -3, 3);
+                UseProperty(serializedObject, "_tempo", label);
                 EndLabelWidth();
-
-                return result;
-            }, (x, y) => x.tempo = y, targets);
+            }
 
             EndFieldWidth();
             GUILayout.EndHorizontal();
@@ -123,16 +112,13 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             bool spatialMixed = !TargetsIsEquals(x => x.spatial, targets);
 
-            TargetsSetValue(x => x.spatial, x =>
             {
                 string label = TryGetText("gui.spatial");
+
                 BeginLabelWidth(label);
-
-                bool result = EditorGUILayout.Toggle(label, x.spatial, GUILayout.Width(EditorGUIUtility.labelWidth + 15));
+                UseProperty(serializedObject, "_spatial", label, GUILayout.Width(EditorGUIUtility.labelWidth + 17));
                 EndLabelWidth();
-
-                return result;
-            }, (x, y) => x.spatial = y, targets);
+            }
 
             Space();
 
@@ -140,35 +126,40 @@ namespace RuniEngine.Editor.Inspector.Sounds
             {
                 if (spatialMixed)
                 {
-                    TargetsSetValue(x => x.panStereo, x =>
-                    {
-                        string label = TryGetText("inspector.sound_player_base.pan_stereo");
-                        BeginLabelWidth(label);
+                    string label = TryGetText("inspector.sound_player_base.pan_stereo");
 
-                        float result = EditorGUILayout.Slider(label, (float)x.volume, -1, 1);
-                        EndLabelWidth();
-
-                        return result;
-                    }, (x, y) => x.panStereo = y, targets);
+                    BeginLabelWidth(label);
+                    UseProperty(serializedObject, "_panStereo", label);
+                    EndLabelWidth();
 
                     Space();
                 }
 
-                GUILayout.Label(TryGetText("gui.min_distance"), GUILayout.ExpandWidth(false));
-                UseProperty(serializedObject, "_minDistance", "");
+                {
+                    string label = TryGetText("gui.min_distance");
+                    
+                    BeginLabelWidth(label);
+                    UseProperty(serializedObject, "_minDistance", label);
+                    EndLabelWidth();
+                }
 
                 Space();
 
-                GUILayout.Label(TryGetText("gui.max_distance"), GUILayout.ExpandWidth(false));
-                UseProperty(serializedObject, "_maxDistance", "");
+                {
+                    string label = TryGetText("gui.max_distance");
+
+                    BeginLabelWidth(label);
+                    UseProperty(serializedObject, "_maxDistance", label);
+                    EndLabelWidth();
+                }
             }
             else
             {
-                TargetsSetValue(x => x.panStereo, x =>
-                {
-                    GUILayout.Label(TryGetText("inspector.sound_player_base.pan_stereo"), GUILayout.ExpandWidth(false));
-                    return EditorGUILayout.Slider((float)x.panStereo, -1, 1);
-                }, (x, y) => x.panStereo = y, targets);
+                string label = TryGetText("inspector.sound_player_base.pan_stereo");
+
+                BeginLabelWidth(label);
+                UseProperty(serializedObject, "_panStereo", label);
+                EndLabelWidth();
             }
 
             EndFieldWidth();
