@@ -36,53 +36,34 @@ namespace RuniEngine.Sounds
         public abstract double time { get; set; }
         public virtual double realTime { get => time / realTempo; set => time = value * realTempo; }
 
-        public event Action timeChanged { add => _timeChanged += value; remove => _timeChanged -= value; }
-        Action? _timeChanged;
+        public event Action? timeChanged;
 
         public abstract double length { get; }
         public virtual double realLength => length / realTempo;
 
 
 
-        public bool isPlaying => Interlocked.Add(ref _isPlaying, 0) != 0;
-        [NonSerialized] int _isPlaying = 0;
+        public bool isPlaying { get; private set; } = false;
 
-        public virtual bool isPaused
-        {
-            get => Interlocked.Add(ref _isPaused, 0) != 0;
-            set => Interlocked.Exchange(ref _isPaused, value ? 1 : 0);
-        }
-        [SerializeField] int _isPaused = 0;
+        public virtual bool isPaused { get => _isPaused; set => _isPaused = value; }
+        [SerializeField] bool _isPaused = false;
 
 
 
-        public bool loop
-        {
-            get => Interlocked.Add(ref _loop, 0) != 0;
-            set => Interlocked.Exchange(ref _loop, value ? 1 : 0);
-        }
-        [SerializeField] int _loop = 0;
+        public bool loop { get => _loop; set => _loop = value; }
+        [SerializeField] bool _loop = false;
 
-        
-        public event Action looped { add => _looped += value; remove => _looped -= value; }
-        [NonSerialized] Action? _looped;
+
+        public event Action? looped;
 
 
 
-        public float pitch
-        {
-            get => Interlocked.CompareExchange(ref _pitch, 0, 0).Clamp(0);
-            set => Interlocked.Exchange(ref _pitch, value.Clamp(0));
-        }
+        public float pitch { get => _pitch.Clamp(0); set => _pitch = value.Clamp(0); }
         [SerializeField, Range(0, 3)] float _pitch = 1;
 
         public virtual float realPitch => pitch * (soundMetaData != null ? soundMetaData.pitch : 1);
 
-        public float tempo
-        {
-            get => Interlocked.CompareExchange(ref _tempo, 0, 0);
-            set => Interlocked.Exchange(ref _tempo, value);
-        }
+        public float tempo{ get => _tempo; set => _tempo = value; }
         [SerializeField, Range(-3, 3)] float _tempo = 1;
 
         public virtual double realTempo => tempo * (soundMetaData != null ? soundMetaData.tempo : 1);
@@ -98,11 +79,7 @@ namespace RuniEngine.Sounds
 
 
 
-        public float panStereo
-        {
-            get => Interlocked.CompareExchange(ref _panStereo, 0, 0);
-            set => Interlocked.Exchange(ref _panStereo, value);
-        }
+        public float panStereo { get => _panStereo; set => _panStereo = value; }
         [SerializeField, Range(-1, 1)] float _panStereo = 0;
 
 
@@ -155,8 +132,8 @@ namespace RuniEngine.Sounds
         {
             base.OnDestroy();
 
-            _looped = null;
-            _timeChanged = null;
+            looped = null;
+            timeChanged = null;
             _onAudioFilterReadEvent = null;
         }
 
@@ -182,16 +159,16 @@ namespace RuniEngine.Sounds
 
 
 
-        protected void TimeChangedEventInvoke() => _timeChanged?.Invoke();
-        protected void LoopedEventInvoke() => _looped?.Invoke();
+        protected void TimeChangedEventInvoke() => timeChanged?.Invoke();
+        protected void LoopedEventInvoke() => looped?.Invoke();
 
 
 
         public abstract bool Refresh();
 
-        public virtual void Play() => Interlocked.Exchange(ref _isPlaying, 1);
+        public virtual void Play() => isPlaying = true;
 
-        public virtual void Stop() => Interlocked.Exchange(ref _isPlaying, 0);
+        public virtual void Stop() => isPlaying = false;
 
 
 
@@ -222,8 +199,8 @@ namespace RuniEngine.Sounds
 
 
 
-            _looped = null;
-            _timeChanged = null;
+            looped = null;
+            timeChanged = null;
             _onAudioFilterReadEvent = null;
         }
     }
