@@ -245,6 +245,8 @@ namespace RuniEngine.Sounds
             audioSource.Stop();
             audioSource.Play();
 
+            isPaused = isPaused;
+
             audioSource.timeSamples = timeSamples.Clamp(0, samples);
 
             return true;
@@ -265,6 +267,8 @@ namespace RuniEngine.Sounds
 
             audioSource.Stop();
             audioSource.Play();
+
+            isPaused = isPaused;
 
             if (tempo < 0 && audioMetaData != null)
                 audioSource.timeSamples = samples;
