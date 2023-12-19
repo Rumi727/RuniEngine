@@ -2,9 +2,9 @@ using RuniEngine.UI;
 using UnityEditor;
 using UnityEngine;
 
-namespace RuniEngine.Editor.Scene
+namespace RuniEngine.Editor
 {
-    public static class AutoSceneVisibility
+    public static class AutoSceneVisibilitySetter
     {
         [InitializeOnLoadMethod]
         static void Init()
