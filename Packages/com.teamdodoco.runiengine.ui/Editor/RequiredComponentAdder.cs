@@ -31,7 +31,7 @@ namespace RuniEngine.Editor
                 //Runi Engine에 Runi Engine UI 의존성이 추가되선 안됩니다
                 {
                     Scene scene = SceneManager.GetActiveScene();
-                    if (scene.buildIndex == 0 || scene.buildIndex == 1)
+                    if (scene.path.StartsWith("Packages/com.teamdodoco.runiengine/Runtime"))
                         return;
                 }
 
