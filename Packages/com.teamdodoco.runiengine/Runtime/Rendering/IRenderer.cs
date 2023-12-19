@@ -8,9 +8,6 @@ namespace RuniEngine.Rendering
 
         NameSpacePathPair pair { get; set; }
 
-        void Refresh()
-        {
-
-        }
+        void Refresh();
     }
 }
