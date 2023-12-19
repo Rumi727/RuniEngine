@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace RuniEngine.SceneManagement
 {
@@ -56,5 +57,7 @@ namespace RuniEngine.SceneManagement
                 isDone = true;
             }
         }
+
+        public static Scene GetActiveScene() => UnityEngine.SceneManagement.SceneManager.GetActiveScene();
     }
 }
