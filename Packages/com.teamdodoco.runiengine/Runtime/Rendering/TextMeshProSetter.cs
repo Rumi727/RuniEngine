@@ -8,7 +8,7 @@ using UnityEngine;
 namespace RuniEngine
 {
     [RequireComponent(typeof(TMP_Text))]
-    public sealed class TextMeshProRenderer : MonoBehaviour, IRenderer
+    public sealed class TextMeshProSetter : MonoBehaviour, IRenderer
     {
         public TMP_Text? text => _text = this.GetComponentFieldSave(_text);
         TMP_Text? _text;

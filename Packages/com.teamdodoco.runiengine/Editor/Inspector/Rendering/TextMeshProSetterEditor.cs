@@ -4,8 +4,8 @@ using UnityEditor;
 namespace RuniEngine.Editor.Inspector.Rendering
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(TextMeshProRenderer))]
-    public class TextMeshProRendererEditor : CustomInspectorBase<TextMeshProRenderer>
+    [CustomEditor(typeof(TextMeshProSetter))]
+    public class TextMeshProSetterEditor : CustomInspectorBase<TextMeshProSetter>
     {
         public override void OnInspectorGUI()
         {
@@ -25,7 +25,7 @@ namespace RuniEngine.Editor.Inspector.Rendering
             {
                 for (int i = 0; i < targets.Length; i++)
                 {
-                    TextMeshProRenderer? value = targets[i];
+                    TextMeshProSetter? value = targets[i];
                     if (value != null)
                         value.Refresh();
                 }
