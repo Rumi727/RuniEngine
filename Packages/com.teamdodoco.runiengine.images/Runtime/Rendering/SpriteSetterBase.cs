@@ -10,21 +10,63 @@ namespace RuniEngine.Rendering
         public Sprite? defaultSprite => _defaultSprite;
         [SerializeField] Sprite? _defaultSprite;
 
-        public string nameSpace { get => _nameSpace; set => _nameSpace = value; }
+        public string nameSpace
+        {
+            get => _nameSpace; set
+            {
+                _nameSpace = value;
+                Refresh();
+            }
+        }
         [SerializeField] string _nameSpace = "";
 
-        public string type { get => _type; set => _type = value; }
+        public string type
+        {
+            get => _type; set
+            {
+                _type = value;
+                Refresh();
+            }
+        }
         [SerializeField] string _type = "";
 
-        public string spriteName { get => _path; set => _path = value; }
+        public string spriteName
+        {
+            get => _path; set
+            {
+                _path = value;
+                Refresh();
+            }
+        }
 
-        string IRenderer.path { get => _path; set => _path = value; }
+        string IRenderer.path
+        {
+            get => _path; set
+            {
+                _path = value;
+                Refresh();
+            }
+        }
         [SerializeField] string _path = "";
 
-        public string spriteTag { get => _spriteTag; set => _spriteTag = value; }
+        public string spriteTag
+        {
+            get => _spriteTag; set
+            {
+                _spriteTag = value;
+                Refresh();
+            }
+        }
         [SerializeField] string _spriteTag = "";
 
-        public int index { get => _index; set => _index = value; }
+        public int index
+        {
+            get => _index; set
+            {
+                _index = value;
+                Refresh();
+            }
+        }
         [SerializeField, Min(0)] int _index = 0;
 
         public NameSpaceIndexTypeNamePair pair
@@ -34,6 +76,8 @@ namespace RuniEngine.Rendering
             {
                 nameSpace = value.nameSpace;
                 spriteName = value.name;
+
+                Refresh();
             }
         }
 
@@ -44,6 +88,8 @@ namespace RuniEngine.Rendering
             {
                 nameSpace = value.nameSpace;
                 spriteName = value.path;
+
+                Refresh();
             }
         }
 

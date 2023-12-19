@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Threading;
 using UnityEngine;
 
 namespace RuniEngine.Rendering
@@ -9,22 +10,15 @@ namespace RuniEngine.Rendering
         public SpriteRenderer? spriteRenderer => _spriteRenderer = this.GetComponentFieldSave(_spriteRenderer);
         SpriteRenderer? _spriteRenderer;
 
-        bool isLocalLoad = true;
         public override void Refresh()
         {
             if (spriteRenderer == null)
                 return;
 
-            if (spriteRenderer.sprite != null && isLocalLoad)
-            {
-                Destroy(spriteRenderer.sprite.texture);
-                Destroy(spriteRenderer.sprite);
-            }
-
-            if (Kernel.isPlaying)
-                isLocalLoad = false;
-
-            spriteRenderer.sprite = GetSprite();
+            if (ThreadManager.isMainThread)
+                spriteRenderer.sprite = GetSprite();
+            else
+                ThreadDispatcher.Execute(() => spriteRenderer.sprite = GetSprite());
         }
     }
 }
