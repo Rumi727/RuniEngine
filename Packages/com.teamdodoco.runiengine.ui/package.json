@@ -1,0 +1,31 @@
+{
+  "name": "com.teamdodoco.runiengine.ui",
+  "version": "0.0.0",
+  "author": {
+    "name": "Rumi"
+  },
+  "unity": "2023.2",
+  "displayName": "Runi Engine UI",
+  "description": "This is a package that adds image-related scripts",
+  "dependencies": {
+    "com.teamdodoco.runiengine": "0.0.0",
+    "com.teamdodoco.runiengine.images": "0.0.0",
+    "com.teamdodoco.runiengine.pooling": "0.0.0",
+    "com.unity.modules.ui": "1.0.0",
+    "com.unity.modules.particlesystem": "1.0.0",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.screencapture": "1.0.0",
+    "com.unity.ugui": "2.0.0",
+    "com.unity.uiextensions": "2.3.2",
+    "com.cysharp.unitask": "2.5.0"
+  },
+  "keywords": [
+    "Runi",
+    "Runi Engine",
+    "Engine",
+    "UI",
+    "UGUI"
+  ],
+  "license": "MIT",
+  "unityRelease": "1f1"
+}
