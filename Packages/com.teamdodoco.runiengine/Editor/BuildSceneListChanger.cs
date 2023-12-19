@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 
-namespace RuniEngine.Editor.Scene
+namespace RuniEngine.Editor
 {
     [InitializeOnLoad]
     public static class BuildSceneListChanger
