@@ -178,7 +178,7 @@ namespace RuniEngine.Sounds
                 audioSource.pitch = 1;
             }
 
-            audioSource.loop = false;
+            audioSource.loop = loop;
             audioSource.panStereo = panStereo;
 
             audioSource.spatialBlend = spatial ? 1 : 0;
