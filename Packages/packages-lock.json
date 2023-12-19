@@ -105,6 +105,7 @@
       "source": "embedded",
       "dependencies": {
         "com.teamdodoco.runiengine": "0.0.0",
+        "com.teamdodoco.runiengine.images": "0.0.0",
         "com.teamdodoco.runiengine.pooling": "0.0.0",
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.particlesystem": "1.0.0",

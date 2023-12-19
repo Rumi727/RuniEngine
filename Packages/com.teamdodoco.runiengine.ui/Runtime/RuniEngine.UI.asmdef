@@ -1,0 +1,20 @@
+{
+    "name": "RuniEngine.UI",
+    "rootNamespace": "RuniEngine.UI",
+    "references": [
+        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
+        "GUID:33d28b00c078f314fa38a6a00f3b508a",
+        "GUID:43b6e58e1093cf9459a160bf4432d89e",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
