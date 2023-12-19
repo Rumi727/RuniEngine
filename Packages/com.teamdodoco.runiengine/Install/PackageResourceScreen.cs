@@ -18,7 +18,7 @@ namespace RuniEngine.Install
         public void DrawGUI()
         {
             PackageImportButton(EditorTool.TryGetText("gui.streaming_assets"), EditorTool.packagePath, Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "runi"));
-            PackageImportButton(EditorTool.TryGetText("gui.streaming_assets") + " (NBS)", EditorTool.packagePath + ".nbs", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "minecraft"));
+            PackageImportButton(EditorTool.TryGetText("gui.streaming_assets") + " (NBS)", EditorTool.packagePath + ".nbs", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "nbs"));
             PackageImportButton(EditorTool.TryGetText("gui.font"), EditorTool.packagePath, "Fonts", Path.Combine(EditorTool.assetsResourcePathParent, "Fonts"));
         }
 
