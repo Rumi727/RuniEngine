@@ -84,6 +84,10 @@
     "gui.top_left": "왼쪽 상단",
     "gui.top_right": "오른쪽 상단",
     "gui.bottom_right": "오른쪽 하단",
+    "gui.left": "왼쪽",
+    "gui.right": "오른쪽",
+    "gui.top": "상단",
+    "gui.bottom": "하단",
     
     "gui.ago.years": "%value%년 전",
     "gui.ago.months": "%value%달 전",

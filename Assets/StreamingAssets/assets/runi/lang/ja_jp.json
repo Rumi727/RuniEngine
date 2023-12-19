@@ -82,6 +82,10 @@
     "gui.top_left": "左上",
     "gui.top_right": "右上",
     "gui.bottom_right": "右下",
+    "gui.left": "左",
+    "gui.right": "右",
+    "gui.top": "上",
+    "gui.bottom": "下",
     
     "gui.ago.years": "%value%年前",
     "gui.ago.months": "%value%ヶ月前",
