@@ -9,8 +9,6 @@
   "description": "Unity-only universal kernel system that everyone will use",
   "dependencies": {
     "com.unity.modules.ui": "1.0.0",
-    "com.unity.modules.uielements": "1.0.0",
-    "com.unity.modules.imgui": "1.0.0",
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.unitywebrequest": "1.0.0",

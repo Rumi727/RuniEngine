@@ -49,8 +49,6 @@
       "source": "embedded",
       "dependencies": {
         "com.unity.modules.ui": "1.0.0",
-        "com.unity.modules.uielements": "1.0.0",
-        "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.video": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0",
@@ -107,12 +105,14 @@
       "source": "embedded",
       "dependencies": {
         "com.teamdodoco.runiengine": "0.0.0",
+        "com.teamdodoco.runiengine.pooling": "0.0.0",
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.particlesystem": "1.0.0",
         "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.screencapture": "1.0.0",
         "com.unity.ugui": "2.0.0",
-        "com.unity.uiextensions": "2.3.2"
+        "com.unity.uiextensions": "2.3.2",
+        "com.cysharp.unitask": "2.5.0"
       }
     },
     "com.unity.burst": {
@@ -287,12 +287,6 @@
       "source": "builtin",
       "dependencies": {}
     },
-    "com.unity.modules.hierarchycore": {
-      "version": "1.0.0",
-      "depth": 2,
-      "source": "builtin",
-      "dependencies": {}
-    },
     "com.unity.modules.imageconversion": {
       "version": "1.0.0",
       "depth": 2,
@@ -301,7 +295,7 @@
     },
     "com.unity.modules.imgui": {
       "version": "1.0.0",
-      "depth": 1,
+      "depth": 2,
       "source": "builtin",
       "dependencies": {}
     },
@@ -336,17 +330,6 @@
       "depth": 1,
       "source": "builtin",
       "dependencies": {}
-    },
-    "com.unity.modules.uielements": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.ui": "1.0.0",
-        "com.unity.modules.imgui": "1.0.0",
-        "com.unity.modules.jsonserialize": "1.0.0",
-        "com.unity.modules.hierarchycore": "1.0.0"
-      }
     },
     "com.unity.modules.unitywebrequest": {
       "version": "1.0.0",

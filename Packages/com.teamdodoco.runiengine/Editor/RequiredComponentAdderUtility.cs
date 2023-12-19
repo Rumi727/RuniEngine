@@ -8,7 +8,7 @@ namespace RuniEngine.Editor
 {
     public static class RequiredComponentAdderUtility
     {
-        public static TComponentToAdd[] AddComponent<TComponent, TComponentToAdd>(PrefabStage prefabStage, bool backToTop) where TComponent : Component where TComponentToAdd : Behaviour
+        public static TComponentToAdd[] AddComponent<TComponent, TComponentToAdd>(PrefabStage? prefabStage, bool backToTop) where TComponent : Component where TComponentToAdd : Behaviour
         {
             TComponent[] components;
             if (prefabStage != null)
