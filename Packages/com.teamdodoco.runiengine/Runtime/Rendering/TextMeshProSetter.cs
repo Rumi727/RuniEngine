@@ -15,17 +15,45 @@ namespace RuniEngine
 
 
 
-        public string nameSpace { get => _nameSpace; set => _nameSpace = value; }
+        public string nameSpace
+        {
+            get => _nameSpace; set
+            {
+                _nameSpace = value;
+                Refresh();
+            }
+        }
         [SerializeField] string _nameSpace = "";
 
-        public string key { get => _path; set => _path = value; }
+        public string key
+        {
+            get => _path; set
+            {
+                _path = value;
+                Refresh();
+            }
+        }
 
-        string IRenderer.path { get => _path; set => _path = value; }
+        string IRenderer.path
+        {
+            get => _path; set
+            {
+                _path = value;
+                Refresh();
+            }
+        }
         [SerializeField] string _path = "";
 
 
 
-        public ReplaceOldNewPair[] replaces { get => _replaces; set => _replaces = value; }
+        public ReplaceOldNewPair[] replaces
+        {
+            get => _replaces; set
+            {
+                _replaces = value;
+                Refresh();
+            }
+        }
         [SerializeField] ReplaceOldNewPair[] _replaces = new ReplaceOldNewPair[0];
 
         public NameSpacePathPair pair
@@ -35,6 +63,8 @@ namespace RuniEngine
             {
                 nameSpace = value.nameSpace;
                 key = value.path;
+
+                Refresh();
             }
         }
 
