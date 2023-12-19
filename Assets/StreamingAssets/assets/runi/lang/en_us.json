@@ -82,6 +82,10 @@
     "gui.top_left": "Top Left",
     "gui.top_right": "Top Right",
     "gui.bottom_right": "Bottom Right",
+    "gui.left": "Left",
+    "gui.right": "Right",
+    "gui.top": "Top",
+    "gui.bottom": "Bottom",
     
     "gui.ago.years": "%value%y ago",
     "gui.ago.months": "%value%m ago",
