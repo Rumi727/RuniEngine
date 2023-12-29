@@ -222,16 +222,16 @@ namespace RuniEngine.Editor
             return (scrollViewPos, displayRestrictionsIndex);
         }
 
-        public static string DrawStringArray(string value, string[] array) => InternalDrawStringArray("", value, array, false, out _);
-        public static string DrawStringArray(string label, string value, string[] array) => InternalDrawStringArray(label, value, array, true, out _);
-        public static string DrawStringArray(string value, string[] array, out int index) => InternalDrawStringArray("", value, array, false, out index);
-        public static string DrawStringArray(string label, string value, string[] array, out int index) => InternalDrawStringArray(label, value, array, true, out index);
-        static string InternalDrawStringArray(string label, string value, string[] array, bool labelShow, out int index)
+        public static string DrawStringArray(string value, string[] array, params GUILayoutOption[] options) => InternalDrawStringArray("", value, array, false, out _, options);
+        public static string DrawStringArray(string label, string value, string[] array, params GUILayoutOption[] options) => InternalDrawStringArray(label, value, array, true, out _, options);
+        public static string DrawStringArray(string value, string[] array, out int index, params GUILayoutOption[] options) => InternalDrawStringArray("", value, array, false, out index, options);
+        public static string DrawStringArray(string label, string value, string[] array, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(label, value, array, true, out index, options);
+        static string InternalDrawStringArray(string label, string value, string[] array, bool labelShow, out int index, params GUILayoutOption[] options)
         {
             if (!labelShow)
-                index = EditorGUILayout.Popup(Array.IndexOf(array, value), array, GUILayout.MinWidth(0));
+                index = EditorGUILayout.Popup(Array.IndexOf(array, value), array, options);
             else
-                index = EditorGUILayout.Popup(label, Array.IndexOf(array, value), array, GUILayout.MinWidth(0));
+                index = EditorGUILayout.Popup(label, Array.IndexOf(array, value), array, options);
 
             if (index >= 0)
                 return array[index];
