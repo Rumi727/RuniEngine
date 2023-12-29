@@ -120,7 +120,7 @@ namespace RuniEngine.UI.Animating
             isPlaying = true;
         }
 
-        public void Reverse()
+        public void Rewind()
         {
             _time = length;
             duration = length;

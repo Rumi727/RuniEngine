@@ -24,7 +24,7 @@ namespace RuniEngine.Editor.ProjectSetting
 
 
 
-        string nameSpace = "";
+        string nameSpace = ResourceManager.defaultNameSpace;
         bool deleteSafety = true;
         int displayRestrictionsIndex = 0;
         public override void OnGUI(string searchContext) => DrawGUI(ref nameSpace, ref deleteSafety, ref displayRestrictionsIndex);
@@ -35,8 +35,7 @@ namespace RuniEngine.Editor.ProjectSetting
             EditorTool.DeleteSafety(ref deleteSafety);
 
             nameSpace = EditorTool.DrawNameSpace(EditorTool.TryGetText("gui.namespace"), nameSpace);
-            if (string.IsNullOrEmpty(nameSpace))
-                return;
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             string nameSpace2 = nameSpace;
             bool deleteSafety2 = deleteSafety;
