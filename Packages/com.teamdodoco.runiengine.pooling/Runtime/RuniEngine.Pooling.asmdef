@@ -1,6 +1,6 @@
 {
     "name": "RuniEngine.Pooling",
-    "rootNamespace": "RuniEngine.Pooling",
+    "rootNamespace": "RuniEngine",
     "references": [
         "GUID:eaf38b4531b03a64ab00c7d27abbfe25"
     ],
