@@ -583,10 +583,18 @@ namespace RuniEngine
         public static Vector3 Clamp(this Vector3 value, Vector3 min, Vector3 max) => new Vector3(value.x.Clamp(min.x, max.x), value.y.Clamp(min.y, max.y), value.z.Clamp(min.z, max.z));
         public static Vector4 Clamp(this Vector4 value, Vector4 min) => new Vector4(value.x.Clamp(min.x), value.y.Clamp(min.y), value.z.Clamp(min.z), value.w.Clamp(min.w));
         public static Vector4 Clamp(this Vector4 value, Vector4 min, Vector4 max) => new Vector4(value.x.Clamp(min.x, max.x), value.y.Clamp(min.y, max.y), value.z.Clamp(min.z, max.z), value.w.Clamp(min.w, max.w));
+        public static Vector2Int Clamp(this Vector2Int value, Vector2Int min) => new Vector2Int(value.x.Clamp(min.x), value.y.Clamp(min.y));
+        public static Vector2Int Clamp(this Vector2Int value, Vector2Int min, Vector2Int max) => new Vector2Int(value.x.Clamp(min.x, max.x), value.y.Clamp(min.y, max.y));
+        public static Vector3Int Clamp(this Vector3Int value, Vector3Int min) => new Vector3Int(value.x.Clamp(min.x), value.y.Clamp(min.y), value.z.Clamp(min.z));
+        public static Vector3Int Clamp(this Vector3Int value, Vector3Int min, Vector3Int max) => new Vector3Int(value.x.Clamp(min.x, max.x), value.y.Clamp(min.y, max.y), value.z.Clamp(min.z, max.z));
         public static Rect Clamp(this Rect value, Rect min) => new Rect(value.x.Clamp(min.x), value.y.Clamp(min.y), value.width.Clamp(min.width), value.height.Clamp(min.height));
         public static Rect Clamp(this Rect value, Rect min, Rect max) => new Rect(value.x.Clamp(min.x, max.x), value.y.Clamp(min.y, max.y), value.width.Clamp(min.width, max.width), value.height.Clamp(min.height, max.height));
+        public static RectInt Clamp(this RectInt value, RectInt min) => new RectInt(value.x.Clamp(min.x), value.y.Clamp(min.y), value.width.Clamp(min.width), value.height.Clamp(min.height));
+        public static RectInt Clamp(this RectInt value, RectInt min, RectInt max) => new RectInt(value.x.Clamp(min.x, max.x), value.y.Clamp(min.y, max.y), value.width.Clamp(min.width, max.width), value.height.Clamp(min.height, max.height));
         public static Color Clamp(this Color value, Color min) => new Color(value.r.Clamp(min.r), value.g.Clamp(min.g), value.b.Clamp(min.b), value.a.Clamp(min.a));
         public static Color Clamp(this Color value, Color min, Color max) => new Color(value.r.Clamp(min.r, max.r), value.g.Clamp(min.g, max.g), value.b.Clamp(min.b, max.b), value.a.Clamp(min.a, max.a));
+        public static Color32 Clamp(this Color32 value, Color32 min) => new Color32(value.r.Clamp(min.r), value.g.Clamp(min.g), value.b.Clamp(min.b), value.a.Clamp(min.a));
+        public static Color32 Clamp(this Color32 value, Color32 min, Color32 max) => new Color32(value.r.Clamp(min.r, max.r), value.g.Clamp(min.g, max.g), value.b.Clamp(min.b, max.b), value.a.Clamp(min.a, max.a));
         #endregion
 
         #region Clamp01
@@ -735,8 +743,12 @@ namespace RuniEngine
         public static Vector2 Clamp01(this Vector2 value) => new Vector2(value.x.Clamp01(), value.y.Clamp01());
         public static Vector3 Clamp01(this Vector3 value) => new Vector3(value.x.Clamp01(), value.y.Clamp01(), value.z.Clamp01());
         public static Vector4 Clamp01(this Vector4 value) => new Vector4(value.x.Clamp01(), value.y.Clamp01(), value.z.Clamp01(), value.w.Clamp01());
+        public static Vector2Int Clamp01(this Vector2Int value) => new Vector2Int(value.x.Clamp01(), value.y.Clamp01());
+        public static Vector3Int Clamp01(this Vector3Int value) => new Vector3Int(value.x.Clamp01(), value.y.Clamp01(), value.z.Clamp01());
         public static Rect Clamp01(this Rect value) => new Rect(value.x.Clamp01(), value.y.Clamp01(), value.width.Clamp01(), value.height.Clamp01());
+        public static RectInt Clamp01(this RectInt value) => new RectInt(value.x.Clamp01(), value.y.Clamp01(), value.width.Clamp01(), value.height.Clamp01());
         public static Color Clamp01(this Color value) => new Color(value.r.Clamp01(), value.g.Clamp01(), value.b.Clamp01(), value.a.Clamp01());
+        public static Color32 Clamp01(this Color32 value) => new Color32(value.r.Clamp01(), value.g.Clamp01(), value.b.Clamp01(), value.a.Clamp01());
         #endregion
 
         public static int ClosestPowerOfTwo(this int value) => Mathf.ClosestPowerOfTwo(value);
