@@ -1,12 +1,10 @@
 {
-    "name": "RuniEngine.Editor.UI",
+    "name": "RuniEngine.Images.Editor",
     "rootNamespace": "RuniEngine.Editor",
     "references": [
         "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
         "GUID:d19976c8233edf14ba31681d949961c5",
-        "GUID:abc0b517fd44ead4eb811a45aeeeba38",
-        "GUID:43b6e58e1093cf9459a160bf4432d89e",
-        "GUID:2fa01f1e6cd86634592680bab6e3f780"
+        "GUID:43b6e58e1093cf9459a160bf4432d89e"
     ],
     "includePlatforms": [
         "Editor"
