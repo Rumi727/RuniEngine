@@ -260,6 +260,8 @@ namespace RuniEngine.Editor
                 EditorGUIUtility.fieldWidth = 0;
         }
 
+
+
         public static RectOffset RectOffsetField(string label, RectOffset value)
         {
             GUILayout.BeginHorizontal();
@@ -281,8 +283,8 @@ namespace RuniEngine.Editor
                 {
                     GUILayout.BeginHorizontal();
 
-                    value.left = EditorGUILayout.FloatField(leftLabel, value.left);
-                    value.right = EditorGUILayout.FloatField(rightLabel, value.right);
+                    value.left = EditorGUILayout.IntField(leftLabel, value.left);
+                    value.right = EditorGUILayout.IntField(rightLabel, value.right);
 
                     GUILayout.EndHorizontal();
                 }
@@ -290,8 +292,8 @@ namespace RuniEngine.Editor
                 {
                     GUILayout.BeginHorizontal();
 
-                    value.top = EditorGUILayout.FloatField(topLabel, value.top);
-                    value.bottom = EditorGUILayout.FloatField(bottomLabel, value.bottom);
+                    value.top = EditorGUILayout.IntField(topLabel, value.top);
+                    value.bottom = EditorGUILayout.IntField(bottomLabel, value.bottom);
                     
                     GUILayout.EndHorizontal();
                 }

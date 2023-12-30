@@ -20,8 +20,8 @@ namespace RuniEngine.Screens
 
                 RectOffset result = _offset;
 
-                result.min = result.min.Clamp(Vector2.zero);
-                result.max = result.max.Clamp(Vector2.zero);
+                result.min = result.min.Clamp(Vector2Int.zero);
+                result.max = result.max.Clamp(Vector2Int.zero);
 
                 return result;
             }

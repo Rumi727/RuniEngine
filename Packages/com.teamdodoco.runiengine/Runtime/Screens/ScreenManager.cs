@@ -80,8 +80,8 @@ namespace RuniEngine.Screens
         {
             get
             {
-                Vector2 min = Vector2.zero;
-                Vector2 max = Vector2.zero;
+                Vector2Int min = Vector2Int.zero;
+                Vector2Int max = Vector2Int.zero;
 
                 for (int i = 0; i < ScreenCroper.instances.Count; i++)
                 {
