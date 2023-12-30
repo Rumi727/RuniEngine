@@ -4,6 +4,8 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
+using static RuniEngine.Editor.EditorTool;
+
 namespace RuniEngine.Editor
 {
     public static class RequiredComponentAdderUtility
@@ -27,7 +29,7 @@ namespace RuniEngine.Editor
 
                 if (!component.TryGetComponent<TComponentToAdd>(out TComponentToAdd? componentToAdd))
                 {
-                    TComponentToAdd? addedComponent = EditorTool.AddComponentCompatibleWithPrefab<TComponentToAdd>(component.gameObject, backToTop);
+                    TComponentToAdd? addedComponent = AddComponentCompatibleWithPrefab<TComponentToAdd>(component.gameObject, backToTop);
                     if (addedComponent != null)
                         results.Add(addedComponent);
                 }

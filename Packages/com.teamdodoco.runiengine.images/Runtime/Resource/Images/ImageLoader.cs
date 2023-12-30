@@ -8,6 +8,9 @@ using RuniEngine.Json;
 using System.Collections.Generic;
 using RuniEngine.Booting;
 using System.Linq;
+using System;
+
+using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource.Images
 {
@@ -375,6 +378,63 @@ namespace RuniEngine.Resource.Images
             return sprites;
         }
         #endregion
+
+
+
+        public static string[] GetTypes(string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (Kernel.isPlaying)
+            {
+                if (packTextures.TryGetValue(nameSpace, out var result))
+                    return result.Keys.ToArray();
+                else
+                    return Array.Empty<string>();
+            }
+            else
+            {
+                string textureRootPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
+                if (!Directory.Exists(textureRootPath))
+                    return Array.Empty<string>();
+
+                string[] typePaths = Directory.GetDirectories(textureRootPath, "*", SearchOption.AllDirectories);
+                for (int i = 0; i < typePaths.Length; i++)
+                {
+                    string typePath = typePaths[i];
+                    typePaths[i] = typePath.Substring(textureRootPath.Length + 1, typePath.Length - textureRootPath.Length - 1).Replace("\\", "/");
+                }
+
+                return typePaths;
+            }
+        }
+
+        public static string[] GetSpriteNames(string type, string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (Kernel.isPlaying)
+            {
+                if (packTextureRects.TryGetValue(nameSpace, out var result) && result.TryGetValue(type, out var result2))
+                    return result2.Keys.ToArray();
+                else
+                    return Array.Empty<string>();
+            }
+            else
+            {
+                string typePath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name, type);
+                if (!Directory.Exists(typePath))
+                    return Array.Empty<string>();
+
+                string[] paths = DirectoryUtility.GetFiles(typePath, ExtensionFilter.pictureFileFilter);
+                for (int i = 0; i < paths.Length; i++)
+                    paths[i] = paths[i].Replace("\\", "/");
+
+                return paths;
+            }
+        }
+
+
 
         public static string SearchTexturePath(string type, string name, string nameSpace = "")
         {

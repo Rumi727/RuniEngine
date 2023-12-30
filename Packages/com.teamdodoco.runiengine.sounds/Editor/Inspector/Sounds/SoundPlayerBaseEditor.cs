@@ -5,6 +5,8 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
+using static RuniEngine.Editor.EditorTool;
+
 namespace RuniEngine.Editor.Inspector.Sounds
 {
     public abstract class SoundPlayerBaseEditor : CustomInspectorBase<SoundPlayerBase>
