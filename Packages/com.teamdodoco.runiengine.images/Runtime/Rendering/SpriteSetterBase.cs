@@ -95,6 +95,9 @@ namespace RuniEngine.Rendering
 
         public Sprite? GetSprite()
         {
+            if (!Kernel.isPlaying)
+                return defaultSprite;
+
             Sprite? sprite = GetSprite(type, spriteName, index, nameSpace, spriteTag);
             if (sprite == null)
                 return defaultSprite;
