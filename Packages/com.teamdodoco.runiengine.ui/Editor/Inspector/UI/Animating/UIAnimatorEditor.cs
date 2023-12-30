@@ -68,13 +68,13 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                     }
                 }
 
-                if (GUILayout.Button(TryGetText("gui.reverse")))
+                if (GUILayout.Button(TryGetText("gui.rewind")))
                 {
                     for (int i = 0; i < targets.Length; i++)
                     {
                         UIAnimator? value = targets[i];
                         if (value != null)
-                            value.Reverse();
+                            value.Rewind();
                     }
                 }
 
