@@ -1,7 +1,6 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Data;
-using RuniEngine.Editor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +9,8 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Video;
+
+using static RuniEngine.Editor.EditorTool;
 
 namespace RuniEngine.Install
 {
@@ -180,7 +181,7 @@ namespace RuniEngine.Install
 
                         GUILayout.EndHorizontal();
 
-                        EditorTool.DrawLine(2, 0);
+                        DrawLine(2, 0);
                     }
 
                     {
@@ -196,7 +197,7 @@ namespace RuniEngine.Install
 
             //Button
             {
-                EditorTool.DrawLine(2, 0);
+                DrawLine(2, 0);
                 GUILayout.Space(4);
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(6);
@@ -235,7 +236,7 @@ namespace RuniEngine.Install
                         if (videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url))
                         {
                             {
-                                GUILayout.Label($"{EditorTool.TryGetText("gui.volume")} {(musicVolume * 100).Floor()}/100");
+                                GUILayout.Label($"{TryGetText("gui.volume")} {(musicVolume * 100).Floor()}/100");
                                 float volume = GUILayout.HorizontalSlider(musicVolume, 0, 1, GUILayout.Width(100));
 
                                 if (musicVolume != volume)
@@ -247,19 +248,19 @@ namespace RuniEngine.Install
 
                             GUILayout.Space(10);
 
-                            if (GUILayout.Button(EditorTool.TryGetText("gui.audio_reset")))
+                            if (GUILayout.Button(TryGetText("gui.audio_reset")))
                                 AudioReset();
                         }
                         else
-                            GUILayout.Label(EditorTool.TryGetText("installer.music_loading"));
+                            GUILayout.Label(TryGetText("installer.music_loading"));
 
                         GUILayout.FlexibleSpace();
 
                         {
-                            languageStorableClass ??= new StorableClass(typeof(EditorTool.ProjectData));
+                            languageStorableClass ??= new StorableClass(typeof(ProjectData));
                             languageStorableClass.AutoNameLoad(Kernel.projectDataPath);
 
-                            var languageIndex = EditorTool.ProjectData.currentLanguage switch
+                            var languageIndex = ProjectData.currentLanguage switch
                             {
                                 "en_us" => 0,
                                 "ko_kr" => 1,
@@ -268,14 +269,14 @@ namespace RuniEngine.Install
                             };
 
                             int selectedLanguageIndex = EditorGUILayout.Popup(languageIndex, new string[] {
-                                $"{EditorTool.TryGetText("language.name", "en_us")} ({EditorTool.TryGetText("language.region", "en_us")})",
-                                $"{EditorTool.TryGetText("language.name", "ko_kr")} ({EditorTool.TryGetText("language.region", "ko_kr")})",
-                                $"{EditorTool.TryGetText("language.name", "ja_jp")} ({EditorTool.TryGetText("language.region", "ja_jp")})"
+                                $"{TryGetText("language.name", "en_us")} ({TryGetText("language.region", "en_us")})",
+                                $"{TryGetText("language.name", "ko_kr")} ({TryGetText("language.region", "ko_kr")})",
+                                $"{TryGetText("language.name", "ja_jp")} ({TryGetText("language.region", "ja_jp")})"
                             }, GUILayout.Width(120));
 
                             if (selectedLanguageIndex != languageIndex)
                             {
-                                EditorTool.ProjectData.currentLanguage = selectedLanguageIndex switch
+                                ProjectData.currentLanguage = selectedLanguageIndex switch
                                 {
                                     0 => "en_us",
                                     1 => "ko_kr",

@@ -1,7 +1,8 @@
 #nullable enable
-using RuniEngine.Editor;
 using UnityEditor;
 using UnityEngine;
+
+using static RuniEngine.Editor.EditorTool;
 
 namespace RuniEngine.Install
 {
@@ -9,7 +10,7 @@ namespace RuniEngine.Install
     {
         public InstallerMainWindow? installerMainWindow { get; set; }
 
-        public string label => EditorTool.TryGetText("installer.welcome");
+        public string label => TryGetText("installer.welcome");
         public bool headDisable { get; } = true;
 
         public int sort { get; } = 0;
@@ -54,14 +55,14 @@ namespace RuniEngine.Install
                                 alpha = 1 - (dis.Abs() / 25);
 
                             GUI.color = new Color(preColor.r, preColor.g, preColor.b, alpha);
-                            GUI.Label(rect2, EditorTool.TryGetText("installer.welcome", language), headStyle);
+                            GUI.Label(rect2, TryGetText("installer.welcome", language), headStyle);
                         }
                     }
 
                     GUILayout.Space(20);
 
-                    GUILayout.Label(EditorTool.TryGetText("installer.welcome.text"));
-                    GUILayout.Label(EditorTool.TryGetText("installer.welcome.text2"));
+                    GUILayout.Label(TryGetText("installer.welcome.text"));
+                    GUILayout.Label(TryGetText("installer.welcome.text2"));
 
                     GUILayout.EndVertical();
                 }

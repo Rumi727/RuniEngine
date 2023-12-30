@@ -13,6 +13,8 @@ using RuniEngine.Data;
 using UnityEditorInternal;
 using System;
 
+using static RuniEngine.Editor.EditorTool;
+
 namespace RuniEngine.Editor.ProjectSetting
 {
     public class ObjectPoolingProjectSetting : SettingsProvider
@@ -48,7 +50,7 @@ namespace RuniEngine.Editor.ProjectSetting
 
             reorderableList ??= new ReorderableList(null, typeof(KeyValuePair<string, string>), true, true, true, true)
             {
-                drawHeaderCallback = static (Rect rect) => GUI.Label(rect, EditorTool.TryGetText("project_setting.object_pooling.name")),
+                drawHeaderCallback = static (Rect rect) => GUI.Label(rect, TryGetText("project_setting.object_pooling.name")),
                 elementHeight = (height + 8f) * 2,
                 multiSelect = true
             };
@@ -102,9 +104,9 @@ namespace RuniEngine.Editor.ProjectSetting
 
                 string key;
                 {
-                    string label = EditorTool.TryGetText("gui.prefab_key");
+                    string label = TryGetText("gui.prefab_key");
 
-                    EditorTool.BeginLabelWidth(label);
+                    BeginLabelWidth(label);
                     EditorGUI.BeginChangeCheck();
 
                     key = EditorGUI.TextField(new Rect(rect.x, rect.y, initWidth, height), label, item.Key);
@@ -112,7 +114,7 @@ namespace RuniEngine.Editor.ProjectSetting
                     if (EditorGUI.EndChangeCheck())
                         isChanged = true;
 
-                    EditorTool.EndLabelWidth();
+                    EndLabelWidth();
                 }
 
                 rect.x = initX;
@@ -133,8 +135,8 @@ namespace RuniEngine.Editor.ProjectSetting
                     size.x -= 1.5f;
 
                     {
-                        string label = EditorTool.TryGetText("gui.prefab");
-                        EditorTool.BeginLabelWidth(label);
+                        string label = TryGetText("gui.prefab");
+                        BeginLabelWidth(label);
 
                         EditorGUI.BeginChangeCheck();
                         string assetsPath = EditorGUI.TextField(new Rect(rect.x, rect.y, size.x, height), label, item.Value);
@@ -146,7 +148,7 @@ namespace RuniEngine.Editor.ProjectSetting
                         }
                     }
 
-                    EditorTool.EndLabelWidth();
+                    EndLabelWidth();
 
                     rect.x += size.x + 3;
                     size.x = initWidth;
@@ -177,7 +179,7 @@ namespace RuniEngine.Editor.ProjectSetting
                 }
             };
 
-            EditorGUILayout.HelpBox(EditorTool.TryGetText("project_setting.object_pooling.warning"), MessageType.Info);
+            EditorGUILayout.HelpBox(TryGetText("project_setting.object_pooling.warning"), MessageType.Info);
 
             Rect rect = EditorGUILayout.GetControlRect(true, reorderableList.GetHeight());
             reorderableList.DoList(rect);

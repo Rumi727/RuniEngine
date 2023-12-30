@@ -12,6 +12,8 @@ using RuniEngine.Resource.Sounds;
 using System.IO;
 using RuniEngine.Json;
 
+using static RuniEngine.Editor.EditorTool;
+
 namespace RuniEngine.Editor.ProjectSetting
 {
     public class NBSProjectSetting : SettingsProvider
@@ -31,10 +33,10 @@ namespace RuniEngine.Editor.ProjectSetting
 
         public static void DrawGUI(ref string nameSpace, ref bool deleteSafety, ref int displayRestrictionsIndex)
         {
-            EditorTool.BeginFieldWidth(10);
-            EditorTool.DeleteSafety(ref deleteSafety);
+            BeginFieldWidth(10);
+            DeleteSafety(ref deleteSafety);
 
-            nameSpace = EditorTool.DrawNameSpace(EditorTool.TryGetText("gui.namespace"), nameSpace);
+            nameSpace = DrawNameSpace(TryGetText("gui.namespace"), nameSpace);
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             string nameSpace2 = nameSpace;
@@ -44,7 +46,7 @@ namespace RuniEngine.Editor.ProjectSetting
 
             if (!Directory.Exists(path))
             {
-                if (GUILayout.Button(EditorTool.TryGetText("project_setting.nbs.nbses_folder_create"), GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(TryGetText("project_setting.nbs.nbses_folder_create"), GUILayout.ExpandWidth(false)))
                 {
                     Directory.CreateDirectory(path);
                     AssetDatabase.Refresh();
@@ -55,7 +57,7 @@ namespace RuniEngine.Editor.ProjectSetting
                 string jsonPath = path + ".json";
                 if (!File.Exists(jsonPath))
                 {
-                    if (GUILayout.Button(EditorTool.TryGetText("project_setting.nbs.nbses_file_create"), GUILayout.ExpandWidth(false)))
+                    if (GUILayout.Button(TryGetText("project_setting.nbs.nbses_file_create"), GUILayout.ExpandWidth(false)))
                     {
                         File.WriteAllText(jsonPath, "{}");
                         AssetDatabase.Refresh();
@@ -67,7 +69,7 @@ namespace RuniEngine.Editor.ProjectSetting
                     List<KeyValuePair<string?, NBSData?>> nbsDatas = JsonManager.JsonRead<Dictionary<string?, NBSData?>>(jsonPath).ToList();
 
                     //오디오 리스트
-                    displayRestrictionsIndex = EditorTool.DrawRawList(nbsDatas, "", x =>
+                    displayRestrictionsIndex = DrawRawList(nbsDatas, "", x =>
                     {
                         KeyValuePair<string?, NBSData?> pair = (KeyValuePair<string?, NBSData?>)x;
 
@@ -76,15 +78,15 @@ namespace RuniEngine.Editor.ProjectSetting
                         bool isBGM;
 
                         {
-                            EditorTool.BeginLabelWidth(50);
+                            BeginLabelWidth(50);
                             EditorGUI.BeginChangeCheck();
 
-                            key = EditorGUILayout.TextField(EditorTool.TryGetText("gui.key"), pair.Key);
-                            subtitle = EditorGUILayout.TextField(EditorTool.TryGetText("gui.subtitle"), pair.Value?.subtitle);
+                            key = EditorGUILayout.TextField(TryGetText("gui.key"), pair.Key);
+                            subtitle = EditorGUILayout.TextField(TryGetText("gui.subtitle"), pair.Value?.subtitle);
                             isBGM = EditorGUILayout.Toggle("is BGM", pair.Value != null && pair.Value.isBGM);
 
                             isChanged = isChanged || EditorGUI.EndChangeCheck();
-                            EditorTool.EndLabelWidth();
+                            EndLabelWidth();
                         }
 
                         List<NBSMetaData>? metaDatas = null;
@@ -93,7 +95,7 @@ namespace RuniEngine.Editor.ProjectSetting
                             metaDatas = pair.Value.nbses.ToList();
 
                             //오디오 메타데이터 리스트
-                            EditorTool.DrawRawList(metaDatas, "", y =>
+                            DrawRawList(metaDatas, "", y =>
                             {
                                 NBSMetaData metaData = (NBSMetaData)y;
                                 string nbsPath = metaData.path;
@@ -103,15 +105,15 @@ namespace RuniEngine.Editor.ProjectSetting
 
                                 {
                                     EditorGUILayout.BeginHorizontal();
-                                    string label = EditorTool.TryGetText("gui.path");
+                                    string label = TryGetText("gui.path");
 
-                                    EditorTool.BeginLabelWidth(label);
+                                    BeginLabelWidth(label);
                                     EditorGUI.BeginChangeCheck();
 
                                     nbsPath = EditorGUILayout.TextField(label, nbsPath);
 
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
-                                    EditorTool.EndLabelWidth();
+                                    EndLabelWidth();
 
                                     //GUI
                                     {
@@ -160,30 +162,30 @@ namespace RuniEngine.Editor.ProjectSetting
                                     EditorGUI.BeginChangeCheck();
 
                                     {
-                                        string label = EditorTool.TryGetText("gui.pitch");
-                                        EditorTool.BeginLabelWidth(label);
+                                        string label = TryGetText("gui.pitch");
+                                        BeginLabelWidth(label);
 
                                         pitch = EditorGUILayout.FloatField(label, pitch);
-                                        EditorTool.EndLabelWidth();
+                                        EndLabelWidth();
                                     }
 
                                     {
-                                        string label = EditorTool.TryGetText("gui.tempo");
-                                        EditorTool.BeginLabelWidth(label);
+                                        string label = TryGetText("gui.tempo");
+                                        BeginLabelWidth(label);
 
                                         tempo = EditorGUILayout.FloatField(label, tempo);
-                                        EditorTool.EndLabelWidth();
+                                        EndLabelWidth();
                                     }
 
                                     if (metaData.stream)
                                         tempo = tempo.Clamp(0);
 
                                     {
-                                        string label = EditorTool.TryGetText("gui.stream");
-                                        EditorTool.BeginLabelWidth(label);
+                                        string label = TryGetText("gui.stream");
+                                        BeginLabelWidth(label);
 
                                         stream = EditorGUILayout.Toggle(label, stream, GUILayout.Width(EditorGUIUtility.labelWidth + 18));
-                                        EditorTool.EndLabelWidth();
+                                        EndLabelWidth();
                                     }
 
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
@@ -218,7 +220,7 @@ namespace RuniEngine.Editor.ProjectSetting
                 }
             }
 
-            EditorTool.EndFieldWidth();
+            EndFieldWidth();
         }
 
         class NBSDataEqualityComparer : IEqualityComparer<KeyValuePair<string?, NBSData?>>
