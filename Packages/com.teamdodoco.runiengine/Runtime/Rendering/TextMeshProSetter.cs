@@ -20,7 +20,9 @@ namespace RuniEngine
             get => _nameSpace; set
             {
                 _nameSpace = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField] string _nameSpace = "";
@@ -30,7 +32,9 @@ namespace RuniEngine
             get => _path; set
             {
                 _path = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
 
@@ -39,7 +43,9 @@ namespace RuniEngine
             get => _path; set
             {
                 _path = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField] string _path = "";
@@ -51,7 +57,9 @@ namespace RuniEngine
             get => _replaces; set
             {
                 _replaces = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField] ReplaceOldNewPair[] _replaces = new ReplaceOldNewPair[0];
@@ -64,7 +72,8 @@ namespace RuniEngine
                 nameSpace = value.nameSpace;
                 key = value.path;
 
-                Refresh();
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
 

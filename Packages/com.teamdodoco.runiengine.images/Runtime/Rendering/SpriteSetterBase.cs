@@ -15,7 +15,9 @@ namespace RuniEngine.Rendering
             get => _nameSpace; set
             {
                 _nameSpace = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField] string _nameSpace = "";
@@ -25,7 +27,9 @@ namespace RuniEngine.Rendering
             get => _type; set
             {
                 _type = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField] string _type = "";
@@ -35,7 +39,9 @@ namespace RuniEngine.Rendering
             get => _path; set
             {
                 _path = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
 
@@ -44,7 +50,9 @@ namespace RuniEngine.Rendering
             get => _path; set
             {
                 _path = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField] string _path = "";
@@ -54,7 +62,9 @@ namespace RuniEngine.Rendering
             get => _spriteTag; set
             {
                 _spriteTag = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField] string _spriteTag = "";
@@ -64,7 +74,9 @@ namespace RuniEngine.Rendering
             get => _index; set
             {
                 _index = value;
-                Refresh();
+
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
         [SerializeField, Min(0)] int _index = 0;
@@ -75,9 +87,12 @@ namespace RuniEngine.Rendering
             set
             {
                 nameSpace = value.nameSpace;
+                index = value.index;
+                type = value.type;
                 spriteName = value.name;
 
-                Refresh();
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
 
@@ -89,7 +104,8 @@ namespace RuniEngine.Rendering
                 nameSpace = value.nameSpace;
                 spriteName = value.path;
 
-                Refresh();
+                if (isActiveAndEnabled)
+                    Refresh();
             }
         }
 
