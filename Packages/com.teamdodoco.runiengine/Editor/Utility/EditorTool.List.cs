@@ -1,6 +1,8 @@
 #nullable enable
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -234,7 +236,45 @@ namespace RuniEngine.Editor
                 EditorGUILayout.PrefixLabel(label);
 
             value = EditorGUILayout.TextField(value);
-            index = EditorGUILayout.Popup(Array.IndexOf(array, value), array, options);
+
+            //원래 이딴거 안해도 루트 폴더 잘 감지했는데 tq 갑자기 안됨 유니티 병신
+            List<string?> displayList = new List<string?>();
+            List<int> indexList = new List<int>();
+            for (int i = 0; i < array.Length; i++)
+            {
+                string path = array[i];
+
+                bool startWith = false;
+                for (int k = 0; k < array.Length; k++)
+                {
+                    if (path == Path.GetDirectoryName(array[k]).Replace("\\", "/"))
+                    {
+                        startWith = true;
+                        break;
+                    }
+                }
+
+                if (!startWith)
+                {
+                    displayList.Add(path);
+                    indexList.Add(i);
+                }
+
+                if (path.Contains('/'))
+                {
+                    string parentPath = Path.GetDirectoryName(path).Replace("\\", "/");
+                    if (!displayList.Contains(parentPath + "/root"))
+                    {
+                        displayList.Insert(displayList.Count - 1, parentPath + "/root");
+                        displayList.Insert(displayList.Count - 1, parentPath + "/");
+
+                        indexList.Insert(indexList.Count - 1, Array.IndexOf(array, parentPath));
+                        indexList.Insert(indexList.Count - 1, int.MinValue);
+                    }
+                }
+            }
+
+            index = EditorGUILayout.IntPopup(Array.IndexOf(array, value), displayList.ToArray(), indexList.ToArray(), options);
 
             EditorGUILayout.EndHorizontal();
 
@@ -242,6 +282,14 @@ namespace RuniEngine.Editor
                 return array[index];
             else
                 return value;
+        }
+
+        class InternalStringArrayInfo
+        {
+            public string path = "";
+            public List<InternalStringArrayInfo> stringArray = new List<InternalStringArrayInfo>();
+
+            public InternalStringArrayInfo(string path) => this.path = path;
         }
     }
 }

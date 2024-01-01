@@ -8,7 +8,7 @@ namespace RuniEngine
     [Serializable]
     public struct RectOffset : IEquatable<RectOffset>
     {
-        public RectOffset(int left, int right, int top, int bottom)
+        public RectOffset(float left, float right, float top, float bottom)
         {
             this.left = left;
             this.right = right;
@@ -16,7 +16,7 @@ namespace RuniEngine
             this.bottom = bottom;
         }
 
-        public RectOffset(Vector2Int min, Vector2Int max)
+        public RectOffset(Vector2 min, Vector2 max)
         {
             left = min.x;
             right = max.x;
@@ -24,15 +24,15 @@ namespace RuniEngine
             bottom = min.y;
         }
 
-        [FieldName("gui.left")] public int left;
-        [FieldName("gui.right")] public int right;
-        [FieldName("gui.top")] public int top;
-        [FieldName("gui.bottom")] public int bottom;
+        [FieldName("gui.left")] public float left;
+        [FieldName("gui.right")] public float right;
+        [FieldName("gui.top")] public float top;
+        [FieldName("gui.bottom")] public float bottom;
 
         [JsonIgnore]
-        public Vector2Int min
+        public Vector2 min
         {
-            readonly get => new Vector2Int(left, bottom);
+            readonly get => new Vector2(left, bottom);
             set
             {
                 left = value.x;
@@ -41,9 +41,9 @@ namespace RuniEngine
         }
 
         [JsonIgnore]
-        public Vector2Int max
+        public Vector2 max
         {
-            readonly get => new Vector2Int(right, top);
+            readonly get => new Vector2(right, top);
             set
             {
                 right = value.x;
@@ -51,7 +51,7 @@ namespace RuniEngine
             }
         }
 
-        [JsonIgnore] public static RectOffset zero => new RectOffset(Vector2Int.zero, Vector2Int.zero);
+        [JsonIgnore] public static RectOffset zero => new RectOffset(Vector2.zero, Vector2.zero);
 
 
 
@@ -73,7 +73,7 @@ namespace RuniEngine
             return result;
         }
 
-        public static implicit operator UnityEngine.RectOffset(RectOffset v)
+        public static explicit operator UnityEngine.RectOffset(RectOffset v)
         {
             UnityEngine.RectOffset result = new UnityEngine.RectOffset
             {

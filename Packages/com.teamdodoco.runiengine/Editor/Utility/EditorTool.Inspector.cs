@@ -2,6 +2,7 @@
 using RuniEngine.Resource;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -78,7 +79,44 @@ namespace RuniEngine.Editor
 
             EditorGUI.showMixedValue = mixed;
 
-            index = EditorGUILayout.Popup(Array.IndexOf(array, value), array, options);
+            //원래 이딴거 안해도 루트 폴더 잘 감지했는데 tq 갑자기 안됨 유니티 병신
+            List<string?> displayList = new List<string?>();
+            List<int> indexList = new List<int>();
+            for (int i = 0; i < array.Length; i++)
+            {
+                string path = array[i];
+
+                bool startWith = false;
+                for (int k = 0; k < array.Length; k++)
+                {
+                    if (path == Path.GetDirectoryName(array[k]).Replace("\\", "/"))
+                    {
+                        startWith = true;
+                        break;
+                    }
+                }
+
+                if (!startWith)
+                {
+                    displayList.Add(path);
+                    indexList.Add(i);
+                }
+
+                if (path.Contains('/'))
+                {
+                    string parentPath = Path.GetDirectoryName(path).Replace("\\", "/");
+                    if (!displayList.Contains(parentPath + "/root"))
+                    {
+                        displayList.Insert(displayList.Count - 1, parentPath + "/root");
+                        displayList.Insert(displayList.Count - 1, parentPath + "/");
+
+                        indexList.Insert(indexList.Count - 1, Array.IndexOf(array, parentPath));
+                        indexList.Insert(indexList.Count - 1, int.MinValue);
+                    }
+                }
+            }
+
+            index = EditorGUILayout.IntPopup(Array.IndexOf(array, value), displayList.ToArray(), indexList.ToArray(), options);
 
             EditorGUILayout.EndHorizontal();
 
@@ -282,8 +320,8 @@ namespace RuniEngine.Editor
                 {
                     GUILayout.BeginHorizontal();
 
-                    value.left = EditorGUILayout.IntField(leftLabel, value.left);
-                    value.right = EditorGUILayout.IntField(rightLabel, value.right);
+                    value.left = EditorGUILayout.FloatField(leftLabel, value.left);
+                    value.right = EditorGUILayout.FloatField(rightLabel, value.right);
 
                     GUILayout.EndHorizontal();
                 }
@@ -291,8 +329,8 @@ namespace RuniEngine.Editor
                 {
                     GUILayout.BeginHorizontal();
 
-                    value.top = EditorGUILayout.IntField(topLabel, value.top);
-                    value.bottom = EditorGUILayout.IntField(bottomLabel, value.bottom);
+                    value.top = EditorGUILayout.FloatField(topLabel, value.top);
+                    value.bottom = EditorGUILayout.FloatField(bottomLabel, value.bottom);
                     
                     GUILayout.EndHorizontal();
                 }
