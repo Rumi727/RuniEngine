@@ -8,9 +8,9 @@ namespace RuniEngine.UI.Fitter
         protected DrivenRectTransformTracker tracker;
 
         /// <summary>
-        /// Please put <see cref="OnDisable"/> when overriding
+        /// Please put <see cref="OnDestroy"/> when overriding
         /// </summary>
-        protected override void OnDisable()
+        protected override void OnDestroy()
         {
             if (!Kernel.isPlaying)
                 tracker.Clear();

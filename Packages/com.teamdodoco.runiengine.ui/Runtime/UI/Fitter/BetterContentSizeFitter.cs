@@ -29,9 +29,9 @@ namespace RuniEngine.UI.Fitter
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }
 
-        protected override void OnDisable()
+        protected override void OnDestroy()
         {
-            base.OnDisable();
+            base.OnDestroy();
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }
 
