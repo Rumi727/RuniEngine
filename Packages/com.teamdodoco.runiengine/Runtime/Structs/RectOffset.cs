@@ -1,4 +1,5 @@
 #nullable enable
+using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
@@ -28,6 +29,7 @@ namespace RuniEngine
         [FieldName("gui.top")] public int top;
         [FieldName("gui.bottom")] public int bottom;
 
+        [JsonIgnore]
         public Vector2Int min
         {
             readonly get => new Vector2Int(left, bottom);
@@ -37,6 +39,8 @@ namespace RuniEngine
                 bottom = value.y;
             }
         }
+
+        [JsonIgnore]
         public Vector2Int max
         {
             readonly get => new Vector2Int(right, top);
@@ -47,7 +51,7 @@ namespace RuniEngine
             }
         }
 
-        public static RectOffset zero => new RectOffset(Vector2Int.zero, Vector2Int.zero);
+        [JsonIgnore] public static RectOffset zero => new RectOffset(Vector2Int.zero, Vector2Int.zero);
 
 
 

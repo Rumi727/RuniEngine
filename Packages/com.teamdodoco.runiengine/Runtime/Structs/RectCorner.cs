@@ -33,6 +33,7 @@ namespace RuniEngine
 
 
 
+        [JsonIgnore]
         public Rect rect
         {
             readonly get => this;
