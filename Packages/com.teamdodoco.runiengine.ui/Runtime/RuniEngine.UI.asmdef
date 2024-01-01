@@ -1,6 +1,6 @@
 {
     "name": "RuniEngine.UI",
-    "rootNamespace": "RuniEngine.UI",
+    "rootNamespace": "RuniEngine",
     "references": [
         "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
         "GUID:33d28b00c078f314fa38a6a00f3b508a",
