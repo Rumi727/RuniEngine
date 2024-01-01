@@ -228,10 +228,15 @@ namespace RuniEngine.Editor
         public static string DrawStringArray(string label, string value, string[] array, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(label, value, array, true, out index, options);
         static string InternalDrawStringArray(string label, string value, string[] array, bool labelShow, out int index, params GUILayoutOption[] options)
         {
-            if (!labelShow)
-                index = EditorGUILayout.Popup(Array.IndexOf(array, value), array, options);
-            else
-                index = EditorGUILayout.Popup(label, Array.IndexOf(array, value), array, options);
+            EditorGUILayout.BeginHorizontal();
+
+            if (labelShow)
+                EditorGUILayout.PrefixLabel(label);
+
+            value = EditorGUILayout.TextField(value);
+            index = EditorGUILayout.Popup(Array.IndexOf(array, value), array, options);
+
+            EditorGUILayout.EndHorizontal();
 
             if (index >= 0)
                 return array[index];
