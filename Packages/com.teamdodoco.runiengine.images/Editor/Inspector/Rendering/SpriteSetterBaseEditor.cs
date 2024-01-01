@@ -38,11 +38,15 @@ namespace RuniEngine.Editor.Inspector.Rendering
                 targets
             );
 
-            UseProperty("_spriteTag", TryGetText("inspector.sprite_renderer_setter.spriteTag"));
+            UseProperty("_spriteTag", TryGetText("inspector.sprite_setter.spriteTag"));
 
             Space();
 
             UseProperty("_index", TryGetText("gui.index"));
+
+            Space();
+
+            UseProperty("_defaultSprite", TryGetText("inspector.sprite_setter.defaultSprite"));
 
             if (EditorGUI.EndChangeCheck())
             {
