@@ -11,6 +11,8 @@ using System.Linq;
 using System;
 
 using Object = UnityEngine.Object;
+using static UnityEditor.U2D.ScriptablePacker;
+using System.Security.Policy;
 
 namespace RuniEngine.Resource.Images
 {
@@ -120,7 +122,7 @@ namespace RuniEngine.Resource.Images
 
             if (File.Exists(path))
             {
-                Texture2D texture = new Texture2D(0, 0, textureFormat, generateMipmap, false);
+                Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap, false);
                 ResourceManager.allLoadedResources.Add(texture);
 
                 texture.filterMode = filterMode;
@@ -270,6 +272,62 @@ namespace RuniEngine.Resource.Images
 
         #region Get Sprite
         /// <summary>
+        /// 이미지 파일을 스프라이트로 가져옵니다 (Unity API를 사용하기 때문에 메인 스레드에서 실행해야 합니다.)
+        /// Import image files as sprites (Since the Unity API is used, we need to run it on the main thread)
+        /// </summary>
+        /// <param name="resourcePackPath">
+        /// 리소스팩 경로
+        /// Resource Pack Path
+        /// </param>
+        /// <param name="type">
+        /// 타입
+        /// Type
+        /// </param>
+        /// <param name="name">
+        /// 이름
+        /// Name
+        /// </param>
+        /// <param name="nameSpace">
+        /// 네임스페이스
+        /// Name Space
+        /// </param>
+        /// <param name="textureFormat">
+        /// 텍스쳐 포맷
+        /// Texture Format
+        /// </param>
+        /// <returns></returns>
+        public static Sprite[]? GetSprites(string type, string name, string nameSpace = "", string tag = spriteDefaultTag, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        {
+            NotMainThreadException.Exception();
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            string rootPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, ImageLoader.name);
+            string path = Path.Combine(rootPath, type, name);
+            
+            ResourceManager.FileExtensionExists(path, out path, ExtensionFilter.pictureFileFilter);
+            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData>(Path.Combine(rootPath, type) + ".json");
+            Texture2D? texture = GetTexture(path, textureMetaData, textureFormat);
+            if (texture == null)
+                return null;
+            
+            Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(path + ".json");
+            if (spriteMetaDatas == null)
+            {
+                Object.DestroyImmediate(texture);
+                return null;
+            }
+
+            ResourceManager.allLoadedResources.Add(texture);
+
+            Dictionary<string, Sprite[]> sprites = GetSprites(texture, hideFlags, spriteMetaDatas);
+            if (sprites.ContainsKey(tag))
+                return sprites[tag];
+            else if (sprites.ContainsKey(spriteDefaultTag))
+                return sprites[spriteDefaultTag];
+
+            return null;
+        }
+        /// <summary>
         /// 텍스쳐를 스프라이트로 변환합니다 (Unity API를 사용하기 때문에 메인 스레드에서 실행해야 합니다)
         /// Convert texture to sprite (Since the Unity API is used, we need to run it on the main thread)
         /// </summary>
@@ -292,10 +350,10 @@ namespace RuniEngine.Resource.Images
             }
             else
             {
-                spriteMetaData.RectMinMax(texture.width, texture.height);
-                spriteMetaData.PixelsPreUnitMinSet();
+                SpriteMetaData spriteMetaData2 = (SpriteMetaData)spriteMetaData;
+                spriteMetaData2.RectMinMax(texture.width, texture.height);
 
-                Sprite sprite = Sprite.Create(texture, spriteMetaData.rect, spriteMetaData.pivot, spriteMetaData.pixelsPerUnit, 0, SpriteMeshType.FullRect, spriteMetaData.border);
+                Sprite sprite = Sprite.Create(texture, spriteMetaData2.rect, spriteMetaData2.pivot, spriteMetaData2.pixelsPerUnit, 0, SpriteMeshType.FullRect, spriteMetaData2.border);
                 sprite.name = texture.name;
                 sprite.hideFlags = hideFlags;
 
@@ -362,10 +420,7 @@ namespace RuniEngine.Resource.Images
                 for (int i = 0; i < spriteMetaDatas2.Length; i++)
                 {
                     SpriteMetaData spriteMetaData = spriteMetaDatas2[i];
-                    spriteMetaData ??= new SpriteMetaData();
-
                     spriteMetaData.RectMinMax(texture.width, texture.height);
-                    spriteMetaData.PixelsPreUnitMinSet();
 
                     Sprite sprite = Sprite.Create(texture, spriteMetaData.rect, spriteMetaData.pivot, spriteMetaData.pixelsPerUnit, 0, SpriteMeshType.FullRect, spriteMetaData.border);
                     sprite.name = texture.name;
@@ -428,7 +483,7 @@ namespace RuniEngine.Resource.Images
 
                 string[] paths = DirectoryUtility.GetFiles(typePath, ExtensionFilter.pictureFileFilter);
                 for (int i = 0; i < paths.Length; i++)
-                    paths[i] = paths[i].Replace("\\", "/");
+                    paths[i] = Path.GetFileNameWithoutExtension(paths[i]).Replace("\\", "/");
 
                 return paths;
             }
@@ -709,12 +764,9 @@ namespace RuniEngine.Resource.Images
                                     for (int i = 0; i < item.Value.Length; i++)
                                     {
                                         SpriteMetaData spriteMetaData = item.Value[i];
-                                        if (spriteMetaData == null)
-                                        {
-                                            spriteMetaData = new SpriteMetaData();
-                                            spriteMetaData.RectMinMax(rect.width, rect.height);
-                                            spriteMetaDatas[item.Key][i] = spriteMetaData;
-                                        }
+
+                                        spriteMetaData.RectMinMax(rect.width, rect.height);
+                                        spriteMetaDatas[item.Key][i] = spriteMetaData;
 
                                         spriteMetaData.rect = new JRect(rect.x + spriteMetaData.rect.x, rect.y + spriteMetaData.rect.y, rect.width - (rect.width - spriteMetaData.rect.width), rect.height - (rect.height - spriteMetaData.rect.height));
                                     }

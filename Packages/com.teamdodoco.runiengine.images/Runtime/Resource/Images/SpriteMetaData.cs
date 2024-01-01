@@ -1,17 +1,48 @@
 #nullable enable
+using Newtonsoft.Json;
 using RuniEngine.Json;
 
 namespace RuniEngine.Resource.Images
 {
-    public sealed class SpriteMetaData
+    public struct SpriteMetaData
     {
-        public JRect rect = new JRect(float.MinValue);
-        public JVector2 pivot = new JVector2(0.5f);
-        public float pixelsPerUnit = 100;
-        public JVector4 border = JVector4.zero;
+        public JRect rect
+        {
+            get => _rect ??= new JRect(float.MinValue);
+            set => _rect = value;
+        }
+        [JsonIgnore] JRect? _rect;
+
+        public JVector2 pivot
+        {
+            get => _pivot ??= new JVector2(0.5f);
+            set => _pivot = value;
+        }
+        [JsonIgnore] JVector2? _pivot;
+
+        public float pixelsPerUnit
+        {
+            get
+            {
+                _pixelsPerUnit ??= 100;
+                _pixelsPerUnit = _pixelsPerUnit.Value.Clamp(0.01f);
+
+                return _pixelsPerUnit.Value;
+            }
+            set => _pixelsPerUnit = value;
+        }
+        [JsonIgnore] float? _pixelsPerUnit;
+
+        public JVector4 border
+        {
+            get => _border ??= JVector4.zero;
+            set => _border = value;
+        }
+        [JsonIgnore] JVector4? _border;
 
         public void RectMinMax(float width, float height)
         {
+            JRect rect = this.rect;
             if (rect.x <= float.MinValue)
             {
                 rect.x = 0;
@@ -37,12 +68,8 @@ namespace RuniEngine.Resource.Images
                 rect.y = 0;
             if (rect.y > height - rect.height)
                 rect.y = height - rect.height;
-        }
 
-        public void PixelsPreUnitMinSet()
-        {
-            if (pixelsPerUnit < 0.01f)
-                pixelsPerUnit = 0.01f;
+            this.rect = rect;
         }
     }
 }

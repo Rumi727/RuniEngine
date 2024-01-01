@@ -26,7 +26,7 @@ namespace RuniEngine.Editor.Inspector.Rendering
             (
                 x => x.type,
                 x => UsePropertyAndDrawStringArray(serializedObject, "_type", TryGetText("gui.type"), x.type, ImageLoader.GetTypes(x.nameSpace)),
-                (x, y) => x.nameSpace = y,
+                (x, y) => x.type = y,
                 targets
             );
 

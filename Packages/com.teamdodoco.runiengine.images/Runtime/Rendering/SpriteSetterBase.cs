@@ -1,6 +1,7 @@
 #nullable enable
 using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RuniEngine.Rendering
@@ -111,9 +112,6 @@ namespace RuniEngine.Rendering
 
         public Sprite? GetSprite()
         {
-            if (!Kernel.isPlaying)
-                return defaultSprite;
-
             Sprite? sprite = GetSprite(type, spriteName, index, nameSpace, spriteTag);
             if (sprite == null)
                 return defaultSprite;
@@ -125,7 +123,12 @@ namespace RuniEngine.Rendering
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            Sprite[]? sprites = ImageLoader.SearchSprites(type, name, nameSpace, tag);
+            Sprite[]? sprites;
+            if (Kernel.isPlaying)
+                sprites = ImageLoader.SearchSprites(type, name, nameSpace, tag);
+            else
+                sprites = ImageLoader.GetSprites(type, name, nameSpace, tag);
+
             if (sprites != null && sprites.Length > 0)
                 return sprites[index.Clamp(0, sprites.Length - 1)];
 

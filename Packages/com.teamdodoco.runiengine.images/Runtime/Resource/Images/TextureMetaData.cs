@@ -1,4 +1,5 @@
 #nullable enable
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace RuniEngine.Resource.Images
@@ -10,21 +11,21 @@ namespace RuniEngine.Resource.Images
             get => _filterMode ??= FilterMode.Point;
             set => _filterMode = value;
         }
-        FilterMode? _filterMode;
+        [JsonIgnore] FilterMode? _filterMode;
 
         public bool generateMipmap
         {
             get => _generateMipmap ??= true;
             set => _generateMipmap = value;
         }
-        bool? _generateMipmap;
+        [JsonIgnore] bool? _generateMipmap;
 
         public TextureCompressionQuality compressionType
         {
             get => _compressionType ??= TextureCompressionQuality.none;
             set => _compressionType = value;
         }
-        TextureCompressionQuality? _compressionType;
+        [JsonIgnore] TextureCompressionQuality? _compressionType;
 
         public TextureMetaData(FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType)
         {
