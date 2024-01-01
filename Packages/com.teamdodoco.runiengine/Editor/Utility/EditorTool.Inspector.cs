@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 namespace RuniEngine.Editor
 {

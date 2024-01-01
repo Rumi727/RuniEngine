@@ -18,9 +18,9 @@ namespace RuniEngine.UI.Fitter
             Canvas.preWillRenderCanvases += SetDirty;
         }
 
-        protected override void OnDisable()
+        protected override void OnDestroy()
         {
-            base.OnDisable();
+            base.OnDestroy();
             Canvas.preWillRenderCanvases -= SetDirty;
         }
 

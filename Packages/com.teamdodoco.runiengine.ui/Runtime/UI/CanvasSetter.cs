@@ -130,7 +130,7 @@ namespace RuniEngine.UI
 
 
         protected override void OnEnable() => Canvas.preWillRenderCanvases += SetDirty;
-        protected override void OnDisable()
+        protected override void OnDestroy()
         {
             if (!Kernel.isPlaying)
                 tracker.Clear();

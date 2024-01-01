@@ -60,7 +60,7 @@ namespace RuniEngine.UI.Animating
         }
 
 #if UNITY_EDITOR
-        protected override void OnDisable() => UnityEditor.EditorApplication.update -= TimeUpdate;
+        protected override void OnDestroy() => UnityEditor.EditorApplication.update -= TimeUpdate;
 #endif
 
 

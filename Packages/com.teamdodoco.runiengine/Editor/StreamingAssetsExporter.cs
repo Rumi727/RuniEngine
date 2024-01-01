@@ -1,6 +1,5 @@
 #nullable enable
 using RuniEngine.Resource;
-using RuniEngine.Splash;
 using System.IO;
 using UnityEditor;
 
