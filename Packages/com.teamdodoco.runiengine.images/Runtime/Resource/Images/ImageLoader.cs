@@ -440,7 +440,7 @@ namespace RuniEngine.Resource.Images
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            if (Kernel.isPlaying)
+            if (isLoaded)
             {
                 if (packTextures.TryGetValue(nameSpace, out var result))
                     return result.Keys.ToArray();
@@ -468,7 +468,7 @@ namespace RuniEngine.Resource.Images
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            if (Kernel.isPlaying)
+            if (isLoaded)
             {
                 if (packTextureRects.TryGetValue(nameSpace, out var result) && result.TryGetValue(type, out var result2))
                     return result2.Keys.ToArray();
