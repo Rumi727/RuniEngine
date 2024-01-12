@@ -36,6 +36,9 @@ namespace RuniEngine
         
         public static string[] GetFiles(string path, ExtensionFilter extensionFilter, SearchOption searchOption)
         {
+            if (extensionFilter.extensions.Length == 1)
+                return Directory.GetFiles(path, extensionFilter.extensions[0], searchOption);
+
             return Directory.EnumerateFiles(path, "*", searchOption).Where(x =>
             {
                 for (int i = 0; i < extensionFilter.extensions.Length; i++)
