@@ -72,10 +72,26 @@ namespace RuniEngine.Sounds
 
         public float volume
         {
-            get => Interlocked.CompareExchange(ref _volume, 0, 0);
-            set => Interlocked.Exchange(ref _volume, value);
+            get
+            {
+                ThreadManager.Lock(ref volumeLock);
+                float result = _volume;
+                ThreadManager.Unlock(ref volumeLock);
+
+                return result;
+            }
+            set
+            {
+                ThreadManager.Lock(ref volumeLock);
+                _volume = value;
+                ThreadManager.Unlock(ref volumeLock);
+            }
         }
         [SerializeField, Range(0, 2)] float _volume = 1;
+        int volumeLock;
+
+        public void VolumeLock() => ThreadManager.Lock(ref volumeLock);
+        public void VolumeUnlock() => ThreadManager.Unlock(ref volumeLock);
 
 
 

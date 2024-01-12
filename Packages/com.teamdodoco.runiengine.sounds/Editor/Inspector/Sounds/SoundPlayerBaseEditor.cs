@@ -64,7 +64,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             Space();
 
-            //Not Thread Safe
+            target.VolumeLock();
             {
                 string label = TryGetText("gui.volume");
 
@@ -72,6 +72,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 UseProperty(serializedObject, "_volume", label);
                 EndLabelWidth();
             }
+            target.VolumeUnlock();
 
             Space();
 
