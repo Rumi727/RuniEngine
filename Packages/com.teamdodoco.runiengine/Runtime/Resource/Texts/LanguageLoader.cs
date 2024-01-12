@@ -63,7 +63,7 @@ namespace RuniEngine.Resource.Texts
             {
                 if (ResourceManager.FileExtensionExists(Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name, language),
                     out string outPath,
-                    ExtensionFilter.textFileFilter))
+                    ExtensionFilter.jsonFileFilter))
                 {
                     Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(outPath);
                     if (lang != null && lang.TryGetValue(key, out string value))
@@ -112,7 +112,7 @@ namespace RuniEngine.Resource.Texts
                 if (!Directory.Exists(langPath))
                     return;
 
-                string[] filePaths = DirectoryUtility.GetFiles(langPath, ExtensionFilter.textFileFilter);
+                string[] filePaths = DirectoryUtility.GetFiles(langPath, ExtensionFilter.jsonFileFilter);
                 for (int i = 0; i < filePaths.Length; i++)
                 {
                     string filePath = filePaths[i];
