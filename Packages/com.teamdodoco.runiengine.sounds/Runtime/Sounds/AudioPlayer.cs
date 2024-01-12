@@ -146,7 +146,7 @@ namespace RuniEngine.Sounds
 
                 if (isLooped)
                 {
-                    if (loopStartIndex != 0 || timeSamples.Abs() > 1024)
+                    if (loopStartIndex != 0 || timeSamples.Abs() > 2048)
                         audioSource.timeSamples = timeSamples;
 
                     LoopedEventInvoke();
