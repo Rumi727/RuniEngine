@@ -100,24 +100,40 @@ namespace RuniEngine.Sounds
             //시간 보정
             if (isPlaying && !isPaused)
             {
-                int value = (int)(frequency * Kernel.deltaTimeDouble);
-                _timeSamples += (int)(value * tempo);
+                double value = frequency * Kernel.deltaTimeDouble;
+                int valueInt = (int)(value * tempo);
+
+                _timeSamples += valueInt;
                 
                 //템포
                 if (audioSource.isPlaying && timeSamples >= 0 && timeSamples <= samples)
                 {
                     const int condition = 2048;
-                    double pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
+                    float pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
                     
                     tempoAdjustmentTime += value;
-                    while (tempoAdjustmentTime >= condition)
+                    if (tempoAdjustmentTime >= condition)
                     {
-                        float result = (float)((1 - pitchDivideTempo.Abs()) * pitch * condition * tempo.Sign());
-                        
-                        audioSource.timeSamples = (int)(audioSource.timeSamples - result).Clamp(0, samples);
-                        _timeSamples = audioSource.timeSamples;
+                        if (valueInt == 0)
+                            audioSource.timeSamples = timeSamples;
+                        else
+                        {
+                            int changingTimeSamples = audioSource.timeSamples;
+                            while (tempoAdjustmentTime >= condition)
+                            {
+                                changingTimeSamples -= (int)((1 - pitchDivideTempo.Abs()) * pitch * condition * tempo.Sign());
+                                tempoAdjustmentTime -= condition;
+                            }
 
-                        tempoAdjustmentTime -= condition;
+                            {
+                                int changedTimeSamples = changingTimeSamples.Clamp(0, samples);
+                                if (audioSource.timeSamples != changedTimeSamples)
+                                    audioSource.timeSamples = changedTimeSamples;
+                            }
+
+                            if (_timeSamples <= (samples - frequency * 0.1f) && _timeSamples.Distance(changingTimeSamples) > frequency * 0.01f)
+                                _timeSamples = changingTimeSamples;
+                        }
                     }
                 }
                 else
@@ -200,7 +216,7 @@ namespace RuniEngine.Sounds
                         audioSource.timeSamples = timeSamples.Clamp(0, samples);
                     }
 
-                    if (time >= 0 && time < length - 0.01f && !audioSource.isPlaying)
+                    if (timeSamples >= 0 && timeSamples < samples && !audioSource.isPlaying)
                     {
                         audioSource.enabled = true;
                         audioSource.UnPause();
