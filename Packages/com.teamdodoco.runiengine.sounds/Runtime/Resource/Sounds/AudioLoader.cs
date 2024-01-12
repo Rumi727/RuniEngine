@@ -140,7 +140,7 @@ namespace RuniEngine.Resource.Sounds
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            if (Kernel.isPlaying && BootLoader.allLoaded)
+            if (isLoaded)
             {
                 if (allAudios.ContainsKey(nameSpace))
                     return allAudios[nameSpace].Keys.ToArray();
@@ -177,6 +177,7 @@ namespace RuniEngine.Resource.Sounds
             }
 
             allAudios = tempAllAudios;
+            isLoaded = true;
 
             async UniTask Thread(string nameSpacePath, string nameSpace)
             {
