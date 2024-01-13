@@ -124,5 +124,8 @@
     "resource_manager.throw": "An exception occurred while the {type} resource element was loading resources in the path '{path}'",
 
     "thread_manager.lock": "A thread has been locked in class {class}! Beware of deadlocks",
-    "thread_manager.unlock": "Thread lock released on class {class}!"
+    "thread_manager.unlock": "Thread lock released on class {class}!",
+
+    "storable_class.warning.attribute": "It appears that the {class}.{property} property does not have a {method} method.\nThis variable will not be loaded.\nIf you want to ignore it, add the [JsonIgnore] attribute.",
+    "storable_class.warning.method": "The [JsonProperty] attribute is not added to the {class}.{property} property.\nnThis variable will not be loaded.\nIf you want to ignore it, add the [JsonIgnore] attribute."
 }

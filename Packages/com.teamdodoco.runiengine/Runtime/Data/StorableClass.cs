@@ -1,6 +1,7 @@
 #nullable enable
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RuniEngine.Resource.Texts;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,20 +46,25 @@ namespace RuniEngine.Data
                     else if (!propertyInfo.CanWrite)
                         text = "Set";
 
-                    Debug.LogWarning($"{fullName}.{propertyInfo.Name}" +
-                        $@" 프로퍼티에 {text} 메소드가 없는 것 같습니다
-이 변수는 로드되지 않을것입니다.
-무시를 원하신다면 [JsonIgnore] 어트리뷰트를 추가해주세요");
+                    Debug.LogWarning
+                    (
+                        LanguageLoader.TryGetText("storable_class.warning.attribute").
+                        Replace("{class}", fullName).
+                        Replace("{property}", propertyInfo.Name).
+                        Replace("{method}", text)
+                    );
                     continue;
                 }
 
                 //JsonProperty 어트리뷰트가 없으면 경고 표시
                 if (!propertyInfo.AttributeContains<JsonPropertyAttribute>())
                 {
-                    Debug.LogWarning($"{fullName}.{propertyInfo.Name}" +
-                        @" 프로퍼티에 [JsonProperty] 어트리뷰트가 추가되어있지 않습니다.
-이 변수는 로드되지 않을것입니다.
-무시를 원하신다면 [JsonIgnore] 어트리뷰트를 추가해주세요");
+                    Debug.LogWarning
+                    (
+                        LanguageLoader.TryGetText("storable_class.warning.attribute").
+                        Replace("{class}", fullName).
+                        Replace("{property}", propertyInfo.Name)
+                    );
                     continue;
                 }
                 else

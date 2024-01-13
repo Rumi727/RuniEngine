@@ -126,5 +126,8 @@
     "resource_manager.throw": "{type} 리소스 요소가 '{path}' 경로에 있는 리소스들을 불러오다 예외가 발생 했습니다",
 
     "thread_manager.lock": "{class} 클래스에서 스레드를 잠궜습니다! 데드락에 주의하세요",
-    "thread_manager.unlock": "{class} 클래스에서 스레드 잠금을 해제했습니다!"
+    "thread_manager.unlock": "{class} 클래스에서 스레드 잠금을 해제했습니다!",
+
+    "storable_class.warning.attribute": "{class}.{property} 프로퍼티에 {method} 메소드가 없는 것 같습니다\n이 변수는 로드되지 않을것입니다\n무시를 원하신다면 [JsonIgnore] 어트리뷰트를 추가해주세요",
+    "storable_class.warning.method": "{class}.{property} 프로퍼티에 [JsonProperty] 어트리뷰트가 추가되어있지 않습니다\n이 변수는 로드되지 않을것입니다\n무시를 원하신다면 [JsonIgnore] 어트리뷰트를 추가해주세요"
 }
