@@ -70,6 +70,39 @@
     "gui.right": "右",
     "gui.top": "上",
     "gui.bottom": "下",
+    "gui.window": "窓",
+    "gui.button": "ボタン",
+    "gui.slider": "スライダー",
+    "gui.border": "エッジ",
+    "gui.texture": "テクスチャ",
+    "gui.background": "背景",
+    "gui.layout_group": "レイアウトグループ",
+    "gui.padding": "パディング",
+    "gui.spacing": "間隔",
+    "gui.alignment": "ソート",
+    "gui.captionBar": "キャプションバー",
+    "gui.selectable": "ボタン",
+    "gui.transition": "切り替え",
+    "gui.normal": "基本",
+    "gui.highlight": "ハイライト",
+    "gui.press": "押す",
+    "gui.pressed": "押す",
+    "gui.select": "選択",
+    "gui.enable": "活性化",
+    "gui.disable": "無効",
+    "gui.text": "テキスト",
+    "gui.character": "文字",
+    "gui.word": "言葉",
+    "gui.line": "行",
+    "gui.paragraph": "文章",
+    "gui.margin": "マージン",
+    "gui.title": "タイトル",
+    "gui.style": "スタイル",
+    "gui.theme": "テーマ",
+    "gui.transform": "トランスフォーム",
+    "gui.rect_transform": "正方形トランスフォーム",
+    "gui.pivot": "ピボット",
+    "gui.tag": "タグ",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -104,6 +137,14 @@
 
     "inspector.target_rect_transform_fitter_editor.warning": "現在のオブジェクトの回転とサイズが同時に調整されると、その特性により通常はターゲットオブジェクトに合わせることができなくなります。",
     "inspector.canvas_setter_editor.error": "CanvasSetterコンポーネントはUIサイズを変更するため、CanvasScalerコンポーネントを使用しないでください\nUIサイズを無効にするか、CanvasScalerコンポーネントを削除してください",
+
+    "inspector.sprite_setter.spriteTag": "タグ",
+    "inspector.sprite_setter.defaultSprite": "基本スプライト",
+
+    "inspector.style_setter_base.warning": "{name}によって駆動されます",
+
+    "inspector.texture_style.blurImage": "ぼかし画像",
+    "inspector.texture_style.image": "イメージ",
 
     "undo.modified_~": "変更された{object}",
 
@@ -147,6 +188,8 @@
     "rect_transform.offset_max.x": "最大Xオフセット",
     "rect_transform.offset_max.y": "最大Yオフセット",
     "rect_transform.anchors": "アンカー",
+    "rect_transform.anchor_min": "最小アンカー",
+    "rect_transform.anchor_max": "最大アンカー",
     "rect_transform.anchor_min.x": "最小Xアンカー",
     "rect_transform.anchor_min.y": "最小Yアンカー",
     "rect_transform.anchor_max.x": "最大Xアンカー",
@@ -156,6 +199,23 @@
     "rect_transform.pivot.y": "Yピボット",
     "rect_transform.local_rect": "ローカルRect",
     "rect_transform.world_rect": "ワールドRect",
+
+    "texture_style.use_blur": "ぼかしを使う",
+
+    "texture_meta_data.sprite.filter_mode": "フィルタモード",
+    "texture_meta_data.sprite.generate_mipmap": "ミップマップの作成",
+    "texture_meta_data.sprite.compression_type": "圧縮タイプ",
+
+    "sprite_meta_data.rect": "カット",
+    "sprite_meta_data.pixelsPerUnit": "1ピクセルサイズ",
+
+    "text_style.font_size": "フォントサイズ",
+    "text_style.auto_sizing": "自動サイズ",
+    "text_style.auto_sizing.enable_auto_sizing": "自動サイズを使用",
+    "text_style.auto_sizing.font_size_min": "最小フォントサイズ",
+    "text_style.auto_sizing.font_size_max": "最大フォントサイズ",
+    "text_style.auto_sizing.character_width_adjustment": "文字幅",
+    "text_style.auto_sizing.line_spacing_adjustment": "行間隔",
 
     "installer.music_loading": "音楽を読み込んでいます...",
     
@@ -193,5 +253,10 @@
     "project_setting.nbs.nbses_file_create": "nbses.jsonファイルの作成",
     "project_setting.nbs.nbses_folder_delete": "nbses フォルダーの削除",
     "project_setting.nbs.nbses_file_delete": "nbses.jsonファイルの削除",
-    "project_setting.nbs.loop_offset_tick": "ループオフセットティック"
+    "project_setting.nbs.loop_offset_tick": "ループオフセットティック",
+    
+    "project_setting.theme.styles_folder_create": "styles フォルダの作成",
+    "project_setting.theme.styles_folder_delete": "styles フォルダーの削除",
+    "project_setting.theme.styles_file_create": "jsonファイルの作成",
+    "project_setting.theme.styles_file_delete": "jsonファイルの削除"
 }

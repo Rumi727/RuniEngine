@@ -70,6 +70,39 @@
     "gui.right": "Right",
     "gui.top": "Top",
     "gui.bottom": "Bottom",
+    "gui.window": "Window",
+    "gui.button": "Button",
+    "gui.slider": "Slider",
+    "gui.border": "Border",
+    "gui.texture": "Texture",
+    "gui.background": "Background",
+    "gui.layout_group": "Layout Group",
+    "gui.padding": "Padding",
+    "gui.spacing": "Spacing",
+    "gui.alignment": "Alignment",
+    "gui.captionBar": "Caption Bar",
+    "gui.selectable": "Selectable",
+    "gui.transition": "Transition",
+    "gui.normal": "Normal",
+    "gui.highlight": "Highlight",
+    "gui.press": "Press",
+    "gui.pressed": "Pressed",
+    "gui.select": "Select",
+    "gui.enable": "Enable",
+    "gui.disable": "Disable",
+    "gui.text": "Text",
+    "gui.character": "Character",
+    "gui.word": "Word",
+    "gui.line": "Line",
+    "gui.paragraph": "Paragraph",
+    "gui.margin": "Margin",
+    "gui.title": "Title",
+    "gui.style": "Style",
+    "gui.theme": "Theme",
+    "gui.transform": "Transform",
+    "gui.rect_transform": "Rect Transform",
+    "gui.pivot": "Pivot",
+    "gui.tag": "Tag",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -104,6 +137,14 @@
 
     "inspector.target_rect_transform_fitter_editor.warning": "If the rotation and size of the current object are adjusted at the same time, its characteristics will prevent it from fitting properly to the target object.",
     "inspector.canvas_setter_editor.error": "You should not use CanvasScaler component because CanvasSetter component changes UI size\nDisable UI size or remove CanvasScaler component",
+
+    "inspector.sprite_setter.spriteTag": "Tag",
+    "inspector.sprite_setter.defaultSprite": "Default Sprite",
+
+    "inspector.texture_style.blurImage": "Blur Image",
+    "inspector.texture_style.image": "Image",
+
+    "inspector.style_setter_base.warning": "Driven by {name}",
 
     "undo.modified_~": "Modified {object}",
 
@@ -147,6 +188,8 @@
     "rect_transform.offset_max.x": "X Offset Max",
     "rect_transform.offset_max.y": "Y Offset Max",
     "rect_transform.anchors": "Anchors",
+    "rect_transform.anchor_min": "Min Anchor",
+    "rect_transform.anchor_max": "Max Anchor",
     "rect_transform.anchor_min.x": "Min X Anchor",
     "rect_transform.anchor_min.y": "Min Y Anchor",
     "rect_transform.anchor_max.x": "Max X Anchor",
@@ -156,6 +199,23 @@
     "rect_transform.pivot.y": "Y Pivot",
     "rect_transform.local_rect": "Local Rect",
     "rect_transform.world_rect": "World Rect",
+
+    "texture_style.use_blur": "Use blur",
+
+    "texture_meta_data.sprite.filter_mode": "Filter Mode",
+    "texture_meta_data.sprite.generate_mipmap": "Generate Mipmap",
+    "texture_meta_data.sprite.compression_type": "Compression Type",
+
+    "sprite_meta_data.rect": "Rect",
+    "sprite_meta_data.pixelsPerUnit": "Pixels Per Unit",
+
+    "text_style.font_size": "Font Size",
+    "text_style.auto_sizing": "Auto Size",
+    "text_style.auto_sizing.enable_auto_sizing": "Enable Auto Sizing",
+    "text_style.auto_sizing.font_size_min": "Font Size Min",
+    "text_style.auto_sizing.font_size_max": "Font Size Max",
+    "text_style.auto_sizing.character_width_adjustment": "Character Width Adjustment",
+    "text_style.auto_sizing.line_spacing_adjustment": "Line Spacing Adjustment",
 
     "installer.music_loading": "Loading music...",
     
@@ -193,5 +253,10 @@
     "project_setting.nbs.nbses_file_create": "Create the nbses.json file",
     "project_setting.nbs.nbses_folder_delete": "Delete the nbses folder",
     "project_setting.nbs.nbses_file_delete": "Delete the nbses.json File",
-    "project_setting.nbs.loop_offset_tick": "Loop Offset Tick"
+    "project_setting.nbs.loop_offset_tick": "Loop Offset Tick",
+
+    "project_setting.theme.styles_folder_create": "Create styles folder",
+    "project_setting.theme.styles_folder_delete": "Delete the styles folder",
+    "project_setting.theme.styles_file_create": "Create the json file",
+    "project_setting.theme.styles_file_delete": "Delete the json File"
 }
