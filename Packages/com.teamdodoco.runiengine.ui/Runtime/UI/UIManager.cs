@@ -1,7 +1,7 @@
 #nullable enable
 using Newtonsoft.Json;
-using RuniEngine.Data;
-using RuniEngine.Json;
+using RuniEngine.Datas;
+using RuniEngine.Jsons;
 using UnityEngine;
 
 namespace RuniEngine.UI

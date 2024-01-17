@@ -2,7 +2,7 @@
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RuniEngine.Booting;
-using RuniEngine.Data;
+using RuniEngine.Datas;
 using RuniEngine.Resource.Texts;
 using RuniEngine.Threading;
 using System;

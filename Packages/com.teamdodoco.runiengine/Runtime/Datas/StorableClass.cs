@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace RuniEngine.Data
+namespace RuniEngine.Datas
 {
     /// <summary>
     /// 클래스를 저장/로드 해주는 클래스 입니다 (정적 프로퍼티만 저장/로드 합니다)

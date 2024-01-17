@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace RuniEngine.Data
+namespace RuniEngine.Datas
 {
     public static class StorableClassUtility
     {

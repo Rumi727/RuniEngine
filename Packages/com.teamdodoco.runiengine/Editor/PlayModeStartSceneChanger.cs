@@ -1,8 +1,8 @@
 #nullable enable
 using UnityEditor.SceneManagement;
 using UnityEditor;
-using RuniEngine.Data;
-using RuniEngine.Splash;
+using RuniEngine.Datas;
+using RuniEngine.Splashs;
 
 namespace RuniEngine.Editor
 {

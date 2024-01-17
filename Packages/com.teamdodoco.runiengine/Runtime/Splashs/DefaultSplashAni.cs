@@ -2,7 +2,7 @@
 using RuniEngine.Booting;
 using UnityEngine;
 
-namespace RuniEngine.Splash
+namespace RuniEngine.Splashs
 {
     public sealed class DefaultSplashAni : MonoBehaviour
     {

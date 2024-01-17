@@ -1,6 +1,6 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
-using RuniEngine.Data;
+using RuniEngine.Datas;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

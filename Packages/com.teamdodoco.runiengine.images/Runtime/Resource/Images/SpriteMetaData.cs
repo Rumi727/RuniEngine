@@ -1,6 +1,6 @@
 #nullable enable
 using Newtonsoft.Json;
-using RuniEngine.Json;
+using RuniEngine.Jsons;
 
 namespace RuniEngine.Resource.Images
 {
