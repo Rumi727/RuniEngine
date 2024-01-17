@@ -1,0 +1,20 @@
+{
+    "name": "RuniEngine.Editor.Inputs",
+    "rootNamespace": "RuniEngine.Editor",
+    "references": [
+        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
+        "GUID:d19976c8233edf14ba31681d949961c5",
+        "GUID:0e5ef7d3140460942a8afc0b7a16512c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

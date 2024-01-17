@@ -69,6 +69,14 @@
         "com.looooong.asyncimageloader_forked_by_teamdodoco": "727.1.4"
       }
     },
+    "com.teamdodoco.runiengine.inputs": {
+      "version": "file:com.teamdodoco.runiengine.inputs",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.teamdodoco.runiengine": "0.0.0"
+      }
+    },
     "com.teamdodoco.runiengine.nbs": {
       "version": "file:com.teamdodoco.runiengine.nbs",
       "depth": 0,
