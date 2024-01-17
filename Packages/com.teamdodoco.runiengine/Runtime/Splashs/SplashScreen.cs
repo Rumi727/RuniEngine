@@ -1,8 +1,8 @@
 #nullable enable
 using Newtonsoft.Json;
-using RuniEngine.Data;
+using RuniEngine.Datas;
 
-namespace RuniEngine.Splash
+namespace RuniEngine.Splashs
 {
     public static class SplashScreen
     {

@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace RuniEngine.Json
+namespace RuniEngine.Jsons
 {
     public struct JVector4 : IEquatable<JVector4>
     {

@@ -6,7 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace RuniEngine.Account
+namespace RuniEngine.Accounts
 {
     public sealed class UserAccount : IDisposable
     {

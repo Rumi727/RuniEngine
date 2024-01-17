@@ -1,7 +1,7 @@
 #nullable enable
 using System.Reflection;
 
-namespace RuniEngine.Data
+namespace RuniEngine.Datas
 {
     /// <summary>
     /// 저장 가능한 클래스에 있는 멤버에 대한 정보를 가지고 있는 클래스 입니다

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 
-namespace RuniEngine.Json
+namespace RuniEngine.Jsons
 {
     public static class JsonManager
     {

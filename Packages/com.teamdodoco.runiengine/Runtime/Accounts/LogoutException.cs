@@ -2,7 +2,7 @@
 using RuniEngine.Resource.Texts;
 using System;
 
-namespace RuniEngine.Account
+namespace RuniEngine.Accounts
 {
     /// <summary>
     /// 로그아웃 관련 예외

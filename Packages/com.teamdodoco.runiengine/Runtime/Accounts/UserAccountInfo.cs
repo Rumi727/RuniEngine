@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace RuniEngine.Account
+namespace RuniEngine.Accounts
 {
     public readonly struct UserAccountInfo : IEquatable<UserAccountInfo>
     {

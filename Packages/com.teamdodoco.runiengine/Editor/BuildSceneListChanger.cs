@@ -1,6 +1,6 @@
 #nullable enable
-using RuniEngine.Data;
-using RuniEngine.Splash;
+using RuniEngine.Datas;
+using RuniEngine.Splashs;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
