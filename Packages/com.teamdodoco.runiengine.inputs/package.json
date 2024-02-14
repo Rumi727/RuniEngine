@@ -8,6 +8,7 @@
   "displayName": "Runi Engine Inputs",
   "description": "This is a package that adds input-related scripts",
   "dependencies": {
+    "com.unity.inputsystem": "1.7.0",
     "com.teamdodoco.runiengine": "0.0.0"
   },
   "keywords": [
