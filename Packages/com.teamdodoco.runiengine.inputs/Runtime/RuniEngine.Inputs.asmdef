@@ -2,7 +2,8 @@
     "name": "RuniEngine.Inputs",
     "rootNamespace": "RuniEngine",
     "references": [
-        "GUID:eaf38b4531b03a64ab00c7d27abbfe25"
+        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
