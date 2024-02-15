@@ -19,7 +19,7 @@ namespace RuniEngine.Resource.Sounds
         public static bool isLoaded { get; private set; } = false;
 
         public static int systemFrequency { get => Interlocked.Add(ref _systemFrequency, 0); }
-        static int _systemFrequency = 4800;
+        static int _systemFrequency = 48000;
 
         public static int systemChannels { get => Interlocked.Add(ref _systemChannels, 0); }
         static int _systemChannels = 2;
@@ -55,8 +55,19 @@ namespace RuniEngine.Resource.Sounds
         static void Awaken()
         {
             ResourceManager.ElementRegister(new AudioLoader());
+            OnAudioConfigurationChanged(false);
+
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
+            Application.quitting += Quitting;
+        }
+
+        [Starten]
+        static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("audio_player.prefab", "Prefab/Audio Player");
+
+        static void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
             Interlocked.Exchange(ref _systemFrequency, AudioSettings.outputSampleRate);
-            
+
             switch (AudioSettings.speakerMode)
             {
                 case AudioSpeakerMode.Mono:
@@ -83,8 +94,7 @@ namespace RuniEngine.Resource.Sounds
             }
         }
 
-        [Starten]
-        static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("audio_player.prefab", "Prefab/Audio Player");
+        static void Quitting() => AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
 
         public static AudioData? SearchAudioData(string path, string nameSpace = "")
         {
@@ -170,12 +180,6 @@ namespace RuniEngine.Resource.Sounds
             else
                 await ResourceManager.ResourcePackLoop(Thread);
 
-            foreach (var item2 in from item in allAudios from item2 in item.Value select item2)
-            {
-                for (int i = 0; i < item2.Value.audios.Length; i++)
-                    ResourceManager.garbages.Add(item2.Value.audios[i].audioClip);
-            }
-
             allAudios = tempAllAudios;
             isLoaded = true;
 
@@ -235,7 +239,7 @@ namespace RuniEngine.Resource.Sounds
                                     return;
 
                                 if (audioClip != null)
-                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartIndex, audioClip);
+                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
 
                                 if (audioMetaData != null)
                                     audioMetaDatas.Add(audioMetaData);

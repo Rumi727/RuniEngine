@@ -87,7 +87,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             base.TimeSliderGUI(() =>
             {
                 EditorGUI.BeginChangeCheck();
-                int value = EditorGUILayout.IntField(target.timeSamples, GUILayout.Width(75));
+                long value = EditorGUILayout.LongField(target.timeSamples, GUILayout.Width(75));
                 if (EditorGUI.EndChangeCheck())
                 {
                     for (int i = 0; i < targets.Length; i++)
