@@ -265,5 +265,10 @@
     "project_setting.sprite.sprite_delete": "스프라이트 지우기",
     "project_setting.sprite.tag_create": "태그 만들기",
     "project_setting.sprite.tag_delete": "태그 지우기",
-    "project_setting.sprite.tag_warning": "스프라이트 메타 데이터에 '{tag}' 태그가 없기 때문에 기본 태그를 불러왔습니다"
+    "project_setting.sprite.tag_warning": "스프라이트 메타 데이터에 '{tag}' 태그가 없기 때문에 기본 태그를 불러왔습니다",
+
+    "project_setting.splash.splash_scene": "스플래시 씬",
+    "project_setting.splash.loading_scene": "로드 씬",
+    "project_setting.splash.start_scene_enable": "시작 씬 선택 기능 활성화",
+    "project_setting.splash.start_scene_index": "시작 씬 인덱스"
 }

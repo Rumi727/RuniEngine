@@ -258,5 +258,10 @@
     "project_setting.theme.styles_folder_create": "styles フォルダの作成",
     "project_setting.theme.styles_folder_delete": "styles フォルダーの削除",
     "project_setting.theme.styles_file_create": "jsonファイルの作成",
-    "project_setting.theme.styles_file_delete": "jsonファイルの削除"
+    "project_setting.theme.styles_file_delete": "jsonファイルの削除",
+
+    "project_setting.splash.splash_scene": "スプラッシュシーン",
+    "project_setting.splash.loading_scene": "ロードシーン",
+    "project_setting.splash.start_scene_enable": "スタートシーン選択機能を有効にする",
+    "project_setting.splash.start_scene_index": "開始シーンインデックス"
 }
