@@ -9,7 +9,7 @@ namespace RuniEngine.Splashs
         [ProjectData]
         public struct ProjectData
         {
-            [JsonProperty] public static string splashScenePath { get; set; } = "Packages/com.teamdodoco.runiengine/Runtime/Splash/Default Splash Scene.unity";
+            [JsonProperty] public static string splashScenePath { get; set; } = "Packages/com.teamdodoco.runiengine/Runtime/SplashS/Default Splash Scene.unity";
             [JsonProperty] public static string sceneLoadingScenePath { get; set; } = "Packages/com.teamdodoco.runiengine/Runtime/Scene Management/Scene Load Scene.unity";
 
             [JsonProperty] public static int startSceneIndex { get; set; } = -1;
