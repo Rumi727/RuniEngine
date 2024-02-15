@@ -258,5 +258,10 @@
     "project_setting.theme.styles_folder_create": "Create styles folder",
     "project_setting.theme.styles_folder_delete": "Delete the styles folder",
     "project_setting.theme.styles_file_create": "Create the json file",
-    "project_setting.theme.styles_file_delete": "Delete the json File"
+    "project_setting.theme.styles_file_delete": "Delete the json File",
+
+    "project_setting.splash.splash_scene": "Splash Scene",
+    "project_setting.splash.loading_scene": "Loading Scene",
+    "project_setting.splash.start_scene_enable": "Activate startup scene selection feature",
+    "project_setting.splash.start_scene_index": "Start scene index"
 }
