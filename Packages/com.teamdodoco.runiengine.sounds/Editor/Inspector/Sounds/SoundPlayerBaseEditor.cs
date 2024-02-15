@@ -54,6 +54,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             GUILayout.BeginHorizontal();
             BeginFieldWidth(40);
 
+            target.LoopLock();
             {
                 string label = TryGetText("gui.loop");
 
@@ -61,6 +62,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 UseProperty(serializedObject, "_loop", label, GUILayout.Width(EditorGUIUtility.labelWidth + 17));
                 EndLabelWidth();
             }
+            target.LoopUnlock();
 
             Space();
 
@@ -76,6 +78,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             Space();
 
+            target.PitchLock();
             {
                 string label = TryGetText("gui.pitch");
 
@@ -83,9 +86,11 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 UseProperty(serializedObject, "_pitch", label);
                 EndLabelWidth();
             }
+            target.PitchUnlock();
 
             Space();
 
+            target.TempoLock();
             {
                 string label = TryGetText("gui.tempo");
 
@@ -93,6 +98,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 UseProperty(serializedObject, "_tempo", label);
                 EndLabelWidth();
             }
+            target.TempoUnlock();
 
             EndFieldWidth();
             GUILayout.EndHorizontal();
@@ -157,9 +163,13 @@ namespace RuniEngine.Editor.Inspector.Sounds
             {
                 string label = TryGetText("inspector.sound_player_base.pan_stereo");
 
+                target.PanStereoLock();
+
                 BeginLabelWidth(label);
                 UseProperty(serializedObject, "_panStereo", label);
                 EndLabelWidth();
+
+                target.PanStereoUnlock();
             }
 
             EndFieldWidth();

@@ -191,7 +191,7 @@ namespace RuniEngine.Editor.ProjectSetting
 
             //플레이 모드가 아니면 변경한 리스트의 데이터를 잃어버리지 않게 파일로 저장
             if (isChanged && !Kernel.isPlaying && objectPoolingProjectSetting != null)
-                StorableClassUtility.AutoNameSave(objectPoolingProjectSetting, Kernel.projectDataPath);
+                objectPoolingProjectSetting.AutoNameSave(Kernel.projectDataPath);
         }
 
         class PrefabObjectEqualityComparer : IEqualityComparer<KeyValuePair<string, string>>

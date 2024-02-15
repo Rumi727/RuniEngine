@@ -101,9 +101,10 @@ namespace RuniEngine.Editor.ProjectSetting
                                 AudioMetaData metaData = (AudioMetaData)y;
                                 string audioPath = metaData.path;
                                 bool stream = metaData.stream;
-                                float pitch = metaData.pitch;
-                                float tempo = metaData.tempo;
+                                double pitch = metaData.pitch;
+                                double tempo = metaData.tempo;
                                 int loopStartIndex = metaData.loopStartIndex;
+                                int loopOffsetIndex = metaData.loopOffsetIndex;
 
                                 {
                                     EditorGUILayout.BeginHorizontal();
@@ -162,7 +163,7 @@ namespace RuniEngine.Editor.ProjectSetting
                                         string label = TryGetText("gui.pitch");
                                         BeginLabelWidth(label);
 
-                                        pitch = EditorGUILayout.FloatField(label, pitch);
+                                        pitch = EditorGUILayout.DoubleField(label, pitch);
                                         EndLabelWidth();
                                     }
 
@@ -170,7 +171,7 @@ namespace RuniEngine.Editor.ProjectSetting
                                         string label = TryGetText("gui.tempo");
                                         BeginLabelWidth(label);
 
-                                        tempo = EditorGUILayout.FloatField(label, tempo);
+                                        tempo = EditorGUILayout.DoubleField(label, tempo);
                                         EndLabelWidth();
                                     }
 
@@ -196,12 +197,20 @@ namespace RuniEngine.Editor.ProjectSetting
                                         EndLabelWidth();
                                     }
 
+                                    {
+                                        string label = TryGetText("project_setting.audio.loop_offset_index");
+                                        BeginLabelWidth(label);
+
+                                        loopOffsetIndex = EditorGUILayout.IntField(label, loopOffsetIndex).Clamp(0);
+                                        EndLabelWidth();
+                                    }
+
                                     isChanged = isChanged || EditorGUI.EndChangeCheck();
                                     EditorGUILayout.EndHorizontal();
                                 }
 
-                                return new AudioMetaData(audioPath, pitch, tempo, stream, loopStartIndex, null);
-                            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new AudioMetaData("", 1, 1, false, 0, null)), out bool isListChanged, deleteSafety2);
+                                return new AudioMetaData(audioPath, pitch, tempo, stream, loopStartIndex, loopOffsetIndex, null);
+                            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new AudioMetaData("", 1, 1, false, 0, 0, null)), out bool isListChanged, deleteSafety2);
 
                             isChanged = isChanged || isListChanged;
                         }

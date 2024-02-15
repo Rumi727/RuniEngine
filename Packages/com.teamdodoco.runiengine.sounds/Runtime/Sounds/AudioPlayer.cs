@@ -5,6 +5,7 @@ using RuniEngine.Resource;
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Threading;
 using System;
+using System.Threading;
 using UnityEngine;
 
 using Random = UnityEngine.Random;
@@ -34,6 +35,10 @@ namespace RuniEngine.Sounds
 
 
 
+        public float[]? datas => audioMetaData?.datas;
+
+
+
         public int frequency => audioMetaData != null ? audioMetaData.frequency : 0;
 
         public int channels => audioMetaData != null ? audioMetaData.channels : 0;
@@ -41,47 +46,33 @@ namespace RuniEngine.Sounds
 
         public override double time
         {
-            get => frequency != 0 ? (double)timeSamples / frequency : 0;
-            set => timeSamples = (int)(value * frequency);
+            get => (double)timeSamples / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
+            set => timeSamples = (long)(value * (frequency != 0 ? frequency : AudioLoader.systemFrequency));
         }
 
-        public int timeSamples
+        public long timeSamples
         {
-            get => _timeSamples;
+            get => Interlocked.Read(ref _timeSamples);
             set
             {
-                if (_timeSamples != value)
+                if (timeSamples != value)
                 {
-                    _timeSamples = value;
-                    if (audioSource != null)
-                        audioSource.timeSamples = value.Clamp(0, samples);
+                    Interlocked.Exchange(ref _timeSamples, value);
+                    Interlocked.Exchange(ref internalTimeSamples, value);
+
+                    Interlocked.Exchange(ref tempoAdjustmentIndex, 0);
 
                     TimeChangedEventInvoke();
                 }
             }
         }
-        [NonSerialized] int _timeSamples = 0;
+        [NonSerialized] long _timeSamples;
 
         public override double length => audioMetaData != null ? audioMetaData.length : 0;
         public int samples => audioMetaData != null ? audioMetaData.samples : 0;
 
-
-
-        public override bool isPaused
-        {
-            get => base.isPaused;
-            set
-            {
-                base.isPaused = value;
-                if (base.isPaused != value && audioSource != null)
-                {
-                    if (base.isPaused)
-                        audioSource.Pause();
-                    else
-                        audioSource.UnPause();
-                }
-            }
-        }
+        public double spatialStereo => Interlocked.CompareExchange(ref _spatialStereo, 0, 0);
+        double _spatialStereo;
 
 
 
@@ -89,205 +80,111 @@ namespace RuniEngine.Sounds
 
 
 
-        double tempoAdjustmentTime = 0;
         void Update()
         {
-            if (audioSource == null || audioMetaData == null)
-                return;
-
             VarRefresh();
-            
-            //시간 보정
+
+            //매 프레임 시간 보정
             if (isPlaying && !isPaused)
             {
-                double value = frequency * Kernel.deltaTimeDouble;
-                int valueInt = (int)(value * tempo);
+                long index = timeSamples;
+                index += (long)(Kernel.deltaTimeDouble * frequency * realTempo);
 
-                _timeSamples += valueInt;
-                
-                //템포
-                if (audioSource.isPlaying && timeSamples >= 0 && timeSamples <= samples)
-                {
-                    const int condition = 2048;
-                    float pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
-                    
-                    tempoAdjustmentTime += value;
-                    if (tempoAdjustmentTime >= condition)
-                    {
-                        if (valueInt == 0)
-                            audioSource.timeSamples = timeSamples;
-                        else
-                        {
-                            int changingTimeSamples = audioSource.timeSamples;
-                            while (tempoAdjustmentTime >= condition)
-                            {
-                                changingTimeSamples -= (int)((1 - pitchDivideTempo.Abs()) * pitch * condition * tempo.Sign());
-                                tempoAdjustmentTime -= condition;
-                            }
-
-                            {
-                                int changedTimeSamples = changingTimeSamples.Clamp(0, samples);
-                                if (audioSource.timeSamples != changedTimeSamples)
-                                    audioSource.timeSamples = changedTimeSamples;
-                            }
-
-                            if (_timeSamples <= (samples - frequency * 0.1f) && _timeSamples.Distance(changingTimeSamples) > frequency * 0.01f)
-                                _timeSamples = changingTimeSamples;
-                        }
-                    }
-                }
-                else
-                    tempoAdjustmentTime = 0;
-            }
-            else
-                tempoAdjustmentTime = 0;
-
-            //루프
-            if (loop)
-            {
-                int loopStartIndex = audioMetaData.loopStartIndex;
-                bool isLooped = false;
-
-                while (tempo >= 0 && timeSamples >= samples)
-                {
-                    _timeSamples -= samples - loopStartIndex;
-                    isLooped = true;
-                }
-
-                while (tempo < 0 && timeSamples < loopStartIndex)
-                {
-                    _timeSamples += samples - loopStartIndex;
-                    isLooped = true;
-                }
-
-                if (isLooped)
-                {
-                    if (loopStartIndex != 0 || timeSamples.Abs() > 2048)
-                        audioSource.timeSamples = timeSamples;
-
-                    LoopedEventInvoke();
-                }
+                Interlocked.Exchange(ref _timeSamples, index);
             }
 
-            if (isDisposable && !loop && (timeSamples < 0 || timeSamples > samples))
+            if (isDisposable && !loop && datas != null && (timeSamples < 0 || timeSamples >= samples))
                 Remove();
         }
 
         void VarRefresh()
         {
-            if (audioSource == null)
+            if (audioSource == null || AudioLoader.audioListener == null)
                 return;
 
-            if (audioSource.bypassEffects)
-                audioSource.volume = volume;
-            else
-                audioSource.volume = 1;
-
-            if (pitch != 0)
             {
-                audioSource.mute = false;
-                audioSource.pitch = realPitch * tempo.Sign();
+                float pitch = (float)realPitch * ((float)frequency / AudioLoader.systemFrequency) * ((float)channels / AudioLoader.systemChannels);
+                if (pitch != 0)
+                    audioSource.pitch = pitch;
+                else
+                    audioSource.pitch = 1;
             }
-            else
-            {
-                audioSource.mute = true;
-                audioSource.pitch = 1;
-            }
-
-            audioSource.loop = loop;
-            audioSource.panStereo = panStereo;
 
             audioSource.spatialBlend = spatial ? 1 : 0;
 
             audioSource.minDistance = minDistance;
             audioSource.maxDistance = maxDistance;
-            
-            if (isPlaying)
+
+            if (isPlaying && (!audioSource.enabled || !audioSource.isPlaying || audioSource.clip != null))
             {
-                if (!isPaused && tempo != 0)
-                {
-                    if (!audioSource.enabled)
-                    {
-                        audioSource.enabled = true;
-
-                        audioSource.Stop();
-                        audioSource.Play();
-
-                        audioSource.timeSamples = timeSamples.Clamp(0, samples);
-                    }
-
-                    if (timeSamples >= 0 && timeSamples < samples && !audioSource.isPlaying)
-                    {
-                        audioSource.enabled = true;
-                        audioSource.UnPause();
-
-                        if (!audioSource.isPlaying)
-                        {
-                            audioSource.Stop();
-                            audioSource.Play();
-
-                            audioSource.timeSamples = timeSamples.Clamp(0, samples);
-                        }
-                    }
-                }
-                else
-                    audioSource.Pause();
-            }
-            else if (audioSource.isPlaying)
+                audioSource.enabled = true;
                 audioSource.Stop();
+
+                audioSource.clip = null;
+                audioSource.Play();
+            }
+
+            if (spatial)
+            {
+                float value = (Quaternion.Inverse(AudioLoader.audioListener.transform.rotation) * (transform.position - AudioLoader.audioListener.transform.position)).x / (transform.position - AudioLoader.audioListener.transform.position).magnitude;
+                Interlocked.Exchange(ref _spatialStereo, value);
+            }
         }
 
 
 
         public override bool Refresh()
         {
-            if (audioSource == null)
-                return false;
+            try
+            {
+                ThreadManager.Lock(ref onAudioFilterReadLock);
 
-            AudioData? audioData = AudioLoader.SearchAudioData(key, nameSpace);
-            if (audioData == null || audioData.audios.Length <= 0)
-                return false;
+                AudioData? audioData = AudioLoader.SearchAudioData(key, nameSpace);
+                if (audioData == null || audioData.audios.Length <= 0)
+                    return false;
 
-            AudioMetaData? audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
-            if (audioMetaData == null || audioMetaData.audioClip == null)
-                return false;
+                AudioMetaData? audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
+                if (audioMetaData == null || audioMetaData.datas == null)
+                    return false;
 
-            this.audioData = audioData;
-            this.audioMetaData = audioMetaData;
-
-            audioSource.clip = audioMetaData.audioClip;
-            audioSource.enabled = true;
-
-            audioSource.Stop();
-            audioSource.Play();
-
-            isPaused = isPaused;
-
-            audioSource.timeSamples = timeSamples.Clamp(0, samples);
+                this.audioData = audioData;
+                this.audioMetaData = audioMetaData;
+            }
+            finally
+            {
+                ThreadManager.Unlock(ref onAudioFilterReadLock);
+            }
 
             return true;
         }
 
         public override void Play()
         {
-            if (!isActiveAndEnabled || audioSource == null)
+            if (!isActiveAndEnabled)
                 return;
 
             Stop();
             if (!Refresh())
                 return;
-            
+
             VarRefresh();
 
-            audioSource.enabled = true;
+            if (tempo < 0)
+            {
+                int value = samples;
 
-            audioSource.Stop();
-            audioSource.Play();
+                Interlocked.Exchange(ref _timeSamples, value);
+                Interlocked.Exchange(ref internalTimeSamples, value);
+            }
 
-            isPaused = isPaused;
+            if (audioSource != null)
+            {
+                audioSource.enabled = true;
+                audioSource.Stop();
 
-            if (tempo < 0 && audioMetaData != null)
-                audioSource.timeSamples = samples;
+                audioSource.clip = null;
+                audioSource.Play();
+            }
 
             base.Play();
         }
@@ -296,31 +193,233 @@ namespace RuniEngine.Sounds
         {
             base.Stop();
 
-            if (audioSource != null)
+            try
             {
-                audioSource.Stop();
-                audioSource.clip = null;
+                ThreadManager.Lock(ref onAudioFilterReadLock);
+
+                if (audioSource != null)
+                    audioSource.Stop();
+
+                audioData = null;
+                audioMetaData = null;
+
+                Interlocked.Exchange(ref _spatialStereo, 0);
+
+                Interlocked.Exchange(ref _timeSamples, 0);
+                Interlocked.Exchange(ref internalTimeSamples, 0);
             }
-
-            audioData = null;
-            audioMetaData = null;
-
-            _timeSamples = 0;
+            finally
+            {
+                ThreadManager.Unlock(ref onAudioFilterReadLock);
+            }
         }
 
+
+
+        [NonSerialized] int onAudioFilterReadLock = 0;
+        [NonSerialized] float[] tempData = new float[0];
+        [NonSerialized] double tempoAdjustmentIndex = 0;
+        [NonSerialized] long internalTimeSamples = 0;
         protected override void OnAudioFilterRead(float[] data, int channels)
         {
-            for (int i = 0; i < data.Length; i++)
-                data[i] *= volume;
+            try
+            {
+                ThreadManager.Lock(ref onAudioFilterReadLock);
+
+                if (tempData.Length != AudioLoader.systemChannels)
+                    tempData = new float[AudioLoader.systemChannels];
+
+                if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
+                {
+                    long timeSamples = this.timeSamples;
+                    long internalTimeSamples = Interlocked.Read(ref this.internalTimeSamples);
+                    double tempo = realTempo;
+                    double pitch = realPitch;
+                    float volume = (float)this.volume;
+                    bool loop = this.loop;
+
+                    int loopStartIndex = audioMetaData.loopStartIndex;
+                    int loopOffsetIndex = audioMetaData.loopOffsetIndex;
+
+                    int audioChannels = this.channels;
+                    int samplesLength = samples;
+
+                    if (pitch > 0)
+                    {
+                        for (int i = 0; i < data.Length; i += channels)
+                        {
+                            int index;
+                            if (tempo > 0)
+                                index = (int)((internalTimeSamples * audioChannels) + i);
+                            else
+                                index = (int)((internalTimeSamples * audioChannels) - i);
+
+                            GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo, spatialStereo);
+                            for (int j = 0; j < channels; j++)
+                                data[i + j] += tempData[j] * volume;
+                        }
+                    }
+
+                    //시간 조정
+                    {
+                        {
+                            double value = data.Length / audioChannels;
+                            double pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
+
+                            internalTimeSamples += (long)(value * tempo.Sign());
+
+                            //템포
+                            tempoAdjustmentIndex += value;
+
+                            double condition = 2048 * (pitch != 0 ? pitch : 1);
+                            while (tempoAdjustmentIndex >= condition)
+                            {
+                                internalTimeSamples -= (long)(value * (1 - pitchDivideTempo.Abs()) * (condition / value) * tempo.Sign());
+                                timeSamples = internalTimeSamples;
+
+                                tempoAdjustmentIndex -= condition;
+                            }
+                        }
+
+                        if (loop)
+                        {
+                            bool isLooped = false;
+
+                            while (tempo >= 0 && internalTimeSamples >= samplesLength)
+                            {
+                                long value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+
+                                timeSamples -= value;
+                                internalTimeSamples -= value;
+
+                                isLooped = true;
+                            }
+
+                            while (tempo < 0 && internalTimeSamples < loopStartIndex + loopOffsetIndex)
+                            {
+                                long value = samplesLength - 1 - (loopStartIndex + loopOffsetIndex);
+
+                                timeSamples += value;
+                                internalTimeSamples += value;
+
+                                isLooped = true;
+                            }
+
+                            if (isLooped)
+                                LoopedEventInvoke();
+                        }
+                    }
+
+                    Interlocked.Exchange(ref _timeSamples, timeSamples);
+                    Interlocked.Exchange(ref this.internalTimeSamples, internalTimeSamples);
+                }
+            }
+            finally
+            {
+                ThreadManager.Unlock(ref onAudioFilterReadLock);
+            }
 
             base.OnAudioFilterRead(data, channels);
         }
 
-        public static AudioPlayer? PlayAudio(string key, string nameSpace = "", float volume = 1, bool loop = false, float pitch = 1, float tempo = 1, float panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
+        /// <summary>
+        /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
+        /// </summary>
+        public static void GetAudioSample(ref float[] data, float[] samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo, double spatialStereo)
+        {
+            //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
+            if (audioChannels > 2)
+            {
+                for (int i = 0; i < channels; i++)
+                    data[i] = GetSample(channels);
+            }
+            else if (audioChannels == 2) //현재 재생중인 오디오 채널이 2일때
+            {
+                //현재 시스템 채널이 1 보다 크다면 스테레오로 재생
+                if (channels >= 2)
+                {
+                    for (int i = 0; i < channels; i++)
+                        data[i] = GetSample(i);
+                }
+                else //현재 시스템 채널이 1 이하라면 모노로 재생
+                {
+                    float left = GetSample(0);
+                    float right = GetSample(1);
 
-        public static AudioPlayer? PlayAudio(string key, string nameSpace, float volume, bool loop, float pitch, float tempo, float panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
+                    data[0] = (left + right) * 0.66666666666666f;
+                }
+            }
+            else if (audioChannels < 2) //현재 재생중인 오디오의 채널이 2 보다 작다면 변환 없이 재생
+            {
+                /* 
+                 * 오디오 품질이 구려진다
+                 * 왜 그런지는 알 것 같은데 해결 방법을 ㅁ?ㄹ
+                 * 애초에 지금 템포도 구현을 잘못해놔서 이상해지지만 구현을 제대로 하기에는 너무 어렵다
+                 * 나중에 오디오 재생 다시 설계해봐야할 듯?
+                 * 그 나중에가 언제가 될진 모르겠지만...
+                 */
 
-        static AudioPlayer? InternalPlayAudio(string key, string nameSpace, float volume, bool loop, float pitch, float tempo, float panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
+                for (int i = 0; i < channels; i++)
+                    data[i] = GetSample(0) / channels;
+            }
+
+            if (channels >= 2)
+            {
+                float left = data[0];
+                float right = data[1];
+
+                if (!spatial)
+                {
+                    float leftStereo = (float)-panStereo.Clamp(-1, 0);
+                    float rightStereo = (float)panStereo.Clamp(0, 1);
+
+                    data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
+                    data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
+                }
+                else
+                {
+                    float leftStereo = (float)-spatialStereo.Clamp(-1, 0);
+                    float rightStereo = (float)spatialStereo.Clamp(0, 1);
+
+                    data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
+                    data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
+                }
+            }
+
+            float GetSample(int i)
+            {
+                int sampleIndex = index + i;
+                if (loop)
+                    sampleIndex = sampleIndex.Repeat(samples.Length - 1);
+
+                if (sampleIndex >= 0 && sampleIndex < samples.Length)
+                {
+                    float sample = samples[sampleIndex];
+
+                    //루프
+                    if (loop)
+                    {
+                        int rawLoopOffsetSampleIndex = sampleIndex - (samples.Length - 1 - loopOffsetIndex);
+                        int loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(samples.Length - 1 - loopStartIndex);
+
+                        if (rawLoopOffsetSampleIndex >= 0 && loopOffsetSampleIndex >= 0 && loopOffsetSampleIndex < samples.Length)
+                            sample += samples[loopOffsetSampleIndex];
+                    }
+
+                    return sample;
+                }
+
+                return 0;
+            }
+
+            return;
+        }
+
+        public static AudioPlayer? PlayAudio(string key, string nameSpace = "", double volume = 1, bool loop = false, double pitch = 1, double tempo = 1, double panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
+
+        public static AudioPlayer? PlayAudio(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
+
+        static AudioPlayer? InternalPlayAudio(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
@@ -347,10 +446,10 @@ namespace RuniEngine.Sounds
             audioPlayer.maxDistance = maxDistance;
 
             audioPlayer.transform.localPosition = position;
-            
+
             audioPlayer.isDisposable = true;
             audioPlayer.Play();
-            
+
             return audioPlayer;
         }
     }
