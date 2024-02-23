@@ -415,11 +415,11 @@ namespace RuniEngine.Sounds
             return;
         }
 
-        public static AudioPlayer? PlayAudio(string key, string nameSpace = "", double volume = 1, bool loop = false, double pitch = 1, double tempo = 1, double panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
+        public static AudioPlayer? PlayAudio(string key, string nameSpace = "", float volume = 1, bool loop = false, double pitch = 1, double tempo = 1, float panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
 
-        public static AudioPlayer? PlayAudio(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
+        public static AudioPlayer? PlayAudio(string key, string nameSpace, float volume, bool loop, double pitch, double tempo, float panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
 
-        static AudioPlayer? InternalPlayAudio(string key, string nameSpace, double volume, bool loop, double pitch, double tempo, double panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
+        static AudioPlayer? InternalPlayAudio(string key, string nameSpace, float volume, bool loop, double pitch, double tempo, float panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
