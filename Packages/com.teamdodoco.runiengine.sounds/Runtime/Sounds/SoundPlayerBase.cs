@@ -150,12 +150,12 @@ namespace RuniEngine.Sounds
 
 
 
-        public double volume
+        public float volume
         {
             get
             {
                 ThreadManager.Lock(ref volumeLock);
-                double result = _volume;
+                float result = _volume;
                 ThreadManager.Unlock(ref volumeLock);
 
                 return result;
@@ -167,7 +167,7 @@ namespace RuniEngine.Sounds
                 ThreadManager.Unlock(ref volumeLock);
             }
         }
-        [SerializeField, Range(0, 2)] double _volume = 1;
+        [SerializeField, Range(0, 2)] float _volume = 1;
         int volumeLock;
 
         public void VolumeLock() => ThreadManager.Lock(ref volumeLock);
@@ -175,12 +175,12 @@ namespace RuniEngine.Sounds
 
 
 
-        public double panStereo
+        public float panStereo
         {
             get
             {
                 ThreadManager.Lock(ref panStereoLock);
-                double result = _panStereo;
+                float result = _panStereo;
                 ThreadManager.Unlock(ref panStereoLock);
 
                 return result;
@@ -192,7 +192,7 @@ namespace RuniEngine.Sounds
                 ThreadManager.Unlock(ref panStereoLock);
             }
         }
-        [SerializeField, Range(-1, 1)] double _panStereo = 0;
+        [SerializeField, Range(-1, 1)] float _panStereo = 0;
         int panStereoLock;
 
         public void PanStereoLock() => ThreadManager.Lock(ref panStereoLock);
