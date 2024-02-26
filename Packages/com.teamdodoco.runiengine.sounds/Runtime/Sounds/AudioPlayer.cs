@@ -141,11 +141,21 @@ namespace RuniEngine.Sounds
 
                 AudioData? audioData = AudioLoader.SearchAudioData(key, nameSpace);
                 if (audioData == null || audioData.audios.Length <= 0)
+                {
+                    this.audioData = null;
+                    this.audioMetaData = null;
+
                     return false;
+                }
 
                 AudioMetaData? audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
                 if (audioMetaData == null || audioMetaData.datas == null)
+                {
+                    this.audioData = null;
+                    this.audioMetaData = null;
+
                     return false;
+                }
 
                 this.audioData = audioData;
                 this.audioMetaData = audioMetaData;
@@ -193,25 +203,13 @@ namespace RuniEngine.Sounds
         {
             base.Stop();
 
-            try
-            {
-                ThreadManager.Lock(ref onAudioFilterReadLock);
+            if (audioSource != null)
+                audioSource.Stop();
 
-                if (audioSource != null)
-                    audioSource.Stop();
+            Interlocked.Exchange(ref _spatialStereo, 0);
 
-                audioData = null;
-                audioMetaData = null;
-
-                Interlocked.Exchange(ref _spatialStereo, 0);
-
-                Interlocked.Exchange(ref _timeSamples, 0);
-                Interlocked.Exchange(ref internalTimeSamples, 0);
-            }
-            finally
-            {
-                ThreadManager.Unlock(ref onAudioFilterReadLock);
-            }
+            Interlocked.Exchange(ref _timeSamples, 0);
+            Interlocked.Exchange(ref internalTimeSamples, 0);
         }
 
 
