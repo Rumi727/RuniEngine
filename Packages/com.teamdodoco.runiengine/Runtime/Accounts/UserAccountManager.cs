@@ -47,6 +47,7 @@ namespace RuniEngine.Accounts
             infos.Add(info);
 
             File.WriteAllText(accountsInfoFilePath, JsonManager.ToJson(infos));
+            ListRefresh();
         }
 
         public static void Remove(int index)
@@ -55,6 +56,7 @@ namespace RuniEngine.Accounts
             infos.RemoveAt(index);
 
             File.WriteAllText(accountsInfoFilePath, JsonManager.ToJson(infos));
+            ListRefresh();
         }
 
         public static void ListRefresh()
