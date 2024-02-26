@@ -56,7 +56,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             try
             {
-                target.LoopLock();
+                TargetsInvoke(x => x.LoopLock());
 
                 string label = TryGetText("gui.loop");
 
@@ -66,14 +66,14 @@ namespace RuniEngine.Editor.Inspector.Sounds
             }
             finally
             {
-                target.LoopUnlock();
+                TargetsInvoke(x => x.LoopUnlock());
             }
 
             Space();
 
             try
             {
-                target.VolumeLock();
+                TargetsInvoke(x => x.VolumeLock());
 
                 string label = TryGetText("gui.volume");
 
@@ -83,42 +83,97 @@ namespace RuniEngine.Editor.Inspector.Sounds
             }
             finally
             {
-                target.VolumeUnlock();
+                TargetsInvoke(x => x.VolumeUnlock());
             }
 
             Space();
 
-            try
             {
-                target.PitchLock();
+                bool pitchChange = false;
+                try
+                {
+                    TargetsInvoke(x => x.PitchLock());
 
-                string label = TryGetText("gui.pitch");
+                    string label = TryGetText("gui.pitch");
 
-                BeginLabelWidth(label);
-                UseProperty(serializedObject, "_pitch", label);
-                EndLabelWidth();
-            }
-            finally
-            {
-                target.PitchUnlock();
+                    EditorGUI.BeginChangeCheck();
+
+                    BeginLabelWidth(label);
+                    UseProperty(serializedObject, "_pitch", label);
+                    EndLabelWidth();
+
+                    pitchChange = EditorGUI.EndChangeCheck();
+                }
+                finally
+                {
+                    TargetsInvoke(x => x.PitchUnlock());
+                }
+
+                if (pitchChange)
+                {
+                    TargetsInvoke(x =>
+                    {
+                        if (x.pitchFixed)
+                            x.tempo = x.pitch * x.tempo.Sign();
+                    });
+                }
             }
 
             Space();
 
-            try
             {
-                target.TempoLock();
+                bool tempoChange = false;
+                try
+                {
+                    TargetsInvoke(x => x.TempoLock());
 
-                string label = TryGetText("gui.tempo");
+                    string label = TryGetText("gui.tempo");
+
+                    EditorGUI.BeginChangeCheck();
+
+                    BeginLabelWidth(label);
+                    UseProperty(serializedObject, "_tempo", label);
+                    EndLabelWidth();
+
+                    tempoChange = EditorGUI.EndChangeCheck();
+                }
+                finally
+                {
+                    TargetsInvoke(x => x.TempoUnlock());
+                }
+
+                if (tempoChange)
+                {
+                    TargetsInvoke(x =>
+                    {
+                        if (x.pitchFixed)
+                            x.pitch = x.tempo.Abs();
+                    });
+                }
+            }
+
+            Space();
+
+            {
+                string label = "L";
+
+                EditorGUI.BeginChangeCheck();
 
                 BeginLabelWidth(label);
-                UseProperty(serializedObject, "_tempo", label);
+                UseProperty(serializedObject, "_pitchFixed", label, GUILayout.ExpandWidth(false));
                 EndLabelWidth();
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    TargetsInvoke(x =>
+                    {
+                        if (x.pitchFixed)
+                            x.pitch = x.tempo.Abs();
+                    });
+                }
             }
-            finally
-            {
-                target.TempoUnlock();
-            }
+
+
 
             EndFieldWidth();
             GUILayout.EndHorizontal();
@@ -183,7 +238,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             {
                 try
                 {
-                    target.PanStereoLock();
+                    TargetsInvoke(x => x.PanStereoLock());
 
                     string label = TryGetText("inspector.sound_player_base.pan_stereo");
 
@@ -193,7 +248,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 }
                 finally
                 {
-                    target.PanStereoUnlock();
+                    TargetsInvoke(x => x.PanStereoUnlock());
                 }
             }
 
@@ -318,14 +373,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 EditorGUI.BeginDisabledGroup(disable || (!target.isActiveAndEnabled && TargetsIsEquals(x => x.isActiveAndEnabled, targets)));
 
                 if (GUILayout.Button(TryGetText("gui.play")))
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        SoundPlayerBase? target2 = targets[i];
-                        if (target2 != null)
-                            target2.Play();
-                    }
-                }
+                    TargetsInvoke(x => x.Play());
 
                 EditorGUI.EndDisabledGroup();
             }
@@ -337,26 +385,12 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 if (!target.isPaused || !TargetsIsEquals(x => x.isPaused, targets))
                 {
                     if (GUILayout.Button(TryGetText("gui.pause")))
-                    {
-                        for (int i = 0; i < targets.Length; i++)
-                        {
-                            SoundPlayerBase? target2 = targets[i];
-                            if (target2 != null)
-                                target2.isPaused = true;
-                        }
-                    }
+                        TargetsInvoke(x => x.isPaused = true);
                 }
                 else
                 {
                     if (GUILayout.Button(TryGetText("gui.unpause")))
-                    {
-                        for (int i = 0; i < targets.Length; i++)
-                        {
-                            SoundPlayerBase? target2 = targets[i];
-                            if (target2 != null)
-                                target2.isPaused = false;
-                        }
-                    }
+                        TargetsInvoke(x => x.isPaused = false);
                 }
             }
 
@@ -367,14 +401,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 EditorGUI.BeginDisabledGroup(disable || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
 
                 if (GUILayout.Button(TryGetText("gui.stop")))
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        SoundPlayerBase? target2 = targets[i];
-                        if (target2 != null)
-                            target2.Stop();
-                    }
-                }
+                    TargetsInvoke(x => x.Stop());
 
                 EditorGUI.EndDisabledGroup();
             }
@@ -386,14 +413,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 EditorGUI.BeginDisabledGroup(disable);
 
                 if (GUILayout.Button(TryGetText("gui.refresh")))
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        SoundPlayerBase? target2 = targets[i];
-                        if (target2 != null)
-                            target2.Refresh();
-                    }
-                }
+                    TargetsInvoke(x => x.Refresh());
 
                 EditorGUI.EndDisabledGroup();
             }

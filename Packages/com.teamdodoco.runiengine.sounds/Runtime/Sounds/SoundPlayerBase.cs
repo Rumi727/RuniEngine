@@ -150,6 +150,15 @@ namespace RuniEngine.Sounds
 
 
 
+        /// <summary>
+        /// 이 프로퍼티는 에디터에서만 사용되며 런타임에 영향가지 않습니다
+        /// <para></para>
+        /// 피치와 템포를 서로 같은 값으로 고정합니다
+        /// </summary>
+        public bool pitchFixed { get => _pitchFixed; set => _pitchFixed = value; }
+        [SerializeField] bool _pitchFixed = false;
+
+
         public float volume
         {
             get
