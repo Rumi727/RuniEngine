@@ -46,8 +46,8 @@ namespace RuniEngine.Sounds
 
         public override double time
         {
-            get => (double)timeSamples / (frequency != 0 ? frequency : AudioLoader.systemFrequency);
-            set => timeSamples = (long)(value * (frequency != 0 ? frequency : AudioLoader.systemFrequency));
+            get => (double)timeSamples / (frequency != 0 ? frequency : AudioLoader.systemFrequency) / metaDataTempo;
+            set => timeSamples = (long)(value * metaDataTempo * (frequency != 0 ? frequency : AudioLoader.systemFrequency));
         }
 
         public long timeSamples
@@ -68,7 +68,7 @@ namespace RuniEngine.Sounds
         }
         [NonSerialized] long _timeSamples;
 
-        public override double length => audioMetaData != null ? audioMetaData.length : 0;
+        public override double length => audioMetaData != null ? audioMetaData.length / metaDataTempo : 0;
         public int samples => audioMetaData != null ? audioMetaData.samples : 0;
 
         public double spatialStereo => Interlocked.CompareExchange(ref _spatialStereo, 0, 0);
