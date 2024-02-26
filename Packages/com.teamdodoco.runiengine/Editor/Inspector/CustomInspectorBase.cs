@@ -53,5 +53,19 @@ namespace RuniEngine.Editor.Inspector
         public bool TargetsIsEquals<TValue>(Func<TTarget, TValue> func) => TargetsIsEquals(func, targets);
 
         public string TargetsToString<TValue>(Func<TTarget, TValue> func) => TargetsToString(func, targets);
+
+
+        public void TargetsInvoke(Action<TTarget> action)
+        {
+            if (targets == null || targets.Length <= 0)
+                return;
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                TTarget? target2 = targets[i];
+                if (target2 != null)
+                    action.Invoke(target2);
+            }
+        }
     }
 }
