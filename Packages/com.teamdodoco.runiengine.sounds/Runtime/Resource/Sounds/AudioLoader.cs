@@ -68,28 +68,54 @@ namespace RuniEngine.Resource.Sounds
         {
             Interlocked.Exchange(ref _systemFrequency, AudioSettings.outputSampleRate);
 
+            int driverChannels = 1;
+            switch (AudioSettings.driverCapabilities)
+            {
+                case AudioSpeakerMode.Mono:
+                    driverChannels = 1;
+                    break;
+                case AudioSpeakerMode.Stereo:
+                    driverChannels = 2;
+                    break;
+                case AudioSpeakerMode.Quad:
+                    driverChannels = 4;
+                    break;
+                case AudioSpeakerMode.Surround:
+                    driverChannels = 5;
+                    break;
+                case AudioSpeakerMode.Mode5point1:
+                    driverChannels = 6;
+                    break;
+                case AudioSpeakerMode.Mode7point1:
+                    driverChannels = 8;
+                    break;
+                case AudioSpeakerMode.Prologic:
+                    driverChannels = 2;
+                    break;
+            }
+
             switch (AudioSettings.speakerMode)
             {
                 case AudioSpeakerMode.Mono:
-                    Interlocked.Exchange(ref _systemChannels, 1);
+                    Interlocked.Exchange(ref _systemChannels, 1.Min(driverChannels));
                     break;
                 case AudioSpeakerMode.Stereo:
-                    Interlocked.Exchange(ref _systemChannels, 2);
+                    Interlocked.Exchange(ref _systemChannels, 2.Min(driverChannels));
                     break;
                 case AudioSpeakerMode.Quad:
-                    Interlocked.Exchange(ref _systemChannels, 4);
+                    Interlocked.Exchange(ref _systemChannels, 4.Min(driverChannels));
                     break;
                 case AudioSpeakerMode.Surround:
-                    Interlocked.Exchange(ref _systemChannels, 5);
+                    Interlocked.Exchange(ref _systemChannels, 5.Min(driverChannels));
                     break;
                 case AudioSpeakerMode.Mode5point1:
-                    Interlocked.Exchange(ref _systemChannels, 6);
+                    Interlocked.Exchange(ref _systemChannels, 6.Min(driverChannels));
                     break;
                 case AudioSpeakerMode.Mode7point1:
-                    Interlocked.Exchange(ref _systemChannels, 8);
+                    Interlocked.Exchange(ref _systemChannels, 8.Min(driverChannels));
                     break;
                 case AudioSpeakerMode.Prologic:
-                    Interlocked.Exchange(ref _systemChannels, 2);
+                    Interlocked.Exchange(ref _systemChannels, 2.Min(driverChannels));
                     break;
             }
         }
