@@ -34,13 +34,13 @@ namespace RuniEngine.Sounds
 
 
         public abstract double time { get; set; }
-        public virtual double realTime { get => time / realTempo; set => time = value * realTempo; }
+        public virtual double realTime { get => time / tempo; set => time = value * tempo; }
 
         public event Action timeChanged { add => _timeChanged += value; remove => _timeChanged -= value; }
         Action? _timeChanged;
 
         public abstract double length { get; }
-        public virtual double realLength => length / realTempo;
+        public virtual double realLength => length / tempo;
 
 
 
@@ -121,7 +121,8 @@ namespace RuniEngine.Sounds
         public void PitchLock() => ThreadManager.Lock(ref pitchLock);
         public void PitchUnlock() => ThreadManager.Unlock(ref pitchLock);
 
-        public virtual double realPitch => pitch * (soundMetaData != null ? soundMetaData.pitch : 1);
+        public virtual double metaDataPitch => soundMetaData != null ? soundMetaData.pitch : 1;
+        public virtual double realPitch => pitch * metaDataPitch;
 
         public double tempo
         {
@@ -146,7 +147,8 @@ namespace RuniEngine.Sounds
         public void TempoLock() => ThreadManager.Lock(ref tempoLock);
         public void TempoUnlock() => ThreadManager.Unlock(ref tempoLock);
 
-        public virtual double realTempo => tempo * (soundMetaData != null ? soundMetaData.tempo : 1);
+        public virtual double metaDataTempo => soundMetaData != null ? soundMetaData.tempo : 1;
+        public virtual double realTempo => tempo * metaDataTempo;
 
 
 
