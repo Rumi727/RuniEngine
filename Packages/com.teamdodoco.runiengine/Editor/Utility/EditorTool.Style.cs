@@ -55,6 +55,11 @@ namespace RuniEngine.Editor
                 EditorGUIUtility.labelWidth = 0;
         }
 
+        public static float GetXSize(GUIStyle style) => style.CalcSize(new GUIContent()).x;
+        public static float GetYSize(GUIStyle style) => style.CalcSize(new GUIContent()).y;
+
+        public static float GetButtonYSize() => GetYSize(GUI.skin.button);
+
         public static float GetLabelXSize(string label) => GetLabelXSize(new GUIContent(label));
         public static float GetLabelXSize(GUIContent label) => GetLabelXSize(label, EditorStyles.label);
         public static float GetLabelXSize(string label, GUIStyle style) => GetLabelXSize(new GUIContent(label), style);
@@ -93,6 +98,37 @@ namespace RuniEngine.Editor
                 EditorGUIUtility.fieldWidth = result;
             else
                 EditorGUIUtility.fieldWidth = 0;
+        }
+
+
+
+        static readonly Dictionary<GUIStyle, Stack<TextAnchor>> alignmentQueue = new Dictionary<GUIStyle, Stack<TextAnchor>>();
+        public static void BeginAlignment(TextAnchor alignment, GUIStyle style)
+        {
+            if (!alignmentQueue.ContainsKey(style))
+                alignmentQueue.Add(style, new Stack<TextAnchor>());
+
+            alignmentQueue[style].Push(style.alignment);
+            style.alignment = alignment;
+        }
+
+        public static void EndAlignment(GUIStyle style)
+        {
+            if (alignmentQueue.ContainsKey(style))
+            {
+                Stack<TextAnchor> stack = alignmentQueue[style];
+                if (stack.TryPop(out TextAnchor result))
+                    style.alignment = result;
+                else
+                    style.alignment = 0;
+
+                if (stack.Count <= 0)
+                    alignmentQueue.Remove(style);
+
+                return;
+            }
+            else
+                style.alignment = 0;
         }
 
 

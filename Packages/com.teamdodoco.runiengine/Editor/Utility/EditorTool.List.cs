@@ -34,12 +34,15 @@ namespace RuniEngine.Editor
                 {
                     BeginLabelWidth(100);
 
+                    BeginAlignment(TextAnchor.MiddleLeft, EditorStyles.label);
+                    BeginAlignment(TextAnchor.MiddleLeft, EditorStyles.textField);
+
                     {
                         EditorGUILayout.BeginHorizontal();
                         {
                             EditorGUI.BeginChangeCheck();
 
-                            int count = EditorGUILayout.IntField(TryGetText("gui.list_count"), list.Count, GUILayout.Height(21));
+                            int count = EditorGUILayout.IntField(TryGetText("gui.list_count"), list.Count, GUILayout.Height(GetButtonYSize()));
                             //변수 설정
                             if (count < 0)
                                 count = 0;
@@ -137,6 +140,9 @@ namespace RuniEngine.Editor
                         EditorGUILayout.EndHorizontal();
                     }
 
+                    EndAlignment(EditorStyles.textField);
+                    EndAlignment(EditorStyles.label);
+
                     EndLabelWidth();
                 }
 
@@ -207,6 +213,9 @@ namespace RuniEngine.Editor
                         }
 
                         EditorGUILayout.EndHorizontal();
+
+                        Space(3);
+
                         EditorGUILayout.EndVertical();
 
                         loopCount++;
