@@ -32,11 +32,12 @@ namespace RuniEngine.Editor.ProjectSettings
 
 
 
-        string nameSpace = ResourceManager.defaultNameSpace;
-        string type = "";
-        string name = "";
-        string tag = ImageLoader.spriteDefaultTag;
-        int index = 0;
+        [SerializeField] string nameSpace = ResourceManager.defaultNameSpace;
+        [SerializeField] string type = "";
+        [SerializeField] string name = "";
+        [SerializeField] string tag = ImageLoader.spriteDefaultTag;
+        [SerializeField] int index = 0;
+        [SerializeField] float previewSize = 200;
         public override void OnGUI(string searchContext)
         {
             BeginLabelWidth(150);
@@ -183,7 +184,6 @@ namespace RuniEngine.Editor.ProjectSettings
         static readonly Assembly assembly = typeof(ImageEditor).Assembly;
         static Type? spriteDrawUtility;
         static MethodInfo? drawSpriteMethod;
-        float previewSize = 200;
         public static void DrawSprite(string nameSpace, string type, string name, string tag, int index, ref float previewSize)
         {
             if (spriteDrawUtility == null)
