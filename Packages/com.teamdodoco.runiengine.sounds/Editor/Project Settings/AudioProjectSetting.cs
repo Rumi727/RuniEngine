@@ -26,9 +26,9 @@ namespace RuniEngine.Editor.ProjectSettings
 
 
 
-        string nameSpace = ResourceManager.defaultNameSpace;
-        bool deleteSafety = true;
-        int displayRestrictionsIndex = 0;
+        [SerializeField] string nameSpace = ResourceManager.defaultNameSpace;
+        [SerializeField] bool deleteSafety = true;
+        [SerializeField] int displayRestrictionsIndex = 0;
         public override void OnGUI(string searchContext) => DrawGUI(ref nameSpace, ref deleteSafety, ref displayRestrictionsIndex);
 
         public static void DrawGUI(ref string nameSpace, ref bool deleteSafety, ref int displayRestrictionsIndex)
