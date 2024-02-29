@@ -55,15 +55,18 @@ namespace RuniEngine.Editor.ProjectSettings
 
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUI.BeginChangeCheck();
 
                 BeginAlignment(TextAnchor.MiddleLeft, EditorStyles.label);
                 BeginAlignment(TextAnchor.MiddleLeft, EditorStyles.textField);
 
-                selectedKey = EditorGUILayout.TextField(TryGetText("gui.key"), selectedKey, GUILayout.Height(GetButtonYSize()));
+                {
+                    EditorGUI.BeginChangeCheck();
 
-                if (EditorGUI.EndChangeCheck() && treeView.itemIDs.ContainsKey(selectedKey))
-                    treeView.SetSelection(treeView.itemIDs[selectedKey]);
+                    selectedKey = EditorGUILayout.TextField(TryGetText("gui.key"), selectedKey, GUILayout.Height(GetButtonYSize()));
+
+                    if (EditorGUI.EndChangeCheck() && treeView.itemIDs.ContainsKey(selectedKey))
+                        treeView.SetSelection(treeView.itemIDs[selectedKey]);
+                }
 
                 string addLabel = TryGetText("gui.add");
                 string removeLabel = TryGetText("gui.remove");
