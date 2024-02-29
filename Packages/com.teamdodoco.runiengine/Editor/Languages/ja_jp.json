@@ -263,5 +263,8 @@
     "project_setting.splash.splash_scene": "スプラッシュシーン",
     "project_setting.splash.loading_scene": "ロードシーン",
     "project_setting.splash.start_scene_enable": "スタートシーン選択機能を有効にする",
-    "project_setting.splash.start_scene_index": "開始シーンインデックス"
+    "project_setting.splash.start_scene_index": "開始シーンインデックス",
+
+    "control_panel.refresh_delay": "リフレッシュディレイ",
+    "control_panel.generic": "ジェネリック"
 }

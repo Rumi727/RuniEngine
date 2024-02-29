@@ -263,5 +263,8 @@
     "project_setting.splash.splash_scene": "Splash Scene",
     "project_setting.splash.loading_scene": "Loading Scene",
     "project_setting.splash.start_scene_enable": "Activate startup scene selection feature",
-    "project_setting.splash.start_scene_index": "Start scene index"
+    "project_setting.splash.start_scene_index": "Start scene index",
+
+    "control_panel.refresh_delay": "Refresh Delay",
+    "control_panel.generic": "Generic"
 }

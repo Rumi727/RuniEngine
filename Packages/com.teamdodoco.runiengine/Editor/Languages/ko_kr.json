@@ -270,5 +270,70 @@
     "project_setting.splash.splash_scene": "스플래시 씬",
     "project_setting.splash.loading_scene": "로드 씬",
     "project_setting.splash.start_scene_enable": "시작 씬 선택 기능 활성화",
-    "project_setting.splash.start_scene_index": "시작 씬 인덱스"
+    "project_setting.splash.start_scene_index": "시작 씬 인덱스",
+
+    "control_panel.refresh_delay": "새로고침 딜레이",
+    "control_panel.generic": "일반",
+    "control_panel.generic.delta_time": "델타 타임",
+    "control_panel.generic.smooth_delta_time": "부드러운 델타 타임",
+    "control_panel.generic.fps_delta_time": "델타 타임 * 기준 프레임",
+    "control_panel.generic.fps_smooth_delta_time": "부드러운 델타 타임 * 기준 프레임",
+    "control_panel.generic.unscaled_delta_time": "스케일되지 않은 델타 타임",
+    "control_panel.generic.unscaled_smooth_delta_time": "스케일되지 않은 부드러운 델타 타임",
+    "control_panel.generic.fps_unscaled_delta_time": "스케일되지 않은 델타 타임 * 기준 프레임",
+    "control_panel.generic.fps_unscaled_smooth_delta_time": "스케일되지 않은 부드러운 델타 타임 * 기준 프레임",
+
+    "control_panel.generic.fps": "현재 프레임",
+
+    "control_panel.generic.memory": "총 할당된 메모리 (MB)",
+
+    "control_panel.generic.main_thread_id": "메인 스레드 ID",
+
+    "control_panel.generic.data_path": "데이터 경로",
+    "control_panel.generic.streaming_assets_path": "스트리밍 에셋 경로",
+    "control_panel.generic.persistent_data_path": "영구 데이터 경로",
+    "control_panel.generic.temporary_cache_path": "임시 캐시 경로",
+    "control_panel.generic.resource_pack_path": "리소스팩 경로",
+    "control_panel.generic.project_data_path": "프로젝트 데이터 경로",
+
+    "control_panel.generic.company_name": "회사 이름",
+    "control_panel.generic.product_name": "제품 이름",
+
+    "control_panel.generic.account_status": "계정 상태",
+    "control_panel.generic.account_login": "로그아웃",
+    "control_panel.generic.account_logout": "로그아웃",
+    "control_panel.generic.account_name": "계정 이름",
+    "control_panel.generic.account_path": "계정 경로",
+    "control_panel.generic.account_hashed_password": "계정 해시 암호",
+
+    "control_panel.generic.version": "버전",
+    "control_panel.generic.unity_version": "유니티 버전",
+
+    "control_panel.generic.platform": "플랫폼",
+
+    "control_panel.generic.operating_system": "OS",
+
+    "control_panel.generic.device_model": "장치 모델",
+    "control_panel.generic.device_name": "장치 이름",
+
+    "control_panel.generic.internet_reachability": "인터넷 연결 방식",
+    "control_panel.generic.battery_status": "배터리 상태",
+
+    "control_panel.generic.processor_type": "프로세서 유형",
+    "control_panel.generic.processor_frequency": "프로세서 속도",
+    "control_panel.generic.processor_count": "코어 수",
+
+    "control_panel.generic.graphics_device_name": "그래픽 장치 이름",
+    "control_panel.generic.graphics_memory_size": "그래픽 메모리 크기 (MB)",
+
+    "control_panel.generic.system_memory_size": "시스템 메모리 크기 (MB)",
+
+    "control_panel.generic.game_speed": "게임 속도",
+
+
+
+    "control_panel.resource": "리소스",
+
+    "control_panel.resource.refresh": "리소스 새로고침",
+    "control_panel.resource.resource_pack": "리소스팩"
 }
