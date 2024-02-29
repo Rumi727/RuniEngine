@@ -13,7 +13,12 @@ namespace RuniEngine.SceneManagement
 
         public static event Action? activeSceneChanged;
 
-        public static async UniTask LoadScene(int sceneBuildIndex) => await InternalLoadScene(sceneBuildIndex);
+        public static UniTask LoadScene(int sceneBuildIndex) => InternalLoadScene(sceneBuildIndex);
+
+        public static AsyncOperation AddScene(int sceneBuildIndex) => UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneBuildIndex, LoadSceneMode.Additive);
+
+        public static AsyncOperation UnloadScene(int sceneBuildIndex) => UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneBuildIndex);
+        public static AsyncOperation UnloadScene(Scene scene) => UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene);
 
         static async UniTask InternalLoadScene(int sceneBuildIndex)
         {
