@@ -113,7 +113,7 @@ namespace RuniEngine.Editor
                 if (splitDirection == Direction.Horizontal)
                     splitNormalizedPosition = (Event.current.mousePosition.x.Clamp(0) / availableRect.width).Clamp(0.1f, 0.9f);
                 else
-                    splitNormalizedPosition = (Event.current.mousePosition.y.Clamp(0) / availableRect.height).Clamp(0.01f, 0.9f);
+                    splitNormalizedPosition = (Event.current.mousePosition.y.Clamp(0) / availableRect.height).Clamp(0.1f, 0.9f);
 
                 repaintAction?.Invoke();
             }
