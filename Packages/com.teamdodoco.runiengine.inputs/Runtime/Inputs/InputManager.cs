@@ -12,15 +12,15 @@ namespace RuniEngine.Inputs
     public static class InputManager
     {
         [ProjectData]
-        public sealed class ProjectData
+        public struct ProjectData
         {
-            [JsonProperty] public static Dictionary<string, KeyCode[]> controlList = new();
+            [JsonProperty] public static Dictionary<string, KeyCode[]> controlList { get; set; } = new();
         }
 
         [UserData]
-        public sealed class UserData
+        public struct UserData
         {
-            [JsonProperty] public static Dictionary<string, KeyCode[]> controlList = new();
+            [JsonProperty] public static Dictionary<string, KeyCode[]> controlList { get; set; } = new();
         }
 
 
