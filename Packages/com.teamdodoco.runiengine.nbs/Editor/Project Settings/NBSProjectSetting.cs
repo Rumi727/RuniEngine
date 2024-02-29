@@ -14,7 +14,7 @@ using RuniEngine.Jsons;
 
 using static RuniEngine.Editor.EditorTool;
 
-namespace RuniEngine.Editor.ProjectSetting
+namespace RuniEngine.Editor.ProjectSettings
 {
     public class NBSProjectSetting : SettingsProvider
     {

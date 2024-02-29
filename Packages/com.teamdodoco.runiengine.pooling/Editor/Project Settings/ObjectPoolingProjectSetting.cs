@@ -15,7 +15,7 @@ using System;
 
 using static RuniEngine.Editor.EditorTool;
 
-namespace RuniEngine.Editor.ProjectSetting
+namespace RuniEngine.Editor.ProjectSettings
 {
     public class ObjectPoolingProjectSetting : SettingsProvider
     {

@@ -19,9 +19,8 @@ using static RuniEngine.Editor.EditorTool;
 
 using SpriteMetaData = RuniEngine.Resource.Images.SpriteMetaData;
 using Object = UnityEngine.Object;
-using UnityEngine.UIElements;
 
-namespace RuniEngine.Editor.ProjectSetting
+namespace RuniEngine.Editor.ProjectSettings
 {
     public class SpriteProjectSetting : SettingsProvider
     {

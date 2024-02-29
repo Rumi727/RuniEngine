@@ -1,14 +1,10 @@
 #nullable enable
-using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
-using RuniEngine;
 using RuniEngine.Datas;
-using System.Collections.Generic;
 using RuniEngine.Splashs;
-using RuniEngine.Editor;
 
-namespace SCKRM.Editor
+namespace RuniEngine.Editor.ProjectSettings
 {
     public class SplashProjectSetting : SettingsProvider
     {
