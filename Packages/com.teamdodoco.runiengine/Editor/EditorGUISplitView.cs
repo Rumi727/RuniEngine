@@ -14,67 +14,89 @@ namespace RuniEngine.Editor
             Vertical
         }
 
-        readonly Direction splitDirection;
-        public float splitNormalizedPosition;
-        bool resize;
-        public Vector2 scrollPosition;
-        public Rect availableRect;
-        public Action? repaintAction;
+
+
+        public Direction splitDirection { get; }
+        public float splitNormalizedPosition { get; set; }
+        
+        public Vector2 formerScrollPosition { get; set; }
+        public Vector2 latterScrollPosition { get; set; }
+        public Rect availableRect { get; private set; }
+
+
+
+        public event Action? repaintAction;
+
+
 
         public EditorGUISplitView(Direction splitDirection, float initialValue = 0.3f, Action? repaintAction = null)
         {
             splitNormalizedPosition = initialValue;
+
             this.splitDirection = splitDirection;
             this.repaintAction = repaintAction;
         }
 
         public void BeginSplitView()
         {
-            Rect tempRect;
+            EditorGUILayout.BeginScrollView(Vector2.zero);
+
+            Rect rect;
+            if (splitDirection == Direction.Horizontal)
+                rect = EditorGUILayout.BeginHorizontal();
+            else
+                rect = EditorGUILayout.BeginVertical();
+
+            if (rect.width > 0.0f)
+                availableRect = rect;
 
             if (splitDirection == Direction.Horizontal)
-                tempRect = EditorGUILayout.BeginHorizontal();
+                formerScrollPosition = EditorGUILayout.BeginScrollView(formerScrollPosition, GUILayout.Width(availableRect.width * splitNormalizedPosition - 4f));
             else
-                tempRect = EditorGUILayout.BeginVertical();
-
-            if (tempRect.width > 0.0f)
-            {
-                availableRect = tempRect;
-            }
-            if (splitDirection == Direction.Horizontal)
-                scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Width(availableRect.width * splitNormalizedPosition));
-            else
-                scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(availableRect.height * splitNormalizedPosition));
+                formerScrollPosition = EditorGUILayout.BeginScrollView(formerScrollPosition, GUILayout.Height(availableRect.height * splitNormalizedPosition - 2f));
         }
 
         public void Split()
         {
-            GUILayout.EndScrollView();
+            EditorGUILayout.EndScrollView();
+
+            GUILayout.Space(4);
+
             ResizeSplitFirstView();
+
+            latterScrollPosition = EditorGUILayout.BeginScrollView(latterScrollPosition);
         }
 
         public void EndSplitView()
         {
+            EditorGUILayout.EndScrollView();
+
             if (splitDirection == Direction.Horizontal)
                 EditorGUILayout.EndHorizontal();
             else
                 EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndScrollView();
         }
 
+        bool resize;
         void ResizeSplitFirstView()
         {
+            if (Event.current.type == EventType.Layout)
+                return;
+
             Rect resizeHandleDrawRect;
             Rect resizeHandleRect;
 
             if (splitDirection == Direction.Horizontal)
             {
-                resizeHandleRect = new Rect(availableRect.width * splitNormalizedPosition - 2.5f, availableRect.y, 5f, availableRect.height);
-                resizeHandleDrawRect = new Rect(availableRect.width * splitNormalizedPosition - 1f, availableRect.y, 2f, availableRect.height);
+                resizeHandleRect = new Rect(availableRect.width * splitNormalizedPosition - 4f, availableRect.y, 8f, availableRect.height);
+                resizeHandleDrawRect = new Rect(availableRect.width * splitNormalizedPosition - 0.5f, availableRect.y, 1f, availableRect.height);
             }
             else
             {
-                resizeHandleRect = new Rect(availableRect.x, availableRect.height * splitNormalizedPosition - 2.5f, availableRect.width, 5f);
-                resizeHandleDrawRect = new Rect(availableRect.x, availableRect.height * splitNormalizedPosition - 1f, availableRect.width, 2f);
+                resizeHandleRect = new Rect(availableRect.x, availableRect.height * splitNormalizedPosition - 4f, availableRect.width, 8f);
+                resizeHandleDrawRect = new Rect(availableRect.x, availableRect.height * splitNormalizedPosition - 0.5f, availableRect.width, 1f);
             }
 
             EditorGUI.DrawRect(resizeHandleDrawRect, new Color(0.4980392f, 0.4980392f, 0.4980392f));
@@ -86,17 +108,16 @@ namespace RuniEngine.Editor
 
             if (Event.current.type == EventType.MouseDown && resizeHandleRect.Contains(Event.current.mousePosition))
                 resize = true;
-
             if (resize)
             {
                 if (splitDirection == Direction.Horizontal)
-                    splitNormalizedPosition = (Event.current.mousePosition.x.Clamp(0) / availableRect.width).Clamp(0.2f, 0.8f);
+                    splitNormalizedPosition = (Event.current.mousePosition.x.Clamp(0) / availableRect.width).Clamp(0.1f, 0.9f);
                 else
-                    splitNormalizedPosition = (Event.current.mousePosition.y.Clamp(0) / availableRect.height).Clamp(0.2f, 0.8f);
+                    splitNormalizedPosition = (Event.current.mousePosition.y.Clamp(0) / availableRect.height).Clamp(0.01f, 0.9f);
 
                 repaintAction?.Invoke();
             }
-
+            
             if (Event.current.type == EventType.MouseUp)
                 resize = false;
         }
