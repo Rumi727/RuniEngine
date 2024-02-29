@@ -33,7 +33,7 @@ namespace RuniEngine.Editor
             {
                 List<string> packLists = ResourceManager.GlobalData.resourcePacks;
                 float height = EditorStyles.textField.CalcSize(new GUIContent()).y;
-                bool isChanged = false;
+                //bool isChanged = false;
 
                 reorderableList ??= new ReorderableList(packLists, typeof(List<string>), true, true, true, true)
                 {
@@ -47,7 +47,7 @@ namespace RuniEngine.Editor
                 reorderableList.onAddCallback = x =>
                 {
                     packLists.Add("");
-                    isChanged = true;
+                    //isChanged = true;
                 };
 
                 reorderableList.onRemoveCallback = x =>
@@ -63,10 +63,10 @@ namespace RuniEngine.Editor
                     else
                         packLists.RemoveAt(x.list.Count - 1);
 
-                    isChanged = true;
+                    //isChanged = true;
                 };
 
-                reorderableList.onReorderCallback = x => isChanged = true;
+                //reorderableList.onReorderCallback = x => isChanged = true;
 
                 reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
                 {
