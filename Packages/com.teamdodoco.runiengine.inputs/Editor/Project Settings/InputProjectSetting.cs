@@ -64,8 +64,8 @@ namespace RuniEngine.Editor.ProjectSettings
 
                     selectedKey = EditorGUILayout.TextField(TryGetText("gui.key"), selectedKey, GUILayout.Height(GetButtonYSize()));
 
-                    if (EditorGUI.EndChangeCheck() && treeView.itemIDs.ContainsKey(selectedKey))
-                        treeView.SetSelection(treeView.itemIDs[selectedKey]);
+                    if (EditorGUI.EndChangeCheck() && treeView.ContainsKey(selectedKey))
+                        treeView.SetSelection(selectedKey);
                 }
 
                 string addLabel = TryGetText("gui.add");
@@ -81,7 +81,7 @@ namespace RuniEngine.Editor.ProjectSettings
                         OrderBy();
 
                         treeView.Reload();
-                        treeView.SetSelection(treeView.itemIDs[selectedKey]);
+                        treeView.SetSelection(selectedKey);
 
                         isChanged |= true;
                     }
@@ -125,7 +125,7 @@ namespace RuniEngine.Editor.ProjectSettings
             {
                 for (int i = 0; i < treeView.selectedItems.Length; i++)
                 {
-                    InputProjectSettingTreeViewItem? item = treeView.selectedItems[i];
+                    RuniDictionaryTreeViewItem? item = treeView.selectedItems[i];
                     if (item == null)
                         continue;
 
@@ -182,7 +182,7 @@ namespace RuniEngine.Editor.ProjectSettings
             if (treeView == null)
                 return;
 
-            InputProjectSettingTreeViewItem? item = treeView.FindItem(selectedIDs.Last());
+            RuniDictionaryTreeViewItem? item = treeView.FindItem(selectedIDs.Last());
             if (item != null)
                 selectedKey = item.key;
         }
