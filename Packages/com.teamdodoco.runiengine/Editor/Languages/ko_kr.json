@@ -147,6 +147,10 @@
     "inspector.texture_style.blurImage": "블러 이미지",
     "inspector.texture_style.image": "이미지",
 
+    "inspector.camera_setter.normalizedViewPortRect": "뷰포트 사각형",
+    "inspector.camera_setter.globalScreenPositionMultiple": "화면 위치 배수",
+    "inspector.camera_setter.globalScreenAreaMultiple": "화면 영역 배수",
+
     "undo.modified_~": "수정된 {object}",
 
     "transform.position": "좌표",
