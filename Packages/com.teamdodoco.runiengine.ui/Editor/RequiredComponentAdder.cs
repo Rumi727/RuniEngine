@@ -3,7 +3,6 @@ using RuniEngine.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace RuniEngine.Editor
 {
@@ -26,17 +25,10 @@ namespace RuniEngine.Editor
             {
                 hierarchyChangedDisable = true;
 
-                //Runi Engine에 Runi Engine UI 의존성이 추가되선 안됩니다
-                {
-                    Scene scene = SceneManager.GetActiveScene();
-                    if (scene.path.StartsWith("Packages/com.teamdodoco.runiengine/Runtime"))
-                        return;
-                }
-
                 PrefabStage? prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
 
-                RequiredComponentAdderUtility.AddComponent<RectTransform, RectTransformTool>(prefabStage, true);
-                RequiredComponentAdderUtility.AddComponent<Canvas, CanvasSetter>(prefabStage, false);
+                RequiredComponentAdderUtility.AddComponent<RectTransform, RectTransformTool>(prefabStage, true, "Packages/com.teamdodoco.runiengine/Runtime");
+                RequiredComponentAdderUtility.AddComponent<Canvas, CanvasSetter>(prefabStage, false, "Packages/com.teamdodoco.runiengine/Runtime");
             }
             finally
             {
