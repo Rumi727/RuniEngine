@@ -41,9 +41,9 @@ namespace RuniEngine.Editor.ProjectSettings
             FileObjectField<SceneAsset>(TryGetText("project_setting.splash.splash_scene"), ref path, out _);
             SplashScreen.ProjectData.splashScenePath = path;
 
-            path = SplashScreen.ProjectData.sceneLoadingScenePath;
+            /*path = SplashScreen.ProjectData.sceneLoadingScenePath;
             FileObjectField<SceneAsset>(TryGetText("project_setting.splash.loading_scene"), ref path, out _);
-            SplashScreen.ProjectData.sceneLoadingScenePath = path;
+            SplashScreen.ProjectData.sceneLoadingScenePath = path;*/
 
             EditorGUILayout.Space();
 
@@ -54,7 +54,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 startSceneIndex = -1;
 
             if (startSceneIndex >= 0)
-                startSceneIndex = EditorGUILayout.IntSlider(TryGetText("project_setting.splash.start_scene_index"), startSceneIndex, 2, EditorBuildSettings.scenes.Length - 1);
+                startSceneIndex = EditorGUILayout.IntSlider(TryGetText("project_setting.splash.start_scene_index"), startSceneIndex, 1, EditorBuildSettings.scenes.Length - 1);
 
             SplashScreen.ProjectData.startSceneIndex = startSceneIndex;
 

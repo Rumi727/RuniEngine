@@ -11,7 +11,7 @@ namespace RuniEngine.Editor
     public static class BuildSceneListChanger
     {
         public static string splashScenePath => SplashScreen.ProjectData.splashScenePath;
-        public static string sceneLoadingScenePath => SplashScreen.ProjectData.sceneLoadingScenePath;
+        //public static string sceneLoadingScenePath => SplashScreen.ProjectData.sceneLoadingScenePath;
 
         static BuildSceneListChanger()
         {
@@ -40,7 +40,7 @@ namespace RuniEngine.Editor
                 for (int i = 0; i < buildScenes.Count; i++)
                 {
                     EditorBuildSettingsScene scene = buildScenes[i];
-                    if (splashScenePath == scene.path || sceneLoadingScenePath == scene.path)
+                    if (splashScenePath == scene.path)
                     {
                         buildScenes.RemoveAt(i);
                         i--;
@@ -48,7 +48,7 @@ namespace RuniEngine.Editor
                 }
 
                 buildScenes.Insert(0, new EditorBuildSettingsScene() { path = splashScenePath, enabled = true });
-                buildScenes.Insert(1, new EditorBuildSettingsScene() { path = sceneLoadingScenePath, enabled = true });
+                //buildScenes.Insert(1, new EditorBuildSettingsScene() { path = sceneLoadingScenePath, enabled = true });
 
                 EditorBuildSettings.scenes = buildScenes.ToArray();
             }

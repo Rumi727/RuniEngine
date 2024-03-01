@@ -124,7 +124,7 @@ namespace RuniEngine.Booting
             if (SplashScreen.ProjectData.startSceneIndex >= 0)
                 await SceneManager.LoadSceneAsync(SplashScreen.ProjectData.startSceneIndex, LoadSceneMode.Single);
             else
-                await SceneManager.LoadSceneAsync(2, LoadSceneMode.Single);
+                await SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
         }
 
         static void AttributeInvoke<T>() where T : Attribute

@@ -10,6 +10,7 @@ namespace RuniEngine.UI
 {
     [ExecuteAlways]
     [DisallowMultipleComponent]
+    [RequireComponent(typeof(Canvas))]
     public sealed class CanvasSetter : UIBase
     {
         public bool disableScreenArea
@@ -130,7 +131,7 @@ namespace RuniEngine.UI
 
 
         protected override void OnEnable() => Canvas.preWillRenderCanvases += SetDirty;
-        protected override void OnDestroy()
+        protected override void OnDisable()
         {
             if (!Kernel.isPlaying)
                 tracker.Clear();
@@ -203,14 +204,10 @@ namespace RuniEngine.UI
 
             if (Kernel.isPlaying && useScreenArea)
             {
-                float size = 1 / uiSize;
-                if (disableUISize)
-                    size = UIManager.uiSize / canvas.scaleFactor;
+                areaObject.offsetMin = ScreenManager.screenArea.min * globalScreenAreaMultiple / canvas.scaleFactor;
+                areaObject.offsetMax = ScreenManager.screenArea.max * globalScreenAreaMultiple / canvas.scaleFactor;
 
-                areaObject.offsetMin = ScreenManager.screenArea.min * globalScreenAreaMultiple * size;
-                areaObject.offsetMax = ScreenManager.screenArea.max * globalScreenAreaMultiple * size;
-
-                areaObject.position += ScreenManager.screenPosition.Multiply(globalScreenPositionMultiple) * size;
+                areaObject.position += ScreenManager.screenPosition.Multiply(globalScreenPositionMultiple) / canvas.scaleFactor;
             }
             else
             {
@@ -218,8 +215,8 @@ namespace RuniEngine.UI
                 areaObject.offsetMax = Vector2.zero;
             }
 
-            areaObject.offsetMin += areaOffset.min;
-            areaObject.offsetMax += areaOffset.max;
+            areaObject.offsetMin += areaOffset.min / canvas.scaleFactor;
+            areaObject.offsetMax += areaOffset.max / canvas.scaleFactor;
 
             areaObject.pivot = Vector2.zero;
 
@@ -291,20 +288,13 @@ namespace RuniEngine.UI
                 return;
 
             if (!Kernel.isPlaying)
-            {
-                tracker.Clear();
                 tracker.Add(this, rectTransform, DrivenTransformProperties.All);
-            }
 
+            canvas.renderMode = RenderMode.WorldSpace;
 
-            Camera camera = canvas.worldCamera;
+            Camera? camera = canvas.worldCamera;
             if (camera == null)
-            {
-                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 return;
-            }
-            else
-                canvas.renderMode = RenderMode.WorldSpace;
 
             transform.SetPositionAndRotation(camera.transform.position + (transform.forward * planeDistance), camera.transform.rotation);
 
@@ -313,6 +303,8 @@ namespace RuniEngine.UI
                 uiSize = canvas.scaleFactor;
             else
                 uiSize = UIManager.uiSize * this.uiSize;
+
+            uiSize = uiSize.Clamp(0.0001f);
 
             float width = camera.pixelWidth * (1 / uiSize);
             float height = camera.pixelHeight * (1 / uiSize);
