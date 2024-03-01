@@ -36,7 +36,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
         InputProjectSettingTreeView? treeView;
         [SerializeField] TreeViewState treeViewState = new TreeViewState();
-        [SerializeField] EditorGUISplitView? splitView;
+        EditorGUISplitView? splitView;
         [SerializeField] string selectedKey = "";
         [SerializeField] bool deleteSafety = true;
         public override void OnGUI(string searchContext)
@@ -176,7 +176,16 @@ namespace RuniEngine.Editor.ProjectSettings
                 InputManager.ProjectData.controlList.RenameKey(oldKey, key);
 
             List<KeyCode> keyCodes = InputManager.ProjectData.controlList[key].ToList();
-            DrawRawList(keyCodes, "", x => EditorGUILayout.EnumPopup(TryGetText("gui.key"), (KeyCode)x), x => keyCodes[x] == KeyCode.None, x => keyCodes.Insert(x, KeyCode.None), out isListChanged, deleteSafety);
+            DrawRawList
+            (
+                keyCodes,
+                "",
+                x => EditorGUILayout.EnumPopup(TryGetText("gui.key"), (KeyCode)x),
+                x => keyCodes[x] == KeyCode.None,
+                x => keyCodes.Insert(x, KeyCode.None),
+                out isListChanged,
+                deleteSafety
+            );
 
             InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
             EditorGUILayout.EndVertical();
