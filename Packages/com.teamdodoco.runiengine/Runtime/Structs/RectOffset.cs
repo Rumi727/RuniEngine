@@ -8,20 +8,16 @@ namespace RuniEngine
     [Serializable]
     public struct RectOffset : IEquatable<RectOffset>
     {
+        public RectOffset(float value) : this(value, value, value, value) { }
+
+        public RectOffset(Vector2 min, Vector2 max) : this(min.x, max.x, max.y, min.y) { }
+
         public RectOffset(float left, float right, float top, float bottom)
         {
             this.left = left;
             this.right = right;
             this.top = top;
             this.bottom = bottom;
-        }
-
-        public RectOffset(Vector2 min, Vector2 max)
-        {
-            left = min.x;
-            right = max.x;
-            top = max.y;
-            bottom = min.y;
         }
 
         [FieldName("gui.left")] public float left;
@@ -73,7 +69,7 @@ namespace RuniEngine
             return result;
         }
 
-        public static explicit operator UnityEngine.RectOffset(RectOffset v)
+        public static implicit operator UnityEngine.RectOffset(RectOffset v)
         {
             UnityEngine.RectOffset result = new UnityEngine.RectOffset
             {
@@ -92,5 +88,7 @@ namespace RuniEngine
         public override readonly bool Equals(object? obj) => obj is RectOffset result && Equals(result);
 
         public override readonly int GetHashCode() => HashCode.Combine(left, right, top, bottom);
+
+        public override readonly string ToString() => $"RectOffset l:{left} r:{right} t:{top} b:{bottom}";
     }
 }

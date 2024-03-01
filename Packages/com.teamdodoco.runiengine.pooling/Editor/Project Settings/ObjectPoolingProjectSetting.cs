@@ -90,7 +90,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 rect.y += 2;
 
                 if (Event.current.type == EventType.Repaint)
-                    EditorStyles.helpBox.Draw(new Rect(rect.x, rect.y, rect.width, rect.height - 4), new GUIContent(), 0);
+                    helpBox.Draw(new Rect(rect.x, rect.y, rect.width, rect.height - 4), new GUIContent(), 0);
 
                 rect.x += 4;
                 rect.y += 5;

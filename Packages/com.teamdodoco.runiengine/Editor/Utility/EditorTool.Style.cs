@@ -1,4 +1,5 @@
 #nullable enable
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace RuniEngine.Editor
 {
     public partial class EditorTool
     {
+        public static GUIStyle label => EditorStyles.label;
         public static GUIStyle labelButtonStyle
         {
             get
@@ -27,6 +29,23 @@ namespace RuniEngine.Editor
             }
         }
         static GUIStyle? _labelButtonStyle;
+
+        public static GUIStyle helpBox => EditorStyles.helpBox;
+
+        public static GUIStyle otherHelpBox
+        {
+            get
+            {
+                _otherHelpBox ??= new GUIStyle(EditorStyles.helpBox)
+                {
+                    padding = new RectOffset(10),
+                    margin = new RectOffset(10)
+                };
+
+                return _otherHelpBox;
+            }
+        }
+        static GUIStyle? _otherHelpBox;
 
 
 
