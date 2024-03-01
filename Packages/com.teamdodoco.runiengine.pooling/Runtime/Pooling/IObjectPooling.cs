@@ -1,5 +1,4 @@
 #nullable enable
-using RuniEngine.SceneManagement;
 using System;
 using UnityEngine;
 
@@ -20,8 +19,6 @@ namespace RuniEngine.Pooling
 
         bool IsDestroyed();
 
-        void ActiveSceneChanged();
-
         public static void OnCreateDefault(Transform transform, IObjectPooling objectPooling)
         {
             transform.gameObject.name = objectPooling.objectKey;
@@ -30,8 +27,6 @@ namespace RuniEngine.Pooling
 
             transform.localEulerAngles = Vector3.zero;
             transform.localScale = Vector3.one;
-
-            SceneManager.activeSceneChanged += objectPooling.ActiveSceneChanged;
         }
 
         public static bool RemoveDefault(MonoBehaviour monoBehaviour, IObjectPooling objectPooling)
@@ -53,8 +48,6 @@ namespace RuniEngine.Pooling
             monoBehaviour.transform.localScale = Vector3.one;*/
 
             monoBehaviour.StopAllCoroutines();
-
-            SceneManager.activeSceneChanged -= objectPooling.ActiveSceneChanged;
             return true;
         }
     }

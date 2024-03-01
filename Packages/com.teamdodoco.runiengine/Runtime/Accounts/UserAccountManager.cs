@@ -3,11 +3,11 @@ using Cysharp.Threading.Tasks;
 using RuniEngine.Booting;
 using RuniEngine.Datas;
 using RuniEngine.Jsons;
-using RuniEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace RuniEngine.Accounts
 {
@@ -93,7 +93,7 @@ namespace RuniEngine.Accounts
             currentAccount = account;
             UserDataLoad();
 
-            await SceneManager.LoadScene(3);
+            await SceneManager.LoadSceneAsync(3).ToUniTask();
             return true;
         }
 
