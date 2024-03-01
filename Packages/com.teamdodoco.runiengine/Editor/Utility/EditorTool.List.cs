@@ -23,7 +23,7 @@ namespace RuniEngine.Editor
             isListChanged = false;
 
             {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.BeginVertical(otherHelpBox);
 
                 //GUI
                 {
@@ -149,7 +149,7 @@ namespace RuniEngine.Editor
                     int loopCount = 0;
                     for (int i = displayRestrictions * displayRestrictionsIndex; i < list.Count; i++)
                     {
-                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        EditorGUILayout.BeginVertical(otherHelpBox);
                         EditorGUILayout.BeginHorizontal();
                         
                         if (!string.IsNullOrEmpty(label))
