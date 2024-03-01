@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace RuniEngine.Editor
+namespace RuniEngine.Editor.ProjectSettings
 {
     public class InputProjectSettingTreeView : RuniTreeView<InputProjectSettingTreeViewItem>
     {
