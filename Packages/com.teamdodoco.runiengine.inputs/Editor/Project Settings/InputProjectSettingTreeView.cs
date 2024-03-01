@@ -1,6 +1,5 @@
 #nullable enable
 using RuniEngine.Inputs;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
@@ -8,26 +7,13 @@ using UnityEngine;
 
 namespace RuniEngine.Editor
 {
-    public class InputProjectSettingTreeView : TreeView
+    public class InputProjectSettingTreeView : RuniTreeView<InputProjectSettingTreeViewItem>
     {
         public InputProjectSettingTreeView(TreeViewState state) : base(state) { }
 
-        public new InputProjectSettingTreeViewItem rootItem => (InputProjectSettingTreeViewItem)base.rootItem;
-
         public Dictionary<string, int> itemIDs { get; } = new Dictionary<string, int>();
 
-        public InputProjectSettingTreeViewItem? selectedItem { get; private set; }
-        public InputProjectSettingTreeViewItem?[] selectedItems { get; private set; } = new InputProjectSettingTreeViewItem[0];
 
-        public event Action<IList<int>>? selectionChanged;
-
-
-
-        public new void Reload()
-        {
-            base.Reload();
-            SetSelectedItem(GetSelection());
-        }
 
         protected override TreeViewItem BuildRoot()
         {
@@ -84,34 +70,5 @@ namespace RuniEngine.Editor
             SetupDepthsFromParentsAndChildren(root);
             return root;
         }
-
-        protected override void SelectionChanged(IList<int> selectedIDs)
-        {
-            SetSelectedItem(selectedIDs);
-            selectionChanged?.Invoke(selectedIDs);
-        }
-
-        void SetSelectedItem(IList<int> selectedIDs)
-        {
-            if (selectedIDs.Count == 1)
-                selectedItem = (InputProjectSettingTreeViewItem)FindItem(selectedIDs[0], rootItem);
-            else
-                selectedItem = null;
-
-            selectedItems = new InputProjectSettingTreeViewItem[selectedIDs.Count];
-            for (int i = 0; i < selectedItems.Length; i++)
-                selectedItems[i] = (InputProjectSettingTreeViewItem)FindItem(selectedIDs[i], rootItem);
-        }
-
-        readonly int[] setSelectionIDs = new int[] { 0 };
-        public void SetSelection(int selectedID)
-        {
-            setSelectionIDs[0] = selectedID;
-            SetSelection(setSelectionIDs);
-        }
-
-        public void SetSelection(params int[] selectedIDs) => SetSelection((IList<int>)selectedIDs);
-
-        public InputProjectSettingTreeViewItem FindItem(int id) => (InputProjectSettingTreeViewItem)FindItem(id, rootItem);
     }
 }
