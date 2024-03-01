@@ -8,7 +8,6 @@ namespace RuniEngine.Editor
     public abstract class RuniTreeView<T> : TreeView where T : TreeViewItem
     {
         public RuniTreeView(TreeViewState state) : base(state) { }
-
         public RuniTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader) { }
 
 
@@ -55,6 +54,14 @@ namespace RuniEngine.Editor
         }
 
         public void SetSelection(params int[] selectedIDs) => SetSelection((IList<int>)selectedIDs);
+
+        public new void SetSelection(IList<int> selectedIDs) => SetSelection(selectedIDs, TreeViewSelectionOptions.None);
+
+        public new void SetSelection(IList<int> selectedIDs, TreeViewSelectionOptions options)
+        {
+            base.SetSelection(selectedIDs, options);
+            SetSelectedItem(selectedIDs);
+        }
 
         public T FindItem(int id) => (T)FindItem(id, rootItem);
     }
