@@ -1,7 +1,7 @@
 #nullable enable
 using UnityEditor.IMGUI.Controls;
 
-namespace RuniEngine.Editor
+namespace RuniEngine.Editor.ProjectSettings
 {
     public class InputProjectSettingTreeViewItem : TreeViewItem
     {
