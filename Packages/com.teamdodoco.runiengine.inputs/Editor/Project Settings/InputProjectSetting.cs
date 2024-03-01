@@ -38,8 +38,12 @@ namespace RuniEngine.Editor.ProjectSettings
         [SerializeField] TreeViewState treeViewState = new TreeViewState();
         [SerializeField] EditorGUISplitView? splitView;
         [SerializeField] string selectedKey = "";
+        [SerializeField] bool deleteSafety = true;
         public override void OnGUI(string searchContext)
         {
+            //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
+            BeginLabelWidth(0);
+
             Dictionary<string, KeyCode[]> list = InputManager.ProjectData.controlList;
 
             if (treeView == null)
@@ -50,6 +54,8 @@ namespace RuniEngine.Editor.ProjectSettings
                 if (list.Count > 0)
                     treeView.Reload();
             }
+
+            DeleteSafety(ref deleteSafety);
 
             bool isChanged = false;
 
@@ -87,7 +93,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     }
 
                     EditorGUI.EndDisabledGroup();
-                    EditorGUI.BeginDisabledGroup(!containsKey);
+                    EditorGUI.BeginDisabledGroup(!containsKey || (deleteSafety && list[selectedKey].Length > 0));
 
                     if (GUILayout.Button(removeLabel, GUILayout.ExpandWidth(false)))
                     {
@@ -131,7 +137,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
                     if (list.ContainsKey(item.key))
                     {
-                        DrawGUI(item.key, out bool isListChanged, out string editedKey);
+                        DrawGUI(item.key, deleteSafety, out bool isListChanged, out string editedKey);
                         if (item.key != editedKey)
                         {
                             if (item.key == selectedKey)
@@ -152,10 +158,12 @@ namespace RuniEngine.Editor.ProjectSettings
 
             if (isChanged && !Kernel.isPlaying && inputProjectSetting != null)
                 inputProjectSetting.AutoNameSave(Kernel.projectDataPath);
+
+            EndLabelWidth();
         }
 
         public static StorableClass? inputProjectSetting = null;
-        public static void DrawGUI(string key, out bool isListChanged, out string editedKey)
+        public static void DrawGUI(string key, bool deleteSafety, out bool isListChanged, out string editedKey)
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
@@ -171,7 +179,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 InputManager.ProjectData.controlList.RenameKey(oldKey, key);
 
             List<KeyCode> keyCodes = InputManager.ProjectData.controlList[key].ToList();
-            DrawRawList(keyCodes, "", x => EditorGUILayout.EnumPopup(TryGetText("gui.key"), (KeyCode)x), x => keyCodes[x] == KeyCode.None, x => keyCodes.Insert(x, KeyCode.None), out isListChanged);
+            DrawRawList(keyCodes, "", x => EditorGUILayout.EnumPopup(TryGetText("gui.key"), (KeyCode)x), x => keyCodes[x] == KeyCode.None, x => keyCodes.Insert(x, KeyCode.None), out isListChanged, deleteSafety);
 
             InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
             EditorGUILayout.EndVertical();

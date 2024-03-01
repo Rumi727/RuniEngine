@@ -4,6 +4,8 @@ using UnityEngine.UIElements;
 using RuniEngine.Datas;
 using RuniEngine.Splashs;
 
+using static RuniEngine.Editor.EditorTool;
+
 namespace RuniEngine.Editor.ProjectSettings
 {
     public class SplashProjectSetting : SettingsProvider
@@ -30,26 +32,29 @@ namespace RuniEngine.Editor.ProjectSettings
         public static StorableClass? splashProjectSetting = null;
         public static void DrawGUI()
         {
+            //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
+            BeginLabelWidth(0);
+
             EditorGUI.BeginChangeCheck();
 
             string path = SplashScreen.ProjectData.splashScenePath;
-            EditorTool.FileObjectField<SceneAsset>(EditorTool.TryGetText("project_setting.splash.splash_scene"), ref path, out _);
+            FileObjectField<SceneAsset>(TryGetText("project_setting.splash.splash_scene"), ref path, out _);
             SplashScreen.ProjectData.splashScenePath = path;
 
             path = SplashScreen.ProjectData.sceneLoadingScenePath;
-            EditorTool.FileObjectField<SceneAsset>(EditorTool.TryGetText("project_setting.splash.loading_scene"), ref path, out _);
+            FileObjectField<SceneAsset>(TryGetText("project_setting.splash.loading_scene"), ref path, out _);
             SplashScreen.ProjectData.sceneLoadingScenePath = path;
 
             EditorGUILayout.Space();
 
             int startSceneIndex = SplashScreen.ProjectData.startSceneIndex;
-            if (EditorGUILayout.Toggle(EditorTool.TryGetText("project_setting.splash.start_scene_enable"), startSceneIndex >= 0))
+            if (EditorGUILayout.Toggle(TryGetText("project_setting.splash.start_scene_enable"), startSceneIndex >= 0))
                 startSceneIndex = startSceneIndex.Clamp(0);
             else
                 startSceneIndex = -1;
 
             if (startSceneIndex >= 0)
-                startSceneIndex = EditorGUILayout.IntSlider(EditorTool.TryGetText("project_setting.splash.start_scene_index"), startSceneIndex, 2, EditorBuildSettings.scenes.Length - 1);
+                startSceneIndex = EditorGUILayout.IntSlider(TryGetText("project_setting.splash.start_scene_index"), startSceneIndex, 2, EditorBuildSettings.scenes.Length - 1);
 
             SplashScreen.ProjectData.startSceneIndex = startSceneIndex;
 
@@ -65,6 +70,8 @@ namespace RuniEngine.Editor.ProjectSettings
 
                 splashProjectSetting?.AutoNameSave(Kernel.projectDataPath);
             }
+
+            EndLabelWidth();
         }
     }
 }

@@ -33,7 +33,10 @@ namespace RuniEngine.Editor.ProjectSettings
 
         public static void DrawGUI(ref string nameSpace, ref bool deleteSafety, ref int displayRestrictionsIndex)
         {
+            //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
+            BeginLabelWidth(0);
             BeginFieldWidth(10);
+
             DeleteSafety(ref deleteSafety);
 
             nameSpace = DrawNameSpace(TryGetText("gui.namespace"), nameSpace);
@@ -221,6 +224,7 @@ namespace RuniEngine.Editor.ProjectSettings
             }
 
             EndFieldWidth();
+            EndLabelWidth();
         }
 
         class NBSDataEqualityComparer : IEqualityComparer<KeyValuePair<string?, NBSData?>>
