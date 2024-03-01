@@ -256,10 +256,8 @@ namespace RuniEngine.Sounds
 
         protected virtual void OnDisable() => Stop();
 
-        protected override void OnDestroy()
+        protected void OnDestroy()
         {
-            base.OnDestroy();
-
             _looped = null;
             _timeChanged = null;
             _onAudioFilterReadEvent = null;

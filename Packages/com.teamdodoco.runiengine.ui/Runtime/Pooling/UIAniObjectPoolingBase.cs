@@ -1,5 +1,4 @@
 #nullable enable
-using RuniEngine.SceneManagement;
 using RuniEngine.UI;
 using System;
 
@@ -36,19 +35,5 @@ namespace RuniEngine.Pooling
         /// Please put <see cref="Remove"/> when overriding
         /// </summary>
         public virtual void Remove() => IObjectPooling.RemoveDefault(this, this);
-
-        /// <summary>
-        /// Please put <see cref="ActiveSceneChanged"/> when overriding
-        /// </summary>
-        public virtual void ActiveSceneChanged()
-        {
-            if (!isRemoved && gameObject.scene.name != "DontDestroyOnLoad")
-                Remove();
-        }
-
-        /// <summary>
-        /// Please put <see cref="OnDestroy"/> when overriding
-        /// </summary>
-        protected override void OnDestroy() => SceneManager.activeSceneChanged -= ActiveSceneChanged;
     }
 }

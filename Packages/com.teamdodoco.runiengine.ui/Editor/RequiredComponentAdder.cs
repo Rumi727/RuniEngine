@@ -5,8 +5,6 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-using SceneManager = RuniEngine.SceneManagement.SceneManager;
-
 namespace RuniEngine.Editor
 {
     [InitializeOnLoad]
