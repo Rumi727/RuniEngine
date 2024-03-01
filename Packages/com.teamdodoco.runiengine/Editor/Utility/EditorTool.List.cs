@@ -14,12 +14,7 @@ namespace RuniEngine.Editor
         public delegate bool DrawRawListDefaultValueFunc(int index);
         public delegate void DrawRawListAddRemoveFunc(int index);
 
-        public static void DeleteSafety(ref bool value)
-        {
-            EditorGUILayout.BeginHorizontal();
-            value = EditorGUILayout.Toggle(TryGetText("gui.delete_safety"), value);
-            EditorGUILayout.EndHorizontal();
-        }
+        public static void DeleteSafety(ref bool value) => value = EditorGUILayout.Toggle(TryGetText("gui.delete_safety"), value);
 
         public static int DrawRawList(IList list, string label, DrawRawListFunc drawFunc, DrawRawListDefaultValueFunc defaultValueFunc, DrawRawListAddRemoveFunc addFunc, out bool isListChanged, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(list, label, drawFunc, defaultValueFunc, addFunc, false, Vector2.zero, out isListChanged, deleteSafety, displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
         public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList(IList list, string label, DrawRawListFunc drawFunc, DrawRawListDefaultValueFunc defaultValueFunc, DrawRawListAddRemoveFunc addFunc, Vector2 scrollViewPos, out bool isListChanged, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(list, label, drawFunc, defaultValueFunc, addFunc, true, scrollViewPos, out isListChanged, deleteSafety, displayRestrictions, displayRestrictionsIndex);
