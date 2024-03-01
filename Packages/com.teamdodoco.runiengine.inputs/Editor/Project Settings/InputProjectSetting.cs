@@ -74,14 +74,11 @@ namespace RuniEngine.Editor.ProjectSettings
                         treeView.SetSelection(selectedKey);
                 }
 
-                string addLabel = TryGetText("gui.add");
-                string removeLabel = TryGetText("gui.remove");
-
                 {
                     bool containsKey = list.ContainsKey(selectedKey);
                     EditorGUI.BeginDisabledGroup(containsKey);
 
-                    if (GUILayout.Button(addLabel, GUILayout.ExpandWidth(false)))
+                    if (GUILayout.Button(TryGetText("gui.add"), GUILayout.ExpandWidth(false)))
                     {
                         list.Add(selectedKey, new KeyCode[0]);
                         OrderBy();
@@ -95,7 +92,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     EditorGUI.EndDisabledGroup();
                     EditorGUI.BeginDisabledGroup(!containsKey || (deleteSafety && list[selectedKey].Length > 0));
 
-                    if (GUILayout.Button(removeLabel, GUILayout.ExpandWidth(false)))
+                    if (GUILayout.Button(TryGetText("gui.remove"), GUILayout.ExpandWidth(false)))
                     {
                         list.Remove(selectedKey);
 
