@@ -10,7 +10,7 @@ namespace RuniEngine.Editor
 {
     public static class RequiredComponentAdderUtility
     {
-        public static TComponentToAdd[] AddComponent<TComponent, TComponentToAdd>(PrefabStage? prefabStage, bool backToTop) where TComponent : Component where TComponentToAdd : Behaviour
+        public static TComponentToAdd[] AddComponent<TComponent, TComponentToAdd>(PrefabStage? prefabStage, bool backToTop, string ignoreScenePath = "") where TComponent : Component where TComponentToAdd : Behaviour
         {
             TComponent[] components;
             if (prefabStage != null)
@@ -26,6 +26,8 @@ namespace RuniEngine.Editor
             for (int i = 0; i < components.Length; i++)
             {
                 TComponent component = components[i];
+                if (!string.IsNullOrEmpty(ignoreScenePath) && component.gameObject.scene.path.StartsWith(ignoreScenePath))
+                    continue;
 
                 if (!component.TryGetComponent<TComponentToAdd>(out TComponentToAdd? componentToAdd))
                 {
