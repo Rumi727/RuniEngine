@@ -237,7 +237,7 @@ namespace RuniEngine.Editor
         public static RectOffset RectOffsetField(string label, RectOffset value)
         {
             GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(label, GUILayout.Width(EditorGUIUtility.labelWidth));
+            GUILayout.Label(label, EditorStyles.label, GUILayout.Width(EditorGUIUtility.labelWidth));
 
             TextAnchor alignment = EditorStyles.label.alignment;
             EditorStyles.label.alignment = TextAnchor.MiddleLeft;
