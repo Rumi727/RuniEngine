@@ -7,6 +7,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace RuniEngine
 {
+    //이거 코드 분명 어디서 긁어온거였는데 어디서 긁어왔는지 까먹어버렸다 ㅎ...
     public static class CompressFileManager
     {
         /// <summary>
