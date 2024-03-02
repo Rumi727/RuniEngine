@@ -55,6 +55,7 @@ namespace RuniEngine
 
         void OnPreCull() => SetDirty();
 
+        bool isProjectionReset = false;
         public void SetDirty()
         {
             if (camera == null)
@@ -63,15 +64,66 @@ namespace RuniEngine
                 return;
 
             Rect rect = normalizedViewPortRect;
-            rect.position += (Vector2)ScreenManager.screenPosition * 2 * globalScreenPositionMultiple / ScreenManager.size;
+            rect.position += (Vector2)ScreenManager.screenPosition * globalScreenPositionMultiple / ScreenManager.size;
 
             rect.min += ScreenManager.screenArea.min / ScreenManager.size;
             rect.max += ScreenManager.screenArea.max / ScreenManager.size;
 
-            rect.size += rect.position.Clamp(new Vector2(float.MinValue, float.MinValue), Vector2.zero);
-            rect.position = rect.position.Clamp(Vector2.zero, new Vector2(0.9999999f, 0.9999999f));
+            if (rect.position.x < 0 || rect.position.x + rect.width > 1 || rect.position.y < 0 || rect.position.y + rect.height > 1)
+            {
+                isProjectionReset = false;
+                camera.ResetProjectionMatrix();
 
-            rect.size = rect.size.Clamp(new Vector2(0.0001f, 0.0001f), Vector2.positiveInfinity);
+                float x = 0;
+                float y = 0;
+                float size = 1;
+
+                Matrix4x4 m = camera.projectionMatrix;
+
+                if (rect.position.x < 0)
+                    x = rect.position.x / (rect.position.x + rect.width).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                else if (rect.position.x + rect.width > 1)
+                    x = (rect.position.x + rect.width - 1).Clamp(0) / (-rect.position.x + 1).Clamp(MathUtility.epsilonFloatWithAccuracy);
+
+                if (rect.position.y < 0)
+                {
+                    y = rect.position.y / (rect.position.y + rect.height).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                    size = ((rect.position.y + rect.height) / rect.height).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                }
+                else if (rect.position.y + rect.height > 1)
+                {
+                    float yHeight = rect.position.y + rect.height;
+
+                    y = (yHeight - 1).Clamp(0) / (-rect.position.y + 1).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                    size = (1 - ((yHeight - 1) / rect.height)).Clamp(MathUtility.epsilonFloatWithAccuracy, 1);
+                }
+
+                if (camera.orthographic)
+                {
+                    m[0, 3] = x;
+                    m[1, 3] = y;
+                }
+                else 
+                {
+                    m[0, 2] = -x;
+                    m[1, 2] = -y;
+                }
+
+                m[0, 0] /= size;
+                m[1, 1] /= size;
+
+                camera.projectionMatrix = m;
+            }
+            else if (!isProjectionReset)
+            {
+                isProjectionReset = true;
+                camera.ResetProjectionMatrix();
+            }
+
+            rect.size += rect.position.Clamp(new Vector2(float.MinValue, float.MinValue), Vector2.zero);
+            rect.position = rect.position.Clamp(Vector2.zero, new Vector2(1 - (1f / ScreenManager.width), 1 - (1f / ScreenManager.height)));
+
+            rect.size = rect.size.Clamp(new Vector2(1f / ScreenManager.width, 1f / ScreenManager.height), Vector2.positiveInfinity);
 
             camera.rect = rect;
         }
