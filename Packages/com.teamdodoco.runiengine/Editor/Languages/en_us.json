@@ -146,6 +146,10 @@
 
     "inspector.style_setter_base.warning": "Driven by {name}",
 
+    "inspector.camera_setter.normalizedViewPortRect": "Viewport Rect",
+    "inspector.camera_setter.globalScreenPositionMultiple": "Global Screen Position Multiple",
+    "inspector.camera_setter.globalScreenAreaMultiple": "Global Screen Area Multiple",
+
     "undo.modified_~": "Modified {object}",
 
     "transform.position": "Position",

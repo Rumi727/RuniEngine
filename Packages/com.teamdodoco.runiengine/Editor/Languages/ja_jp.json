@@ -146,6 +146,10 @@
     "inspector.texture_style.blurImage": "ぼかし画像",
     "inspector.texture_style.image": "イメージ",
 
+    "inspector.camera_setter.normalizedViewPortRect": "ビューポート長方形",
+    "inspector.camera_setter.globalScreenPositionMultiple": "画面位置の倍数",
+    "inspector.camera_setter.globalScreenAreaMultiple": "画面領域の倍数",
+
     "undo.modified_~": "変更された{object}",
 
     "transform.position": "座標",
