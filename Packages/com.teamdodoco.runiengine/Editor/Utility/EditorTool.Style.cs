@@ -183,5 +183,22 @@ namespace RuniEngine.Editor
             else
                 style.fontSize = 0;
         }
+
+
+
+        static readonly Stack<bool> wideModeQueue = new Stack<bool>();
+        public static void BeginWideMode(bool width)
+        {
+            wideModeQueue.Push(EditorGUIUtility.wideMode);
+            EditorGUIUtility.wideMode = width;
+        }
+
+        public static void EndWideMode()
+        {
+            if (wideModeQueue.TryPop(out bool result))
+                EditorGUIUtility.wideMode = result;
+            else
+                EditorGUIUtility.wideMode = false;
+        }
     }
 }
