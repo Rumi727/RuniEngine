@@ -80,18 +80,21 @@ namespace RuniEngine.Screens
         {
             get
             {
-                Vector2 min = Vector2.zero;
-                Vector2 max = Vector2.zero;
+                if (ScreenCroper.instances.Count <= 0)
+                    return new RectOffset();
+
+                Vector2 min = new Vector2(float.MinValue, float.MinValue);
+                Vector2 max = new Vector2(float.MaxValue, float.MaxValue);
 
                 for (int i = 0; i < ScreenCroper.instances.Count; i++)
                 {
                     RectOffset item = ScreenCroper.instances[i].offset;
 
                     min.x = min.x.Max(item.min.x);
-                    min.y = min.x.Max(item.min.y);
+                    min.y = min.y.Max(item.min.y);
                     
-                    max.x = max.x.Max(item.max.x);
-                    max.y = max.x.Max(item.max.y);
+                    max.x = max.x.Min(item.max.x);
+                    max.y = max.y.Min(item.max.y);
                 }
 
                 return new RectOffset(min, max);

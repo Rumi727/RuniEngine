@@ -202,7 +202,7 @@ namespace RuniEngine.UI
             areaObject.anchorMin = Vector2.zero;
             areaObject.anchorMax = Vector2.one;
 
-            if (Kernel.isPlaying && useScreenArea)
+            if (useScreenArea)
             {
                 areaObject.offsetMin = ScreenManager.screenArea.min * globalScreenAreaMultiple / canvas.scaleFactor;
                 areaObject.offsetMax = ScreenManager.screenArea.max * globalScreenAreaMultiple / canvas.scaleFactor;
