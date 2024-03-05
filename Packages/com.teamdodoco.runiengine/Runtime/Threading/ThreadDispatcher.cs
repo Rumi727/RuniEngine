@@ -30,13 +30,31 @@ namespace RuniEngine.Threading
              * 시간 초과 코드가 맨 뒤에 있을 경우 작업 리스트에서는 빠지는데 시간 초과로 인해 코드가 작동하지 않는 경우가 생김!!!
              */
             while (stopwatch.Elapsed.TotalMilliseconds < allotedTime && scheduledTasks.TryDequeue(out Action action))
-                action();
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
         }
 
         public static void Quit()
         {
             while (scheduledTasks.TryDequeue(out Action action))
-                action();
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
         }
 
         public static UniTask<T> Execute<T>(Func<T> func)
