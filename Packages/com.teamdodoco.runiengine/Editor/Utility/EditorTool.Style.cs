@@ -52,7 +52,7 @@ namespace RuniEngine.Editor
         public static void BeginLabelWidth(string label) => BeginLabelWidth(new GUIContent(label));
         public static void BeginLabelWidth(GUIContent label) => BeginLabelWidth(label, EditorStyles.label);
         public static void BeginLabelWidth(string label, GUIStyle style) => BeginLabelWidth(new GUIContent(label), style);
-        public static void BeginLabelWidth(GUIContent label, GUIStyle style) => BeginLabelWidth(GetLabelXSize(label, style) + 2);
+        public static void BeginLabelWidth(GUIContent label, GUIStyle style) => BeginLabelWidth(GetXSize(label, style) + 2);
 
         public static void BeginLabelWidth(params string[] label) => BeginLabelWidth(label, EditorStyles.label);
         public static void BeginLabelWidth(params GUIContent[] label) => BeginLabelWidth(label, EditorStyles.label);
@@ -74,15 +74,22 @@ namespace RuniEngine.Editor
                 EditorGUIUtility.labelWidth = 0;
         }
 
-        public static float GetXSize(GUIStyle style) => style.CalcSize(new GUIContent()).x;
-        public static float GetYSize(GUIStyle style) => style.CalcSize(new GUIContent()).y;
+        public static float GetXSize(GUIStyle style) => GetXSize(new GUIContent(), style);
+        public static float GetYSize(GUIStyle style) => GetYSize(new GUIContent(), style);
+
+        public static float GetXSize(string label, GUIStyle style) => GetXSize(new GUIContent(label), style);
+        public static float GetYSize(string label, GUIStyle style) => GetXSize(new GUIContent(label), style);
+
+        public static float GetXSize(GUIContent content, GUIStyle style) => style.CalcSize(content).x;
+        public static float GetYSize(GUIContent content, GUIStyle style) => style.CalcSize(content).y;
 
         public static float GetButtonYSize() => GetYSize(GUI.skin.button);
 
         public static float GetLabelXSize(string label) => GetLabelXSize(new GUIContent(label));
-        public static float GetLabelXSize(GUIContent label) => GetLabelXSize(label, EditorStyles.label);
-        public static float GetLabelXSize(string label, GUIStyle style) => GetLabelXSize(new GUIContent(label), style);
-        public static float GetLabelXSize(GUIContent label, GUIStyle style) => style.CalcSize(label).x;
+        public static float GetLabelXSize(GUIContent label) => GetXSize(label, EditorStyles.label);
+
+        public static float GetLabelYSize(string label) => GetLabelYSize(new GUIContent(label));
+        public static float GetLabelYSize(GUIContent label) => GetYSize(label, EditorStyles.label);
 
         public static float GetLabelXSize(params string[] label) => GetLabelXSize(label, EditorStyles.label);
         public static float GetLabelXSize(params GUIContent[] label) => GetLabelXSize(label, EditorStyles.label);
