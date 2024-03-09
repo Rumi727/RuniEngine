@@ -15,38 +15,31 @@ namespace RuniEngine.Editor
 
 
 
-        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, "", false, options);
-        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string label, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, label, true, options);
-        static SerializedProperty? InternalUseProperty(SerializedObject serializedObject, string propertyName, string label, bool labelShow, params GUILayoutOption[] options)
+        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, null, options);
+        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string? label, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, label, options);
+        static SerializedProperty? InternalUseProperty(SerializedObject serializedObject, string propertyName, string? label, params GUILayoutOption[] options)
         {
             GUIContent? guiContent = null;
-            if (labelShow)
+            if (!string.IsNullOrEmpty(label))
                 guiContent = new GUIContent { text = label };
 
-            SerializedProperty? tps = null;
+            SerializedProperty? tps;
 
             try
             {
                 tps = serializedObject.FindProperty(propertyName);
-            }
-            catch (ExitGUIException)
-            {
-
             }
             catch (Exception)
             {
                 GUILayout.Label(TryGetText("inspector.property_none").Replace("{name}", propertyName));
                 return null;
             }
-
+            
             if (tps != null)
             {
                 EditorGUI.BeginChangeCheck();
 
-                if (!labelShow)
-                    EditorGUILayout.PropertyField(tps, true, options);
-                else
-                    EditorGUILayout.PropertyField(tps, guiContent, true, options);
+                EditorGUILayout.PropertyField(tps, guiContent, options);
 
                 if (EditorGUI.EndChangeCheck())
                     serializedObject.ApplyModifiedProperties();
