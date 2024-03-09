@@ -79,16 +79,17 @@ namespace RuniEngine
                 float size = 1;
 
                 Matrix4x4 m = camera.projectionMatrix;
-
-                if (rect.position.x < 0)
-                    x = rect.position.x / (rect.position.x + rect.width).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                if (rect.position.x < 0 && rect.position.x + rect.width > 1)
+                    x = (rect.position.x * 2) + (rect.width - 1);
                 else if (rect.position.x + rect.width > 1)
                     x = (rect.position.x + rect.width - 1).Clamp(0) / (-rect.position.x + 1).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                else if (rect.position.x < 0)
+                    x = (rect.position.x) / (rect.position.x + rect.width).Clamp(MathUtility.epsilonFloatWithAccuracy);
 
-                if (rect.position.y < 0)
+                if (rect.position.y < 0 && rect.position.y + rect.height > 1)
                 {
-                    y = rect.position.y / (rect.position.y + rect.height).Clamp(MathUtility.epsilonFloatWithAccuracy);
-                    size = ((rect.position.y + rect.height) / rect.height).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                    y = (rect.position.y * 2) + (rect.height - 1);
+                    size = 1 / rect.height;
                 }
                 else if (rect.position.y + rect.height > 1)
                 {
@@ -96,6 +97,11 @@ namespace RuniEngine
 
                     y = (yHeight - 1).Clamp(0) / (-rect.position.y + 1).Clamp(MathUtility.epsilonFloatWithAccuracy);
                     size = (1 - ((yHeight - 1) / rect.height)).Clamp(MathUtility.epsilonFloatWithAccuracy, 1);
+                }
+                else if (rect.position.y < 0)
+                {
+                    y = rect.position.y / (rect.position.y + rect.height).Clamp(MathUtility.epsilonFloatWithAccuracy);
+                    size = ((rect.position.y + rect.height) / rect.height).Clamp(MathUtility.epsilonFloatWithAccuracy);
                 }
 
                 if (camera.orthographic)
