@@ -1,11 +1,8 @@
 {
-    "name": "RuniEngine.Editor.Images",
-    "rootNamespace": "RuniEngine.Editor",
+    "name": "RuniEngine.Editor.APIBridge",
+    "rootNamespace": "RuniEngine.Editor.APIBridge",
     "references": [
-        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
-        "GUID:d19976c8233edf14ba31681d949961c5",
-        "GUID:43b6e58e1093cf9459a160bf4432d89e",
-        "GUID:e0d7720a211379b4bab82afbf6fc6b14"
+        "GUID:c6d2ee51b86b95246ae92eebdcffddee"
     ],
     "includePlatforms": [
         "Editor"

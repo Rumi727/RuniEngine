@@ -12,7 +12,8 @@
     "com.unity.modules.unitywebrequestaudio": "1.0.0",
     "com.cysharp.unitask": "2.3.3",
     "com.teamdodoco.runiengine": "0.0.0",
-    "com.teamdodoco.runiengine.pooling": "0.0.0"
+    "com.teamdodoco.runiengine.pooling": "0.0.0",
+    "com.teamdodoco.runiengine.internal-api-bridge": "0.0.0"
   },
   "keywords": [
     "Runi",
