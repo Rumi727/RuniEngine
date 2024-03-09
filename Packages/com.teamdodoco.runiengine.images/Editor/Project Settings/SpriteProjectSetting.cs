@@ -10,15 +10,13 @@ using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
 using System.IO;
 using RuniEngine.Jsons;
-using System.Reflection;
-using UnityEditor.UI;
-using System;
 using RuniEngine.Rendering;
 
 using static RuniEngine.Editor.EditorTool;
 
 using SpriteMetaData = RuniEngine.Resource.Images.SpriteMetaData;
 using Object = UnityEngine.Object;
+using RuniEngine.Editor.APIBridge.UnityEditor.UI;
 
 namespace RuniEngine.Editor.ProjectSettings
 {
@@ -69,7 +67,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
             ResourceManager.FileExtensionExists(filePath, out filePath, ExtensionFilter.pictureFileFilter);
 
-            if (!Directory.Exists(typePath) || string.IsNullOrWhiteSpace(type))
+            if (!Directory.Exists(typePath))
                 return;
 
             DrawLine();
@@ -182,49 +180,8 @@ namespace RuniEngine.Editor.ProjectSettings
             EditorGUILayout.LabelField($"{TryGetText("gui.path")} - " + relativePath.Replace("\\", "/"));
         }
 
-        static readonly Assembly assembly = typeof(ImageEditor).Assembly;
-        static Type? spriteDrawUtility;
-        static MethodInfo? drawSpriteMethod;
         public static void DrawSprite(string nameSpace, string type, string name, string tag, int index, ref float previewSize)
         {
-            if (spriteDrawUtility == null)
-            {
-                spriteDrawUtility = assembly.GetType("UnityEditor.UI.SpriteDrawUtility");
-
-                MethodInfo[] methodInfos = spriteDrawUtility.GetMethods(BindingFlags.Public | BindingFlags.Static);
-                for (int i = 0; i < methodInfos.Length; i++)
-                {
-                    MethodInfo methodInfo = methodInfos[i];
-                    ParameterInfo[] parameterInfos = methodInfo.GetParameters();
-                    if (parameterInfos.Length == 3)
-                    {
-                        bool loopContinue = false;
-                        for (int k = 0; k < parameterInfos.Length; k++)
-                        {
-                            ParameterInfo parameterInfo = parameterInfos[k];
-                            if ((k == 0 && parameterInfo.ParameterType == typeof(Sprite)) || (k == 1 && parameterInfo.ParameterType == typeof(Rect)) || (k == 2 && parameterInfo.ParameterType == typeof(Color)))
-                            {
-                                if (k == 2)
-                                {
-                                    drawSpriteMethod = methodInfo;
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                loopContinue = true;
-                                break;
-                            }
-                        }
-
-                        if (loopContinue)
-                            continue;
-                    }
-                }
-
-                return;
-            }
-
             Sprite? sprite = SpriteSetterBase.GetSprite(type, name, index, nameSpace, tag);
             if (sprite == null)
                 return;
@@ -242,7 +199,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
                 Space();
 
-                drawSpriteMethod?.Invoke(null, new object[] { sprite, EditorGUILayout.GetControlRect(false, previewSize), Color.white });
+                SpriteDrawUtility.DrawSprite(sprite, EditorGUILayout.GetControlRect(false, previewSize), Color.white);
 
                 GUILayout.EndHorizontal();
             }

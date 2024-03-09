@@ -1,10 +1,12 @@
 #nullable enable
+using RuniEngine.Editor.APIBridge.UnityEditor;
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Sounds;
 using System;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+
+using EditorGUI = UnityEditor.EditorGUI;
 
 namespace RuniEngine.Editor.Inspector.Sounds
 {
@@ -12,31 +14,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
     [CustomEditor(typeof(AudioPlayer))]
     public class AudioPlayerEditor : SoundPlayerBaseEditor
     {
-        static Type? _audioFilterGUIType;
-        public static Type audioFilterGUIType => _audioFilterGUIType ??= editorAssembly.GetType("UnityEditor.AudioFilterGUI");
-
-
-        static object? _audioFilterGUIInstance;
-        public static object audioFilterGUIInstance => _audioFilterGUIInstance ??= Activator.CreateInstance(_audioFilterGUIType);
-
-
-        static MethodInfo? _audioFilterGUIMethod;
-        public static MethodInfo audioFilterGUIMethod => _audioFilterGUIMethod ??= audioFilterGUIType.GetMethod("DrawAudioFilterGUI");
-
-
-
-        static Type? _audioUtilType;
-        public static Type audioUtilType => _audioUtilType ??= editorAssembly.GetType("UnityEditor.AudioUtil");
-
-
-        static MethodInfo? _audioUtilHasAudioCallbackMethod;
-        public static MethodInfo audioUtilHasAudioCallbackMethod => _audioUtilHasAudioCallbackMethod ??= audioUtilType.GetMethod("HasAudioCallback");
-
-
-        static MethodInfo? _audioUtilGetCustomFilterChannelCountMethod;
-        public static MethodInfo audioUtilGetCustomFilterChannelCountMethod => _audioUtilGetCustomFilterChannelCountMethod ??= audioUtilType.GetMethod("GetCustomFilterChannelCount");
-
-
+        static AudioFilterGUI? _audioFilterGUIInstance;
+        public static AudioFilterGUI audioFilterGUIInstance => _audioFilterGUIInstance ??= AudioFilterGUI.CreateInstance();
 
         public override void OnInspectorGUI()
         {
@@ -49,20 +28,10 @@ namespace RuniEngine.Editor.Inspector.Sounds
             if (audioPlayer.audioSource == null || audioPlayer.audioSource.bypassEffects)
                 return;
 
-            object[] monos = new object[] { target };
-            if ((bool)audioUtilHasAudioCallbackMethod.Invoke(null, monos) && ((int)audioUtilGetCustomFilterChannelCountMethod.Invoke(null, monos)) > 0)
+            if (AudioUtil.HasAudioCallback(target) && AudioUtil.GetCustomFilterChannelCount(target) > 0)
             {
                 DrawLine();
-
-                try
-                {
-                    audioFilterGUIMethod.Invoke(audioFilterGUIInstance, new object[] { target });
-                }
-                catch (TargetInvocationException e)
-                {
-                    if (e.InnerException.GetType() != typeof(NullReferenceException))
-                        throw;
-                }
+                audioFilterGUIInstance.DrawAudioFilterGUI(target);
             }
         }
 

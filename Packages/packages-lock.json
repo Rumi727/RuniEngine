@@ -48,6 +48,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
+        "com.teamdodoco.runiengine.internal-api-bridge": "0.0.0",
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.video": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
@@ -66,6 +67,7 @@
       "dependencies": {
         "com.cysharp.unitask": "2.3.3",
         "com.teamdodoco.runiengine": "0.0.0",
+        "com.teamdodoco.runiengine.internal-api-bridge": "0.0.0",
         "com.looooong.asyncimageloader_forked_by_teamdodoco": "727.1.4"
       }
     },
@@ -77,6 +79,12 @@
         "com.unity.inputsystem": "1.7.0",
         "com.teamdodoco.runiengine": "0.0.0"
       }
+    },
+    "com.teamdodoco.runiengine.internal-api-bridge": {
+      "version": "file:com.teamdodoco.runiengine.internal-api-bridge",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.teamdodoco.runiengine.nbs": {
       "version": "file:com.teamdodoco.runiengine.nbs",
@@ -105,7 +113,8 @@
         "com.unity.modules.unitywebrequestaudio": "1.0.0",
         "com.cysharp.unitask": "2.3.3",
         "com.teamdodoco.runiengine": "0.0.0",
-        "com.teamdodoco.runiengine.pooling": "0.0.0"
+        "com.teamdodoco.runiengine.pooling": "0.0.0",
+        "com.teamdodoco.runiengine.internal-api-bridge": "0.0.0"
       }
     },
     "com.teamdodoco.runiengine.ui": {
