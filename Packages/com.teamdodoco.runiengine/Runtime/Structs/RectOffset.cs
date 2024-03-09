@@ -20,10 +20,10 @@ namespace RuniEngine
             this.bottom = bottom;
         }
 
-        [FieldName("gui.left")] public float left;
-        [FieldName("gui.right")] public float right;
-        [FieldName("gui.top")] public float top;
-        [FieldName("gui.bottom")] public float bottom;
+        public float left;
+        public float right;
+        public float top;
+        public float bottom;
 
         [JsonIgnore]
         public Vector2 min

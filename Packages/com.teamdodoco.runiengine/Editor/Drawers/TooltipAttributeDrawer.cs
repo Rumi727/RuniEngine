@@ -2,9 +2,11 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace RuniEngine.Editor.Attribute
+using static RuniEngine.Editor.EditorTool;
+
+namespace RuniEngine.Editor.Drawer
 {
-    [CustomPropertyDrawer(typeof(TooltipAttribute), true)]
+    [CustomPropertyDrawer(typeof(TooltipAttribute))]
     public sealed class TooltipAttributeAttributeDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -12,7 +14,9 @@ namespace RuniEngine.Editor.Attribute
             TooltipAttribute attribute = (TooltipAttribute)this.attribute;
             label.tooltip = EditorTool.TryGetText(attribute.text);
 
-            EditorGUI.PropertyField(position, property, label);
+            EditorGUI.PropertyField(position, property, label, IsChildrenIncluded(property));
         }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) => EditorGUI.GetPropertyHeight(property, label);
     }
 }
