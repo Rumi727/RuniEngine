@@ -12,10 +12,10 @@ namespace RuniEngine.Editor
     [CustomEditor(typeof(CanvasSetter))]
     public class CanvasSetterEditor : UIBaseEditor<CanvasSetter>
     {
-        readonly AnimBool disableScreenAreaAnim = new AnimBool();
-        readonly AnimBool worldRenderModeAnim = new AnimBool();
-        readonly AnimBool overlaySpaceAnim = new AnimBool();
-        readonly AnimBool disableUISizeAnim = new AnimBool();
+        AnimBool? disableScreenAreaAnim;
+        AnimBool? worldRenderModeAnim;
+        AnimBool? overlaySpaceAnim;
+        AnimBool? disableUISizeAnim;
 
         public override void OnInspectorGUI()
         {
@@ -30,16 +30,16 @@ namespace RuniEngine.Editor
             bool worldSpace = (target.canvas != null ? target.canvas.renderMode : RenderMode.ScreenSpaceOverlay) == RenderMode.WorldSpace;
 
             EditorGUI.BeginChangeCheck();
-
+            
             {
                 UseProperty("_disableScreenArea", TryGetText("inspector.canvas_setter.disableScreenArea"));
 
-                disableScreenAreaAnim.FadeGroup(!target.disableScreenArea || !TargetsIsEquals(x => x.disableScreenArea, targets), Repaint, () =>
+                FadeGroup(ref disableScreenAreaAnim, !target.disableScreenArea || !TargetsIsEquals(x => x.disableScreenArea, targets), () =>
                 {
                     {
                         UseProperty("_worldRenderMode", TryGetText("inspector.canvas_setter.worldRenderMode"));
 
-                        worldRenderModeAnim.FadeGroup(target.worldRenderMode || !TargetsIsEquals(x => x.worldRenderMode), Repaint, () =>
+                        FadeGroup(ref worldRenderModeAnim, target.worldRenderMode || !TargetsIsEquals(x => x.worldRenderMode), () =>
                             UseProperty("_planeDistance", TryGetText("inspector.canvas_setter.planeDistance"))
                         );
                     }
@@ -47,9 +47,9 @@ namespace RuniEngine.Editor
                     Space();
 
                     {
-                        UseProperty("_areaOffset", TryGetText("inspector.canvas_setter.areaOffset"));
-
-                        overlaySpaceAnim.FadeGroup(overlaySpace || spaceMixed, Repaint, () =>
+                        SerializedProperty? tps = UseProperty("_areaOffset", TryGetText("inspector.canvas_setter.areaOffset"));
+                        
+                        FadeGroup(ref overlaySpaceAnim, overlaySpace || spaceMixed, () =>
                         {
                             Space();
 
@@ -65,10 +65,10 @@ namespace RuniEngine.Editor
             {
                 UseProperty("_disableUISize", TryGetText("inspector.canvas_setter.disableUISize"));
 
-                disableUISizeAnim.FadeGroup
+                FadeGroup
                 (
+                    ref disableUISizeAnim,
                     !target.disableUISize && (!worldSpace || spaceMixed || target.worldRenderMode || !TargetsIsEquals(x => x.worldRenderMode)),
-                    Repaint,
                     () =>
                     {
                         UseProperty("_uiSize", TryGetText("inspector.canvas_setter.uiSize"));
