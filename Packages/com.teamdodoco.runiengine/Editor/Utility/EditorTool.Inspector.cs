@@ -15,13 +15,13 @@ namespace RuniEngine.Editor
 
 
 
-        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, null, options);
-        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string? label, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, label, options);
-        static SerializedProperty? InternalUseProperty(SerializedObject serializedObject, string propertyName, string? label, params GUILayoutOption[] options)
+        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, null, true, options);
+        public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string? label, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, label, false, options);
+        static SerializedProperty? InternalUseProperty(SerializedObject serializedObject, string propertyName, string? label, bool defaultLabel, params GUILayoutOption[] options)
         {
-            GUIContent? guiContent = null;
+            GUIContent? guiContent = new GUIContent();
             if (!string.IsNullOrEmpty(label))
-                guiContent = new GUIContent { text = label };
+                guiContent = new GUIContent(label);
 
             SerializedProperty? tps;
 
@@ -39,7 +39,10 @@ namespace RuniEngine.Editor
             {
                 EditorGUI.BeginChangeCheck();
 
-                EditorGUILayout.PropertyField(tps, guiContent, options);
+                if (defaultLabel)
+                    EditorGUILayout.PropertyField(tps, options);
+                else
+                    EditorGUILayout.PropertyField(tps, guiContent, options);
 
                 if (EditorGUI.EndChangeCheck())
                     serializedObject.ApplyModifiedProperties();
@@ -50,24 +53,24 @@ namespace RuniEngine.Editor
 
 
 
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, "", value, array, false, out _, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string label, string value, string[] array, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, true, out _, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, "", value, array, false, out index, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string label, string value, string[] array, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, true, out index, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, "", value, array, false, out index, out usePropertyChanged, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string label, string value, string[] array, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, true, out index, out usePropertyChanged, options);
-        static string InternalUsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string label, string value, string[] array, bool labelShow, out int index, out bool usePropertyChanged, params GUILayoutOption[] options)
+        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, out _, out _, options);
+        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, out _, out _, options);
+        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, out index, out _, options);
+        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, out index, out _, options);
+        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, out index, out usePropertyChanged, options);
+        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, out index, out usePropertyChanged, options);
+        static string InternalUsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, out int index, out bool usePropertyChanged, params GUILayoutOption[] options)
         {
             EditorGUILayout.BeginHorizontal();
 
-            if (labelShow)
+            if (!string.IsNullOrEmpty(label))
                 EditorGUILayout.PrefixLabel(label);
 
             EditorGUI.BeginChangeCheck();
 
             bool mixed = EditorGUI.showMixedValue;
 
-            SerializedProperty? serializedProperty = UseProperty(serializedObject, propertyName, "", options);
+            SerializedProperty? serializedProperty = UseProperty(serializedObject, propertyName, null, options);
             usePropertyChanged = EditorGUI.EndChangeCheck();
 
             EditorGUI.showMixedValue = mixed;
@@ -227,51 +230,40 @@ namespace RuniEngine.Editor
 
 
 
-        public static RectOffset RectOffsetField(string label, RectOffset value)
+        public static RectOffset RectOffsetField(Rect position, string label, RectOffset value) => RectOffsetField(position, new GUIContent(label), value);
+
+        static readonly GUIContent[] rectOffsetLabels = new GUIContent[] { new GUIContent("L"), new GUIContent("R"), new GUIContent("T"), new GUIContent("B") };
+        static readonly float[] rectOffsetValues = new float[4];
+        public static RectOffset RectOffsetField(Rect position, GUIContent label, RectOffset value)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label, EditorStyles.label, GUILayout.Width(EditorGUIUtility.labelWidth));
+            rectOffsetValues[0] = value.left;
+            rectOffsetValues[1] = value.right;
+            rectOffsetValues[2] = value.top;
 
-            TextAnchor alignment = EditorStyles.label.alignment;
-            EditorStyles.label.alignment = TextAnchor.MiddleLeft;
+            rectOffsetValues[3] = value.bottom;
+            EditorGUI.MultiFloatField(position, label, rectOffsetLabels, rectOffsetValues);
 
-            {
-                GUILayout.BeginVertical();
-
-                string leftLabel = "L";
-                string rightLabel = "R";
-                string topLabel = "T";
-                string bottomLabel = "B";
-
-                BeginLabelWidth(leftLabel, rightLabel, topLabel, bottomLabel);
-
-                {
-                    GUILayout.BeginHorizontal();
-
-                    value.left = EditorGUILayout.FloatField(leftLabel, value.left);
-                    value.right = EditorGUILayout.FloatField(rightLabel, value.right);
-
-                    GUILayout.EndHorizontal();
-                }
-
-                {
-                    GUILayout.BeginHorizontal();
-
-                    value.top = EditorGUILayout.FloatField(topLabel, value.top);
-                    value.bottom = EditorGUILayout.FloatField(bottomLabel, value.bottom);
-                    
-                    GUILayout.EndHorizontal();
-                }
-
-                EndLabelWidth();
-
-                GUILayout.EndVertical();
-            }
-
-            GUILayout.EndHorizontal();
-            EditorStyles.label.alignment = alignment;
+            value.left = rectOffsetValues[0];
+            value.right = rectOffsetValues[1];
+            value.top = rectOffsetValues[2];
+            value.bottom = rectOffsetValues[3];
 
             return value;
         }
+
+        public static RectOffset RectOffsetField(string label, RectOffset value) => RectOffsetField(new GUIContent(label), value);
+        public static RectOffset RectOffsetField(GUIContent label, RectOffset value)
+        {
+            float height;
+            if (EditorGUIUtility.wideMode)
+                height = EditorGUIUtility.singleLineHeight;
+            else
+                height = EditorGUIUtility.singleLineHeight * 2 + 2;
+
+            Rect position = EditorGUILayout.GetControlRect(true, height);
+            return RectOffsetField(position, label, value);
+        }
+
+        public static bool IsChildrenIncluded(SerializedProperty prop) => prop.propertyType == SerializedPropertyType.Generic || prop.propertyType == SerializedPropertyType.Vector4;
     }
 }
