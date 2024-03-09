@@ -17,22 +17,24 @@ namespace RuniEngine
                 speed = 0.125f * Kernel.fpsUnscaledSmoothDeltaTime;
 
             {
+                Vector3 motion = Vector3.zero;
                 Vector3 rotation = transform.localEulerAngles;
                 transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
-
+                
                 if (InputManager.GetKey(KeyCode.A))
-                    transform.position -= transform.right * speed;
+                    motion -= transform.right * speed;
                 if (InputManager.GetKey(KeyCode.D))
-                    transform.position += transform.right * speed;
+                    motion += transform.right * speed;
                 if (InputManager.GetKey(KeyCode.S))
-                    transform.position -= transform.forward * speed;
+                    motion -= transform.forward * speed;
                 if (InputManager.GetKey(KeyCode.W))
-                    transform.position += transform.forward * speed;
+                    motion += transform.forward * speed;
                 if (InputManager.GetKey(KeyCode.LeftShift))
-                    transform.position -= transform.up * speed;
+                    motion -= transform.up * speed;
                 if (InputManager.GetKey(KeyCode.Space))
-                    transform.position += transform.up * speed;
+                    motion += transform.up * speed;
 
+                transform.position += motion;
                 transform.localEulerAngles = rotation;
             }
 
