@@ -176,7 +176,7 @@ namespace RuniEngine.UI
                 if (areaObject == null)
                     return;
 
-                areaObject.name = "Safe Area";
+                areaObject.name = "Area";
             }
 
             if (!Kernel.isPlaying)
@@ -206,7 +206,8 @@ namespace RuniEngine.UI
             {
                 areaObject.offsetMin = ScreenManager.screenArea.min * globalScreenAreaMultiple / canvas.scaleFactor;
                 areaObject.offsetMax = ScreenManager.screenArea.max * globalScreenAreaMultiple / canvas.scaleFactor;
-
+                
+                areaObject.position = new Vector3(areaObject.position.x, areaObject.position.y, 0);
                 areaObject.position += ScreenManager.screenPosition.Multiply(globalScreenPositionMultiple) / canvas.scaleFactor;
             }
             else
