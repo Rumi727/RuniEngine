@@ -26,16 +26,12 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                 List<(UIAnimator animator, UIAnimation animation)> adds = new List<(UIAnimator animator, UIAnimation animation)>();
                 List<Object> undos = new List<Object>();
 
-                for (int i = 0; i < targets.Length; i++)
+                TargetsInvoke(x =>
                 {
-                    UIAnimation? target = targets[i];
-                    if (target == null)
-                        continue;
-
-                    if (target.animator != null)
+                    if (x.animator != null)
                     {
-                        removes.Add((target.animator, target));
-                        undos.Add(target.animator);
+                        removes.Add((x.animator, target));
+                        undos.Add(x.animator);
                     }
 
                     if (selectedAnimator != null)
@@ -43,7 +39,7 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                         adds.Add((selectedAnimator, target));
                         undos.Add(selectedAnimator);
                     }
-                }
+                });
 
                 Undo.RecordObjects(undos.ToArray(), TryGetText("undo.modified_~").Replace("{object}", TryGetText("inspector.ui_animation.animator")));
 

@@ -49,14 +49,7 @@ namespace RuniEngine.Editor.Inspector.Rendering
             UseProperty("_defaultSprite", TryGetText("inspector.sprite_setter.defaultSprite"));
 
             if (EditorGUI.EndChangeCheck())
-            {
-                for (int i = 0; i < targets.Length; i++)
-                {
-                    SpriteSetterBase? value = targets[i];
-                    if (value != null)
-                        value.Refresh();
-                }
-            }
+                TargetsInvoke(x => x.Refresh());
         }
     }
 }

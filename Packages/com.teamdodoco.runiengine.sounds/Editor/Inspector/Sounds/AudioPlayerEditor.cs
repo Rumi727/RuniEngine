@@ -58,14 +58,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 EditorGUI.BeginChangeCheck();
                 long value = EditorGUILayout.LongField(target.timeSamples, GUILayout.Width(75));
                 if (EditorGUI.EndChangeCheck())
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        AudioPlayer? target2 = (AudioPlayer?)targets[i];
-                        if (target2 != null)
-                            target2.timeSamples = value;
-                    }
-                }
+                    TargetsInvoke(x => ((AudioPlayer)x).timeSamples = value);
+
                 func?.Invoke();
             });
         }

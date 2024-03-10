@@ -34,16 +34,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     EditorGUI.BeginChangeCheck();
                     double value = EditorGUILayout.DoubleField(target.tick, GUILayout.Width(50));
-
                     if (EditorGUI.EndChangeCheck())
-                    {
-                        for (int i = 0; i < targets.Length; i++)
-                        {
-                            NBSPlayer? target2 = (NBSPlayer?)targets[i];
-                            if (target2 != null)
-                                target2.tick = value;
-                        }
-                    }
+                        TargetsInvoke(x => ((NBSPlayer)x).tick = value);
                 }
 
                 {
@@ -51,14 +43,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                     int value = EditorGUILayout.IntField(target.index, GUILayout.Width(50));
 
                     if (EditorGUI.EndChangeCheck())
-                    {
-                        for (int i = 0; i < targets.Length; i++)
-                        {
-                            NBSPlayer? target2 = (NBSPlayer?)targets[i];
-                            if (target2 != null)
-                                target2.index = value;
-                        }
-                    }
+                        TargetsInvoke(x => ((NBSPlayer)x).index = value);
                 }
 
                 func?.Invoke();

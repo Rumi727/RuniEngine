@@ -25,12 +25,7 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                 if (EditorGUI.EndChangeCheck())
                 {
                     serializedObject.ApplyModifiedProperties();
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        UIAnimator? value = targets[i];
-                        if (value != null)
-                            value.LayoutUpdate();
-                    }
+                    TargetsInvoke(x => x.LayoutUpdate());
                 }
             }
             else
@@ -59,59 +54,24 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
                 EditorGUILayout.BeginHorizontal();
 
                 if (GUILayout.Button(TryGetText("gui.play")))
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        UIAnimator? value = targets[i];
-                        if (value != null)
-                            value.Play();
-                    }
-                }
+                    TargetsInvoke(x => x.Play());
 
                 if (GUILayout.Button(TryGetText("gui.rewind")))
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        UIAnimator? value = targets[i];
-                        if (value != null)
-                            value.Rewind();
-                    }
-                }
+                    TargetsInvoke(x => x.Rewind());
 
                 if (!TargetsIsEquals(x => x.isPlaying) || !target.isPlaying)
                 {
                     if (GUILayout.Button(TryGetText("gui.unpause")))
-                    {
-                        for (int i = 0; i < targets.Length; i++)
-                        {
-                            UIAnimator? value = targets[i];
-                            if (value != null)
-                                value.UnPause();
-                        }
-                    }
+                        TargetsInvoke(x => x.UnPause());
                 }
                 else
                 {
                     if (GUILayout.Button(TryGetText("gui.pause")))
-                    {
-                        for (int i = 0; i < targets.Length; i++)
-                        {
-                            UIAnimator? value = targets[i];
-                            if (value != null)
-                                value.Pause();
-                        }
-                    }
+                        TargetsInvoke(x => x.Pause());
                 }
 
                 if (GUILayout.Button(TryGetText("gui.stop")))
-                {
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        UIAnimator? value = targets[i];
-                        if (value != null)
-                            value.Stop();
-                    }
-                }
+                    TargetsInvoke(x => x.Stop());
 
                 GUILayout.EndHorizontal();
             }
