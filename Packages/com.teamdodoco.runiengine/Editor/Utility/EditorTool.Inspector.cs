@@ -1,10 +1,15 @@
 #nullable enable
+using RuniEngine.Editor.APIBridge.UnityEditor;
+using RuniEngine.Editor.APIBridge.UnityEditorInternal;
 using RuniEngine.Resource;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
+
+using EditorGUI = UnityEditor.EditorGUI;
 
 namespace RuniEngine.Editor
 {
@@ -14,6 +19,8 @@ namespace RuniEngine.Editor
         public static string DrawNameSpace(string label, string nameSpace, params GUILayoutOption[] options) => DrawStringArray(label, nameSpace, ResourceManager.GetNameSpaces(), options);
 
 
+
+        static readonly Dictionary<string, AnimBool> usePropertyAnimBoolList = new Dictionary<string, AnimBool>();
 
         public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, null, true, options);
         public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string? label, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, label, false, options);
@@ -39,10 +46,78 @@ namespace RuniEngine.Editor
             {
                 EditorGUI.BeginChangeCheck();
 
-                if (defaultLabel)
-                    EditorGUILayout.PropertyField(tps, options);
+                if (tps.isArray)
+                {
+                    AnimBool animBool;
+                    {
+                        string key = ReorderableListWrapper.GetPropertyIdentifier(tps);
+                        if (!usePropertyAnimBoolList.TryGetValue(key, out animBool))
+                        {
+                            animBool = new AnimBool(tps.isExpanded);
+                            usePropertyAnimBoolList[key] = animBool;
+                        }
+                    }
+
+                    animBool.target = tps.isExpanded;
+
+                    if (tps.isExpanded || animBool.faded != 0)
+                    {
+                        bool isExpanded = tps.isExpanded;
+                        tps.isExpanded = true;
+
+                        float foldoutHeight = GetYSize(EditorStyles.foldoutHeader);
+                        float height = EditorGUI.GetPropertyHeight(tps);
+
+                        Rect position = EditorGUILayout.GetControlRect(false, foldoutHeight.Lerp(height, animBool.faded), options);
+                        Rect clip = position;
+
+                        clip.size += clip.position;
+                        clip.position = Vector2.zero;
+
+                        clip.width += 4;
+                        clip.height = position.y + foldoutHeight.Lerp(height, animBool.faded);
+
+                        InspectorWindow.RepaintAllInspectors();
+
+                        {
+                            GUI.BeginClip(clip);
+
+                            if (defaultLabel)
+                                EditorGUI.PropertyField(position, tps);
+                            else
+                                EditorGUI.PropertyField(position, tps, guiContent);
+
+                            GUI.EndClip();
+                        }
+
+                        if (tps.isExpanded == false)
+                            isExpanded = !isExpanded;
+
+                        tps.isExpanded = isExpanded;
+                    }
+                    else
+                    {
+                        float foldoutHeight = GetYSize(EditorStyles.foldoutHeader);
+
+                        bool isExpanded = tps.isExpanded;
+                        tps.isExpanded = true;
+
+                        Rect position = EditorGUILayout.GetControlRect(false, foldoutHeight, options);
+                        tps.isExpanded = isExpanded;
+
+                        if (defaultLabel)
+                            EditorGUI.PropertyField(position, tps);
+                        else
+                            EditorGUI.PropertyField(position, tps, guiContent);
+                    }
+                }
                 else
-                    EditorGUILayout.PropertyField(tps, guiContent, options);
+                {
+                    if (defaultLabel)
+                        EditorGUILayout.PropertyField(tps, options);
+                    else
+                        EditorGUILayout.PropertyField(tps, guiContent, options);
+                }
 
                 if (EditorGUI.EndChangeCheck())
                     serializedObject.ApplyModifiedProperties();
