@@ -22,14 +22,7 @@ namespace RuniEngine.Editor.Inspector.Rendering
             UseProperty("_replaces", TryGetText("gui.replace"));
 
             if (EditorGUI.EndChangeCheck())
-            {
-                for (int i = 0; i < targets.Length; i++)
-                {
-                    TextMeshProSetter? value = targets[i];
-                    if (value != null)
-                        value.Refresh();
-                }
-            }
+                TargetsInvoke(x => x.Refresh());
         }
     }
 }
