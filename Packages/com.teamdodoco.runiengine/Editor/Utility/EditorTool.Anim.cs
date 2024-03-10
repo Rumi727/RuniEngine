@@ -24,12 +24,14 @@ namespace RuniEngine.Editor
                 finally
                 {
                     EditorGUILayout.EndFadeGroup();
+                    Space(-2f.Lerp(0, animBool.faded).RoundToInt());
                 }
 
                 return true;
             }
 
             EditorGUILayout.EndFadeGroup();
+
             return false;
         }
 
