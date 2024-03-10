@@ -2,6 +2,7 @@
 using RuniEngine.UI.Animating;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 namespace RuniEngine.Editor.Inspector.UI.Animating
@@ -65,10 +66,6 @@ namespace RuniEngine.Editor.Inspector.UI.Animating
             GUILayout.Label($"{TryGetText("gui.length")}: {TargetsToString(x => x.length)}");
         }
 
-        public void AutoField(bool condition, string propertyName, string label)
-        {
-            if (condition)
-                UseProperty(propertyName, label);
-        }
+        public void AutoField(ref AnimBool? animBool, bool condition, string propertyName, string label) => FadeGroup(ref animBool, condition, () => UseProperty(propertyName, label));
     }
 }
