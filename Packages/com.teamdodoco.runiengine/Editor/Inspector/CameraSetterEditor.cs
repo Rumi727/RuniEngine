@@ -17,7 +17,7 @@ namespace RuniEngine.Editor
 
             UseProperty("_disable", TryGetText("gui.disable"));
 
-            FadeGroup(ref disableAnim, Repaint, !target.disable || !TargetsIsEquals(x => x.disable), () =>
+            FadeGroup(ref disableAnim, !target.disable || !TargetsIsEquals(x => x.disable), () =>
             {
                 Space();
 
