@@ -24,41 +24,14 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
             get
             {
                 f_dataOut ??= type.GetField("dataOut", BindingFlags.NonPublic | BindingFlags.Instance);
-                
-                IList? list = (IList?)f_dataOut.GetValue(instance);
-                if (list == null)
-                    return null;
-
-                if (list.Count != tg_dataOut?.Length)
-                    tg_dataOut = new EditorGUI.VUMeter.SmoothingData[list.Count];
-
-                for (int i = 0; i < list.Count; i++)
-                    tg_dataOut[i] = EditorGUI.VUMeter.SmoothingData.GetInstance(list[i]);
-
-                return tg_dataOut;
+                return (EditorGUI.VUMeter.SmoothingData[]?)f_dataOut.GetValue(instance);
             }
             set
             {
                 f_dataOut ??= type.GetField("dataOut", BindingFlags.Public | BindingFlags.Instance);
-                if (value == null)
-                {
-                    f_dataOut.SetValue(instance, null);
-                    tg_dataOut = null;
-
-                    return;
-                }
-
-                if (value.Length != ts_dataOut?.Length)
-                    ts_dataOut = new object[value.Length];
-
-                for (int i = 0; i < value.Length; i++)
-                    ts_dataOut[i] = value[i].instance;
-
-                f_dataOut.SetValue(instance, ts_dataOut);
+                f_dataOut.SetValue(instance, value);
             }
         }
-        EditorGUI.VUMeter.SmoothingData[]? tg_dataOut;
-        object[]? ts_dataOut;
         static FieldInfo? f_dataOut;
 
 
