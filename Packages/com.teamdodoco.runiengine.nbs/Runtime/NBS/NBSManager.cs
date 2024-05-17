@@ -54,7 +54,7 @@ namespace RuniEngine.NBS
 
             /*Jumps to the next tick*/
             short tick;
-            short tick2 = -1;
+            short tick2 = -1; //틱의 시작은 -1이여야합니다
 
             List<NBSNote> nbsNotes = new List<NBSNote>();
             while ((tick = binaryReader.ReadInt16()) != 0)
@@ -64,7 +64,7 @@ namespace RuniEngine.NBS
 
                 /*Jumps to the next layer*/
                 short layerIndex;
-                short layerIndex2 = -1;
+                short layerIndex2 = -1; //레이어도 마찬가지
                 while ((layerIndex = binaryReader.ReadInt16()) != 0)
                 {
                     layerIndex2 += layerIndex;
