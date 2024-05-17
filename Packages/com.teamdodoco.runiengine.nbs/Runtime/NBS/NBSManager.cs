@@ -70,7 +70,7 @@ namespace RuniEngine.NBS
                     layerIndex2 += layerIndex;
                     NBSNoteMetaData nbsNoteMetaData = new NBSNoteMetaData
                     (
-                        (short)(layerIndex2 - 1),
+                        layerIndex2,
                         /*Note block instrument*/ binaryReader.ReadByte(),
                         /*Note block key*/ binaryReader.ReadByte(),
                         /*Note block velocity*/ binaryReader.ReadByte(),
