@@ -251,7 +251,7 @@ namespace RuniEngine.Editor
                 bool startWith = false;
                 for (int k = 0; k < array.Length; k++)
                 {
-                    if (path == Path.GetDirectoryName(array[k]).Replace("\\", "/"))
+                    if (path == Path.Combine(array[k], "..").Replace("\\", "/"))
                     {
                         startWith = true;
                         break;
@@ -266,7 +266,7 @@ namespace RuniEngine.Editor
 
                 if (path.Contains('/'))
                 {
-                    string parentPath = Path.GetDirectoryName(path).Replace("\\", "/");
+                    string parentPath = Path.Combine(path, "..").Replace("\\", "/");
                     if (!displayList.Contains(parentPath + "/root"))
                     {
                         displayList.Insert(displayList.Count - 1, parentPath + "/root");
