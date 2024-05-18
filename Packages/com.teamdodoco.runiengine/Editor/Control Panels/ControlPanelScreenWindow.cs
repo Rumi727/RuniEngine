@@ -7,8 +7,11 @@ namespace RuniEngine.Editor
 {
     public class ControlPanelScreenWindow : IControlPanelWindow
     {
-        public string label { get; } = "gui.screen";
-        public int sort { get; } = 600;
+        public string label => "gui.screen";
+        public int sort => 600;
+
+        public bool allowUpdate => true;
+        public bool allowEditorUpdate => false;
 
         static ScreenMover? screenMover;
         static ScreenCroper? screenCroper;

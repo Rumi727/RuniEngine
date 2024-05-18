@@ -11,8 +11,11 @@ namespace RuniEngine.Editor
 {
     public class ControlPanelResourceWindow : IControlPanelWindow
     {
-        public string label { get; } = "control_panel.resource";
-        public int sort { get; } = 300;
+        public string label => "control_panel.resource";
+        public int sort => 300;
+
+        public bool allowUpdate => true;
+        public bool allowEditorUpdate => false;
 
         public void OnGUI() => DrawGUI();
 
