@@ -129,8 +129,8 @@ namespace RuniEngine.Booting
 
         static void AttributeInvoke<T>() where T : Attribute
         {
-            Type[] types = ReflectionManager.types;
-            for (int typesIndex = 0; typesIndex < types.Length; typesIndex++)
+            IReadOnlyList<Type> types = ReflectionManager.types;
+            for (int typesIndex = 0; typesIndex < types.Count; typesIndex++)
             {
                 MethodInfo[] methodInfos = types[typesIndex].GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
                 for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.Length; methodInfoIndex++)
