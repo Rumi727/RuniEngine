@@ -940,6 +940,29 @@ namespace RuniEngine
         public static BigDecimal Exp(this BigInteger value) => BigDecimal.Exp(value);
         #endregion
 
+        public static float FastInverseSqrt(this float number)
+        {
+            const float threehalfs = 1.5F;
+
+            float x2 = number * 0.5F;
+            float y = number;
+
+            // evil floating point bit level hacking
+            uint i = BitConverter.ToUInt32(BitConverter.GetBytes(y), 0);
+
+            // value is pre-assumed
+            i = 0x5f3759df - (i >> 1);
+            y = BitConverter.ToSingle(BitConverter.GetBytes(i), 0);
+
+            // 1st iteration
+            y *= (threehalfs - (x2 * y * y));
+
+            // 2nd iteration, this can be removed
+            // y = y * (threehalfs - (x2 * y * y));
+
+            return y;
+        }
+
         #region Floor
         public static float Floor(this float value) => (float)Math.Floor(value);
         public static double Floor(this double value) => Math.Floor(value);
