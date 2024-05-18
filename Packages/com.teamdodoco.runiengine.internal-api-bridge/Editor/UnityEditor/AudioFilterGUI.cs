@@ -1,6 +1,5 @@
 #nullable enable
 using System;
-using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
@@ -41,9 +40,21 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
         public void DrawAudioFilterGUI(MonoBehaviour monoBehaviour)
         {
             m_DrawAudioFilterGUI ??= type.GetMethod("DrawAudioFilterGUI", BindingFlags.Public | BindingFlags.Instance);
-
             mp_DrawAudioFilterGUI[0] = monoBehaviour;
-            m_DrawAudioFilterGUI.Invoke(instance, mp_DrawAudioFilterGUI);
+
+            /* 
+             * 어째서인지 Null 참조 예외가 발생하지만 이는 유니티 버그로 추정됨
+             * 모든 변수 값을 확인해봐도 null이 아님
+             */
+            try
+            {
+                m_DrawAudioFilterGUI.Invoke(instance, mp_DrawAudioFilterGUI);
+            }
+            catch (TargetInvocationException e)
+            {
+                if (e.InnerException.GetType() != typeof(NullReferenceException))
+                    throw;
+            }
         }
 
 
