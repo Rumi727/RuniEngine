@@ -113,6 +113,9 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     TargetsInvoke(x =>
                     {
+                        //프로퍼티 업데이트
+                        x.pitch = x.pitch;
+
                         if (x.pitchFixed)
                             x.tempo = x.pitch * x.tempo.Sign();
                     });
@@ -196,9 +199,20 @@ namespace RuniEngine.Editor.Inspector.Sounds
             {
                 string label = TryGetText("gui.spatial");
 
+                EditorGUI.BeginChangeCheck();
+
                 BeginLabelWidth(label);
                 UseProperty(serializedObject, "_spatial", label, GUILayout.Width(EditorGUIUtility.labelWidth + 17));
                 EndLabelWidth();
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    TargetsInvoke(x =>
+                    {
+                        //프로퍼티 업데이트
+                        x.spatial = x.spatial;
+                    });
+                }
             }
 
             Space();
@@ -218,10 +232,21 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
                 {
                     string label = TryGetText("gui.min_distance");
+
+                    EditorGUI.BeginChangeCheck();
                     
                     BeginLabelWidth(label);
                     UseProperty(serializedObject, "_minDistance", label);
                     EndLabelWidth();
+
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        TargetsInvoke(x =>
+                        {
+                            //프로퍼티 업데이트
+                            x.minDistance = x.minDistance;
+                        });
+                    }
                 }
 
                 Space();
@@ -229,9 +254,20 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     string label = TryGetText("gui.max_distance");
 
+                    EditorGUI.BeginChangeCheck();
+
                     BeginLabelWidth(label);
                     UseProperty(serializedObject, "_maxDistance", label);
                     EndLabelWidth();
+
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        TargetsInvoke(x =>
+                        {
+                            //프로퍼티 업데이트
+                            x.maxDistance = x.maxDistance;
+                        });
+                    }
                 }
             }
             else
@@ -334,7 +370,9 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             BeginFieldWidth(60);
             EditorGUI.BeginChangeCheck();
+
             float value = EditorGUILayout.Slider((float)target.time, 0, (float)target.length);
+            
             EndFieldWidth();
 
             if (EditorGUI.EndChangeCheck())

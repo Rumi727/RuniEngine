@@ -71,6 +71,52 @@ namespace RuniEngine.Sounds
         public override double length => audioMetaData != null ? audioMetaData.length / metaDataTempo : 0;
         public int samples => audioMetaData != null ? audioMetaData.samples : 0;
 
+
+
+        public override double pitch
+        {
+            get => base.pitch;
+            set
+            {
+                base.pitch = value;
+                PitchUpdate();
+            }
+        }
+
+
+
+        public override float minDistance
+        {
+            get => base.minDistance;
+            set
+            {
+                base.minDistance = value;
+                DistanceUpdate();
+            }
+        }
+
+        public override float maxDistance
+        {
+            get => base.maxDistance;
+            set
+            {
+                base.maxDistance = value;
+                DistanceUpdate();
+            }
+        }
+
+
+
+        public override bool spatial
+        {
+            get => base.spatial;
+            set
+            {
+                base.spatial = value;
+                SpatialUpdate();
+            }
+        }
+
         public double spatialStereo => Interlocked.CompareExchange(ref _spatialStereo, 0, 0);
         double _spatialStereo;
 
@@ -80,9 +126,22 @@ namespace RuniEngine.Sounds
 
 
 
+        void OnEnable() => AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+        }
+
+        void OnAudioConfigurationChanged(bool deviceWasChanged) => VarUpdate();
+
         void Update()
         {
-            VarRefresh();
+            if (isDisposable && !loop && datas != null && (timeSamples < 0 || timeSamples >= samples))
+            {
+                Remove();
+                return;
+            }
 
             //매 프레임 시간 보정
             if (isPlaying && !isPaused)
@@ -92,30 +151,17 @@ namespace RuniEngine.Sounds
 
                 Interlocked.Exchange(ref _timeSamples, index);
             }
-
-            if (isDisposable && !loop && datas != null && (timeSamples < 0 || timeSamples >= samples))
-                Remove();
         }
 
-        void VarRefresh()
+        void LateUpdate()
         {
-            if (audioSource == null || AudioLoader.audioListener == null)
-                return;
+            ClipFixUpdate();
+            PosUpdate();
+        }
 
-            {
-                float pitch = (float)realPitch * ((float)frequency / AudioLoader.systemFrequency) * ((float)channels / AudioLoader.systemChannels);
-                if (pitch != 0)
-                    audioSource.pitch = pitch;
-                else
-                    audioSource.pitch = 1;
-            }
-
-            audioSource.spatialBlend = spatial ? 1 : 0;
-
-            audioSource.minDistance = minDistance;
-            audioSource.maxDistance = maxDistance;
-
-            if (isPlaying && (!audioSource.enabled || !audioSource.isPlaying || audioSource.clip != null))
+        void ClipFixUpdate()
+        {
+            if (audioSource != null && (!audioSource.enabled || !audioSource.isPlaying || audioSource.clip != null))
             {
                 audioSource.enabled = true;
                 audioSource.Stop();
@@ -123,21 +169,58 @@ namespace RuniEngine.Sounds
                 audioSource.clip = null;
                 audioSource.Play();
             }
+        }
 
-            if (spatial)
+        void PosUpdate()
+        {
+            if (AudioLoader.audioListener != null && spatial)
             {
-                float value = (Quaternion.Inverse(AudioLoader.audioListener.transform.rotation) * (transform.position - AudioLoader.audioListener.transform.position)).x / (transform.position - AudioLoader.audioListener.transform.position).magnitude;
+                float value = (Quaternion.Inverse(AudioLoader.audioListener.transform.rotation) * (transform.position - AudioLoader.audioListener.transform.position)).normalized.x;
                 Interlocked.Exchange(ref _spatialStereo, value);
             }
         }
 
+        void VarUpdate()
+        {
+            PitchUpdate();
+            SpatialUpdate();
+            DistanceUpdate();
+        }
 
+        public void PitchUpdate()
+        {
+            if (audioSource == null)
+                return;
+
+            float pitch = (float)realPitch.Abs() * ((float)frequency / AudioLoader.systemFrequency) * ((float)channels / AudioLoader.systemChannels);
+            if (pitch != 0)
+                audioSource.pitch = pitch;
+            else
+                audioSource.pitch = 1;
+        }
+
+        public void SpatialUpdate()
+        {
+            if (audioSource != null)
+                audioSource.spatialBlend = spatial ? 1 : 0;
+
+            PosUpdate();
+        }
+
+        public void DistanceUpdate()
+        {
+            if (audioSource != null)
+            {
+                audioSource.minDistance = minDistance;
+                audioSource.maxDistance = maxDistance;
+            }
+        }
 
         public override bool Refresh()
         {
             try
             {
-                ThreadManager.Lock(ref onAudioFilterReadLock);
+                ThreadTask.Lock(ref onAudioFilterReadLock);
 
                 AudioData? audioData = AudioLoader.SearchAudioData(key, nameSpace);
                 if (audioData == null || audioData.audios.Length <= 0)
@@ -159,10 +242,12 @@ namespace RuniEngine.Sounds
 
                 this.audioData = audioData;
                 this.audioMetaData = audioMetaData;
+
+                VarUpdate();
             }
             finally
             {
-                ThreadManager.Unlock(ref onAudioFilterReadLock);
+                ThreadTask.Unlock(ref onAudioFilterReadLock);
             }
 
             return true;
@@ -177,7 +262,7 @@ namespace RuniEngine.Sounds
             if (!Refresh())
                 return;
 
-            VarRefresh();
+            VarUpdate();
 
             if (tempo < 0)
             {
@@ -222,7 +307,7 @@ namespace RuniEngine.Sounds
         {
             try
             {
-                ThreadManager.Lock(ref onAudioFilterReadLock);
+                ThreadTask.Lock(ref onAudioFilterReadLock);
 
                 if (tempData.Length != AudioLoader.systemChannels)
                     tempData = new float[AudioLoader.systemChannels];
@@ -232,7 +317,7 @@ namespace RuniEngine.Sounds
                     long timeSamples = this.timeSamples;
                     long internalTimeSamples = Interlocked.Read(ref this.internalTimeSamples);
                     double tempo = realTempo;
-                    double pitch = realPitch;
+                    double pitch = realPitch.Abs();
                     float volume = (float)this.volume;
                     bool loop = this.loop;
 
@@ -262,13 +347,12 @@ namespace RuniEngine.Sounds
                     {
                         {
                             double value = data.Length / audioChannels;
-                            double pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
-
                             internalTimeSamples += (long)(value * tempo.Sign());
 
                             //템포
                             tempoAdjustmentIndex += value;
 
+                            double pitchDivideTempo = tempo / (pitch != 0 ? pitch : 1);
                             double condition = 2048 * (pitch != 0 ? pitch : 1);
                             while (tempoAdjustmentIndex >= condition)
                             {
