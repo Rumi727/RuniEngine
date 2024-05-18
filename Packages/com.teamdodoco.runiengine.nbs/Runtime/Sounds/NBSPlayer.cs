@@ -315,9 +315,9 @@ namespace RuniEngine.Sounds
 
                 AudioPlayer? audioPlayer;
                 if (spatial)
-                    audioPlayer = AudioPlayer.PlayAudio(blockType, "nbs", volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform, Vector3.zero, minDistance, maxDistance);
+                    audioPlayer = AudioPlayer.PlayAudio(blockType, NBSLoader.nbsNameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform, Vector3.zero, minDistance, maxDistance);
                 else
-                    audioPlayer = AudioPlayer.PlayAudio(blockType, "nbs", volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform);
+                    audioPlayer = AudioPlayer.PlayAudio(blockType, NBSLoader.nbsNameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform);
 
                 allPlayingAudios.Add(audioPlayer);
             }
