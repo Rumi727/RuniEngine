@@ -1,6 +1,5 @@
 #nullable enable
 using RuniEngine.Screens;
-using System;
 using UnityEngine;
 
 namespace RuniEngine

@@ -33,13 +33,16 @@ namespace RuniEngine.Editor.Inspector.Sounds
             {
                 {
                     EditorGUI.BeginChangeCheck();
+
                     double value = EditorGUILayout.DoubleField(target.tick, GUILayout.Width(50));
+
                     if (EditorGUI.EndChangeCheck())
                         TargetsInvoke(x => ((NBSPlayer)x).tick = value);
                 }
 
                 {
                     EditorGUI.BeginChangeCheck();
+
                     int value = EditorGUILayout.IntField(target.index, GUILayout.Width(50));
 
                     if (EditorGUI.EndChangeCheck())
