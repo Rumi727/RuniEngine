@@ -35,7 +35,7 @@ namespace RuniEngine.Editor
         public static void ShowWindow()
         {
             if (!HasOpenInstances<ControlPanelMainWindow>())
-                GetWindow<ControlPanelMainWindow>(true, "Runi Engine");
+                GetWindow<ControlPanelMainWindow>(false, "Runi Engine");
             else
                 FocusWindowIfItsOpen<ControlPanelMainWindow>();
         }
