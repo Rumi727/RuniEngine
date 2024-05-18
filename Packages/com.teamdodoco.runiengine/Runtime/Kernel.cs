@@ -4,7 +4,6 @@ using RuniEngine.Accounts;
 using RuniEngine.Booting;
 using RuniEngine.Datas;
 using RuniEngine.Resource;
-using RuniEngine.Tasks;
 using RuniEngine.Threading;
 using System.Diagnostics;
 using UnityEngine;
@@ -101,25 +100,25 @@ namespace RuniEngine
 
 #if UNITY_EDITOR
         /// <summary>
-        /// Editor: ThreadManager.isMainThread && Application.isEditor
+        /// Editor: ThreadTask.isMainThread && Application.isEditor
         /// /
         /// Build: const false
         /// </summary>
-        public static bool isEditor => ThreadManager.isMainThread && Application.isEditor;
+        public static bool isEditor => ThreadTask.isMainThread && Application.isEditor;
 
         /// <summary>
-        /// Editor: !ThreadManager.isMainThread || Application.isPlaying
+        /// Editor: !ThreadTask.isMainThread || Application.isPlaying
         /// /
         /// Build: const true
         /// </summary>
-        public static bool isPlaying => !ThreadManager.isMainThread || Application.isPlaying;
+        public static bool isPlaying => !ThreadTask.isMainThread || Application.isPlaying;
 
         /// <summary>
-        /// Editor: !ThreadManager.isMainThread || (Application.isPlaying && !UnityEditor.EditorApplication.isPaused)
+        /// Editor: !ThreadTask.isMainThread || (Application.isPlaying && !UnityEditor.EditorApplication.isPaused)
         /// /
         /// Build: const true
         /// </summary>
-        public static bool isPlayingAndNotPaused => !ThreadManager.isMainThread || (Application.isPlaying && !UnityEditor.EditorApplication.isPaused);
+        public static bool isPlayingAndNotPaused => !ThreadTask.isMainThread || (Application.isPlaying && !UnityEditor.EditorApplication.isPaused);
 #else
         public const bool isEditor = false;
         public const bool isPlaying = true;
