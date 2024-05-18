@@ -30,13 +30,7 @@ namespace RuniEngine
 
 #if UNITY_EDITOR
         [UnityEditor.InitializeOnLoadMethod]
-        static void Init()
-        {
-            UnityEditor.EditorApplication.update += () =>
-            {
-                detectionCount = 0;
-            };
-        }
+        static void Init() => UnityEditor.EditorApplication.update += () => detectionCount = 0;
 #endif
     }
 }

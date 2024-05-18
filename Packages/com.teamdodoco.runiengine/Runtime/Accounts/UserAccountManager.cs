@@ -39,7 +39,7 @@ namespace RuniEngine.Accounts
                 return _userData;
             }
         }
-        private static StorableClass[] _userData = null!;
+        static StorableClass[] _userData = null!;
 
         public static void Add(UserAccountInfo info)
         {
