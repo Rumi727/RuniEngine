@@ -31,7 +31,7 @@ namespace RuniEngine.Sounds
                 if (nbsFile == null)
                     return 0;
                 
-                return tick * 0.05d / (nbsFile.tickTempo * 0.0005f);
+                return internalTick * 0.05d / (nbsFile.tickTempo * 0.0005);
             }
             set
             {
@@ -40,7 +40,7 @@ namespace RuniEngine.Sounds
 
                 if (time != value)
                 {
-                    tick = value * (nbsFile.tickTempo * 0.0005f) * 20;
+                    internalTick = value * (nbsFile.tickTempo * 0.0005) * 20;
                     TimeChangedEventInvoke();
                 }
             }
@@ -48,22 +48,34 @@ namespace RuniEngine.Sounds
 
         public double tick
         {
-            get => _tick;
+            get => internalTick / (nbsFile?.tickTempo * 0.0005) ?? 0;
             set
             {
                 if (nbsFile == null)
                     return;
 
-                if (tick != value)
+                internalTick = value * (nbsFile.tickTempo * 0.0005);
+            }
+        }
+
+        public double internalTick
+        {
+            get => _internalTick;
+            set
+            {
+                if (nbsFile == null)
+                    return;
+
+                if (internalTick != value)
                 {
-                    _tick = value;
+                    _internalTick = value;
                     _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - value).Abs()).index;
                     
                     TimeChangedEventInvoke();
                 }
             }
         }
-        double _tick;
+        double _internalTick;
 
         public int index
         {
@@ -76,7 +88,7 @@ namespace RuniEngine.Sounds
                 if (index != value)
                 {
                     _index = value;
-                    _tick = nbsFile.nbsNotes[value].delayTick;
+                    _internalTick = nbsFile.nbsNotes[value].delayTick;
                     
                     TimeChangedEventInvoke();
                 }
@@ -84,9 +96,10 @@ namespace RuniEngine.Sounds
         }
         int _index;
 
-        public override double length => nbsFile != null ? tickLength / (nbsFile.tickTempo * 0.01f) : 0;
+        public override double length => nbsFile != null ? tickLength / 20d : 0;
 
-        public double tickLength => nbsFile != null ? nbsFile.songLength : 0;
+        public double tickLength => nbsFile != null ? internalTickLength / (nbsFile.tickTempo * 0.0005) : 0;
+        public double internalTickLength => nbsFile != null ? nbsFile.songLength : 0;
 
 
 
@@ -110,14 +123,14 @@ namespace RuniEngine.Sounds
             
             if (!isPaused && realTempo != 0)
             {
-                _tick += Kernel.deltaTimeDouble * (nbsFile.tickTempo * 0.01f) * realTempo;
+                _internalTick += Kernel.deltaTimeDouble * (nbsFile.tickTempo * 0.01) * realTempo;
 
                 Loop();
                 SetIndex();
                 GetAudioDataToMonoAndInvoke();
             }
 
-            if (isDisposable && (tick < 0 || tick > tickLength))
+            if (isDisposable && (internalTick < 0 || internalTick > internalTickLength))
                 Remove();
         }
 
@@ -142,7 +155,7 @@ namespace RuniEngine.Sounds
             this.nbsData = nbsData;
             this.nbsMetaData = nbsMetaData;
 
-            _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - tick).Abs()).index;
+            _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - internalTick).Abs()).index;
             return true;
         }
 
@@ -165,7 +178,7 @@ namespace RuniEngine.Sounds
             nbsData = null;
             nbsMetaData = null;
 
-            _tick = 0;
+            _internalTick = 0;
             _index = 0;
             allLayerLock = false;
         }
@@ -212,13 +225,13 @@ namespace RuniEngine.Sounds
 
         void SetIndex()
         {
-            if (nbsFile == null || index < 0 || index >= nbsFile.nbsNotes.Length)
+            if (nbsFile == null || index < 0 || index >= nbsFile.nbsNotes.Length || pitch == 0)
                 return;
 
             NBSNote nbsNote = nbsFile.nbsNotes[index];
             if (realTempo >= 0)
             {
-                if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick < tick)
+                if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick < internalTick)
                 {
                     InfiniteLoopDetector.Run();
                     
@@ -228,7 +241,7 @@ namespace RuniEngine.Sounds
             }
             else
             {
-                if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick >= tick)
+                if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick >= internalTick)
                 {
                     InfiniteLoopDetector.Run();
                     
@@ -331,21 +344,21 @@ namespace RuniEngine.Sounds
             if (loop)
             {
                 bool isLooped = false;
-                while (tempo >= 0 && tick > tickLength)
+                while (tempo >= 0 && internalTick > internalTickLength)
                 {
-                    _tick -= tickLength - nbsMetaData.loopStartTick;
+                    _internalTick -= internalTickLength - nbsMetaData.loopStartTick;
                     isLooped = true;
                 }
 
-                while (tempo < 0 && tick < 0)
+                while (tempo < 0 && internalTick < 0)
                 {
-                    _tick += tickLength - nbsMetaData.loopStartTick;
+                    _internalTick += internalTickLength - nbsMetaData.loopStartTick;
                     isLooped = true;
                 }
 
                 if (isLooped)
                 {
-                    _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - _tick).Abs()).index;
+                    _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - _internalTick).Abs()).index;
                     LoopedEventInvoke();
                 }
             }
