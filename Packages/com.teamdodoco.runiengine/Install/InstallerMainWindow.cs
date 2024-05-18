@@ -30,8 +30,8 @@ namespace RuniEngine.Install
             {
                 installerScreens.Clear();
 
-                Type[] types = ReflectionManager.types;
-                for (int i = 0; i < types.Length; i++)
+                IReadOnlyList<Type> types = ReflectionManager.types;
+                for (int i = 0; i < types.Count; i++)
                 {
                     Type type = types[i];
                     if (type.IsSubtypeOf<IInstallerScreen>())

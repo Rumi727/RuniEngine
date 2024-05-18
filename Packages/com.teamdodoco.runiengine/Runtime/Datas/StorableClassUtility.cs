@@ -22,9 +22,9 @@ namespace RuniEngine.Datas
         public static StorableClass[] AutoInitialize(Type attribute)
         {
             List<StorableClass> storableObjectInfos = new List<StorableClass>();
-            Type[] types = ReflectionManager.types;
-            new StorableClass(typeof(StorableClass)).GetType();
-            for (int i = 0; i < types.Length; i++)
+            IReadOnlyList<Type> types = ReflectionManager.types;
+            
+            for (int i = 0; i < types.Count; i++)
             {
                 Type type = types[i];
                 if (Attribute.GetCustomAttributes(type, attribute).Length <= 0)
