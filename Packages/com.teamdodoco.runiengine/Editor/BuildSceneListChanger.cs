@@ -33,7 +33,7 @@ namespace RuniEngine.Editor
                 if (loadData)
                 {
                     splashScreen ??= new StorableClass(typeof(SplashScreen.ProjectData));
-                    splashScreen.AutoNameLoad(Kernel.projectDataPath);
+                    splashScreen.AutoNameLoad(Kernel.projectSettingPath);
                 }
 
                 List<EditorBuildSettingsScene> buildScenes = EditorBuildSettings.scenes.ToList();

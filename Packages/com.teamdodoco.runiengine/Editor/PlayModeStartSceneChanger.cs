@@ -17,7 +17,7 @@ namespace RuniEngine.Editor
             if (loadData)
             {
                 storableClass ??= new StorableClass(typeof(SplashScreen.ProjectData));
-                storableClass.AutoNameLoad(Kernel.projectDataPath);
+                storableClass.AutoNameLoad(Kernel.projectSettingPath);
             }
 
             EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SplashScreen.ProjectData.splashScenePath);

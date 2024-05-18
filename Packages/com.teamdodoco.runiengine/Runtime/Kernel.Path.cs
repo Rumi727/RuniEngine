@@ -127,9 +127,9 @@ namespace RuniEngine
         static string _resourcePackPath = "";
 
         /// <summary>
-        /// PathTool.Combine(Kernel.streamingAssetsPath, "projectData")
+        /// PathTool.Combine(Kernel.streamingAssetsPath, "setting")
         /// </summary>
-        public static string projectDataPath { get; } = Path.Combine(streamingAssetsPath, "projectData");
+        public static string projectSettingPath { get; } = Path.Combine(streamingAssetsPath, "setting");
 
         public static void PathInitialize()
         {

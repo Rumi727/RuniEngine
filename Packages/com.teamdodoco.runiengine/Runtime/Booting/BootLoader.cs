@@ -92,7 +92,7 @@ namespace RuniEngine.Booting
                     return;
 
                 await UniTask.WhenAll(
-                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectDataPath)),
+                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectSettingPath)),
                     UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_globalData, Kernel.globalDataPath))
                     );
                 if (!Kernel.isPlaying)

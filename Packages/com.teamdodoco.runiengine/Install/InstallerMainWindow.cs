@@ -258,7 +258,7 @@ namespace RuniEngine.Install
 
                         {
                             languageStorableClass ??= new StorableClass(typeof(ProjectData));
-                            languageStorableClass.AutoNameLoad(Kernel.projectDataPath);
+                            languageStorableClass.AutoNameLoad(Kernel.projectSettingPath);
 
                             var languageIndex = ProjectData.currentLanguage switch
                             {
@@ -284,7 +284,7 @@ namespace RuniEngine.Install
                                     _ => "en_us",
                                 };
 
-                                languageStorableClass.AutoNameSave(Kernel.projectDataPath);
+                                languageStorableClass.AutoNameSave(Kernel.projectSettingPath);
                             }
                         }
                     }

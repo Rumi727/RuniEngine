@@ -44,7 +44,7 @@ namespace RuniEngine.Editor
                 if (storableClass == null)
                 {
                     storableClass = new StorableClass(typeof(ProjectData));
-                    storableClass.AutoNameLoad(Kernel.projectDataPath);
+                    storableClass.AutoNameLoad(Kernel.projectSettingPath);
                 }
 
                 language = ProjectData.currentLanguage;

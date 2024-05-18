@@ -32,7 +32,7 @@ namespace RuniEngine.Editor.ProjectSettings
             if (!Kernel.isPlaying)
             {
                 objectPoolingProjectSetting ??= new StorableClass(typeof(ObjectPoolingManager.ProjectData));
-                objectPoolingProjectSetting.AutoNameLoad(Kernel.projectDataPath);
+                objectPoolingProjectSetting.AutoNameLoad(Kernel.projectSettingPath);
             }
 
             ObjectPoolingManager.ProjectData.prefabList ??= new Dictionary<string, string>();
@@ -191,7 +191,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
             //플레이 모드가 아니면 변경한 리스트의 데이터를 잃어버리지 않게 파일로 저장
             if (isChanged && !Kernel.isPlaying && objectPoolingProjectSetting != null)
-                objectPoolingProjectSetting.AutoNameSave(Kernel.projectDataPath);
+                objectPoolingProjectSetting.AutoNameSave(Kernel.projectSettingPath);
         }
 
         class PrefabObjectEqualityComparer : IEqualityComparer<KeyValuePair<string, string>>

@@ -26,7 +26,7 @@ namespace RuniEngine.Editor.ProjectSettings
             if (!Kernel.isPlaying)
             {
                 inputProjectSetting ??= new StorableClass(typeof(InputManager.ProjectData));
-                inputProjectSetting.AutoNameLoad(Kernel.projectDataPath);
+                inputProjectSetting.AutoNameLoad(Kernel.projectSettingPath);
             }
             
             InputManager.ProjectData.controlList ??= new Dictionary<string, KeyCode[]>();
@@ -154,7 +154,7 @@ namespace RuniEngine.Editor.ProjectSettings
             splitView.EndSplitView();
 
             if (isChanged && !Kernel.isPlaying && inputProjectSetting != null)
-                inputProjectSetting.AutoNameSave(Kernel.projectDataPath);
+                inputProjectSetting.AutoNameSave(Kernel.projectSettingPath);
 
             EndLabelWidth();
         }
