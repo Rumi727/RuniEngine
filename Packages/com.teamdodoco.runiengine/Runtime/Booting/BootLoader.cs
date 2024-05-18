@@ -6,6 +6,7 @@ using RuniEngine.Resource;
 using RuniEngine.Splashs;
 using RuniEngine.Threading;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.LowLevel;
@@ -35,23 +36,21 @@ namespace RuniEngine.Booting
         }
         internal static StorableClass[] _globalData = null!;
 
-        public static bool basicDataLoaded { get; set; } = false;
-        public static bool allLoaded { get; set; } = false;
-
-        public static bool splashAniPlaying { get; set; } = false;
+        public static bool isLoadingStart { get; private set; } = false;
+        public static bool isDataLoaded { get; private set; } = false;
+        public static bool isAllLoaded { get; private set; } = false;
 
         [RuntimeInitializeOnLoadMethod]
-        public static async void Booting()
+        public static async UniTaskVoid Boot()
         {
-            NotPlayModeException.Exception();
-            NotMainThreadException.Exception();
-
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
             //CS0162 접근할 수 없는 코드 경고를 비활성화 하기 위해 변수로 우회합니다
             bool warningDisable = true;
             if (warningDisable)
                 throw new NotSupportedException(LanguageLoader.TryGetText("boot_loader.webgl"));
 #endif
+            NotMainThreadException.Exception();
+            NotPlayModeException.Exception();
 
             //Path Init
             Kernel.PathInitialize();
@@ -73,6 +72,9 @@ namespace RuniEngine.Booting
             }
             Debug.Log("Player Loop Setting End", nameof(BootLoader));
 
+            //Resource Setup
+            TryLoad().Forget();
+
             await UniTask.Delay(100);
             if (!Kernel.isPlaying)
                 return;
@@ -80,41 +82,12 @@ namespace RuniEngine.Booting
             //Splash Screen Play
             SplashScreen.isPlaying = true;
 
-            //Storable Class
-            Debug.Log("Storable Class Loading...", nameof(BootLoader));
-            {
-                await UniTask.WhenAll(
-                    UniTask.RunOnThreadPool(() => _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>()),
-                    UniTask.RunOnThreadPool(() => _globalData = StorableClassUtility.AutoInitialize<GlobalDataAttribute>()),
-                    UniTask.RunOnThreadPool(UserAccountManager.UserDataInit)
-                    );
-                if (!Kernel.isPlaying)
-                    return;
-
-                await UniTask.WhenAll(
-                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectSettingPath)),
-                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_globalData, Kernel.globalDataPath))
-                    );
-                if (!Kernel.isPlaying)
-                    return;
-
-                basicDataLoaded = true;
-            }
-            Debug.Log("Storable Class Loaded", nameof(BootLoader));
-
-            //Starten Invoke
-            AttributeInvoke<StartenAttribute>();
-
-            Debug.Log("Resource Loading...", nameof(BootLoader));
-
-            await ResourceManager.Refresh();
+            await UniTask.WaitUntil(() => isDataLoaded);
             if (!Kernel.isPlaying)
                 return;
 
-            Debug.Log("Resource Loaded", nameof(BootLoader));
-
-            //All Loading End
-            allLoaded = true;
+            //Starten Invoke
+            AttributeInvoke<StartenAttribute>();
 
             //Splash Screen Stop Wait...
             await UniTask.WaitUntil(() => !SplashScreen.isPlaying);
@@ -125,6 +98,59 @@ namespace RuniEngine.Booting
                 await SceneManager.LoadSceneAsync(SplashScreen.ProjectData.startSceneIndex, LoadSceneMode.Single);
             else
                 await SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+        }
+
+        public static async UniTask<bool> TryLoad()
+        {
+            NotMainThreadException.Exception();
+
+            if (isLoadingStart || isAllLoaded)
+                return false;
+
+            isLoadingStart = true;
+
+            //Storable Class
+            Debug.Log("Storable Class Loading...", nameof(BootLoader));
+            {
+                await UniTask.WhenAll(
+                    UniTask.RunOnThreadPool(() => _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>()),
+                    UniTask.RunOnThreadPool(() => _globalData = StorableClassUtility.AutoInitialize<GlobalDataAttribute>()),
+                    UniTask.RunOnThreadPool(UserAccountManager.UserDataInit)
+                    );
+
+                await UniTask.WhenAll(
+                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectSettingPath)),
+                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_globalData, Kernel.globalDataPath))
+                    );
+
+                isDataLoaded = true;
+            }
+            Debug.Log("Storable Class Loaded", nameof(BootLoader));
+
+            Debug.Log("Resource Loading...", nameof(BootLoader));
+
+            await ResourceManager.Refresh();
+
+            Debug.Log("Resource Loaded", nameof(BootLoader));
+
+            //All Loading End
+            isAllLoaded = true;
+            isLoadingStart = false;
+
+            return true;
+        }
+
+        public static bool TryUnload()
+        {
+            if (!isLoadingStart)
+                return false;
+
+            ResourceManager.AllDestroy();
+
+            isAllLoaded = false;
+            isLoadingStart = false;
+
+            return true;
         }
 
         static void AttributeInvoke<T>() where T : Attribute
@@ -141,6 +167,70 @@ namespace RuniEngine.Booting
                         try
                         {
                             methodInfo.Invoke(null, null);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogException(e);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Static Reset 어트리뷰트가 붙은 모든 프로퍼티 및 필드를 기본값으로 초기화합니다
+        /// </summary>
+        public static void StaticReset()
+        {
+            IReadOnlyList<Type> types = ReflectionManager.types;
+            for (int i = 0; i < types.Count; i++)
+            {
+                PropertyInfo[] propertyInfos = types[i].GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                for (int j = 0; j < propertyInfos.Length; j++)
+                {
+                    PropertyInfo propertyInfo = propertyInfos[j];
+                    StaticResetAttribute attribute = propertyInfo.GetCustomAttribute<StaticResetAttribute>();
+
+                    if (attribute != null)
+                    {
+                        try
+                        {
+                            if (attribute.value != null)
+                                propertyInfo.SetValue(null, attribute.value);
+                            else
+                            {
+                                if (attribute.isNullable)
+                                    propertyInfo.SetValue(null, propertyInfo.PropertyType.GetDefaultValue());
+                                else
+                                    propertyInfo.SetValue(null, propertyInfo.PropertyType.GetDefaultValueNotNull());
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogException(e);
+                        }
+                    }
+                }
+
+                FieldInfo[] fieldInfos = types[i].GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                for (int j = 0; j < fieldInfos.Length; j++)
+                {
+                    FieldInfo fieldInfo = fieldInfos[j];
+                    StaticResetAttribute attribute = fieldInfo.GetCustomAttribute<StaticResetAttribute>();
+
+                    if (attribute != null)
+                    {
+                        try
+                        {
+                            if (attribute.value != null)
+                                fieldInfo.SetValue(null, attribute.value);
+                            else
+                            {
+                                if (attribute.isNullable)
+                                    fieldInfo.SetValue(null, fieldInfo.FieldType.GetDefaultValue());
+                                else
+                                    fieldInfo.SetValue(null, fieldInfo.FieldType.GetDefaultValueNotNull());
+                            }
                         }
                         catch (Exception e)
                         {

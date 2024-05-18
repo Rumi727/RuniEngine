@@ -11,13 +11,14 @@ using System.Linq;
 using System;
 
 using Object = UnityEngine.Object;
-using static UnityEditor.U2D.ScriptablePacker;
-using System.Security.Policy;
 
 namespace RuniEngine.Resource.Images
 {
     public sealed class ImageLoader : IResourceElement
     {
+        ImageLoader() { }
+
+        public static ImageLoader instance { get; } = new ImageLoader();
         public static bool isLoaded { get; private set; } = false;
 
 
@@ -50,10 +51,14 @@ namespace RuniEngine.Resource.Images
 
         public const string spriteDefaultTag = "global";
 
-
+        
 
         [Awaken]
-        static void Awaken() => ResourceManager.ElementRegister(new ImageLoader());
+        static void Awaken()
+        {
+            ResourceManager.ElementRegister(instance);
+            Kernel.quitting += () => ResourceManager.ElementUnregister(instance);
+        }
 
 
 
@@ -225,9 +230,6 @@ namespace RuniEngine.Resource.Images
 #else
                 using UnityWebRequest www = UnityWebRequest.Get(path.UrlPathPrefix());
                 await www.SendWebRequest();
-
-                if (!Kernel.isPlaying)
-                    return null;
 
                 if (www.result != UnityWebRequest.Result.Success)
                     Debug.LogError(www.error);
@@ -551,7 +553,17 @@ namespace RuniEngine.Resource.Images
 
         public async UniTask Load()
         {
-            NotPlayModeException.Exception();
+            await UniTask.RunOnThreadPool(() =>
+            {
+                foreach (var item2 in from item in packTextures from item2 in item.Value select item2)
+                    ResourceManager.garbages.Add(item2.Value);
+
+                foreach (var item4 in from item in allTextureSprites from item2 in item.Value from item3 in item2.Value from item4 in item3.Value select item4)
+                {
+                    for (int i = 0; i < item4.Value.Length; i++)
+                        ResourceManager.garbages.Add(item4.Value[i]);
+                }
+            });
 
             /// <summary>
             /// Texture2D = tempTextures[nameSpace][type][name];
@@ -563,43 +575,27 @@ namespace RuniEngine.Resource.Images
             Dictionary<string, Dictionary<string, string>> tempPackTextureTypePaths = new();
             Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, Sprite[]>>>> tempAllTextureSprites = new();
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(FindTextures));
             else
                 await ResourceManager.ResourcePackLoop(FindTextures);
 
-            if (!Kernel.isPlaying)
-                return;
+            packTexturePaths = tempPackTexturePaths;
+            packTextureTypePaths = tempPackTextureTypePaths;
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 await UniTask.RunOnThreadPool(PackTextures);
             else
                 await PackTextures();
 
-            if (!Kernel.isPlaying)
-                return;
+            packTextureRects = tempPackTextureRects;
+            packTextures = tempPackTextures;
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 await UniTask.RunOnThreadPool(LoadSprite);
             else
                 await LoadSprite();
 
-            if (!Kernel.isPlaying)
-                return;
-
-            foreach (var item2 in from item in packTextures from item2 in item.Value select item2)
-                ResourceManager.garbages.Add(item2.Value);
-
-            foreach (var item4 in from item in allTextureSprites from item2 in item.Value from item3 in item2.Value from item4 in item3.Value select item4)
-            {
-                for (int i = 0; i < item4.Value.Length; i++)
-                    ResourceManager.garbages.Add(item4.Value[i]);
-            }
-
-            packTextures = tempPackTextures;
-            packTextureRects = tempPackTextureRects;
-            packTexturePaths = tempPackTexturePaths;
-            packTextureTypePaths = tempPackTextureTypePaths;
             allTextureSprites = tempAllTextureSprites;
 
             isLoaded = true;
@@ -613,10 +609,21 @@ namespace RuniEngine.Resource.Images
                 List<UniTask> tasks = new List<UniTask>();
                 string[] typePaths = Directory.GetDirectories(rootPath, "*", SearchOption.AllDirectories);
 
-                for (int i = 0; i < typePaths.Length; i++)
+                for (int i = -1; i < typePaths.Length; i++)
                 {
-                    string typePath = typePaths[i];
-                    string localTypePath = typePath.Substring(rootPath.Length + 1);
+                    string typePath;
+                    string typeName;
+
+                    if (i >= 0)
+                    {
+                        typePath = typePaths[i];
+                        typeName = typePath.Substring(rootPath.Length + 1);
+                    }
+                    else
+                    {
+                        typePath = rootPath;
+                        typeName = "";
+                    }
 
                     string[] filePaths = DirectoryUtility.GetFiles(typePath, ExtensionFilter.pictureFileFilter);
                     for (int j = 0; j < filePaths.Length; j++)
@@ -626,31 +633,29 @@ namespace RuniEngine.Resource.Images
                         //병렬 로드
                         async UniTask Task()
                         {
-                            string filePath = filePaths[i].UniformDirectorySeparatorCharacter();
-                            string fileName = Path.GetFileName(filePath);
+                            string filePath = filePaths[j].UniformDirectorySeparatorCharacter();
+                            string fileName = Path.GetFileNameWithoutExtension(filePath);
 
                             TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(typePath + ".json") ?? new TextureMetaData();
                             Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
-                            if (!Kernel.isPlaying || texture == null)
+                            if (texture == null)
                                 return;
 
                             tempPackTexturePaths.TryAdd(nameSpace, new());
-                            tempPackTexturePaths[nameSpace].TryAdd(localTypePath, new());
-                            tempPackTexturePaths[nameSpace][localTypePath].TryAdd(fileName, filePath);
+                            tempPackTexturePaths[nameSpace].TryAdd(typeName, new());
+                            tempPackTexturePaths[nameSpace][typeName].TryAdd(fileName, filePath);
 
                             tempPackTextureTypePaths.TryAdd(nameSpace, new());
-                            tempPackTextureTypePaths[nameSpace].TryAdd(localTypePath, typePath);
+                            tempPackTextureTypePaths[nameSpace].TryAdd(typeName, typePath);
 
                             tempTextures.TryAdd(nameSpace, new());
-                            tempTextures[nameSpace].TryAdd(localTypePath, new());
-                            tempTextures[nameSpace][localTypePath].TryAdd(fileName, texture);
+                            tempTextures[nameSpace].TryAdd(typeName, new());
+                            tempTextures[nameSpace][typeName].TryAdd(fileName, texture);
                         }
                     }
                 }
 
                 await UniTask.WhenAll(tasks);
-                if (!Kernel.isPlaying)
-                    return;
             }
 
             async UniTask PackTextures()
@@ -683,34 +688,39 @@ namespace RuniEngine.Resource.Images
                             string[] textureNames = new string[textures.Length];
                             foreach (var item in types.Value)
                             {
-                                x += item.Value.width + 8;
+                                x += item.Value.width + padding;
                                 if (x > maxTextureSize)
                                 {
                                     x = 0;
-                                    y += item.Value.height + 8;
+                                    y += item.Value.height + padding;
                                 }
 
-                                width = width.ClosestPowerOfTwo();
-                                height = height.ClosestPowerOfTwo();
+                                width = x.Max(width);
+                                height = y.Max(height);
                             }
+
+                            width = x.NextPowerOfTwo();
+                            height = y.NextPowerOfTwo();
 
                             background = new Texture2D(maxTextureSize, maxTextureSize, TextureFormat.RGBA32, textureMetaData.generateMipmap);
                             rects = background.PackTextures(textures, padding, maxTextureSize);
+
+                            background.name = types.Key;
 
                             background.filterMode = textureMetaData.filterMode;
                             background.mipMapBias = -0.4f;
 
                             if (textureMetaData.compressionType != TextureCompressionQuality.none)
                                 background.Compress(textureMetaData.compressionType == TextureCompressionQuality.highQuality);
-                        });
 
-                        if (!Kernel.isPlaying)
-                            return;
+                            background.hideFlags = HideFlags.DontSave;
+                            ResourceManager.allLoadedResources.Add(background);
+                        });
 
                         ThreadDispatcher.Execute(() =>
                         {
                             for (int i = 0; i < textures.Length; i++)
-                                Object.Destroy(textures[i]);
+                                Object.DestroyImmediate(textures[i]);
                         }).Forget();
 
                         if (background == null || rects == null)
@@ -741,9 +751,6 @@ namespace RuniEngine.Resource.Images
                     {
                         foreach (var rects in type.Value)
                         {
-                            if (!Kernel.isPlaying)
-                                return;
-
                             tasks.Add(Task());
 
                             async UniTask Task()
@@ -754,7 +761,7 @@ namespace RuniEngine.Resource.Images
 
                                 Rect rect = rects.Value;
                                 rect = new Rect(rect.x * background.width, rect.y * background.height, rect.width * background.width, rect.height * background.height);
-
+                                
                                 Dictionary<string, SpriteMetaData[]> spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(SearchTexturePath(type.Key, rects.Key, nameSpace.Key) + ".json") ?? new Dictionary<string, SpriteMetaData[]>(); ;
                                 if (!spriteMetaDatas.ContainsKey(spriteDefaultTag))
                                     spriteMetaDatas.Add(spriteDefaultTag, new SpriteMetaData[] { new SpriteMetaData() });
@@ -783,8 +790,6 @@ namespace RuniEngine.Resource.Images
                 }
 
                 await UniTask.WhenAll(tasks);
-                if (!Kernel.isPlaying)
-                    return;
             }
         }
     }

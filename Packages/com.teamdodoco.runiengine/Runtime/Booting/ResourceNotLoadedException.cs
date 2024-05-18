@@ -8,7 +8,7 @@ namespace RuniEngine.Booting
     {
         public static void Exception()
         {
-            if (!BootLoader.allLoaded)
+            if (!BootLoader.isAllLoaded)
                 throw new ResourceDataNotLoadedException();
         }
 

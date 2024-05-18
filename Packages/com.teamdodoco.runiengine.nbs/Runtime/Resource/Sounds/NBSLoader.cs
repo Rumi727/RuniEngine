@@ -14,6 +14,11 @@ namespace RuniEngine.Resource.Sounds
 {
     public sealed class NBSLoader : IResourceElement
     {
+        NBSLoader() { }
+
+        public const string nbsNameSpace = "runi-nbs";
+
+        public static NBSLoader instance { get; } = new NBSLoader();
         public static bool isLoaded { get; private set; } = false;
 
 
@@ -31,7 +36,11 @@ namespace RuniEngine.Resource.Sounds
 
 
         [Awaken]
-        static void Awaken() => ResourceManager.ElementRegister(new NBSLoader());
+        static void Awaken()
+        {
+            ResourceManager.ElementRegister(instance);
+            Kernel.quitting += () => ResourceManager.ElementUnregister(instance);
+        }
 
         [Starten]
         static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("nbs_player.prefab", "Prefab/NBS Player");
@@ -82,10 +91,9 @@ namespace RuniEngine.Resource.Sounds
 
         public async UniTask Load()
         {
-            NotPlayModeException.Exception();
             Dictionary<string, Dictionary<string, NBSData>> tempAllNBSes = new();
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(Thread));
             else
                 await ResourceManager.ResourcePackLoop(Thread);
@@ -116,9 +124,6 @@ namespace RuniEngine.Resource.Sounds
                             return;
                         
                         NBSFile? nbsFile = GetNBSFile(nbsPath);
-                        if (!Kernel.isPlaying)
-                            return;
-
                         if (nbsFile != null)
                             nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsFile);
 

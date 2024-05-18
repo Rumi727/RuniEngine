@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using RuniEngine.Accounts;
 using RuniEngine.Booting;
 using RuniEngine.Datas;
-using RuniEngine.Resource;
 using RuniEngine.Threading;
+using System;
 using System.Diagnostics;
 using UnityEngine;
 
@@ -127,12 +127,18 @@ namespace RuniEngine
 
 
 
+        /// <summary>
+        /// Application.quitting 이벤트랑 동일하지만 커널보다 먼저 실행되는 것을 보장하며 플레이 모드 해제 시 이벤트가 자동으로 초기화됩니다
+        /// </summary>
+        public static event Action? quitting;
+
+
 
         [Awaken]
         static void Awaken()
         {
             CustomPlayerLoopSetter.initEvent += Update;
-            Application.quitting += Qutting;
+            Application.quitting += Quitting;
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.update -= Update;
@@ -160,17 +166,22 @@ namespace RuniEngine
             internetReachability = Application.internetReachability;
         }
 
-        static void Qutting()
+        static void Quitting()
         {
-            ResourceManager.AllDestroy();
+            quitting?.Invoke();
+            quitting = null;
 
-            if (BootLoader.basicDataLoaded)
+            Application.quitting -= Quitting;
+
+            AsyncTask.AllAsyncTaskCancel();
+
+            if (BootLoader.isDataLoaded)
                 StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
 
             if (UserAccountManager.currentAccount != null)
                 UserAccountManager.Logout();
 
-            AsyncTaskManager.AllAsyncTaskCancel();
+            BootLoader.StaticReset();
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.update += Update;

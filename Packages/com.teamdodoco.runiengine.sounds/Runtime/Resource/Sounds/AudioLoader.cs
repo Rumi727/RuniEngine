@@ -16,6 +16,7 @@ namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioLoader : IResourceElement
     {
+        public static AudioLoader instance { get; } = new AudioLoader();
         public static bool isLoaded { get; private set; } = false;
 
         public static int systemFrequency { get => Interlocked.Add(ref _systemFrequency, 0); }
@@ -28,7 +29,7 @@ namespace RuniEngine.Resource.Sounds
         {
             get
             {
-                if (_audioListener == null || _audioListener.isActiveAndEnabled)
+                if (_audioListener == null || !_audioListener.isActiveAndEnabled)
                     _audioListener = Object.FindFirstObjectByType<AudioListener>();
 
                 return _audioListener;
@@ -54,11 +55,15 @@ namespace RuniEngine.Resource.Sounds
         [Awaken]
         static void Awaken()
         {
-            ResourceManager.ElementRegister(new AudioLoader());
+            ResourceManager.ElementRegister(instance);
             OnAudioConfigurationChanged(false);
 
             AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
-            Application.quitting += Quitting;
+            Kernel.quitting += () =>
+            {
+                AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+                ResourceManager.ElementUnregister(instance);
+            };
         }
 
         [Starten]
@@ -120,8 +125,6 @@ namespace RuniEngine.Resource.Sounds
             }
         }
 
-        static void Quitting() => AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
-
         public static AudioData? SearchAudioData(string path, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
@@ -149,9 +152,6 @@ namespace RuniEngine.Resource.Sounds
                 downloadHandlerAudioClip.streamAudio = stream;
 
                 await www.SendWebRequest();
-
-                if (!Kernel.isPlaying)
-                    return null;
 
                 if (www.result != UnityWebRequest.Result.Success)
                 {
@@ -198,10 +198,9 @@ namespace RuniEngine.Resource.Sounds
 
         public async UniTask Load()
         {
-            NotPlayModeException.Exception();
             Dictionary<string, Dictionary<string, AudioData>> tempAllAudios = new();
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(Thread));
             else
                 await ResourceManager.ResourcePackLoop(Thread);
@@ -261,9 +260,6 @@ namespace RuniEngine.Resource.Sounds
                                 };
 
                                 AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType, audioMetaData.stream));
-                                if (!Kernel.isPlaying)
-                                    return;
-
                                 if (audioClip != null)
                                     audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
 

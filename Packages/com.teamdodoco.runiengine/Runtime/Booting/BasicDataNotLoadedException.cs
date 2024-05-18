@@ -8,7 +8,7 @@ namespace RuniEngine.Booting
     {
         public static void Exception()
         {
-            if (!BootLoader.basicDataLoaded)
+            if (!BootLoader.isDataLoaded)
                 throw new BasicDataNotLoadedException();
         }
 
