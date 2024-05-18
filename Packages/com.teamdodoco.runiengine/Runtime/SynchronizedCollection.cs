@@ -33,7 +33,7 @@ namespace System.Collections.Generic
             get 
             {
                 while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                    Thread.Sleep(1);
+                    Thread.Yield();
                 
                 int count = items.Count;
 
@@ -50,7 +50,7 @@ namespace System.Collections.Generic
             get
             {
                 while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                    Thread.Sleep(1);
+                    Thread.Yield();
 
                 try
                 {
@@ -64,7 +64,7 @@ namespace System.Collections.Generic
             set
             {
                 while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                    Thread.Sleep(1);
+                    Thread.Yield();
 
                 try
                 {
@@ -83,7 +83,7 @@ namespace System.Collections.Generic
         public void Add(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -99,7 +99,7 @@ namespace System.Collections.Generic
         public void Clear()
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -114,7 +114,7 @@ namespace System.Collections.Generic
         public void CopyTo(T?[]? array, int index)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -129,7 +129,7 @@ namespace System.Collections.Generic
         public bool Contains(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -144,7 +144,7 @@ namespace System.Collections.Generic
         public IEnumerator<T?> GetEnumerator()
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -159,7 +159,7 @@ namespace System.Collections.Generic
         public int IndexOf(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -174,7 +174,7 @@ namespace System.Collections.Generic
         public void Insert(int index, T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -204,7 +204,7 @@ namespace System.Collections.Generic
         public bool Remove(T? item)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -224,7 +224,7 @@ namespace System.Collections.Generic
         public void RemoveAt(int index)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -258,7 +258,7 @@ namespace System.Collections.Generic
         void ICollection.CopyTo(Array? array, int index)
         {
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
@@ -289,7 +289,7 @@ namespace System.Collections.Generic
             VerifyValueType(value);
 
             while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
-                Thread.Sleep(1);
+                Thread.Yield();
 
             try
             {
