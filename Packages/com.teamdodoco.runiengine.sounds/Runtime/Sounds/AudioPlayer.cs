@@ -398,7 +398,7 @@ namespace RuniEngine.Sounds
             }
             finally
             {
-                ThreadManager.Unlock(ref onAudioFilterReadLock);
+                ThreadTask.Unlock(ref onAudioFilterReadLock);
             }
 
             base.OnAudioFilterRead(data, channels);
