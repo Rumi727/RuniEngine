@@ -20,7 +20,11 @@ namespace RuniEngine.Resource.Texts
 
 
 
+        public static LanguageLoader instance { get; } = new LanguageLoader();
         public static bool isLoaded { get; private set; } = false;
+
+
+
         public static List<string> languageList { get; private set; } = new();
 
 
@@ -38,8 +42,11 @@ namespace RuniEngine.Resource.Texts
 
 
         [Awaken]
-        static void Awaken() => ResourceManager.ElementRegister(new LanguageLoader());
-
+        static void Awaken()
+        {
+            ResourceManager.ElementRegister(new LanguageLoader());
+            Kernel.quitting += () => ResourceManager.ElementUnregister(instance);
+        }
 
         public static string TryGetText(string key, string nameSpace = "", string language = "")
         {
@@ -74,7 +81,7 @@ namespace RuniEngine.Resource.Texts
                     }
                 }
             }
-
+            
             if (loadedLanguages.TryGetValue(nameSpace, out var result))
             {
                 if (result.TryGetValue(language, out var result2))
@@ -91,12 +98,10 @@ namespace RuniEngine.Resource.Texts
 
         public async UniTask Load()
         {
-            NotPlayModeException.Exception();
-
             Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempLoadedLanguages = new();
             List<string> tempLanguageTypes = new();
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(Thread));
             else
                 await ResourceManager.ResourcePackLoop(Thread);

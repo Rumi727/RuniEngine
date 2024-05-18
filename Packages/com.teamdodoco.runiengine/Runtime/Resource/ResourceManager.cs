@@ -28,22 +28,32 @@ namespace RuniEngine.Resource
         public const string rootName = "assets";
         public const string defaultNameSpace = "runi";
 
-        public static List<Object> allLoadedResources { get; } = new();
-        public static SynchronizedCollection<Object> garbages { get; } = new SynchronizedCollection<Object>();
+        public static List<Object?> allLoadedResources { get; } = new();
+        public static SynchronizedCollection<Object?> garbages { get; } = new SynchronizedCollection<Object?>();
 
 
 
         static List<IResourceElement> allResourceElements { get; } = new List<IResourceElement>();
 
+
+
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        static void InitializeOnLoadMethod() => UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += Resource.ResourceManager.AllDestroy;
+#endif
+
+
+
         public static void ElementRegister(IResourceElement element) => allResourceElements.Add(element);
         public static void ElementUnregister(IResourceElement element) => allResourceElements.Remove(element);
+
+
 
         public static UniTask Refresh() => Refresh(allResourceElements);
         public static UniTask Refresh(params IResourceElement[] resourceElements) => Refresh((IList<IResourceElement>)resourceElements);
 
         public static async UniTask Refresh(IList<IResourceElement> resourceElements)
         {
-            NotPlayModeException.Exception();
             NotMainThreadException.Exception();
 
             UniTask[] cachedUniTasks = new UniTask[resourceElements.Count];
@@ -51,11 +61,10 @@ namespace RuniEngine.Resource
                 cachedUniTasks[i] = resourceElements[i].Load();
 
             await UniTask.WhenAll(cachedUniTasks);
-            if (!Kernel.isPlaying)
-                return;
-
             GarbageRemoval();
         }
+
+
 
         public delegate UniTask ResourcePackLoopFunc(string nameSpacePath, string nameSpace);
         public static async UniTask ResourcePackLoop(ResourcePackLoopFunc func)
@@ -94,11 +103,15 @@ namespace RuniEngine.Resource
             NotMainThreadException.Exception();
 
             for (int i = 0; i < garbages.Count; i++)
-                Object.DestroyImmediate(garbages[i]);
+            {
+                Object? resource = garbages[i];
+                if (resource != null)
+                    Object.DestroyImmediate(resource);
+            }
 
             for (int i = 0; i < allLoadedResources.Count; i++)
             {
-                Object resource = allLoadedResources[i];
+                Object? resource = allLoadedResources[i];
                 if (resource == null)
                 {
                     allLoadedResources.RemoveAt(i);
@@ -118,20 +131,26 @@ namespace RuniEngine.Resource
         public static void AllDestroy()
         {
             GarbageRemoval();
-
+            
             List<Sprite> allLoadedSprite = allLoadedResources.OfType<Sprite>().ToList();
             for (int i = 0; i < allLoadedSprite.Count; i++)
             {
                 Sprite sprite = allLoadedSprite[i];
                 if (sprite != null)
+                {
+                    Debug.Log(sprite);
                     Object.DestroyImmediate(sprite);
+                }
             }
 
             for (int i = 0; i < allLoadedResources.Count; i++)
             {
-                Object resource = allLoadedResources[i];
+                Object? resource = allLoadedResources[i];
                 if (resource != null)
+                {
+                    Debug.Log(resource);
                     Object.DestroyImmediate(resource);
+                }
             }
 
             allLoadedResources.Clear();
@@ -254,7 +273,7 @@ namespace RuniEngine.Resource
         /// <returns></returns>
         public static string[] GetNameSpaces()
         {
-            if (BootLoader.basicDataLoaded)
+            if (BootLoader.isDataLoaded)
             {
                 IEnumerable<string> nameSpaces = new string[0];
 

@@ -32,7 +32,7 @@ namespace RuniEngine.Splashs
 
             if (SplashScreen.isPlaying)
             {
-                if (start && currentState.normalizedTime >= 1 && BootLoader.allLoaded)
+                if (start && currentState.normalizedTime >= 1 && BootLoader.isAllLoaded)
                 {
                     animator.SetBool(startHash, false);
                     animator.SetBool(endHash, true);

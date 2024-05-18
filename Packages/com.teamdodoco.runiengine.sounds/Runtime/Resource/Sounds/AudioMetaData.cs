@@ -25,9 +25,12 @@ namespace RuniEngine.Resource.Sounds
                 length = audioClip.length;
                 samples = audioClip.samples;
 
-                Object.Destroy(audioClip);
+                Object.DestroyImmediate(audioClip);
             }
         }
+
+        public float bpm { get; } = 60;
+        public int rhythmOffsetIndex { get; } = 0;
 
         public int loopStartIndex { get; } = 0;
         public int loopOffsetIndex { get; } = 0;
