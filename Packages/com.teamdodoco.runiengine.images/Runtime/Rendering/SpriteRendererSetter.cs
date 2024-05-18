@@ -15,7 +15,7 @@ namespace RuniEngine.Rendering
             if (spriteRenderer == null)
                 return;
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 spriteRenderer.sprite = GetSprite();
             else
                 ThreadDispatcher.Execute(() => spriteRenderer.sprite = GetSprite());

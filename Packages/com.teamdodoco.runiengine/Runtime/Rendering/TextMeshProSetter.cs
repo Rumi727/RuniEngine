@@ -82,7 +82,7 @@ namespace RuniEngine
             if (text == null)
                 return;
 
-            if (ThreadManager.isMainThread)
+            if (ThreadTask.isMainThread)
                 text.text = LanguageLoader.GetText(key, nameSpace);
             else
                 ThreadDispatcher.Execute(() => text.text = LanguageLoader.GetText(key, nameSpace));

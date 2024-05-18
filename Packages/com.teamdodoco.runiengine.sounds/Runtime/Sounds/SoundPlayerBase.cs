@@ -51,17 +51,17 @@ namespace RuniEngine.Sounds
         {
             get
             {
-                ThreadManager.Lock(ref isPausedLock);
+                ThreadTask.Lock(ref isPausedLock);
                 bool result = _isPaused;
-                ThreadManager.Unlock(ref isPausedLock);
+                ThreadTask.Unlock(ref isPausedLock);
 
                 return result;
             }
             set
             {
-                ThreadManager.Lock(ref isPausedLock);
+                ThreadTask.Lock(ref isPausedLock);
                 _isPaused = value;
-                ThreadManager.Unlock(ref isPausedLock);
+                ThreadTask.Unlock(ref isPausedLock);
             }
         }
         [SerializeField] bool _isPaused = false;
@@ -73,24 +73,24 @@ namespace RuniEngine.Sounds
         {
             get
             {
-                ThreadManager.Lock(ref loopLock);
+                ThreadTask.Lock(ref loopLock);
                 bool result = _loop;
-                ThreadManager.Unlock(ref loopLock);
+                ThreadTask.Unlock(ref loopLock);
 
                 return result;
             }
             set
             {
-                ThreadManager.Lock(ref loopLock);
+                ThreadTask.Lock(ref loopLock);
                 _loop = value;
-                ThreadManager.Unlock(ref loopLock);
+                ThreadTask.Unlock(ref loopLock);
             }
         }
         [SerializeField] bool _loop = false;
         int loopLock;
 
-        public void LoopLock() => ThreadManager.Lock(ref loopLock);
-        public void LoopUnlock() => ThreadManager.Unlock(ref loopLock);
+        public void LoopLock() => ThreadTask.Lock(ref loopLock);
+        public void LoopUnlock() => ThreadTask.Unlock(ref loopLock);
 
 
         public event Action looped { add => _looped += value; remove => _looped -= value; }
@@ -98,28 +98,28 @@ namespace RuniEngine.Sounds
 
 
 
-        public double pitch
+        public virtual double pitch
         {
             get
             {
-                ThreadManager.Lock(ref pitchLock);
+                ThreadTask.Lock(ref pitchLock);
                 double result = _pitch;
-                ThreadManager.Unlock(ref pitchLock);
+                ThreadTask.Unlock(ref pitchLock);
 
                 return result;
             }
             set
             {
-                ThreadManager.Lock(ref pitchLock);
+                ThreadTask.Lock(ref pitchLock);
                 _pitch = value;
-                ThreadManager.Unlock(ref pitchLock);
+                ThreadTask.Unlock(ref pitchLock);
             }
         }
         [SerializeField, Range(0, 3)] double _pitch = 1;
         int pitchLock;
 
-        public void PitchLock() => ThreadManager.Lock(ref pitchLock);
-        public void PitchUnlock() => ThreadManager.Unlock(ref pitchLock);
+        public void PitchLock() => ThreadTask.Lock(ref pitchLock);
+        public void PitchUnlock() => ThreadTask.Unlock(ref pitchLock);
 
         public virtual double metaDataPitch => soundMetaData != null ? soundMetaData.pitch : 1;
         public virtual double realPitch => pitch * metaDataPitch;
@@ -128,24 +128,24 @@ namespace RuniEngine.Sounds
         {
             get
             {
-                ThreadManager.Lock(ref tempoLock);
+                ThreadTask.Lock(ref tempoLock);
                 double result = _tempo;
-                ThreadManager.Unlock(ref tempoLock);
+                ThreadTask.Unlock(ref tempoLock);
 
                 return result;
             }
             set
             {
-                ThreadManager.Lock(ref tempoLock);
+                ThreadTask.Lock(ref tempoLock);
                 _tempo = value;
-                ThreadManager.Unlock(ref tempoLock);
+                ThreadTask.Unlock(ref tempoLock);
             }
         }
         [SerializeField, Range(-3, 3)] double _tempo = 1;
         int tempoLock;
 
-        public void TempoLock() => ThreadManager.Lock(ref tempoLock);
-        public void TempoUnlock() => ThreadManager.Unlock(ref tempoLock);
+        public void TempoLock() => ThreadTask.Lock(ref tempoLock);
+        public void TempoUnlock() => ThreadTask.Unlock(ref tempoLock);
 
         public virtual double metaDataTempo => soundMetaData != null ? soundMetaData.tempo : 1;
         public virtual double realTempo => tempo * metaDataTempo;
@@ -165,24 +165,24 @@ namespace RuniEngine.Sounds
         {
             get
             {
-                ThreadManager.Lock(ref volumeLock);
+                ThreadTask.Lock(ref volumeLock);
                 float result = _volume;
-                ThreadManager.Unlock(ref volumeLock);
+                ThreadTask.Unlock(ref volumeLock);
 
                 return result;
             }
             set
             {
-                ThreadManager.Lock(ref volumeLock);
+                ThreadTask.Lock(ref volumeLock);
                 _volume = value;
-                ThreadManager.Unlock(ref volumeLock);
+                ThreadTask.Unlock(ref volumeLock);
             }
         }
         [SerializeField, Range(0, 2)] float _volume = 1;
         int volumeLock;
 
-        public void VolumeLock() => ThreadManager.Lock(ref volumeLock);
-        public void VolumeUnlock() => ThreadManager.Unlock(ref volumeLock);
+        public void VolumeLock() => ThreadTask.Lock(ref volumeLock);
+        public void VolumeUnlock() => ThreadTask.Unlock(ref volumeLock);
 
 
 
@@ -190,37 +190,37 @@ namespace RuniEngine.Sounds
         {
             get
             {
-                ThreadManager.Lock(ref panStereoLock);
+                ThreadTask.Lock(ref panStereoLock);
                 float result = _panStereo;
-                ThreadManager.Unlock(ref panStereoLock);
+                ThreadTask.Unlock(ref panStereoLock);
 
                 return result;
             }
             set
             {
-                ThreadManager.Lock(ref panStereoLock);
-                panStereo = value;
-                ThreadManager.Unlock(ref panStereoLock);
+                ThreadTask.Lock(ref panStereoLock);
+                _panStereo = value;
+                ThreadTask.Unlock(ref panStereoLock);
             }
         }
         [SerializeField, Range(-1, 1)] float _panStereo = 0;
         int panStereoLock;
 
-        public void PanStereoLock() => ThreadManager.Lock(ref panStereoLock);
-        public void PanStereoUnlock() => ThreadManager.Unlock(ref panStereoLock);
+        public void PanStereoLock() => ThreadTask.Lock(ref panStereoLock);
+        public void PanStereoUnlock() => ThreadTask.Unlock(ref panStereoLock);
 
 
 
 
-        public bool spatial { get => _spatial; set => _spatial = value; }
+        public virtual bool spatial { get => _spatial; set => _spatial = value; }
         [SerializeField] bool _spatial = false;
 
 
 
-        public float minDistance { get => _minDistance; set => _minDistance = value; }
+        public virtual float minDistance { get => _minDistance; set => _minDistance = value; }
         [SerializeField, Range(0, 32)] float _minDistance = 1;
 
-        public float maxDistance { get => _maxDistance; set => _maxDistance = value; }
+        public virtual float maxDistance { get => _maxDistance; set => _maxDistance = value; }
         [SerializeField, Range(0, 32)] float _maxDistance = 16;
 
 
@@ -240,15 +240,15 @@ namespace RuniEngine.Sounds
         {
             add
             {
-                ThreadManager.Lock(ref onAudioFilterReadEventLock);
+                ThreadTask.Lock(ref onAudioFilterReadEventLock);
                 _onAudioFilterReadEvent += value;
-                ThreadManager.Unlock(ref onAudioFilterReadEventLock);
+                ThreadTask.Unlock(ref onAudioFilterReadEventLock);
             }
             remove
             {
-                ThreadManager.Lock(ref onAudioFilterReadEventLock);
+                ThreadTask.Lock(ref onAudioFilterReadEventLock);
                 _onAudioFilterReadEvent -= value;
-                ThreadManager.Unlock(ref onAudioFilterReadEventLock);
+                ThreadTask.Unlock(ref onAudioFilterReadEventLock);
             }
         }
         event OnAudioFilterReadAction? _onAudioFilterReadEvent;
@@ -267,7 +267,7 @@ namespace RuniEngine.Sounds
 
         protected virtual void OnAudioFilterRead(float[] data, int channels)
         {
-            ThreadManager.Lock(ref onAudioFilterReadEventLock);
+            ThreadTask.Lock(ref onAudioFilterReadEventLock);
 
             try
             {
@@ -279,7 +279,7 @@ namespace RuniEngine.Sounds
             }
             finally
             {
-                ThreadManager.Unlock(ref onAudioFilterReadEventLock);
+                ThreadTask.Unlock(ref onAudioFilterReadEventLock);
             }
         }
 

@@ -8,7 +8,7 @@ namespace RuniEngine.Threading
     {
         public static void Exception()
         {
-            if (!ThreadManager.isMainThread)
+            if (!ThreadTask.isMainThread)
                 throw new NotMainThreadException();
         }
 
