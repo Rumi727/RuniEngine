@@ -16,8 +16,8 @@ namespace RuniEngine.Editor
         {
             controlPanels.Clear();
 
-            Type[] types = ReflectionManager.types;
-            for (int i = 0; i < types.Length; i++)
+            IReadOnlyList<Type> types = ReflectionManager.types;
+            for (int i = 0; i < types.Count; i++)
             {
                 Type type = types[i];
                 if (type.IsSubtypeOf<IControlPanelWindow>())
@@ -44,13 +44,19 @@ namespace RuniEngine.Editor
 
         void Update()
         {
-            if (Kernel.isPlaying && !inspectorUpdate)
+            if (selectedControlPanel == null)
+                return;
+
+            if ((Kernel.isPlaying || selectedControlPanel.allowEditorUpdate) && !inspectorUpdate && selectedControlPanel.allowUpdate)
                 Repaint();
         }
 
         void OnInspectorUpdate()
         {
-            if (Kernel.isPlaying && inspectorUpdate)
+            if (selectedControlPanel == null)
+                return;
+
+            if ((Kernel.isPlaying || selectedControlPanel.allowEditorUpdate) && inspectorUpdate && selectedControlPanel.allowUpdate)
                 Repaint();
         }
 
@@ -61,8 +67,14 @@ namespace RuniEngine.Editor
         static List<IControlPanelWindow> controlPanels = new List<IControlPanelWindow>();
         static readonly List<string> tabLabels = new List<string>();
         static Vector2 scrollPosition = Vector2.zero;
+        static IControlPanelWindow? selectedControlPanel;
         public static void DrawGUI()
         {
+            if (controlPanels.Count <= 0)
+                return;
+
+            selectedControlPanel = controlPanels[tabIndex];
+
             {
                 Space();
 
@@ -76,7 +88,7 @@ namespace RuniEngine.Editor
 
                 Space(5);
 
-                if (Kernel.isPlayingAndNotPaused)
+                if ((Kernel.isPlayingAndNotPaused || selectedControlPanel.allowEditorUpdate) && selectedControlPanel.allowUpdate)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.FlexibleSpace();
@@ -91,12 +103,9 @@ namespace RuniEngine.Editor
                 DrawLine(2);
             }
 
-            if (controlPanels.Count > 0)
-            {
-                scrollPosition = GUILayout.BeginScrollView(scrollPosition);
-                controlPanels[tabIndex].OnGUI();
-                GUILayout.EndScrollView();
-            }
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+            selectedControlPanel.OnGUI();
+            GUILayout.EndScrollView();
         }
     }
 }

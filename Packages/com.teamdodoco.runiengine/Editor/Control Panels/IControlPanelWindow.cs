@@ -7,6 +7,9 @@ namespace RuniEngine.Editor
 
         int sort { get; }
 
+        bool allowUpdate { get; }
+        bool allowEditorUpdate { get; }
+
         void OnGUI();
     }
 }
