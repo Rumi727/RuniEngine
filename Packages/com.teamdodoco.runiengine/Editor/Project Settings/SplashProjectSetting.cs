@@ -23,7 +23,7 @@ namespace RuniEngine.Editor.ProjectSettings
             if (!Kernel.isPlaying)
             {
                 splashProjectSetting ??= new StorableClass(typeof(SplashScreen.ProjectData));
-                splashProjectSetting.AutoNameLoad(Kernel.projectDataPath);
+                splashProjectSetting.AutoNameLoad(Kernel.projectSettingPath);
             }
         }
 
@@ -68,7 +68,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 PlayModeStartSceneChanger.SetPlayModeStartScene(false);
                 BuildSceneListChanger.SceneListChanged(false);
 
-                splashProjectSetting?.AutoNameSave(Kernel.projectDataPath);
+                splashProjectSetting?.AutoNameSave(Kernel.projectSettingPath);
             }
 
             EndLabelWidth();
