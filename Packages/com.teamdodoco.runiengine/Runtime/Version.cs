@@ -142,7 +142,7 @@ namespace RuniEngine
         public static explicit operator string(Version value) => value.ToString();
         public static explicit operator Version(string value) => new Version(value);
 
-        public static explicit operator Vector3Int(Version value) => new Vector3Int((int)value.major, (int)value.minor, (int)value.patch);
+        public static explicit operator Vector3Int(Version value) => new Vector3Int((int)(value.major ?? 0), (int)(value.minor ?? 0), (int)(value.patch ?? 0));
         public static explicit operator Version(Vector3Int value) => new Version((ulong)value.x, (ulong)value.y, (ulong)value.z);
 
 
