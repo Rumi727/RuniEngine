@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 using Object = UnityEngine.Object;
@@ -19,21 +20,24 @@ namespace RuniEngine.Resource
     {
         public delegate UniTask RefreshDelegate(string nameSpacePath, string nameSpace);
 
-        [GlobalData]
+        /*[GlobalData]
         public struct GlobalData
         {
             [JsonProperty] public static List<string> resourcePacks { get; set; } = new List<string>();
-        }
+        }*/
 
         public const string rootName = "assets";
         public const string defaultNameSpace = "runi";
 
+
+
+        public static IReadOnlyList<ResourcePack> resourcePacks => _resourcePacks;
+        static readonly List<ResourcePack> _resourcePacks = new List<ResourcePack>();
+
+
+
         public static List<Object?> allLoadedResources { get; } = new();
         public static SynchronizedCollection<Object?> garbages { get; } = new SynchronizedCollection<Object?>();
-
-
-
-        static List<IResourceElement> allResourceElements { get; } = new List<IResourceElement>();
 
 
 
@@ -44,58 +48,68 @@ namespace RuniEngine.Resource
 
 
 
-        public static void ElementRegister(IResourceElement element) => allResourceElements.Add(element);
-        public static void ElementUnregister(IResourceElement element) => allResourceElements.Remove(element);
-
-
-
-        public static UniTask Refresh() => Refresh(allResourceElements);
-        public static UniTask Refresh(params IResourceElement[] resourceElements) => Refresh((IList<IResourceElement>)resourceElements);
-
-        public static async UniTask Refresh(IList<IResourceElement> resourceElements)
+        public static async UniTask Refresh()
         {
             NotMainThreadException.Exception();
+            
+            List<UniTask> cachedUniTasks = new List<UniTask>();
+            ResourcePackLoop(x =>
+            {
+                foreach (var item in x.resourceElements)
+                    cachedUniTasks.Add(item.Value.Load());
 
-            UniTask[] cachedUniTasks = new UniTask[resourceElements.Count];
-            for (int i = 0; i < cachedUniTasks.Length; i++)
-                cachedUniTasks[i] = resourceElements[i].Load();
+                return true;
+            }, out _);
 
             await UniTask.WhenAll(cachedUniTasks);
             GarbageRemoval();
         }
 
-
-
-        public delegate UniTask ResourcePackLoopFunc(string nameSpacePath, string nameSpace);
-        public static async UniTask ResourcePackLoop(ResourcePackLoopFunc func)
+        public static bool ResourcePackLoop<T>(Func<ResourcePack, T> func, out T? result)
         {
             //기본 에셋도 포함시켜야하기 때문에 리소스팩 길이를 1 늘린다
-            for (int i = 0; i < GlobalData.resourcePacks.Count + 1; i++)
+            for (int i = 0; i < resourcePacks.Count + 1; i++)
             {
                 //현재 인덱스가 리소스팩의 길이를 벗어나면 기본 에셋으로 판정 (반복문이 리소스팩 길이 + 1 까지 반복하기 때문에 가능함)
-                string path;
-                if (i < GlobalData.resourcePacks.Count)
-                    path = GlobalData.resourcePacks[i];
+                ResourcePack pack;
+                if (i < resourcePacks.Count)
+                    pack = resourcePacks[i];
                 else
-                    path = Kernel.streamingAssetsPath;
-
-                path = Path.Combine(path, rootName);
-
-                string[] nameSpaces = Directory.GetDirectories(path);
-                for (int j = 0; j < nameSpaces.Length; j++)
                 {
-                    string nameSpacePath = nameSpaces[j];
-                    try
+                    if (ResourcePack.defaultPack != null)
+                        pack = ResourcePack.defaultPack;
+                    else
+                        continue;
+                }
+
+                try
+                {
+                    if (func != null)
                     {
-                        await func.Invoke(nameSpacePath, Path.GetFileName(nameSpacePath));
+                        result = func.Invoke(pack);
+                        return true;
                     }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);
-                        Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{namespace}", nameSpacePath).Replace("{path}", nameSpacePath), nameof(ResourceManager));
-                    }
+
+                    result = default;
+                    return false;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{path}", pack.path), nameof(ResourceManager));
                 }
             }
+
+            result = default;
+            return false;
+        }
+
+        public static bool ResourceElementLoop<T>(Func<T, bool> action) where T : IResourceElement
+        {
+            if (!ResourcePackLoop(x => action.Invoke((T)x.resourceElements[typeof(T)]), out bool result))
+                return false;
+
+            return result;
         }
 
         public static void GarbageRemoval()
@@ -273,38 +287,10 @@ namespace RuniEngine.Resource
         /// <returns></returns>
         public static string[] GetNameSpaces()
         {
-            if (BootLoader.isDataLoaded)
-            {
-                IEnumerable<string> nameSpaces = new string[0];
+            IEnumerable<string> nameSpaces = new string[0];
+            ResourcePackLoop(x => nameSpaces = nameSpaces.Union(x.nameSpaces), out _);
 
-                //기본 에셋도 포함시켜야하기 때문에 리소스팩 길이를 1 늘린다
-                for (int i = 0; i < GlobalData.resourcePacks.Count + 1; i++)
-                {
-                    //현재 인덱스가 리소스팩의 길이를 벗어나면 기본 에셋으로 판정 (반복문이 리소스팩 길이 + 1 까지 반복하기 때문에 가능함)
-                    string path;
-                    if (i < GlobalData.resourcePacks.Count)
-                        path = GlobalData.resourcePacks[i];
-                    else
-                        path = Kernel.streamingAssetsPath;
-
-                    nameSpaces = nameSpaces.Union(GetResult(path));
-                }
-
-                return nameSpaces.ToArray();
-            }
-            else
-                return GetResult(Kernel.streamingAssetsPath);
-
-            static string[] GetResult(string path)
-            {
-                path = Path.Combine(path, rootName);
-
-                string[] nameSpaces = Directory.GetDirectories(path);
-                for (int j = 0; j < nameSpaces.Length; j++)
-                    nameSpaces[j] = Path.GetFileName(nameSpaces[j]);
-
-                return nameSpaces;
-            }
+            return nameSpaces.ToArray();
         }
     }
 }

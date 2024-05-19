@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Booting;
 using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
 using UnityEngine;
@@ -122,8 +123,8 @@ namespace RuniEngine.Rendering
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            Sprite[]? sprites;
-            if (ImageLoader.isLoaded)
+            Sprite?[]? sprites;
+            if (BootLoader.isAllLoaded)
                 sprites = ImageLoader.SearchSprites(type, name, nameSpace, tag);
             else
                 sprites = ImageLoader.GetSprites(type, name, nameSpace, tag);

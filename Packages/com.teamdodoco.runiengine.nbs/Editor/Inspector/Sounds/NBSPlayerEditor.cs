@@ -17,7 +17,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 return;
 
             TargetsSetValue(x => x.nameSpace, x => UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace), (x, y) => x.nameSpace = y, targets);
-            TargetsSetValue(x => x.key, x => UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, NBSLoader.GetSoundDataKeys(x.nameSpace)), (x, y) => x.key = y, targets);
+            TargetsSetValue(x => x.key, x => UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, NBSLoader.GetNBSDataKeys(x.nameSpace)), (x, y) => x.key = y, targets);
         }
 
         protected override void TimeSliderGUI(Action? func)
