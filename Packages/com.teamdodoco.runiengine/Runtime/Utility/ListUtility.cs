@@ -5,6 +5,7 @@ using System.Numerics;
 using System;
 using System.Linq;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace RuniEngine
 {
@@ -1943,36 +1944,6 @@ namespace RuniEngine
         }
         #endregion
 
-        public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            using (IEnumerator<TSource> sourceIterator = source.GetEnumerator())
-            {
-                if (!sourceIterator.MoveNext())
-                    throw new InvalidOperationException("Empty sequence");
-
-                var comparer = Comparer<TKey>.Default;
-                TSource min = sourceIterator.Current;
-                TKey minKey = selector(min);
-
-                while (sourceIterator.MoveNext())
-                {
-                    TSource current = sourceIterator.Current;
-                    TKey currentKey = selector(current);
-
-                    if (comparer.Compare(currentKey, minKey) >= 0)
-                        continue;
-
-                    min = current;
-                    minKey = currentKey;
-                }
-
-                return min;
-            }
-        }
-
         #region Deduplicate
         public static void Deduplicate(this IList<float> values, float delta)
         {
@@ -2134,6 +2105,42 @@ namespace RuniEngine
             }
         }
         #endregion
+
+        public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            using (IEnumerator<TSource> sourceIterator = source.GetEnumerator())
+            {
+                if (!sourceIterator.MoveNext())
+                    throw new InvalidOperationException("Empty sequence");
+
+                var comparer = Comparer<TKey>.Default;
+                TSource min = sourceIterator.Current;
+                TKey minKey = selector(min);
+
+                while (sourceIterator.MoveNext())
+                {
+                    TSource current = sourceIterator.Current;
+                    TKey currentKey = selector(current);
+
+                    if (comparer.Compare(currentKey, minKey) >= 0)
+                        continue;
+
+                    min = current;
+                    minKey = currentKey;
+                }
+
+                return min;
+            }
+        }
+
+        public static IEnumerable<T> OrderByAlphaNumeric<T>(this IEnumerable<T> source, Func<T, string> selector)
+        {
+            int max = source.SelectMany(i => Regex.Matches(selector(i), @"\d+").Cast<Match>().Select(m => (int?)m.Value.Length)).Max() ?? 0;
+            return source.OrderBy(i => Regex.Replace(selector(i), @"\d+", m => m.Value.PadLeft(max, '0')));
+        }
 
         public static void RenameKey<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey fromKey, TKey toKey)
         {
