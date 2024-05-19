@@ -20,7 +20,7 @@ namespace RuniEngine.Editor
 
         public void OnGUI() => DrawGUI();
 
-        static ReorderableList? reorderableList;
+        static readonly ReorderableList? reorderableList;
         public static void DrawGUI()
         {
             EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
