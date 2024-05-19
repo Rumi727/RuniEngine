@@ -1,4 +1,5 @@
 #nullable enable
+using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.LowLevel;
@@ -25,11 +26,12 @@ namespace RuniEngine.Booting
         [Awaken]
         static void Awaken()
         {
-            Application.quitting += () =>
+            Kernel.quitting += () =>
             {
-                PlayerLoopSystem loopSystems = PlayerLoop.GetCurrentPlayerLoop();
-                EventUnregister(ref loopSystems);
-
+                PlayerLoopSystem loopSystems = PlayerLoop.GetDefaultPlayerLoop();
+                PlayerLoopHelper.Initialize(ref loopSystems);
+                PlayerLoop.SetPlayerLoop(loopSystems);
+                
                 initEvent = null;
                 earlyUpdateEvent = null;
                 fixedUpdateEvent = null;
@@ -72,38 +74,6 @@ namespace RuniEngine.Booting
 #endif
 
                 loopSystem.updateDelegate += updateDelegate;
-                loopSystems.subSystemList[i] = loopSystem;
-            }
-        }
-
-        public static void EventUnregister(ref PlayerLoopSystem loopSystems)
-        {
-            for (int i = 0; i < loopSystems.subSystemList.Length; i++)
-            {
-                PlayerLoopSystem loopSystem = loopSystems.subSystemList[i];
-                PlayerLoopSystem.UpdateFunction? updateDelegate = null;
-                Type type = loopSystem.type;
-
-                if (type == typeof(Initialization))
-                    updateDelegate -= initEvent;
-                else if (type == typeof(EarlyUpdate))
-                    updateDelegate -= earlyUpdateEvent;
-                else if (type == typeof(FixedUpdate))
-                    updateDelegate -= fixedUpdateEvent;
-                else if (type == typeof(PreUpdate))
-                    updateDelegate -= preUpdateEvent;
-                else if (type == typeof(Update))
-                    updateDelegate -= updateEvent;
-                else if (type == typeof(PreLateUpdate))
-                    updateDelegate -= preLateUpdateEvent;
-                else if (type == typeof(PostLateUpdate))
-                    updateDelegate -= postLateUpdateEvent;
-#if UNITY_2020_2_OR_NEWER
-                else if (type == typeof(TimeUpdate))
-                    updateDelegate -= timeUpdateEvent;
-#endif
-
-                loopSystem.updateDelegate -= updateDelegate;
                 loopSystems.subSystemList[i] = loopSystem;
             }
         }
