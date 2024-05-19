@@ -175,15 +175,15 @@ namespace RuniEngine
 
             AsyncTask.AllAsyncTaskCancel();
 
-            if (BootLoader.isDataLoaded)
-                StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
-
             if (UserAccountManager.currentAccount != null)
                 UserAccountManager.Logout();
 
-            BootLoader.StaticReset();
+            if (BootLoader.isDataLoaded)
+                StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
 
 #if UNITY_EDITOR
+            BootLoader.StaticReset();
+
             UnityEditor.EditorApplication.update += Update;
             UnityEditor.EditorApplication.pauseStateChanged -= PauseStateChanged;
 #endif
