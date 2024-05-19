@@ -121,7 +121,7 @@ namespace RuniEngine.Sounds
                 return;
             }
             
-            if (!isPaused && realTempo != 0)
+            if (isPlaying && !isPaused && realTempo != 0)
             {
                 _internalTick += Kernel.deltaTimeDouble * (nbsFile.tickTempo * 0.01) * realTempo;
 
