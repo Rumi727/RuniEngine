@@ -155,11 +155,62 @@ namespace RuniEngine.Sounds
         /// <summary>
         /// 이 프로퍼티는 에디터에서만 사용되며 런타임에 영향가지 않습니다
         /// <para></para>
-        /// 피치와 템포를 서로 같은 값으로 고정합니다
+        /// 피치와 템포를 서로 같은 비율로 고정합니다
         /// </summary>
-        public bool pitchFixed { get => _pitchFixed; set => _pitchFixed = value; }
+        public bool pitchFixed
+        {
+            get => _pitchFixed;
+            set
+            {
+                _pitchFixed = value;
+
+                double tempo = this.tempo;
+                double pitch = this.pitch;
+
+                if (tempo == pitch)
+                {
+                    _pitchTempoRatio = 1;
+                    _tempoPitchRatio = 1;
+                }
+
+                if (tempo != 0)
+                {
+                    if (pitch != 0)
+                        _pitchTempoRatio = pitch / tempo;
+                    else
+                        _pitchTempoRatio = 1;
+                }
+                else
+                    _pitchTempoRatio = 0;
+
+                if (pitch != 0)
+                {
+                    if (tempo != 0)
+                        _tempoPitchRatio = tempo / pitch;
+                    else
+                        _tempoPitchRatio = 1;
+                }
+                else
+                    _tempoPitchRatio = 0;
+            }
+        }
         [SerializeField] bool _pitchFixed = false;
 
+        /// <summary>
+        /// 이 프로퍼티는 에디터에서만 사용되며 런타임에 영향가지 않습니다
+        /// <para></para>
+        /// 피치와 템포의 비율입니다 피치를 고정할 때 사용됩니다 (pitchFixed 프로퍼티의 값이 바뀔 때만 변경됩니다)
+        /// </summary>
+        public double pitchTempoRatio => _pitchTempoRatio;
+        [SerializeField] double _pitchTempoRatio = 1;
+
+        /// <summary>
+        /// 이 프로퍼티는 에디터에서만 사용되며 런타임에 영향가지 않습니다
+        /// <para></para>
+        /// 템포와 피치의 비율입니다 템포를 고정할 때 사용됩니다 (pitchFixed 프로퍼티의 값이 바뀔 때만 변경됩니다)
+        /// </summary>
+        public double tempoPitchRatio => _tempoPitchRatio;
+        [SerializeField] double _tempoPitchRatio = 1;
 
         public float volume
         {

@@ -51,6 +51,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
             if (target == null)
                 return;
 
+            bool pitchFixedMixed = !TargetsIsEquals(x => x.pitchFixed);
+
             GUILayout.BeginHorizontal();
             BeginFieldWidth(40);
 
@@ -89,6 +91,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
             Space();
 
             {
+                EditorGUI.BeginDisabledGroup(!pitchFixedMixed && target.pitchFixed && TargetsIsEquals(x => x.tempoPitchRatio) && target.tempoPitchRatio == 0);
+
                 bool pitchChange = false;
                 try
                 {
@@ -116,15 +120,19 @@ namespace RuniEngine.Editor.Inspector.Sounds
                         //프로퍼티 업데이트
                         x.pitch = x.pitch;
 
-                        if (x.pitchFixed)
-                            x.tempo = x.pitch * x.tempo.Sign();
+                        if (x.pitchFixed && x.pitchTempoRatio != 0)
+                            x.tempo = x.pitch * x.tempoPitchRatio;
                     });
                 }
+
+                EditorGUI.EndDisabledGroup();
             }
 
             Space();
 
             {
+                EditorGUI.BeginDisabledGroup(!pitchFixedMixed && target.pitchFixed && TargetsIsEquals(x => x.pitchTempoRatio) && target.pitchTempoRatio == 0);
+
                 bool tempoChange = false;
                 try
                 {
@@ -149,10 +157,15 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     TargetsInvoke(x =>
                     {
-                        if (x.pitchFixed)
-                            x.pitch = x.tempo.Abs();
+                        //프로퍼티 업데이트
+                        x.tempo = x.tempo;
+
+                        if (x.pitchFixed && x.tempoPitchRatio != 0)
+                            x.pitch = (x.tempo * x.pitchTempoRatio).Abs();
                     });
                 }
+
+                EditorGUI.EndDisabledGroup();
             }
 
             Space();
@@ -170,8 +183,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     TargetsInvoke(x =>
                     {
-                        if (x.pitchFixed)
-                            x.pitch = x.tempo.Abs();
+                        //프로퍼티 업데이트
+                        x.pitchFixed = x.pitchFixed;
                     });
                 }
             }
