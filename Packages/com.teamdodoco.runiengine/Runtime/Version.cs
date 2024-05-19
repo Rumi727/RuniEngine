@@ -4,15 +4,28 @@ using UnityEngine;
 
 namespace RuniEngine
 {
-    public struct Version : IEquatable<Version>, IComparable, IComparable<Version>
+    public readonly struct Version : IEquatable<Version>, IComparable, IComparable<Version>
     {
-        public ulong major { get; set; }
-        public ulong minor { get; set; }
-        public ulong patch { get; set; }
+        public static Version all => new Version();
+        public static Version zero => new Version(0, 0, 0);
+        public static Version one => new Version(1, 0, 0);
+
+        public ulong? major { get; }
+        public ulong? minor { get; }
+        public ulong? patch { get; }
 
 
-        public Version(string value)
+        public Version(string? value)
         {
+            if (value == null)
+            {
+                major = null;
+                minor = null;
+                patch = null;
+
+                return;
+            }
+
             string[] versions = value.Split(".");
             if (versions == null || versions.Length <= 0)
             {
@@ -22,33 +35,53 @@ namespace RuniEngine
             }
             else if (versions.Length == 1)
             {
-                ulong.TryParse(versions[0], out ulong major);
+                if (ulong.TryParse(versions[0], out ulong major))
+                    this.major = major;
+                else
+                    this.major = null;
 
-                this.major = major;
                 minor = 0;
                 patch = 0;
             }
             else if (versions.Length == 2)
             {
-                ulong.TryParse(versions[0], out ulong major);
-                ulong.TryParse(versions[1], out ulong minor);
+                if (ulong.TryParse(versions[0], out ulong major))
+                    this.major = major;
+                else
+                    this.major = null;
 
-                this.major = major;
-                this.minor = minor;
+                if (ulong.TryParse(versions[1], out ulong minor))
+                    this.minor = minor;
+                else
+                    this.minor = null;
+
                 patch = 0;
             }
             else
             {
-                ulong.TryParse(versions[0], out ulong major);
-                ulong.TryParse(versions[1], out ulong minor);
-                ulong.TryParse(versions[2], out ulong patch);
+                {
+                    if (ulong.TryParse(versions[0], out ulong major))
+                        this.major = major;
+                    else
+                        this.major = null;
+                }
 
-                this.major = major;
-                this.minor = minor;
-                this.patch = patch;
+                {
+                    if (ulong.TryParse(versions[1], out ulong minor))
+                        this.minor = minor;
+                    else
+                        this.minor = null;
+                }
+
+                {
+                    if (ulong.TryParse(versions[2], out ulong patch))
+                        this.patch = patch;
+                    else
+                        this.patch = null;
+                }
             }
         }
-        public Version(ulong major, ulong minor, ulong patch)
+        public Version(ulong? major, ulong? minor, ulong? patch)
         {
             this.major = major;
             this.minor = minor;
@@ -59,44 +92,44 @@ namespace RuniEngine
 
         public static bool operator <=(Version lhs, Version rhs)
         {
-            if (lhs.major < rhs.major)
+            if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor == rhs.minor) && (lhs.patch == null || rhs.patch == null || lhs.patch <= rhs.patch))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor < rhs.patch)
+            else if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor < rhs.minor))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch <= rhs.patch)
+            else if (lhs.major == null || rhs.major == null || lhs.major < rhs.major)
                 return true;
 
             return false;
         }
         public static bool operator >=(Version lhs, Version rhs)
         {
-            if (lhs.major > rhs.major)
+            if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor == rhs.minor) && (lhs.patch == null || rhs.patch == null || lhs.patch >= rhs.patch))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor > rhs.patch)
+            else if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor > rhs.minor))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch >= rhs.patch)
+            else if (lhs.major == null || rhs.major == null || lhs.major > rhs.major)
                 return true;
 
             return false;
         }
         public static bool operator <(Version lhs, Version rhs)
         {
-            if (lhs.major < rhs.major)
+            if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor == rhs.minor) && (lhs.patch == null || rhs.patch == null || lhs.patch < rhs.patch))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor < rhs.patch)
+            else if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor < rhs.minor))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch < rhs.patch)
+            else if (lhs.major == null || rhs.major == null || lhs.major < rhs.major)
                 return true;
 
             return false;
         }
         public static bool operator >(Version lhs, Version rhs)
         {
-            if (lhs.major > rhs.major)
+            if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor == rhs.minor) && (lhs.patch == null || rhs.patch == null || lhs.patch > rhs.patch))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor > rhs.patch)
+            else if ((lhs.major == null || rhs.major == null || lhs.major == rhs.major) && (lhs.minor == null || rhs.minor == null || lhs.minor > rhs.minor))
                 return true;
-            else if (lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch > rhs.patch)
+            else if (lhs.major == null || rhs.major == null || lhs.major > rhs.major)
                 return true;
 
             return false;
