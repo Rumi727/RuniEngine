@@ -225,7 +225,7 @@ namespace RuniEngine.Sounds
 
         void SetIndex()
         {
-            if (nbsFile == null || index < 0 || index >= nbsFile.nbsNotes.Length || pitch == 0)
+            if (nbsFile == null || index < 0 || index >= nbsFile.nbsNotes.Length)
                 return;
 
             NBSNote nbsNote = nbsFile.nbsNotes[index];
@@ -234,8 +234,10 @@ namespace RuniEngine.Sounds
                 if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick < internalTick)
                 {
                     InfiniteLoopDetector.Run();
-                    
-                    AudioPlay();
+
+                    if (pitch != 0)
+                        AudioPlay();
+
                     _index++;
                 }
             }
@@ -244,8 +246,10 @@ namespace RuniEngine.Sounds
                 if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick >= internalTick)
                 {
                     InfiniteLoopDetector.Run();
-                    
-                    AudioPlay();
+
+                    if (pitch != 0)
+                        AudioPlay();
+
                     _index--;
                 }
             }
