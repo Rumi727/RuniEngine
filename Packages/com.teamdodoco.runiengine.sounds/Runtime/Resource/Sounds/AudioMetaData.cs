@@ -24,8 +24,6 @@ namespace RuniEngine.Resource.Sounds
 
                 length = audioClip.length;
                 samples = audioClip.samples;
-
-                Object.DestroyImmediate(audioClip);
             }
         }
 
