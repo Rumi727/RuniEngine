@@ -9,24 +9,23 @@ using RuniEngine.Jsons;
 using RuniEngine.NBS;
 using System.Linq;
 using RuniEngine.Pooling;
+using System;
 
 namespace RuniEngine.Resource.Sounds
 {
     public sealed class NBSLoader : IResourceElement
     {
-        NBSLoader() { }
-
         public const string nbsNameSpace = "runi-nbs";
 
-        public static NBSLoader instance { get; } = new NBSLoader();
-        public static bool isLoaded { get; private set; } = false;
+        public bool isLoaded { get; private set; } = false;
+        public ResourcePack? resourcePack { get; set; } = null;
 
 
 
         /// <summary>
         /// NBSData = allNBSs[nameSpace][key];
         /// </summary>
-        static Dictionary<string, Dictionary<string, NBSData>> allNBSes = new();
+        Dictionary<string, Dictionary<string, NBSData>> allNBSes = new();
 
 
 
@@ -34,14 +33,7 @@ namespace RuniEngine.Resource.Sounds
         string IResourceElement.name => name;
 
 
-
-        [Awaken]
-        static void Awaken()
-        {
-            ResourceManager.ElementRegister(instance);
-            Kernel.quitting += () => ResourceManager.ElementUnregister(instance);
-        }
-
+        
         [Starten]
         static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("nbs_player.prefab", "Prefab/NBS Player");
 
@@ -49,10 +41,19 @@ namespace RuniEngine.Resource.Sounds
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            if (allNBSes.TryGetValue(nameSpace, out var value) && value.TryGetValue(path, out NBSData value2))
-                return value2;
+            NBSData? result = null;
+            ResourceManager.ResourceElementLoop<NBSLoader>(x =>
+            {
+                if (x.allNBSes.TryGetValue(nameSpace, out var value) && value.TryGetValue(path, out NBSData value2))
+                {
+                    result = value2;
+                    return true;
+                }
 
-            return null;
+                return false;
+            });
+
+            return result;
         }
 
 
@@ -65,18 +66,24 @@ namespace RuniEngine.Resource.Sounds
             return null;
         }
 
-        public static string[] GetSoundDataKeys(string nameSpace = "")
+        public static string[] GetNBSDataKeys(string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            if (isLoaded)
+            string[] result = Array.Empty<string>();
+            if (!ResourceManager.ResourceElementLoop<NBSLoader>(x =>
             {
-                if (allNBSes.ContainsKey(nameSpace))
-                    return allNBSes[nameSpace].Keys.ToArray();
+                if (!x.isLoaded)
+                    return false;
+
+                if (x.allNBSes.ContainsKey(nameSpace))
+                {
+                    result = x.allNBSes[nameSpace].Keys.ToArray();
+                    return true;
+                }
                 else
-                    return new string[0];
-            }
-            else
+                    return false;
+            }))
             {
                 string path = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
                 Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(path + ".json");
@@ -85,58 +92,75 @@ namespace RuniEngine.Resource.Sounds
                 else
                     return new string[0];
             }
+
+            return result;
         }
 
 
 
         public async UniTask Load()
         {
+            if (resourcePack == null)
+                return;
+
             Dictionary<string, Dictionary<string, NBSData>> tempAllNBSes = new();
 
             if (ThreadTask.isMainThread)
-                await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(Thread));
+                await UniTask.RunOnThreadPool(Thread);
             else
-                await ResourceManager.ResourcePackLoop(Thread);
+                await Thread();
 
             allNBSes = tempAllNBSes;
             isLoaded = true;
 
-            async UniTask Thread(string nameSpacePath, string nameSpace)
+            async UniTask Thread()
             {
-                string folderPath = Path.Combine(nameSpacePath, name);
-
-                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(folderPath + ".json");
-                if (nbsDatas == null)
-                    return;
-
-                foreach (var nbsData in nbsDatas)
+                for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
                 {
-                    if (nbsData.Value.nbses == null)
+                    string nameSpace = resourcePack.nameSpaces[i];
+                    string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+
+                    Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(folderPath + ".json");
+                    if (nbsDatas == null)
                         continue;
 
-                    List<NBSMetaData> nbsMetaDatas = new List<NBSMetaData>();
-                    for (int i = 0; i < nbsData.Value.nbses.Length; i++)
+                    foreach (var nbsData in nbsDatas)
                     {
-                        NBSMetaData? nbsMetaData = nbsData.Value.nbses[i];
-                        string nbsPath = Path.Combine(folderPath, nbsMetaData.path);
+                        if (nbsData.Value.nbses == null)
+                            continue;
 
-                        if (!ResourceManager.FileExtensionExists(nbsPath, out nbsPath, ExtensionFilter.nbsFileFilter))
-                            return;
-                        
-                        NBSFile? nbsFile = GetNBSFile(nbsPath);
-                        if (nbsFile != null)
-                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsFile);
+                        List<NBSMetaData> nbsMetaDatas = new List<NBSMetaData>();
+                        for (int j = 0; j < nbsData.Value.nbses.Length; j++)
+                        {
+                            NBSMetaData? nbsMetaData = nbsData.Value.nbses[j];
+                            string nbsPath = Path.Combine(folderPath, nbsMetaData.path);
 
-                        if (nbsMetaData != null)
-                            nbsMetaDatas.Add(nbsMetaData);
+                            if (!ResourceManager.FileExtensionExists(nbsPath, out nbsPath, ExtensionFilter.nbsFileFilter))
+                                return;
+
+                            NBSFile? nbsFile = GetNBSFile(nbsPath);
+                            if (nbsFile != null)
+                                nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsFile);
+
+                            if (nbsMetaData != null)
+                                nbsMetaDatas.Add(nbsMetaData);
+                        }
+
+                        tempAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
+                        tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
                     }
-
-                    tempAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
-                    tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
                 }
 
                 await UniTask.CompletedTask;
             }
+        }
+
+        public async UniTask Unload()
+        {
+            allNBSes = new();
+            isLoaded = false;
+
+            await UniTask.CompletedTask;
         }
     }
 }

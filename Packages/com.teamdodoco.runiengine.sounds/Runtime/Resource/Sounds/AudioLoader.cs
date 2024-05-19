@@ -11,14 +11,14 @@ using System.Linq;
 using System.Threading;
 using OggVorbis;
 using RuniEngine.Pooling;
+using System;
+
+using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioLoader : IResourceElement
     {
-        public static AudioLoader instance { get; } = new AudioLoader();
-        public static bool isLoaded { get; private set; } = false;
-
         public static int systemFrequency { get => Interlocked.Add(ref _systemFrequency, 0); }
         static int _systemFrequency = 48000;
 
@@ -40,10 +40,15 @@ namespace RuniEngine.Resource.Sounds
 
 
 
+        public bool isLoaded { get; private set; } = false;
+        public ResourcePack? resourcePack { get; set; } = null;
+
+
+
         /// <summary>
         /// AudioData = allAudios[nameSpace][key];
         /// </summary>
-        static Dictionary<string, Dictionary<string, AudioData>> allAudios = new();
+        Dictionary<string, Dictionary<string, AudioData>> allAudios = new();
 
 
 
@@ -55,15 +60,10 @@ namespace RuniEngine.Resource.Sounds
         [Awaken]
         static void Awaken()
         {
-            ResourceManager.ElementRegister(instance);
             OnAudioConfigurationChanged(false);
 
             AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
-            Kernel.quitting += () =>
-            {
-                AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
-                ResourceManager.ElementUnregister(instance);
-            };
+            Kernel.quitting += () => AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
         }
 
         [Starten]
@@ -129,10 +129,19 @@ namespace RuniEngine.Resource.Sounds
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            if (allAudios.TryGetValue(nameSpace, out var value) && value.TryGetValue(path, out AudioData value2))
-                return value2;
+            AudioData? result = null;
+            ResourceManager.ResourceElementLoop<AudioLoader>(x =>
+            {
+                if (x.allAudios.TryGetValue(nameSpace, out var value) && value.TryGetValue(path, out AudioData value2))
+                {
+                    result = value2;
+                    return true;
+                }
 
-            return null;
+                return false;
+            });
+
+            return result;
         }
 
 
@@ -176,107 +185,128 @@ namespace RuniEngine.Resource.Sounds
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            if (isLoaded)
+            string[] result = Array.Empty<string>();
+            if (!ResourceManager.ResourceElementLoop<AudioLoader>(x =>
             {
-                if (allAudios.ContainsKey(nameSpace))
-                    return allAudios[nameSpace].Keys.ToArray();
+                if (!x.isLoaded)
+                    return false;
+
+                if (x.allAudios.ContainsKey(nameSpace))
+                {
+                    result = x.allAudios[nameSpace].Keys.ToArray();
+                    return true;
+                }
                 else
-                    return new string[0];
-            }
-            else
+                    return false;
+            }))
             {
                 string path = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
                 Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(path + ".json");
                 if (audioDatas != null)
-                    return audioDatas.Keys.ToArray();
-                else
-                    return new string[0];
+                    result = audioDatas.Keys.ToArray();
             }
+
+            return result;
         }
 
 
 
         public async UniTask Load()
         {
+            if (resourcePack == null)
+                return;
+
             Dictionary<string, Dictionary<string, AudioData>> tempAllAudios = new();
 
             if (ThreadTask.isMainThread)
-                await UniTask.RunOnThreadPool(() => ResourceManager.ResourcePackLoop(Thread));
+                await UniTask.RunOnThreadPool(Thread);
             else
-                await ResourceManager.ResourcePackLoop(Thread);
+                await Thread();
 
             allAudios = tempAllAudios;
             isLoaded = true;
 
-            async UniTask Thread(string nameSpacePath, string nameSpace)
+            async UniTask Thread()
             {
-                string folderPath = Path.Combine(nameSpacePath, name);
-
-                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(folderPath + ".json");
-                if (audioDatas == null)
-                    return;
-
-                List<UniTask> tasks = new List<UniTask>();
-                foreach (var audioData in audioDatas)
+                for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
                 {
-                    tasks.Add(Task());
+                    string nameSpace = resourcePack.nameSpaces[i];
+                    string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+                    
+                    Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(folderPath + ".json");
+                    if (audioDatas == null)
+                        continue;
 
-                    //병렬 로드
-                    async UniTask Task()
+                    List<UniTask> tasks = new List<UniTask>();
+                    foreach (var audioData in audioDatas)
                     {
-                        if (audioData.Value.audios == null)
-                            return;
+                        tasks.Add(Task());
 
-                        List<UniTask> tasks2 = new List<UniTask>();
-                        List<AudioMetaData> audioMetaDatas = new List<AudioMetaData>();
-
-                        for (int i = 0; i < audioData.Value.audios.Length; i++)
+                        //병렬 로드
+                        async UniTask Task()
                         {
-                            tasks2.Add(Task2());
+                            if (audioData.Value.audios == null)
+                                return;
 
-                            //병렬 로드 2
-                            async UniTask Task2()
+                            List<UniTask> tasks2 = new List<UniTask>();
+                            List<AudioMetaData> audioMetaDatas = new List<AudioMetaData>();
+
+                            for (int i = 0; i < audioData.Value.audios.Length; i++)
                             {
-                                AudioMetaData? audioMetaData = audioData.Value.audios[i];
-                                string audioPath = Path.Combine(folderPath, audioMetaData.path);
+                                tasks2.Add(Task2());
 
-                                if (!ResourceManager.FileExtensionExists(audioPath, out audioPath, ExtensionFilter.musicFileFilter))
-                                    return;
-
-                                AudioType audioType = Path.GetExtension(audioPath).ToLower() switch
+                                //병렬 로드 2
+                                async UniTask Task2()
                                 {
-                                    ".ogg" => AudioType.OGGVORBIS,
-                                    ".mp3" => AudioType.MPEG,
-                                    ".mp2" => AudioType.MPEG,
-                                    ".wav" => AudioType.WAV,
-                                    ".aiff" => AudioType.AIFF,
-                                    ".xm" => AudioType.XM,
-                                    ".mod" => AudioType.MOD,
-                                    ".it" => AudioType.IT,
-                                    ".vag" => AudioType.VAG,
-                                    ".xma" => AudioType.XMA,
-                                    ".s3m" => AudioType.S3M,
-                                    _ => AudioType.UNKNOWN,
-                                };
+                                    AudioMetaData? audioMetaData = audioData.Value.audios[i];
+                                    string audioPath = Path.Combine(folderPath, audioMetaData.path);
 
-                                AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType, audioMetaData.stream));
-                                if (audioClip != null)
-                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
+                                    if (!ResourceManager.FileExtensionExists(audioPath, out audioPath, ExtensionFilter.musicFileFilter))
+                                        return;
 
-                                if (audioMetaData != null)
-                                    audioMetaDatas.Add(audioMetaData);
+                                    AudioType audioType = Path.GetExtension(audioPath).ToLower() switch
+                                    {
+                                        ".ogg" => AudioType.OGGVORBIS,
+                                        ".mp3" => AudioType.MPEG,
+                                        ".mp2" => AudioType.MPEG,
+                                        ".wav" => AudioType.WAV,
+                                        ".aiff" => AudioType.AIFF,
+                                        ".xm" => AudioType.XM,
+                                        ".mod" => AudioType.MOD,
+                                        ".it" => AudioType.IT,
+                                        ".vag" => AudioType.VAG,
+                                        ".xma" => AudioType.XMA,
+                                        ".s3m" => AudioType.S3M,
+                                        _ => AudioType.UNKNOWN,
+                                    };
+
+                                    AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType, audioMetaData.stream));
+                                    if (audioClip != null)
+                                        audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
+
+                                    if (audioMetaData != null)
+                                        audioMetaDatas.Add(audioMetaData);
+                                }
                             }
+
+                            await UniTask.WhenAll(tasks2);
+
+                            tempAllAudios.TryAdd(nameSpace, new Dictionary<string, AudioData>());
+                            tempAllAudios[nameSpace].TryAdd(audioData.Key, new AudioData(audioData.Value.subtitle, audioData.Value.isBGM, audioMetaDatas.ToArray()));
                         }
-
-                        await UniTask.WhenAll(tasks2);
-
-                        tempAllAudios.TryAdd(nameSpace, new Dictionary<string, AudioData>());
-                        tempAllAudios[nameSpace].TryAdd(audioData.Key, new AudioData(audioData.Value.subtitle, audioData.Value.isBGM, audioMetaDatas.ToArray()));
                     }
-                }
 
-                await UniTask.WhenAll(tasks);
+                    await UniTask.WhenAll(tasks);
+                }
             }
+        }
+
+        public async UniTask Unload()
+        {
+            allAudios = new();
+            isLoaded = false;
+
+            await UniTask.CompletedTask;
         }
     }
 }

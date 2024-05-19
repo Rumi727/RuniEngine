@@ -1,4 +1,5 @@
 #nullable enable
+using Cysharp.Threading.Tasks;
 using RuniEngine.Resource;
 using System.Collections.Generic;
 using UnityEditor;
@@ -28,13 +29,13 @@ namespace RuniEngine.Editor
                 GUILayout.BeginHorizontal();
 
                 if (GUILayout.Button(TryGetText("control_panel.resource.refresh"), GUILayout.ExpandWidth(false)))
-                    ResourceManager.Refresh();
+                    ResourceManager.Refresh().Forget();
 
                 GUILayout.EndHorizontal();
             }
 
             {
-                List<string> packLists = ResourceManager.GlobalData.resourcePacks;
+                /*List<string> packLists = ResourceManager.GlobalData.resourcePacks;
                 float height = EditorStyles.textField.CalcSize(new GUIContent()).y;
                 //bool isChanged = false;
 
@@ -80,7 +81,7 @@ namespace RuniEngine.Editor
                 };
 
                 Rect rect = EditorGUILayout.GetControlRect(true, reorderableList.GetHeight());
-                reorderableList.DoList(rect);
+                reorderableList.DoList(rect);*/
             }
 
             EditorGUI.EndDisabledGroup();
