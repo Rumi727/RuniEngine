@@ -101,7 +101,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.teamdodoco.runiengine": "0.0.0"
+        "com.teamdodoco.runiengine": "0.0.0",
+        "com.unity.modules.assetbundle": "0.0.0"
       }
     },
     "com.teamdodoco.runiengine.sounds": {
@@ -312,6 +313,12 @@
       "dependencies": {}
     },
     "com.unity.modules.animation": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {}
+    },
+    "com.unity.modules.assetbundle": {
       "version": "1.0.0",
       "depth": 1,
       "source": "builtin",

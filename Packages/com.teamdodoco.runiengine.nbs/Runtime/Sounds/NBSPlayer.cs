@@ -197,7 +197,7 @@ namespace RuniEngine.Sounds
 
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            NBSPlayer? nbsPlayer = (NBSPlayer?)ObjectPoolingManager.ObjectCreate("nbs_player.prefab", parent).monoBehaviour;
+            NBSPlayer? nbsPlayer = ObjectPoolingManager.ObjectClone<NBSPlayer>("NBS Player", NBSLoader.nbsNameSpace, parent);
             if (nbsPlayer == null)
                 return null;
 

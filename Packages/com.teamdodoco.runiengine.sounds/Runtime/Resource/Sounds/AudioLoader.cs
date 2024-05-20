@@ -10,7 +10,6 @@ using RuniEngine.Jsons;
 using System.Linq;
 using System.Threading;
 using OggVorbis;
-using RuniEngine.Pooling;
 using System;
 
 using Object = UnityEngine.Object;
@@ -19,6 +18,8 @@ namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioLoader : IResourceElement
     {
+        public const string soundsNameSpace = "runi-sounds";
+
         public static int systemFrequency { get => Interlocked.Add(ref _systemFrequency, 0); }
         static int _systemFrequency = 48000;
 
@@ -65,9 +66,6 @@ namespace RuniEngine.Resource.Sounds
             AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
             Kernel.quitting += () => AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
         }
-
-        [Starten]
-        static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("audio_player.prefab", "Prefab/Audio Player");
 
         static void OnAudioConfigurationChanged(bool deviceWasChanged)
         {

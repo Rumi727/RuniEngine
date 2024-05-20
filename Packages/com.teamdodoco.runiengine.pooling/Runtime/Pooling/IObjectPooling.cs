@@ -6,7 +6,9 @@ namespace RuniEngine.Pooling
 {
     public interface IObjectPooling
     {
-        string objectKey { get; set; }
+        string poolingNameSpace { get; set; }
+        string poolingKey { get; set; }
+
         bool isActived { get; }
 
         bool disableCreation { get; set; }
@@ -21,7 +23,7 @@ namespace RuniEngine.Pooling
 
         public static void OnCreateDefault(Transform transform, IObjectPooling objectPooling)
         {
-            transform.gameObject.name = objectPooling.objectKey;
+            transform.gameObject.name = objectPooling.poolingKey;
 
             transform.localPosition = Vector3.zero;
 
@@ -29,25 +31,25 @@ namespace RuniEngine.Pooling
             transform.localScale = Vector3.one;
         }
 
-        public static bool RemoveDefault(MonoBehaviour monoBehaviour, IObjectPooling objectPooling)
+        public static bool RemoveDefault<T>(T poolingObject) where T : MonoBehaviour, IObjectPooling
         {
-            if (!objectPooling.isActived)
+            if (!poolingObject.isActived)
                 return false;
             if (!Kernel.isPlaying)
                 return false;
 
-            objectPooling.removed?.Invoke();
-            objectPooling.removed = null;
+            poolingObject.removed?.Invoke();
+            poolingObject.removed = null;
 
-            ObjectPoolingManager.ObjectRemove(objectPooling.objectKey, monoBehaviour, objectPooling);
-            monoBehaviour.name = objectPooling.objectKey;
+            ObjectPoolingManager.AddObject(poolingObject);
+            poolingObject.name = poolingObject.poolingKey;
 
             /*monoBehaviour.transform.localPosition = Vector3.zero;
 
             monoBehaviour.transform.localEulerAngles = Vector3.zero;
             monoBehaviour.transform.localScale = Vector3.one;*/
 
-            monoBehaviour.StopAllCoroutines();
+            poolingObject.StopAllCoroutines();
             return true;
         }
     }
