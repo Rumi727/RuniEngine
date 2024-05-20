@@ -852,6 +852,8 @@ namespace RuniEngine.Resource.Images
 
         public async UniTask Unload()
         {
+            isLoaded = false;
+
             foreach (var item4 in from item in allTextureSprites from item2 in item.Value from item3 in item2.Value from item4 in item3.Value select item4)
             {
                 for (int i = 0; i < item4.Value.Length; i++)
@@ -859,21 +861,22 @@ namespace RuniEngine.Resource.Images
                     Sprite? sprite = item4.Value[i];
                     if (sprite != null)
                         Object.DestroyImmediate(sprite);
+
+                    await UniTask.Yield();
                 }
             }
 
             foreach (var item2 in from item in packTextures from item2 in item.Value where item2.Value != null select item2)
+            {
                 Object.DestroyImmediate(item2.Value);
+                await UniTask.Yield();
+            }
 
             packTextures = new();
             packTextureRects = new();
             packTexturePaths = new();
             packTextureTypePaths = new();
             allTextureSprites = new();
-
-            isLoaded = false;
-
-            await UniTask.CompletedTask;
         }
     }
 }
