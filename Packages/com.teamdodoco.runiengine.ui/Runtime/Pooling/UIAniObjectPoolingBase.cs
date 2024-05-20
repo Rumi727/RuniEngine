@@ -6,7 +6,8 @@ namespace RuniEngine.Pooling
 {
     public abstract class UIAniObjectPoolingBase : UIAniBase, IObjectPooling
     {
-        public string objectKey { get; set; } = string.Empty;
+        public string poolingNameSpace { get; set; } = string.Empty;
+        public string poolingKey { get; set; } = string.Empty;
 
         public bool isRemoved => !isActived;
 
@@ -34,6 +35,6 @@ namespace RuniEngine.Pooling
         /// <summary>
         /// Please put <see cref="Remove"/> when overriding
         /// </summary>
-        public virtual void Remove() => IObjectPooling.RemoveDefault(this, this);
+        public virtual void Remove() => IObjectPooling.RemoveDefault(this);
     }
 }

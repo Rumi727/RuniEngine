@@ -1,6 +1,5 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
-using RuniEngine.Booting;
 using RuniEngine.Threading;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +7,6 @@ using UnityEngine;
 using RuniEngine.Jsons;
 using RuniEngine.NBS;
 using System.Linq;
-using RuniEngine.Pooling;
 using System;
 
 namespace RuniEngine.Resource.Sounds
@@ -34,9 +32,6 @@ namespace RuniEngine.Resource.Sounds
 
 
         
-        [Starten]
-        static void Starten() => ObjectPoolingManager.ProjectData.prefabList.TryAdd("nbs_player.prefab", "Prefab/NBS Player");
-
         public static NBSData? SearchNBSData(string path, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);

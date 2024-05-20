@@ -15,10 +15,6 @@ namespace RuniEngine.Sounds
     [RequireComponent(typeof(AudioSource))]
     public sealed class AudioPlayer : SoundPlayerBase
     {
-        public override string objectKey => "audio_player.prefab";
-
-
-
         AudioSource? _audioSource;
         public AudioSource? audioSource => _audioSource = this.GetComponentFieldSave(_audioSource);
 
@@ -509,7 +505,7 @@ namespace RuniEngine.Sounds
 
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            AudioPlayer? audioPlayer = (AudioPlayer?)ObjectPoolingManager.ObjectCreate("audio_player.prefab", parent).monoBehaviour;
+            AudioPlayer? audioPlayer = ObjectPoolingManager.ObjectClone<AudioPlayer>("audio_player", AudioLoader.soundsNameSpace, parent);
             if (audioPlayer == null)
                 return null;
 

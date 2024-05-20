@@ -1,7 +1,7 @@
 #nullable enable
-using Newtonsoft.Json;
 using RuniEngine.Booting;
-using RuniEngine.Datas;
+using RuniEngine.Resource;
+using RuniEngine.Resource.Objects;
 using RuniEngine.Threading;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,14 +10,6 @@ namespace RuniEngine.Pooling
 {
     public static class ObjectPoolingManager
     {
-        [ProjectData]
-        public struct ProjectData
-        {
-            [JsonProperty] public static Dictionary<string, string> prefabList { get; set; } = new Dictionary<string, string>();
-        }
-
-
-
         public static Transform instance
         {
             get
@@ -37,18 +29,7 @@ namespace RuniEngine.Pooling
 
         
 
-        static readonly List<Instance> instanceList = new List<Instance>();
-        class Instance
-        {
-            public string key = "";
-            public (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) objectPooling;
-
-            public Instance(string key, (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) objectPooling)
-            {
-                this.key = key;
-                this.objectPooling = objectPooling;
-            }
-        }
+        [StaticReset(false)] static readonly Dictionary<string, Dictionary<string, List<MonoBehaviour>>> pooledObjectList = new();
 
 
 
@@ -56,139 +37,135 @@ namespace RuniEngine.Pooling
         /// <summary>
         /// 오브젝트를 미리 생성합니다
         /// </summary>
-        /// <param name="objectKey">미리 생성할 오브젝트 키</param>
-        public static void ObjectAdvanceCreate(string objectKey)
-        {
-            MonoBehaviour? monoBehaviour = Resources.Load<MonoBehaviour>(ProjectData.prefabList[objectKey]);
-            if (monoBehaviour is not IObjectPooling)
-                return;
-
-            ObjectAdd(objectKey, monoBehaviour);
-        }
-
-        /// <summary>
-        /// 오브젝트를 리스트에 추가합니다
-        /// </summary>
-        /// <param name="objectKey">추가할 오브젝트의 키</param>
-        /// <param name="monoBehaviour">추가할 오브젝트</param>
-        public static void ObjectAdd(string objectKey, MonoBehaviour monoBehaviour)
+        /// <param name="key">미리 생성할 오브젝트 키</param>
+        public static void CachingObject(string key, string nameSpace = "")
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
             BasicDataNotLoadedException.Exception();
 
-            MonoBehaviour? instantiate = Object.Instantiate(monoBehaviour, instance.transform);
-            if (instantiate is not IObjectPooling objectPooling)
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            GameObject? gameObject = ObjectLoader.SearchGameObject(key, nameSpace);
+            if (gameObject == null)
                 return;
 
-            objectPooling.objectKey = objectKey;
-            ObjectRemove(objectKey, instantiate, objectPooling);
+            MonoBehaviour monoBehaviour = gameObject.GetComponent<MonoBehaviour>();
+            if (monoBehaviour is not IObjectPooling)
+                return;
+
+            IObjectPooling poolingObject = (IObjectPooling)Object.Instantiate(monoBehaviour, instance.transform);
+
+            poolingObject.poolingNameSpace = nameSpace;
+            poolingObject.poolingKey = key;
+
+            monoBehaviour.gameObject.SetActive(false);
+            monoBehaviour.transform.SetParent(instance.transform, false);
+
+            pooledObjectList.TryAdd(poolingObject.poolingNameSpace, new());
+            pooledObjectList[poolingObject.poolingNameSpace].TryAdd(poolingObject.poolingKey, new());
+            pooledObjectList[poolingObject.poolingNameSpace][poolingObject.poolingKey].Add(monoBehaviour);
         }
 
         /// <summary>
-        /// 오브젝트가 리스트에 있는지 감지합니다 (리소스 폴더에 있는 프리팹은 알아서 감지하고 생성하니, 이 함수를 쓸 필요가 없습니다)
+        /// 커스텀 오브젝트를 풀링 리스트에 추가합니다
         /// </summary>
-        /// <param name="objectKey">감지할 오브젝트 키</param>
-        /// <returns></returns>
-        public static bool ObjectContains(string objectKey)
+        /// <param name="key">추가할 오브젝트의 키</param>
+        /// <param name="poolingObject">추가할 오브젝트</param>
+        public static void AddObject<T>(T poolingObject) where T : MonoBehaviour, IObjectPooling
         {
-            for (int i = 0; i < instanceList.Count; i++)
-            {
-                Instance instance = instanceList[i];
-                if (instance.key == objectKey)
-                    return true;
-            }
+            NotMainThreadException.Exception();
+            NotPlayModeException.Exception();
+            BasicDataNotLoadedException.Exception();
 
-            return false;
+            poolingObject.gameObject.SetActive(false);
+            poolingObject.transform.SetParent(instance.transform, false);
+
+            pooledObjectList.TryAdd(poolingObject.poolingNameSpace, new());
+            pooledObjectList[poolingObject.poolingNameSpace].TryAdd(poolingObject.poolingKey, new());
+            pooledObjectList[poolingObject.poolingNameSpace][poolingObject.poolingKey].Add(poolingObject);
+        }
+
+        /// <summary>
+        /// 오브젝트가 리스트에 있는지 감지합니다 (커스텀 오브젝트으로 수동 풀링 시키지 않는이상 알아서 감지하고 생성하니, 이 메소드를 쓸 필요가 없습니다)
+        /// </summary>
+        /// <param name="key">감지할 오브젝트 키</param>
+        /// <returns></returns>
+        public static bool ContainsObject(string key, string nameSpace = "")
+        {
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+            return pooledObjectList.ContainsKey(nameSpace) && pooledObjectList.ContainsKey(key);
         }
 
         /// <summary>
         /// 오브젝트를 생성합니다
         /// </summary>
-        /// <param name="objectKey">생성할 오브젝트 키</param>
+        /// <param name="key">생성할 오브젝트 키</param>
         /// <param name="parent">생성할 오브젝트가 자식으로갈 오브젝트</param>
         /// <returns></returns>
-        public static (MonoBehaviour? monoBehaviour, IObjectPooling? objectPooling) ObjectCreate(string objectKey, Transform? parent = null)
+        public static T? ObjectClone<T>(string key, string nameSpace = "", Transform? parent = null) where T : MonoBehaviour, IObjectPooling
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
             BasicDataNotLoadedException.Exception();
 
-            int objectIndex = -1;
-            for (int i = 0; i < instanceList.Count; i++)
+            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+
+            if (pooledObjectList.TryGetValue(nameSpace, out var value) && value.TryGetValue(key, out var poolingObjectList))
             {
-                Instance instance = instanceList[i];
-                if (instance.key == objectKey)
+                int poolingObjectIndex = -1;
+                for (int i = 0; i < poolingObjectList.Count; i++)
                 {
-                    (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) = instance.objectPooling;
-                    if (monoBehaviour == null)
+                    MonoBehaviour monoBehaviour = poolingObjectList[i];
+
+                    //풀링 오브젝트가 맞는지만 감지하는 것이기 때문에 제너릭 타입을 사용해선 안됩니다
+                    if (monoBehaviour is not IObjectPooling poolingObject || monoBehaviour == null)
                     {
-                        instanceList.RemoveAt(i);
+                        poolingObjectList.RemoveAt(i);
 
                         i--;
                         continue;
                     }
 
-                    if (!objectPooling.disableCreation)
+                    if (!poolingObject.disableCreation)
                     {
-                        objectIndex = i;
+                        poolingObjectIndex = i;
                         break;
                     }
                 }
+
+                if (poolingObjectIndex >= 0)
+                {
+                    if (poolingObjectList[poolingObjectIndex] is not T poolingObject)
+                        return null;
+
+                    poolingObject.transform.SetParent(parent, false);
+                    poolingObject.gameObject.SetActive(true);
+
+                    poolingObjectList.RemoveAt(poolingObjectIndex);
+
+                    poolingObject.OnCreate();
+                    return poolingObject;
+                }
             }
-
-            if (objectIndex >= 0)
+            
             {
-                (MonoBehaviour? monoBehaviour, IObjectPooling objectPooling) = instanceList[objectIndex].objectPooling;
-                if (monoBehaviour == null)
-                    return (null, null);
-
-                monoBehaviour.transform.SetParent(parent, false);
-                monoBehaviour.gameObject.SetActive(true);
-
-                objectPooling.objectKey = objectKey;
-                instanceList.RemoveAt(objectIndex);
-
-                objectPooling.OnCreate();
-                return (monoBehaviour, objectPooling);
-            }
-            else if (ProjectData.prefabList.ContainsKey(objectKey))
-            {
-                GameObject? gameObject = Resources.Load<GameObject>(ProjectData.prefabList[objectKey]);
+                GameObject? gameObject = ObjectLoader.SearchGameObject(key, nameSpace);
                 if (gameObject == null)
-                    return (null, null);
+                    return null;
 
-                if (!Object.Instantiate(gameObject, parent).TryGetComponent<IObjectPooling>(out IObjectPooling? objectPooling))
-                    return (null, null);
+                MonoBehaviour monoBehaviour = gameObject.GetComponent<MonoBehaviour>();
+                if (monoBehaviour is not T)
+                    return null;
 
-                MonoBehaviour monoBehaviour = (MonoBehaviour)objectPooling;
+                T poolingObject = (T)Object.Instantiate(monoBehaviour, parent);
 
-                monoBehaviour.name = objectKey;
-                objectPooling.objectKey = objectKey;
+                poolingObject.poolingNameSpace = nameSpace;
+                poolingObject.poolingKey = key;
 
-                objectPooling.OnCreate();
-                return (monoBehaviour, objectPooling);
+                poolingObject.OnCreate();
+                return poolingObject;
             }
-
-            return (null, null);
-        }
-
-        /// <summary>
-        /// 오브젝트를 삭제합니다
-        /// </summary>
-        /// <param name="objectKey">지울 오브젝트 키</param>
-        /// <param name="objectPooling">지울 오브젝트</param>
-        public static bool ObjectRemove(string objectKey, MonoBehaviour monoBehaviour, IObjectPooling objectPooling)
-        {
-            NotMainThreadException.Exception();
-            NotPlayModeException.Exception();
-            BasicDataNotLoadedException.Exception();
-
-            monoBehaviour.gameObject.SetActive(false);
-            monoBehaviour.transform.SetParent(instance.transform, false);
-
-            instanceList.Add(new Instance(objectKey, (monoBehaviour, objectPooling)));
-            return true;
         }
     }
 }
