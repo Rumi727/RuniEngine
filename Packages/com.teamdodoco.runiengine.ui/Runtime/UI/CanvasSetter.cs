@@ -195,8 +195,8 @@ namespace RuniEngine.UI
                 }
             }
 #else
-            if (safeScreen.parent != transform)
-                safeScreen.SetParent(transform);
+            if (areaObject.parent != transform)
+                areaObject.SetParent(transform);
 #endif
 
             areaObject.anchorMin = Vector2.zero;
@@ -237,7 +237,7 @@ namespace RuniEngine.UI
                             childtransform.SetParent(areaObject);
                     }
 #else
-                    childtransform.SetParent(safeScreen);
+                    childtransform.SetParent(areaObject);
 #endif
                     i--;
                     childCount--;
@@ -277,7 +277,7 @@ namespace RuniEngine.UI
                     DestroyImmediate(areaObject.gameObject);
             }
 #else
-            DestroyImmediate(safeScreen.gameObject);
+            DestroyImmediate(areaObject.gameObject);
 #endif
 
             _areaObject = null;
