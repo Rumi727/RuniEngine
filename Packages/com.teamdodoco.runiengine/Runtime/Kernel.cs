@@ -176,7 +176,7 @@ namespace RuniEngine
             AsyncTask.AllAsyncTaskCancel();
 
             if (UserAccountManager.currentAccount != null)
-                UserAccountManager.Logout();
+                UserAccountManager.LogoutWithoutUnload();
 
             if (BootLoader.isDataLoaded)
                 StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);

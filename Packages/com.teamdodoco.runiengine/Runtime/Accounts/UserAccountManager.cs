@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using RuniEngine.Booting;
 using RuniEngine.Datas;
 using RuniEngine.Jsons;
+using RuniEngine.Resource;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -84,7 +85,7 @@ namespace RuniEngine.Accounts
             BasicDataNotLoadedException.Exception();
 
             if (currentAccount != null)
-                Logout();
+                await Logout();
 
             UserAccount? account = await UserAccount.Create(info, password);
             if (account == null)
@@ -93,11 +94,42 @@ namespace RuniEngine.Accounts
             currentAccount = account;
             UserDataLoad();
 
+            UniTask[] tasks = new UniTask[ResourceManager.UserData.resourcePacks.Count];
+            for (int i = 0; i < ResourceManager.UserData.resourcePacks.Count; i++)
+                tasks[i] = ResourceManager.Load(ResourceManager.UserData.resourcePacks[i]);
+
+            await UniTask.WhenAll(tasks);
             await SceneManager.LoadSceneAsync(3).ToUniTask();
             return true;
         }
 
-        public static void Logout()
+        public static async UniTask Logout()
+        {
+            BasicDataNotLoadedException.Exception();
+
+            if (currentAccount == null)
+                throw LogoutException.AlreadyLoggedException();
+
+            List<UniTask> tasks = new List<UniTask>();
+            ResourceManager.ResourcePackLoop(x =>
+            {
+                if (!ResourceManager.UserData.resourcePacks.Contains(x.path))
+                    return false;
+
+                tasks.Add(ResourceManager.Unload(x));
+                return true;
+            }, out _);
+
+            await UniTask.WhenAll(tasks);
+
+            UserDataSave();
+            UserDataSetDefault();
+
+            currentAccount.Dispose();
+            currentAccount = null;
+        }
+
+        public static void LogoutWithoutUnload()
         {
             BasicDataNotLoadedException.Exception();
 
