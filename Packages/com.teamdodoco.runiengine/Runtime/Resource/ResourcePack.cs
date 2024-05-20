@@ -1,7 +1,6 @@
 #nullable enable
 using Newtonsoft.Json;
 using RuniEngine.Jsons;
-using RuniEngine.Resource.Texts;
 using System;
 using System.Collections.Generic;
 using System.IO;
