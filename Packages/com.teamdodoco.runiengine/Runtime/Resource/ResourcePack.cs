@@ -21,65 +21,23 @@ namespace RuniEngine.Resource
         }
         static ResourcePack? _defaultPack;
 
-        [JsonIgnore]
-        public string name
-        {
-            get
-            {
-                if (isUnloaded)
-                    throw new ObjectDisposedException(GetType().FullName);
-
-                return _name;
-            }
-        }
+        [JsonIgnore] public string name => _name;
         [JsonProperty(nameof(name))] readonly string _name = "";
 
-        [JsonIgnore]
-        public string description
-        {
-            get
-            {
-                if (isUnloaded)
-                    throw new ObjectDisposedException(GetType().FullName);
-
-                return _description;
-            }
-        }
+        [JsonIgnore] public string description => _description;
         [JsonProperty(nameof(description))] readonly string _description = "";
 
-        [JsonIgnore]
-        public Version version
-        {
-            get
-            {
-                if (isUnloaded)
-                    throw new ObjectDisposedException(GetType().FullName);
-
-                return _version;
-            }
-        }
+        [JsonIgnore] public Version version => _version;
         [JsonProperty(nameof(version))] readonly Version _version = Version.zero;
 
-        [JsonIgnore]
-        public VersionRange targetVersion
-        {
-            get
-            {
-                if (isUnloaded)
-                    throw new ObjectDisposedException(GetType().FullName);
-
-                return _targetVersion;
-            }
-        }
-        [JsonProperty(nameof(targetVersion))] private VersionRange _targetVersion = new VersionRange(Kernel.runiEngineVersion, Kernel.runiEngineVersion);
+        [JsonIgnore] public VersionRange targetVersion => _targetVersion;
+        [JsonProperty(nameof(targetVersion))] VersionRange _targetVersion = new VersionRange(Kernel.runiEngineVersion, Kernel.runiEngineVersion);
 
         [JsonIgnore] public string path { get; private set; } = "";
         [JsonIgnore] public string iconPatch { get; private set; } = "";
 
         [JsonIgnore] public IReadOnlyList<string> nameSpaces { get; private set; } = new List<string>();
         [JsonIgnore] public IReadOnlyDictionary<Type, IResourceElement> resourceElements { get; private set; } = new Dictionary<Type, IResourceElement>();
-
-        [JsonIgnore] public bool isUnloaded { get; private set; } = false;
 
         public static ResourcePack? Create(string path)
         {
@@ -127,7 +85,5 @@ namespace RuniEngine.Resource
 
             return resourcePack;
         }
-
-        public void UnloadCheck() => isUnloaded = true;
     }
 }
