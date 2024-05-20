@@ -1,5 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
+using RuniEngine.Datas;
 using RuniEngine.Resource.Texts;
 using RuniEngine.Threading;
 using System;
@@ -16,11 +18,11 @@ namespace RuniEngine.Resource
     {
         public delegate UniTask RefreshDelegate(string nameSpacePath, string nameSpace);
 
-        /*[GlobalData]
-        public struct GlobalData
+        [UserData]
+        public struct UserData
         {
             [JsonProperty] public static List<string> resourcePacks { get; set; } = new List<string>();
-        }*/
+        }
 
         public const string rootName = "assets";
         public const string defaultNameSpace = "runi";
@@ -39,10 +41,35 @@ namespace RuniEngine.Resource
 
 #if UNITY_EDITOR
         [UnityEditor.InitializeOnLoadMethod]
-        static void InitializeOnLoadMethod() => UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += Resource.ResourceManager.AllDestroy;
+        static void InitializeOnLoadMethod() => UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += AllDestroy;
 #endif
 
+        public static async UniTask<ResourcePack?> Load(string path)
+        {
+            ResourcePack? resourcePack = ResourcePack.Create(path);
+            if (resourcePack == null)
+                return null;
 
+            List<UniTask> cachedUniTasks = new List<UniTask>();
+            foreach (var item in resourcePack.resourceElements)
+                cachedUniTasks.Add(item.Value.Load());
+
+            await UniTask.WhenAll(cachedUniTasks);
+
+            _resourcePacks.Add(resourcePack);
+            return resourcePack;
+        }
+
+        public static async UniTask Unload(ResourcePack resourcePack)
+        {
+            _resourcePacks.Remove(resourcePack);
+            
+            List<UniTask> cachedUniTasks = new List<UniTask>();
+            foreach (var item in resourcePack.resourceElements)
+                cachedUniTasks.Add(item.Value.Unload());
+
+            await UniTask.WhenAll(cachedUniTasks);
+        }
 
         public static async UniTask Refresh()
         {
