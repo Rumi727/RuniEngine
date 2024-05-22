@@ -79,7 +79,7 @@ namespace RuniEngine.Resource.Objects
         {
             /* 
              * 기본 리소스팩이 아닌 다른 리소스팩에서 불러와도 (이론상) 지장이 전혀 없습니다
-             * 다만 굉장히 오브젝트를 통째로 불러오는건 위험한 방법이기에 기본적으로 내장 리소스팩에서만 불러오게 설정했습니다
+             * 다만 오브젝트를 통째로 불러오는건 굉장히 위험한 방법이기에 기본적으로 내장 리소스팩에서만 불러오게 설정했습니다
              */
             if (resourcePack == null || (!UserData.allowOtherResourcePackLoad && resourcePack != ResourcePack.defaultPack))
                 return;
