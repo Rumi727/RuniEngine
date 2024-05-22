@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace RuniEngine
 {
-    public class AsyncTask : IDisposable
+    public class AsyncTask : IProgress<float>, IDisposable
     {
         public static event Action? asyncTaskAdd = null;
         public static event Action? asyncTaskChange = null;
@@ -268,6 +268,12 @@ namespace RuniEngine
         public CancellationToken cancelToken => cancelTokenSource.Token;
 
 
+
+        void IProgress<float>.Report(float value)
+        {
+            progress = value;
+            maxProgress = 1;
+        }
 
         public virtual void Dispose()
         {
