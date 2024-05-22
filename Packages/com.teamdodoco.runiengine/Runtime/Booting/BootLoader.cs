@@ -40,7 +40,7 @@ namespace RuniEngine.Booting
         public static bool isDataLoaded { get; private set; } = false;
         public static bool isAllLoaded { get; private set; } = false;
 
-        [RuntimeInitializeOnLoadMethod]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static async UniTaskVoid Boot()
         {
 #if UNITY_WEBGL
