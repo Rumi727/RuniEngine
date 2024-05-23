@@ -6,7 +6,7 @@ namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioMetaData : SoundMetaDataBase
     {
-        public AudioMetaData(string path, double pitch, double tempo, bool stream, int loopStartIndex, int loopOffsetIndex, AudioClip? audioClip) : base(path, pitch, tempo, stream)
+        public AudioMetaData(string path, double pitch, double tempo, int loopStartIndex, int loopOffsetIndex, AudioClip? audioClip) : base(path, pitch, tempo)
         {
             this.loopStartIndex = loopStartIndex;
             this.loopOffsetIndex = loopOffsetIndex;

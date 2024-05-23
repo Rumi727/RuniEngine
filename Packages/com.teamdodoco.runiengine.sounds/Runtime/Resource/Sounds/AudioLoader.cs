@@ -278,10 +278,10 @@ namespace RuniEngine.Resource.Sounds
                                         _ => AudioType.UNKNOWN,
                                     };
 
-                                    AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType, audioMetaData.stream));
+                                    AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType));
                                     if (audioClip != null)
                                     {
-                                        audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.stream, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
+                                        audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
                                         Object.DestroyImmediate(audioClip);
                                     }
 

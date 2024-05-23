@@ -250,7 +250,6 @@ namespace RuniEngine.Editor.ProjectSettings
             {
                 NBSMetaData metaData = (NBSMetaData)y;
                 string nbsPath = metaData.path;
-                bool stream = metaData.stream;
                 double pitch = metaData.pitch;
                 double tempo = metaData.tempo;
 
@@ -323,23 +322,12 @@ namespace RuniEngine.Editor.ProjectSettings
                         EndLabelWidth();
                     }
 
-                    if (metaData.stream)
-                        tempo = tempo.Clamp(0);
-
-                    {
-                        string label = TryGetText("gui.stream");
-                        BeginLabelWidth(label);
-
-                        stream = EditorGUILayout.Toggle(label, stream, GUILayout.Width(EditorGUIUtility.labelWidth + 18));
-                        EndLabelWidth();
-                    }
-
                     EditorGUILayout.EndHorizontal();
                     tempIsChanged |= EditorGUI.EndChangeCheck();
                 }
 
-                return new NBSMetaData(nbsPath, pitch, tempo, stream, null);
-            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new NBSMetaData("", 1, 1, false, null)), out bool isListChanged, deleteSafety);
+                return new NBSMetaData(nbsPath, pitch, tempo, null);
+            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new NBSMetaData("", 1, 1, null)), out bool isListChanged, deleteSafety);
 
             isChanged = tempIsChanged || isListChanged;
             return new NBSData(subtitle, isBGM, metaDatas.ToArray());
