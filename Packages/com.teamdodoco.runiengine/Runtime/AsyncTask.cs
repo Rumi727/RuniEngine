@@ -43,9 +43,9 @@ namespace RuniEngine
 
 
 
-        public AsyncTask() : this("", "", false, true) { }
+        public AsyncTask() : this("", "", false, false) { }
 
-        public AsyncTask(NameSpacePathReplacePair name) : this(name, "", false, true) { }
+        public AsyncTask(NameSpacePathReplacePair name) : this(name, "", false, false) { }
 
         public AsyncTask(NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool isLoop = false, bool cancellable = false, bool isEditor = false)
         {
