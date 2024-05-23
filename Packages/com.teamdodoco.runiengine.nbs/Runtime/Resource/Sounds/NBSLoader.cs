@@ -135,7 +135,7 @@ namespace RuniEngine.Resource.Sounds
 
                             NBSFile? nbsFile = GetNBSFile(nbsPath);
                             if (nbsFile != null)
-                                nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.stream, nbsFile);
+                                nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsFile);
 
                             if (nbsMetaData != null)
                                 nbsMetaDatas.Add(nbsMetaData);

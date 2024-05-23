@@ -6,7 +6,7 @@ namespace RuniEngine.Resource.Sounds
 {
     public sealed class NBSMetaData : SoundMetaDataBase
     {
-        public NBSMetaData(string path, double pitch, double tempo, bool stream, NBSFile? nbsFile) : base(path, pitch, tempo, stream) => this.nbsFile = nbsFile;
+        public NBSMetaData(string path, double pitch, double tempo, NBSFile? nbsFile) : base(path, pitch, tempo) => this.nbsFile = nbsFile;
 
         public int loopStartTick => nbsFile?.loopStartTick ?? 0;
 

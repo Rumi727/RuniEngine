@@ -250,7 +250,6 @@ namespace RuniEngine.Editor.ProjectSettings
             {
                 AudioMetaData metaData = (AudioMetaData)y;
                 string audioPath = metaData.path;
-                bool stream = metaData.stream;
                 double pitch = metaData.pitch;
                 double tempo = metaData.tempo;
                 int loopStartIndex = metaData.loopStartIndex;
@@ -325,17 +324,6 @@ namespace RuniEngine.Editor.ProjectSettings
                         EndLabelWidth();
                     }
 
-                    if (metaData.stream)
-                        tempo = tempo.Clamp(0);
-
-                    {
-                        string label = TryGetText("gui.stream");
-                        BeginLabelWidth(label);
-
-                        stream = EditorGUILayout.Toggle(label, stream, GUILayout.Width(EditorGUIUtility.labelWidth + 18));
-                        EndLabelWidth();
-                    }
-
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
 
@@ -359,8 +347,8 @@ namespace RuniEngine.Editor.ProjectSettings
                     tempIsChanged |= EditorGUI.EndChangeCheck();
                 }
 
-                return new AudioMetaData(audioPath, pitch, tempo, stream, loopStartIndex, loopOffsetIndex, null);
-            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new AudioMetaData("", 1, 1, false, 0, 0, null)), out bool isListChanged, deleteSafety);
+                return new AudioMetaData(audioPath, pitch, tempo, loopStartIndex, loopOffsetIndex, null);
+            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new AudioMetaData("", 1, 1, 0, 0, null)), out bool isListChanged, deleteSafety);
 
             isChanged = tempIsChanged || isListChanged;
             return new AudioData(subtitle, isBGM, metaDatas.ToArray());
