@@ -209,7 +209,8 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public async UniTask Load()
+        public UniTask Load() => Load(null);
+        public async UniTask Load(IProgress<float>? progress)
         {
             if (resourcePack == null)
                 return;
@@ -298,6 +299,7 @@ namespace RuniEngine.Resource.Sounds
                     }
 
                     await UniTask.WhenAll(tasks);
+                    progress?.Report((float)i / resourcePack.nameSpaces.Count);
                 }
             }
         }

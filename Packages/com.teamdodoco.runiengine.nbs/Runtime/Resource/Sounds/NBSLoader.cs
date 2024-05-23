@@ -93,7 +93,8 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public async UniTask Load()
+        public UniTask Load() => Load(null);
+        public async UniTask Load(IProgress<float>? progress)
         {
             if (resourcePack == null)
                 return;
@@ -103,12 +104,12 @@ namespace RuniEngine.Resource.Sounds
             if (ThreadTask.isMainThread)
                 await UniTask.RunOnThreadPool(Thread);
             else
-                await Thread();
+                Thread();
 
             allNBSes = tempAllNBSes;
             isLoaded = true;
 
-            async UniTask Thread()
+            void Thread()
             {
                 for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
                 {
@@ -144,9 +145,9 @@ namespace RuniEngine.Resource.Sounds
                         tempAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
                         tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
                     }
-                }
 
-                await UniTask.CompletedTask;
+                    progress?.Report((float)i / resourcePack.nameSpaces.Count);
+                }
             }
         }
 

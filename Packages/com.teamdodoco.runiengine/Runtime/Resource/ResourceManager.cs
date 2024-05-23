@@ -44,15 +44,35 @@ namespace RuniEngine.Resource
         static void InitializeOnLoadMethod() => UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += AllDestroy;
 #endif
 
-        public static async UniTask<ResourcePack?> Load(string path)
+        public static async UniTask<ResourcePack?> Load(string path, IProgress<float>? progress = null)
         {
             ResourcePack? resourcePack = ResourcePack.Create(path);
             if (resourcePack == null)
                 return null;
 
             List<UniTask> cachedUniTasks = new List<UniTask>();
+            SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
+            int progressIndex = 0;
+
             foreach (var item in resourcePack.resourceElements)
-                cachedUniTasks.Add(item.Value.Load());
+            {
+                if (progress != null)
+                {
+                    int index = progressIndex;
+                    IProgress<float> progress2 = Progress.Create<float>(x =>
+                    {
+                        progressLists[index] = x;
+                        progress.Report(progressLists.Sum() / resourcePack.resourceElements.Count);
+                    });
+
+                    progressLists.Add(0);
+                    progressIndex++;
+
+                    cachedUniTasks.Add(item.Value.Load(progress2));
+                }
+                else
+                    cachedUniTasks.Add(item.Value.Load());
+            }
 
             await UniTask.WhenAll(cachedUniTasks);
 
@@ -71,15 +91,35 @@ namespace RuniEngine.Resource
             await UniTask.WhenAll(cachedUniTasks);
         }
 
-        public static async UniTask Refresh()
+        public static async UniTask Refresh(IProgress<float>? progress = null)
         {
             NotMainThreadException.Exception();
-            
+
             List<UniTask> cachedUniTasks = new List<UniTask>();
+            SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
+            int progressIndex = 0;
+
             ResourcePackLoop(x =>
             {
                 foreach (var item in x.resourceElements)
-                    cachedUniTasks.Add(item.Value.Load());
+                {
+                    if (progress != null)
+                    {
+                        int index = progressIndex;
+                        IProgress<float> progress2 = Progress.Create<float>(y =>
+                        {
+                            progressLists[index] = y;
+                            progress.Report(progressLists.Sum() / x.resourceElements.Count);
+                        });
+
+                        progressLists.Add(0);
+                        progressIndex++;
+
+                        cachedUniTasks.Add(item.Value.Load(progress2));
+                    }
+                    else
+                        cachedUniTasks.Add(item.Value.Load());
+                }
 
                 return true;
             }, out _);
