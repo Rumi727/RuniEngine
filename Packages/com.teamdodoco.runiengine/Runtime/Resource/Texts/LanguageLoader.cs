@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using RuniEngine.Datas;
 using RuniEngine.Jsons;
 using RuniEngine.Threading;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -119,7 +120,8 @@ namespace RuniEngine.Resource.Texts
 
 
 
-        public async UniTask Load()
+        public UniTask Load() => Load(null);
+        public async UniTask Load(IProgress<float>? progress)
         {
             if (resourcePack == null)
                 return;
@@ -136,7 +138,7 @@ namespace RuniEngine.Resource.Texts
             languageList = tempLanguageTypes;
 
             isLoaded = true;
-
+            
             async UniTask Thread()
             {
                 for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
@@ -166,6 +168,8 @@ namespace RuniEngine.Resource.Texts
                                 tempLanguageTypes.Add(fileName);
                         }
                     }
+
+                    progress?.Report((float)i / resourcePack.nameSpaces.Count);
                 }
 
                 await UniTask.CompletedTask;

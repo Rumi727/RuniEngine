@@ -600,7 +600,8 @@ namespace RuniEngine.Resource.Images
 
 
 
-        public async UniTask Load()
+        public UniTask Load() => Load(null);
+        public async UniTask Load(IProgress<float>? progress)
         {
             if (resourcePack == null)
                 return;
@@ -654,6 +655,8 @@ namespace RuniEngine.Resource.Images
 
             async UniTask FindTextures()
             {
+                int progressValue = 0;
+                int maxProgress = 0;
                 List<UniTask> tasks = new List<UniTask>();
 
                 for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
@@ -689,13 +692,20 @@ namespace RuniEngine.Resource.Images
 
                             tasks.Add(Task());
 
+                            maxProgress++;
+
                             //병렬 로드
                             async UniTask Task()
                             {
                                 TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(typePath + ".json") ?? new TextureMetaData();
                                 Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
                                 if (texture == null)
+                                {
+                                    maxProgress--;
+                                    progress?.Report((float)progressValue / maxProgress);
+
                                     return;
+                                }
 
                                 tempPackTexturePaths.TryAdd(nameSpace, new());
                                 tempPackTexturePaths[nameSpace].TryAdd(typeName, new());
@@ -707,6 +717,9 @@ namespace RuniEngine.Resource.Images
                                 tempTextures.TryAdd(nameSpace, new());
                                 tempTextures[nameSpace].TryAdd(typeName, new());
                                 tempTextures[nameSpace][typeName].TryAdd(fileName, texture);
+
+                                progressValue++;
+                                progress?.Report((float)progressValue / maxProgress);
                             }
                         }
                     }
@@ -717,6 +730,14 @@ namespace RuniEngine.Resource.Images
 
             async UniTask PackTextures()
             {
+                int progressValue = 0;
+                int maxProgress = 0;
+                foreach (var nameSpaces in tempTextures)
+                {
+                    foreach (var types in nameSpaces.Value)
+                        maxProgress++;
+                }
+
                 foreach (var nameSpaces in tempTextures)
                 {
                     /* packTextureRects */
@@ -789,6 +810,9 @@ namespace RuniEngine.Resource.Images
 
                         /* packTextureRects */ type_name_rect.Add(types.Key, fileName_rect);
                         /* packTextures */ type_texture.Add(types.Key, background);
+
+                        progressValue++;
+                        progress?.Report((float)progressValue / maxProgress);
                     }
 
                     /* packTextureRects */
@@ -800,6 +824,18 @@ namespace RuniEngine.Resource.Images
 
             async UniTask LoadSprite()
             {
+                int progressValue = 0;
+                int maxProgress = 0;
+                foreach (var nameSpace in tempPackTextureRects)
+                {
+                    foreach (var type in nameSpace.Value)
+                    {
+                        foreach (var rects in type.Value)
+                            maxProgress++;
+                    }
+                }
+
+
                 List<UniTask> tasks = new List<UniTask>();
 
                 foreach (var nameSpace in tempPackTextureRects)
@@ -841,6 +877,9 @@ namespace RuniEngine.Resource.Images
                                 tempAllTextureSprites.TryAdd(nameSpace.Key, new Dictionary<string, Dictionary<string, Dictionary<string, Sprite?[]>>>());
                                 tempAllTextureSprites[nameSpace.Key].TryAdd(type.Key, new Dictionary<string, Dictionary<string, Sprite?[]>>());
                                 tempAllTextureSprites[nameSpace.Key][type.Key].TryAdd(rects.Key, sprites);
+
+                                progressValue++;
+                                progress?.Report((float)progressValue / maxProgress);
                             }
                         }
                     }

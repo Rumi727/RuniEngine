@@ -2,9 +2,12 @@
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RuniEngine.Datas;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+
+using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource.Objects
 {
@@ -75,7 +78,8 @@ namespace RuniEngine.Resource.Objects
 
 
 
-        public async UniTask Load()
+        public UniTask Load() => Load(null);
+        public async UniTask Load(IProgress<float>? progress)
         {
             /* 
              * 기본 리소스팩이 아닌 다른 리소스팩에서 불러와도 (이론상) 지장이 전혀 없습니다
@@ -84,6 +88,7 @@ namespace RuniEngine.Resource.Objects
             if (resourcePack == null || (!UserData.allowOtherResourcePackLoad && resourcePack != ResourcePack.defaultPack))
                 return;
 
+            int progressValue = 0;
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
@@ -92,8 +97,17 @@ namespace RuniEngine.Resource.Objects
                 if (!File.Exists(path))
                     continue;
 
-                AssetBundle assetBundle = await AssetBundle.LoadFromFileAsync(path);
-                Object[] unityObjects = await assetBundle.LoadAllAssetsAsync().AwaitForAllAssets();
+                AssetBundle assetBundle = await AssetBundle.LoadFromFileAsync(path).ToUniTask(Progress.Create<float>(x =>
+                {
+                    progress?.Report(progressValue + (x / resourcePack.nameSpaces.Count * 0.5f));
+                }));
+
+                Object[] unityObjects = await assetBundle.LoadAllAssetsAsync().AwaitForAllAssets(Progress.Create<float>(x =>
+                {
+                    progress?.Report(progressValue + (0.5f + (x / resourcePack.nameSpaces.Count * 0.5f)));
+                }));
+
+                progressValue++;
 
                 for (int j = 0; j < unityObjects.Length; j++)
                 {
@@ -106,13 +120,9 @@ namespace RuniEngine.Resource.Objects
                     {
                         gameObjects.TryAdd(nameSpace, new());
                         gameObjects[nameSpace].TryAdd(gameObject.name, gameObject);
-
-                        Debug.Log(gameObject);
                     }
                 }
             }
-
-            await UniTask.CompletedTask;
         }
 
         public async UniTask Unload()
