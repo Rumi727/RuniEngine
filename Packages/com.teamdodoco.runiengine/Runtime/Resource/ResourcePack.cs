@@ -1,9 +1,11 @@
 #nullable enable
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RuniEngine.Jsons;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace RuniEngine.Resource
 {
@@ -38,6 +40,8 @@ namespace RuniEngine.Resource
 
         [JsonIgnore] public IReadOnlyList<string> nameSpaces { get; private set; } = new List<string>();
         [JsonIgnore] public IReadOnlyDictionary<Type, IResourceElement> resourceElements { get; private set; } = new Dictionary<Type, IResourceElement>();
+
+        [JsonIgnore] public bool isLoaded { get; private set; } = false;
 
         public static ResourcePack? Create(string path)
         {
@@ -84,6 +88,47 @@ namespace RuniEngine.Resource
             }
 
             return resourcePack;
+        }
+
+        public async UniTask Load(IProgress<float>? progress = null)
+        {
+            List<UniTask> cachedUniTasks = new List<UniTask>();
+            SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
+            int progressIndex = 0;
+
+            foreach (var item in resourceElements)
+            {
+                if (progress != null)
+                {
+                    int index = progressIndex;
+                    IProgress<float> progress2 = Progress.Create<float>(x =>
+                    {
+                        progressLists[index] = x;
+                        progress.Report(progressLists.Sum() / resourceElements.Count);
+                    });
+
+                    progressLists.Add(0);
+                    progressIndex++;
+
+                    cachedUniTasks.Add(item.Value.Load(progress2));
+                }
+                else
+                    cachedUniTasks.Add(item.Value.Load());
+            }
+
+            await UniTask.WhenAll(cachedUniTasks);
+            isLoaded = true;
+        }
+
+        public async UniTask Unload()
+        {
+            isLoaded = false;
+
+            List<UniTask> cachedUniTasks = new List<UniTask>();
+            foreach (var item in resourceElements)
+                cachedUniTasks.Add(item.Value.Unload());
+
+            await UniTask.WhenAll(cachedUniTasks);
         }
     }
 }

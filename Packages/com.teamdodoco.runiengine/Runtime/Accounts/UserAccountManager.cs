@@ -96,7 +96,14 @@ namespace RuniEngine.Accounts
 
             UniTask[] tasks = new UniTask[ResourceManager.UserData.resourcePacks.Count];
             for (int i = 0; i < ResourceManager.UserData.resourcePacks.Count; i++)
-                tasks[i] = ResourceManager.Load(ResourceManager.UserData.resourcePacks[i]);
+            {
+                ResourcePack? resourcePack = ResourcePack.Create(ResourceManager.UserData.resourcePacks[i]);
+                if (resourcePack == null)
+                    continue;
+
+                ResourceManager.PackRegister(resourcePack);
+                tasks[i] = resourcePack.Load();
+            }
 
             await UniTask.WhenAll(tasks);
             await SceneManager.LoadSceneAsync(3).ToUniTask();
@@ -116,9 +123,11 @@ namespace RuniEngine.Accounts
                 if (!ResourceManager.UserData.resourcePacks.Contains(x.path))
                     return false;
 
-                tasks.Add(ResourceManager.Unload(x));
-                return true;
-            }, out _);
+                ResourceManager.PackUnregister(x);
+                tasks.Add(x.Unload());
+
+                return false;
+            });
 
             await UniTask.WhenAll(tasks);
 
