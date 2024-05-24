@@ -40,7 +40,8 @@ namespace RuniEngine.Booting
         public static bool isDataLoaded { get; private set; } = false;
         public static bool isAllLoaded { get; private set; } = false;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        //UniTask는 BeforeSplashScreen 단계에서부터 사용 가능
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         public static async UniTaskVoid Boot()
         {
 #if UNITY_WEBGL
