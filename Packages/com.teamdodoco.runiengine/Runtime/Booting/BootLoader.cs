@@ -76,7 +76,7 @@ namespace RuniEngine.Booting
             //Resource Setup
             TryLoad().Forget();
 
-            await UniTask.Delay(100);
+            await UniTask.Delay(100, true);
             if (!Kernel.isPlaying)
                 return;
 
