@@ -44,52 +44,13 @@ namespace RuniEngine.Resource
         static void InitializeOnLoadMethod() => UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += AllDestroy;
 #endif
 
-        public static async UniTask<ResourcePack?> Load(string path, IProgress<float>? progress = null)
+        public static void PackRegister(ResourcePack resourcePack)
         {
-            ResourcePack? resourcePack = ResourcePack.Create(path);
-            if (resourcePack == null)
-                return null;
-
-            List<UniTask> cachedUniTasks = new List<UniTask>();
-            SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
-            int progressIndex = 0;
-
-            foreach (var item in resourcePack.resourceElements)
-            {
-                if (progress != null)
-                {
-                    int index = progressIndex;
-                    IProgress<float> progress2 = Progress.Create<float>(x =>
-                    {
-                        progressLists[index] = x;
-                        progress.Report(progressLists.Sum() / resourcePack.resourceElements.Count);
-                    });
-
-                    progressLists.Add(0);
-                    progressIndex++;
-
-                    cachedUniTasks.Add(item.Value.Load(progress2));
-                }
-                else
-                    cachedUniTasks.Add(item.Value.Load());
-            }
-
-            await UniTask.WhenAll(cachedUniTasks);
-
-            _resourcePacks.Add(resourcePack);
-            return resourcePack;
+            if (resourcePack != ResourcePack.defaultPack)
+                _resourcePacks.Add(resourcePack);
         }
 
-        public static async UniTask Unload(ResourcePack resourcePack)
-        {
-            _resourcePacks.Remove(resourcePack);
-            
-            List<UniTask> cachedUniTasks = new List<UniTask>();
-            foreach (var item in resourcePack.resourceElements)
-                cachedUniTasks.Add(item.Value.Unload());
-
-            await UniTask.WhenAll(cachedUniTasks);
-        }
+        public static void PackUnregister(ResourcePack resourcePack) => _resourcePacks.Remove(resourcePack);
 
         public static async UniTask Refresh(IProgress<float>? progress = null)
         {
@@ -108,8 +69,18 @@ namespace RuniEngine.Resource
                         int index = progressIndex;
                         IProgress<float> progress2 = Progress.Create<float>(y =>
                         {
-                            progressLists[index] = y;
-                            progress.Report(progressLists.Sum() / x.resourceElements.Count);
+                            try
+                            {
+                                ThreadTask.Lock(ref progressLists.internalSync);
+
+                                progressLists.internalList[index] = y;
+                                progress.Report(progressLists.internalList.Sum() / x.resourceElements.Count);
+                                
+                            }
+                            finally
+                            {
+                                ThreadTask.Unlock(ref progressLists.internalSync);
+                            }
                         });
 
                         progressLists.Add(0);
@@ -121,21 +92,33 @@ namespace RuniEngine.Resource
                         cachedUniTasks.Add(item.Value.Load());
                 }
 
-                return true;
-            }, out _);
+                return false;
+            });
 
             await UniTask.WhenAll(cachedUniTasks);
+
             GarbageRemoval();
         }
 
-        public static bool ResourcePackLoop<T>(Func<ResourcePack, T> func, out T? result)
+        /// <summary>
+        /// 등록된 리소스팩을 등록 순서에 따라 루프합니다
+        /// <para></para>
+        /// <see langword="true"/>를 반환하면 true를 반환받은 시점에 리소스팩 루프를 중지합니다!!
+        /// <para></para>
+        /// 어떤 경우던 리소스팩을 전부 루프하고 싶은 경우에는 <see langword="false"/>"만" 반환해주세요
+        /// </summary>
+        /// <param name="func"></param>
+        public static void ResourcePackLoop(Func<ResourcePack, bool> func)
         {
+            //루프 안에서 리소스팩의 등록을 해제할 수 있기 때문에 리스트를 복사합니다
+            ResourcePack[] resourcePacks = ResourceManager.resourcePacks.ToArray();
+
             //기본 에셋도 포함시켜야하기 때문에 리소스팩 길이를 1 늘린다
-            for (int i = 0; i < resourcePacks.Count + 1; i++)
+            for (int i = 0; i < resourcePacks.Length + 1; i++)
             {
                 //현재 인덱스가 리소스팩의 길이를 벗어나면 기본 에셋으로 판정 (반복문이 리소스팩 길이 + 1 까지 반복하기 때문에 가능함)
                 ResourcePack pack;
-                if (i < resourcePacks.Count)
+                if (i < resourcePacks.Length)
                     pack = resourcePacks[i];
                 else
                 {
@@ -147,14 +130,8 @@ namespace RuniEngine.Resource
 
                 try
                 {
-                    if (func != null)
-                    {
-                        result = func.Invoke(pack);
-                        return true;
-                    }
-
-                    result = default;
-                    return false;
+                    if (func.Invoke(pack))
+                        return;
                 }
                 catch (Exception e)
                 {
@@ -162,17 +139,38 @@ namespace RuniEngine.Resource
                     Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{path}", pack.path), nameof(ResourceManager));
                 }
             }
-
-            result = default;
-            return false;
         }
 
+        /// <summary>
+        /// <see langword="true"/> 반환하면 리소스팩 루프를 중지합니다
+        /// 즉, 리소스를 성공적으로 불러왔을 경우, 중복 할당을 방지하기 위해 <see langword="true"/> 반환하고 리소스를 찾지 못했다면 <see langword="false"/> 반환해주세요
+        /// </summary>
+        /// <typeparam name="T">리소스 요소</typeparam>
+        /// <returns>
+        /// 등록된 모든 리소스팩에서 요소가 전부 <see langword="false"/> 반환할 경우 <see langword="false"/> 반환합니다 (즉, 성공 여부입니다)
+        /// </returns>
         public static bool ResourceElementLoop<T>(Func<T, bool> action) where T : IResourceElement
         {
-            if (!ResourcePackLoop(x => action.Invoke((T)x.resourceElements[typeof(T)]), out bool result))
-                return false;
+            bool suc = false;
+            ResourcePackLoop(x =>
+            {
+                try
+                {
+                    bool result = action.Invoke((T)x.resourceElements[typeof(T)]);
+                    suc = suc || result;
 
-            return result;
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{path}", x.path), nameof(ResourceManager));
+
+                    return false;
+                }
+            });
+
+            return suc;
         }
 
         public static void GarbageRemoval()
@@ -351,7 +349,11 @@ namespace RuniEngine.Resource
         public static string[] GetNameSpaces()
         {
             IEnumerable<string> nameSpaces = new string[0];
-            ResourcePackLoop(x => nameSpaces = nameSpaces.Union(x.nameSpaces), out _);
+            ResourcePackLoop(x =>
+            {
+                nameSpaces = nameSpaces.Union(x.nameSpaces);
+                return false;
+            });
 
             return nameSpaces.ToArray();
         }
