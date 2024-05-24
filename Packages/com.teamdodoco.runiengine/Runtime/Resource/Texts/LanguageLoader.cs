@@ -146,7 +146,10 @@ namespace RuniEngine.Resource.Texts
                     string nameSpace = resourcePack.nameSpaces[i];
                     string langPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
                     if (!Directory.Exists(langPath))
-                        return;
+                    {
+                        progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+                        continue;
+                    }
 
                     string[] filePaths = DirectoryUtility.GetFiles(langPath, ExtensionFilter.jsonFileFilter);
                     for (int j = 0; j < filePaths.Length; j++)
@@ -169,7 +172,7 @@ namespace RuniEngine.Resource.Texts
                         }
                     }
 
-                    progress?.Report((float)i / resourcePack.nameSpaces.Count);
+                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
                 }
 
                 await UniTask.CompletedTask;

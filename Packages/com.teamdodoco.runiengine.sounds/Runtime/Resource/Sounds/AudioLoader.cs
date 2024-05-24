@@ -234,7 +234,10 @@ namespace RuniEngine.Resource.Sounds
                     
                     Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(folderPath + ".json");
                     if (audioDatas == null)
+                    {
+                        progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
                         continue;
+                    }
 
                     List<UniTask> tasks = new List<UniTask>();
                     foreach (var audioData in audioDatas)
@@ -299,7 +302,7 @@ namespace RuniEngine.Resource.Sounds
                     }
 
                     await UniTask.WhenAll(tasks);
-                    progress?.Report((float)i / resourcePack.nameSpaces.Count);
+                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
                 }
             }
         }
