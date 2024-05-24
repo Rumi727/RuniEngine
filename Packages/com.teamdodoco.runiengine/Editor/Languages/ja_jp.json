@@ -105,6 +105,8 @@
     "gui.tag": "タグ",
     "gui.screen": "画面",
     "gui.position": "座標",
+    "gui.progress": "進行度",
+    "gui.max_progress": "最大進行度",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -151,6 +153,8 @@
     "inspector.camera_setter.normalizedViewPortRect": "ビューポート長方形",
     "inspector.camera_setter.globalScreenPositionMultiple": "画面位置の倍数",
     "inspector.camera_setter.globalScreenAreaMultiple": "画面領域の倍数",
+
+    "inspector.progress.allowNoResponseAni": "応答なしアニメーションの使用",
 
     "undo.modified_~": "変更された{object}",
 
