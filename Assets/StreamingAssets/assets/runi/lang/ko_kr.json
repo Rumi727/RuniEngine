@@ -88,6 +88,8 @@
     "gui.right": "오른쪽",
     "gui.top": "상단",
     "gui.bottom": "하단",
+    "gui.progress": "진행도",
+    "gui.max_progress": "최대 진행도",
     
     "gui.ago.years": "%value%년 전",
     "gui.ago.months": "%value%달 전",
@@ -124,6 +126,7 @@
     "boot_loader.webgl": "Runi Engine은 WebGL을 지원하지 않습니다",
 
     "resource_manager.throw": "{type} 리소스 요소가 '{path}' 경로에 있는 리소스들을 불러오다 예외가 발생 했습니다",
+    "resource_manager.load.name": "리소스 로딩...",
 
     "thread_manager.lock": "{class} 클래스에서 스레드를 잠궜습니다! 데드락에 주의하세요",
     "thread_manager.unlock": "{class} 클래스에서 스레드 잠금을 해제했습니다!",

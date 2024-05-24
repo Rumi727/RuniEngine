@@ -1,5 +1,6 @@
 #nullable enable
 using RuniEngine.Booting;
+using RuniEngine.UI;
 using UnityEngine;
 
 namespace RuniEngine.Splashs
@@ -7,6 +8,7 @@ namespace RuniEngine.Splashs
     public sealed class DefaultSplashAni : MonoBehaviour
     {
         [SerializeField, NotNullField] Animator? animator;
+        [SerializeField, NotNullField] SplashScreenProgressBar? progressBar;
 
         [SerializeField] int layer = 0;
         [SerializeField] string startParameter = "Start";
@@ -51,6 +53,20 @@ namespace RuniEngine.Splashs
             {
                 animator.SetBool(startHash, false);
                 animator.SetBool(endHash, false);
+            }
+
+            if (progressBar != null)
+            {
+                if (BootLoader.resourceTask != null)
+                {
+                    float value = BootLoader.resourceTask.progress / BootLoader.resourceTask.maxProgress;
+                    if (float.IsNormal(value))
+                        progressBar.progress = value;
+                }
+                else if (BootLoader.isAllLoaded)
+                    progressBar.progress = 1;
+                else
+                    progressBar.progress = 0;
             }
         }
     }

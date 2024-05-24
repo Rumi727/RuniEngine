@@ -86,6 +86,8 @@
     "gui.right": "Right",
     "gui.top": "Top",
     "gui.bottom": "Bottom",
+    "gui.progress": "Progress",
+    "gui.max_progress": "Max Progress",
     
     "gui.ago.years": "%value%y ago",
     "gui.ago.months": "%value%m ago",
@@ -122,6 +124,7 @@
     "boot_loader.webgl": "Runi Engine does not support WebGL",
 
     "resource_manager.throw": "An exception occurred while the {type} resource element was loading resources in the path '{path}'",
+    "resource_manager.load.name": "Resource Loading...",
 
     "thread_manager.lock": "A thread has been locked in class {class}! Beware of deadlocks",
     "thread_manager.unlock": "Thread lock released on class {class}!",

@@ -40,6 +40,8 @@ namespace RuniEngine.Booting
         public static bool isDataLoaded { get; private set; } = false;
         public static bool isAllLoaded { get; private set; } = false;
 
+        public static AsyncTask? resourceTask { get; private set; } = null;
+
         //UniTask는 BeforeSplashScreen 단계에서부터 사용 가능
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         public static async UniTaskVoid Boot()
@@ -79,7 +81,7 @@ namespace RuniEngine.Booting
             await UniTask.Delay(100, true);
             if (!Kernel.isPlaying)
                 return;
-
+            
             //Splash Screen Play
             SplashScreen.isPlaying = true;
 
@@ -130,7 +132,9 @@ namespace RuniEngine.Booting
 
             Debug.Log("Resource Loading...", nameof(BootLoader));
 
-            await ResourceManager.Refresh();
+            await ResourceManager.Refresh(resourceTask = new AsyncTask("resource_manager.load.name"));
+            resourceTask.Dispose();
+            resourceTask = null;
 
             Debug.Log("Resource Loaded", nameof(BootLoader));
 

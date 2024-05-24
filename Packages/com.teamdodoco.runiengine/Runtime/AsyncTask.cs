@@ -299,7 +299,7 @@ namespace RuniEngine
 
             cancelTokenSource.Cancel();
 
-            Debug.Log($"{LanguageLoader.GetText(name.path, name.nameSpace)} async task ended");
+            Debug.Log($"{LanguageLoader.TryGetText(name.path, name.nameSpace)} async task ended");
 
             isDisposed = true;
         }
