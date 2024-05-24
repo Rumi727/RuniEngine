@@ -664,7 +664,13 @@ namespace RuniEngine.Resource.Images
                     string nameSpace = resourcePack.nameSpaces[i];
                     string rootPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
                     if (!Directory.Exists(rootPath))
+                    {
+                        progressValue++;
+                        maxProgress++;
+
+                        progress?.Report((float)progressValue / maxProgress);
                         continue;
+                    }
 
                     string[] typePaths = Directory.GetDirectories(rootPath, "*", SearchOption.AllDirectories);
 
@@ -701,7 +707,7 @@ namespace RuniEngine.Resource.Images
                                 Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
                                 if (texture == null)
                                 {
-                                    maxProgress--;
+                                    progressValue++;
                                     progress?.Report((float)progressValue / maxProgress);
 
                                     return;

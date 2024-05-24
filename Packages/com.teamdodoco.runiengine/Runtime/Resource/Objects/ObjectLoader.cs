@@ -88,26 +88,28 @@ namespace RuniEngine.Resource.Objects
             if (resourcePack == null || (!UserData.allowOtherResourcePackLoad && resourcePack != ResourcePack.defaultPack))
                 return;
 
-            int progressValue = 0;
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
                 string path = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
 
                 if (!File.Exists(path))
+                {
+                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
                     continue;
+                }
 
                 AssetBundle assetBundle = await AssetBundle.LoadFromFileAsync(path).ToUniTask(Progress.Create<float>(x =>
                 {
-                    progress?.Report(progressValue + (x / resourcePack.nameSpaces.Count * 0.5f));
+                    progress?.Report((i + (x * 0.5f)) / resourcePack.nameSpaces.Count);
                 }));
 
                 Object[] unityObjects = await assetBundle.LoadAllAssetsAsync().AwaitForAllAssets(Progress.Create<float>(x =>
                 {
-                    progress?.Report(progressValue + (0.5f + (x / resourcePack.nameSpaces.Count * 0.5f)));
+                    progress?.Report((i + (0.5f + (x * 0.5f))) / resourcePack.nameSpaces.Count);
                 }));
 
-                progressValue++;
+                progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
 
                 for (int j = 0; j < unityObjects.Length; j++)
                 {

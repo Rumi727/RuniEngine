@@ -118,7 +118,10 @@ namespace RuniEngine.Resource.Sounds
 
                     Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(folderPath + ".json");
                     if (nbsDatas == null)
+                    {
+                        progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
                         continue;
+                    }
 
                     foreach (var nbsData in nbsDatas)
                     {
@@ -146,7 +149,7 @@ namespace RuniEngine.Resource.Sounds
                         tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
                     }
 
-                    progress?.Report((float)i / resourcePack.nameSpaces.Count);
+                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
                 }
             }
         }
