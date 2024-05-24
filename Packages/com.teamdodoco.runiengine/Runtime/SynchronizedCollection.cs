@@ -7,17 +7,17 @@ namespace System.Collections.Generic
     [Runtime.InteropServices.ComVisible(false)]
     public class SynchronizedCollection<T> : IList<T?>, IList
     {
-        readonly List<T?> items;
-        int sync = 0;
+        public readonly List<T?> internalList;
+        public int internalSync = 0;
 
-        public SynchronizedCollection() => items = new List<T?>();
+        public SynchronizedCollection() => internalList = new List<T?>();
 
         public SynchronizedCollection(IEnumerable<T?>? list)
         {
             if (list == null)
                 throw new ArgumentNullException("list");
             
-            items = new List<T?>(list);
+            internalList = new List<T?>(list);
         }
 
         public SynchronizedCollection(params T?[]? list)
@@ -25,80 +25,80 @@ namespace System.Collections.Generic
             if (list == null)
                 throw new ArgumentNullException("list");
 
-            items = new List<T?>(list);
+            internalList = new List<T?>(list);
         }
 
         public int Count
         {
             get 
             {
-                while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+                while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                     Thread.Yield();
                 
-                int count = items.Count;
+                int count = internalList.Count;
 
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
 
                 return count;
             }
         }
 
-        protected List<T?> Items => items;
+        protected List<T?> Items => internalList;
 
         public T? this[int index]
         {
             get
             {
-                while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+                while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                     Thread.Yield();
 
                 try
                 {
-                    return items[index];
+                    return internalList[index];
                 }
                 finally
                 {
-                    Interlocked.Decrement(ref sync);
+                    Interlocked.Decrement(ref internalSync);
                 }
             }
             set
             {
-                while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+                while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                     Thread.Yield();
 
                 try
                 {
-                    if (index < 0 || index >= items.Count)
+                    if (index < 0 || index >= internalList.Count)
                         throw new ArgumentOutOfRangeException();
 
                     SetItem(index, value);
                 }
                 finally
                 {
-                    Interlocked.Decrement(ref sync);
+                    Interlocked.Decrement(ref internalSync);
                 }
             }
         }
 
         public void Add(T? item)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
             {
-                int index = items.Count;
+                int index = internalList.Count;
                 InsertItem(index, item);
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public void Clear()
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
@@ -107,58 +107,58 @@ namespace System.Collections.Generic
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public void CopyTo(T?[]? array, int index)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
             {
-                items.CopyTo(array, index);
+                internalList.CopyTo(array, index);
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public bool Contains(T? item)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
             {
-                return items.Contains(item);
+                return internalList.Contains(item);
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public IEnumerator<T?> GetEnumerator()
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
             {
-                return items.GetEnumerator();
+                return internalList.GetEnumerator();
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public int IndexOf(T? item)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
@@ -167,35 +167,35 @@ namespace System.Collections.Generic
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public void Insert(int index, T? item)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
             {
-                if (index < 0 || index > items.Count)
+                if (index < 0 || index > internalList.Count)
                     throw new ArgumentOutOfRangeException();
 
                 InsertItem(index, item);
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         int InternalIndexOf(T? item)
         {
-            int count = items.Count;
+            int count = internalList.Count;
 
             for (int i = 0; i < count; i++)
             {
-                if (Equals(items[i], item))
+                if (Equals(internalList[i], item))
                     return i;
             }
             return -1;
@@ -203,7 +203,7 @@ namespace System.Collections.Generic
 
         public bool Remove(T? item)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
@@ -217,56 +217,56 @@ namespace System.Collections.Generic
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public void RemoveAt(int index)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
             {
-                if (index < 0 || index >= items.Count)
+                if (index < 0 || index >= internalList.Count)
                     throw new ArgumentOutOfRangeException();
 
                 RemoveItem(index);
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
-        protected virtual void ClearItems() => items.Clear();
+        protected virtual void ClearItems() => internalList.Clear();
 
-        protected virtual void InsertItem(int index, T? item) => items.Insert(index, item);
+        protected virtual void InsertItem(int index, T? item) => internalList.Insert(index, item);
 
-        protected virtual void RemoveItem(int index) => items.RemoveAt(index);
+        protected virtual void RemoveItem(int index) => internalList.RemoveAt(index);
 
-        protected virtual void SetItem(int index, T? item) => items[index] = item;
+        protected virtual void SetItem(int index, T? item) => internalList[index] = item;
 
         bool ICollection<T?>.IsReadOnly => false;
 
-        IEnumerator IEnumerable.GetEnumerator() => ((IList)items).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IList)internalList).GetEnumerator();
 
         bool ICollection.IsSynchronized => true;
 
-        object ICollection.SyncRoot => sync;
+        object ICollection.SyncRoot => internalSync;
 
         void ICollection.CopyTo(Array? array, int index)
         {
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
             {
-                ((IList)items).CopyTo(array, index);
+                ((IList)internalList).CopyTo(array, index);
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
@@ -288,7 +288,7 @@ namespace System.Collections.Generic
         {
             VerifyValueType(value);
 
-            while (Interlocked.CompareExchange(ref sync, 1, 0) != 0)
+            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                 Thread.Yield();
 
             try
@@ -298,7 +298,7 @@ namespace System.Collections.Generic
             }
             finally
             {
-                Interlocked.Decrement(ref sync);
+                Interlocked.Decrement(ref internalSync);
             }
         }
 
