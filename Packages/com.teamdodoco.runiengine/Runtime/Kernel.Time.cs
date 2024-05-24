@@ -51,7 +51,6 @@ namespace RuniEngine
             deltaTimeDouble = realDeltaTime * gameSpeed;
             fpsDeltaTimeDouble = deltaTimeDouble * VideoManager.standardFPS;
 
-            float lastUnscaledDeltaTime = unscaledDeltaTime;
             unscaledDeltaTime = (float)realDeltaTime;
             fpsUnscaledDeltaTime = (float)(unscaledDeltaTime * VideoManager.standardFPS);
 
@@ -64,9 +63,9 @@ namespace RuniEngine
             fps = 1f / unscaledDeltaTime;
 
             //Smooth Delta Time
-            //테스트 결과, 게임 속도 영향을 제외하면 유니티 내부 구현이랑 정확히 같습니다
+            //유니티 내부 구현이랑 100% 일치하진 않지만 98% 일치합니다
             {
-                unscaledSmoothDeltaTime += (unscaledDeltaTime - lastUnscaledDeltaTime) * 0.2f;
+                unscaledSmoothDeltaTime = 0.2f * unscaledDeltaTime + (1 - 0.2f) * unscaledSmoothDeltaTime;
                 smoothDeltaTime = unscaledDeltaTime * gameSpeed;
 
                 fpsSmoothDeltaTime = (float)(smoothDeltaTime * VideoManager.standardFPS);
