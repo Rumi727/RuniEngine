@@ -36,9 +36,13 @@ namespace RuniEngine.Splashs
             {
                 if (start && currentState.normalizedTime >= 1 && BootLoader.isAllLoaded)
                 {
+                    SplashScreen.resourceLoadable = true;
+
                     animator.SetBool(startHash, false);
                     animator.SetBool(endHash, true);
                 }
+                else if (start && currentState.normalizedTime >= 0.4370370370f)
+                    SplashScreen.resourceLoadable = true;
                 else if (end && currentState.normalizedTime >= 1)
                 {
                     SplashScreen.isPlaying = false;
@@ -57,16 +61,26 @@ namespace RuniEngine.Splashs
 
             if (progressBar != null)
             {
-                if (BootLoader.resourceTask != null)
+                if (start && currentState.normalizedTime < 0.4370370370f)
                 {
-                    float value = BootLoader.resourceTask.progress / BootLoader.resourceTask.maxProgress;
-                    if (float.IsNormal(value))
-                        progressBar.progress = value;
-                }
-                else if (BootLoader.isAllLoaded)
-                    progressBar.progress = 1;
-                else
                     progressBar.progress = 0;
+                    progressBar.allowNoResponseAni = false;
+                }
+                else
+                {
+                    progressBar.allowNoResponseAni = true;
+
+                    if (BootLoader.resourceTask != null)
+                    {
+                        float value = BootLoader.resourceTask.progress / BootLoader.resourceTask.maxProgress;
+                        if (float.IsNormal(value))
+                            progressBar.progress = value;
+                    }
+                    else if (BootLoader.isAllLoaded)
+                        progressBar.progress = 1;
+                    else
+                        progressBar.progress = 0;
+                }
             }
         }
     }

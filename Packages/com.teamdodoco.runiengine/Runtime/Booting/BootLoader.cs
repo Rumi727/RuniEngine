@@ -44,7 +44,7 @@ namespace RuniEngine.Booting
 
         //UniTask는 BeforeSplashScreen 단계에서부터 사용 가능
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
-        public static async UniTaskVoid Boot()
+        static async UniTaskVoid Boot()
         {
 #if UNITY_WEBGL
             //CS0162 접근할 수 없는 코드 경고를 비활성화 하기 위해 변수로 우회합니다
@@ -85,7 +85,14 @@ namespace RuniEngine.Booting
             //Splash Screen Play
             SplashScreen.isPlaying = true;
 
-            await UniTask.WaitUntil(() => isDataLoaded);
+            await UniTask.WaitUntil(() => SplashScreen.resourceLoadable);
+            if (!Kernel.isPlaying)
+                return;
+
+            //Resource Setup
+            TryLoad().Forget();
+
+            await UniTask.WaitUntil(() => isDataLoaded || !Kernel.isPlaying);
             if (!Kernel.isPlaying)
                 return;
 
@@ -93,7 +100,7 @@ namespace RuniEngine.Booting
             AttributeInvoke<StartenAttribute>();
 
             //Splash Screen Stop Wait...
-            await UniTask.WaitUntil(() => !SplashScreen.isPlaying);
+            await UniTask.WaitUntil(() => (!SplashScreen.isPlaying && isAllLoaded) || !Kernel.isPlaying);
             if (!Kernel.isPlaying)
                 return;
 
