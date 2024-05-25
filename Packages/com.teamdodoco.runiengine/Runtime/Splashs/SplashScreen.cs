@@ -15,6 +15,7 @@ namespace RuniEngine.Splashs
             [JsonProperty] public static int startSceneIndex { get; set; } = -1;
         }
 
-        public static bool isPlaying { get; set; } = false;
+        [StaticResettable] public static bool isPlaying { get; set; } = false;
+        [StaticResettable] public static bool resourceLoadable { get; set; } = false;
     }
 }
