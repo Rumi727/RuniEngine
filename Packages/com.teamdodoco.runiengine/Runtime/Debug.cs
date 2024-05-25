@@ -50,13 +50,13 @@ public static class Debug
 
     public static void LogException(Exception exception) => UnityEngine.Debug.LogException(exception);
 
-    public static string NameOfCallingClass()
+    public static string NameOfCallingClass(int skipFrames = 0)
     {
         string name;
 
         Type declaringType;
 
-        int skipFrames = 2;
+        skipFrames += 2;
         do
         {
             MethodBase method = new StackFrame(skipFrames, false).GetMethod();
