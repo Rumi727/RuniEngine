@@ -182,8 +182,6 @@ namespace RuniEngine
                 StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
 
 #if UNITY_EDITOR
-            BootLoader.StaticReset();
-
             UnityEditor.EditorApplication.update += Update;
             UnityEditor.EditorApplication.pauseStateChanged -= PauseStateChanged;
 #endif

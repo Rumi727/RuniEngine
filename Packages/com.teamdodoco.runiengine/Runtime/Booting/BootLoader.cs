@@ -55,6 +55,10 @@ namespace RuniEngine.Booting
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
 
+#if UNITY_EDITOR
+            StaticReset();
+#endif
+
             //Path Init
             Kernel.PathInitialize();
 
