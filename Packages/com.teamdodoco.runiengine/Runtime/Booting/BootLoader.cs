@@ -67,16 +67,13 @@ namespace RuniEngine.Booting
                 PlayerLoopHelper.Initialize(ref loopSystems);
 
                 //Awaken Invoke
-                AttributeInvoke<AwakenAttribute>();
+                await AttributeInvoke<AwakenAttribute>();
 
                 //Custom Update Setting
                 CustomPlayerLoopSetter.EventRegister(ref loopSystems);
                 PlayerLoop.SetPlayerLoop(loopSystems);
             }
             Debug.Log("Player Loop Setting End", nameof(BootLoader));
-
-            //Resource Setup
-            TryLoad().Forget();
 
             await UniTask.Delay(100, true);
             if (!Kernel.isPlaying)
@@ -97,7 +94,7 @@ namespace RuniEngine.Booting
                 return;
 
             //Starten Invoke
-            AttributeInvoke<StartenAttribute>();
+            await AttributeInvoke<StartenAttribute>();
 
             //Splash Screen Stop Wait...
             await UniTask.WaitUntil(() => (!SplashScreen.isPlaying && isAllLoaded) || !Kernel.isPlaying);
@@ -165,8 +162,12 @@ namespace RuniEngine.Booting
             return true;
         }
 
-        static void AttributeInvoke<T>() where T : Attribute
+        static async UniTask AttributeInvoke<T>() where T : Attribute
         {
+            //GC 이슈로 인해 스레드로 전환하지 않으면 메인 스레드에서 프레임 드랍이 일어남
+            await UniTask.SwitchToThreadPool();
+
+            List<MethodInfo> methods = new List<MethodInfo>();
             IReadOnlyList<Type> types = ReflectionManager.types;
             for (int typesIndex = 0; typesIndex < types.Count; typesIndex++)
             {
@@ -175,16 +176,21 @@ namespace RuniEngine.Booting
                 {
                     MethodInfo methodInfo = methodInfos[methodInfoIndex];
                     if (methodInfo.AttributeContains<T>() && methodInfo.GetParameters().Length <= 0)
-                    {
-                        try
-                        {
-                            methodInfo.Invoke(null, null);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogException(e);
-                        }
-                    }
+                        methods.Add(methodInfo);
+                }
+            }
+
+            await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
+
+            for (int i = 0; i < methods.Count; i++)
+            {
+                try
+                {
+                    methods[i].Invoke(null, null);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
                 }
             }
         }
