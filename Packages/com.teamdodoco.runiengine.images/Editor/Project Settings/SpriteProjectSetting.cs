@@ -10,13 +10,13 @@ using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
 using System.IO;
 using RuniEngine.Jsons;
-using RuniEngine.Rendering;
+using RuniEngine.Editor.APIBridge.UnityEditor.UI;
+using System.Linq;
 
 using static RuniEngine.Editor.EditorTool;
 
 using SpriteMetaData = RuniEngine.Resource.Images.SpriteMetaData;
 using Object = UnityEngine.Object;
-using RuniEngine.Editor.APIBridge.UnityEditor.UI;
 
 namespace RuniEngine.Editor.ProjectSettings
 {
@@ -94,12 +94,15 @@ namespace RuniEngine.Editor.ProjectSettings
                 {
                     File.WriteAllText(typePath + ".json", JsonManager.ToJson(textureMetaData));
                     AssetDatabase.Refresh();
+
+                    foreach (var item in cachedLocalTextures.Where(item => item.Value != null).Select(x => x.Value))
+                        Object.DestroyImmediate(item);
                 }
             }
 
             if (!cachedLocalTextures.TryGetValue(filePath, out texture) || texture == null)
             {
-                texture = ImageLoader.GetTexture(filePath, textureMetaData, TextureFormat.Alpha8);
+                texture = ImageLoader.GetTexture(filePath, textureMetaData.filterMode, textureMetaData.generateMipmap, Resource.Images.TextureCompressionQuality.none, TextureFormat.Alpha8);
                 cachedLocalTextures[filePath] = texture;
             }
 
