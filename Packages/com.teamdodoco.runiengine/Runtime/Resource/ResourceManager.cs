@@ -135,8 +135,7 @@ namespace RuniEngine.Resource
                 }
                 catch (Exception e)
                 {
-                    Debug.LogException(e);
-                    Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{path}", pack.path), nameof(ResourceManager));
+                    ExceptionLog(e, pack.path);
                 }
             }
         }
@@ -163,14 +162,20 @@ namespace RuniEngine.Resource
                 }
                 catch (Exception e)
                 {
-                    Debug.LogException(e);
-                    Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", Debug.NameOfCallingClass()).Replace("{path}", x.path), nameof(ResourceManager));
-
+                    ExceptionLog(e, x.path, typeof(T).Name);
                     return false;
                 }
             });
 
             return suc;
+        }
+
+        public static void ExceptionLog(Exception e, string path) => ExceptionLog(e, path, Debug.NameOfCallingClass());
+
+        public static void ExceptionLog(Exception e, string path, string? typeName)
+        {
+            Debug.LogException(e);
+            Debug.ForceLogError(LanguageLoader.TryGetText("resource_manager.throw").Replace("{type}", typeName).Replace("{path}", path), nameof(ResourceManager));
         }
 
         public static void GarbageRemoval()

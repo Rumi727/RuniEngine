@@ -5,6 +5,7 @@ using RuniEngine.Datas;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 using Object = UnityEngine.Object;
@@ -25,12 +26,12 @@ namespace RuniEngine.Resource.Objects
         /// <summary>
         /// Object = unityObjects[nameSpace][key];
         /// </summary>
-        readonly Dictionary<string, Dictionary<string, Object>> unityObjects = new();
+        Dictionary<string, Dictionary<string, Object?>> unityObjects = new();
 
         /// <summary>
         /// GameObject = gameObjects[nameSpace][key];
         /// </summary>
-        readonly Dictionary<string, Dictionary<string, GameObject>> gameObjects = new();
+        Dictionary<string, Dictionary<string, GameObject?>> gameObjects = new();
 
         public string name { get; } = "objects";
 
@@ -43,7 +44,7 @@ namespace RuniEngine.Resource.Objects
             Object? result = null;
             ResourceManager.ResourceElementLoop<ObjectLoader>(x =>
             {
-                if (x.unityObjects.TryGetValue(nameSpace, out var value) && value.TryGetValue(name, out Object value2))
+                if (x.unityObjects.TryGetValue(nameSpace, out var value) && value.TryGetValue(name, out Object? value2))
                 {
                     result = value2;
                     return true;
@@ -64,7 +65,7 @@ namespace RuniEngine.Resource.Objects
             GameObject? result = null;
             ResourceManager.ResourceElementLoop<ObjectLoader>(x =>
             {
-                if (x.gameObjects.TryGetValue(nameSpace, out var value) && value.TryGetValue(name, out GameObject value2))
+                if (x.gameObjects.TryGetValue(nameSpace, out var value) && value.TryGetValue(name, out GameObject? value2))
                 {
                     result = value2;
                     return true;
@@ -88,48 +89,67 @@ namespace RuniEngine.Resource.Objects
             if (resourcePack == null || (!UserData.allowOtherResourcePackLoad && resourcePack != ResourcePack.defaultPack))
                 return;
 
+            await UniTask.SwitchToThreadPool();
+
+            foreach (Object? unityObject in unityObjects.SelectMany(x => x.Value).Select(x => x.Value).Where(unityObject => unityObject != null))
+                ResourceManager.garbages.Add(unityObject);
+
+            await UniTask.SwitchToMainThread();
+
+            Dictionary<string, Dictionary<string, Object?>> tempUnityObjects = new();
+            Dictionary<string, Dictionary<string, GameObject?>> tempGameObjects = new();
+
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
                 string path = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-
+                
                 if (!File.Exists(path))
                 {
-                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+                    Report(1);
                     continue;
                 }
 
-                AssetBundle assetBundle = await AssetBundle.LoadFromFileAsync(path).ToUniTask(Progress.Create<float>(x =>
-                {
-                    progress?.Report((i + (x * 0.5f)) / resourcePack.nameSpaces.Count);
-                }));
+                AssetBundle assetBundle = await AssetBundle.LoadFromFileAsync(path).ToUniTask(Progress.Create<float>(x => Report(x * 0.5f)));
+                Object[] unityObjects = await assetBundle.LoadAllAssetsAsync().AwaitForAllAssets(Progress.Create<float>(x => Report((x * 0.5f) + 0.5f)));
 
-                Object[] unityObjects = await assetBundle.LoadAllAssetsAsync().AwaitForAllAssets(Progress.Create<float>(x =>
-                {
-                    progress?.Report((i + (0.5f + (x * 0.5f))) / resourcePack.nameSpaces.Count);
-                }));
+                Report(1);
 
-                progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+                void Report(float value)
+                {
+                    if (resourcePack != null)
+                        progress?.Report((float)(i + value) / resourcePack.nameSpaces.Count);
+                }
 
                 for (int j = 0; j < unityObjects.Length; j++)
                 {
                     Object unityObject = unityObjects[j];
 
-                    this.unityObjects.TryAdd(nameSpace, new());
-                    this.unityObjects[nameSpace].TryAdd(unityObject.name, unityObject);
+                    tempUnityObjects.TryAdd(nameSpace, new());
+                    tempUnityObjects[nameSpace].TryAdd(unityObject.name, unityObject);
 
                     if (unityObject is GameObject gameObject)
                     {
-                        gameObjects.TryAdd(nameSpace, new());
-                        gameObjects[nameSpace].TryAdd(gameObject.name, gameObject);
+                        tempGameObjects.TryAdd(nameSpace, new());
+                        tempGameObjects[nameSpace].TryAdd(gameObject.name, gameObject);
                     }
                 }
             }
+
+            unityObjects = tempUnityObjects;
+            gameObjects = tempGameObjects;
         }
 
         public async UniTask Unload()
         {
-            await UniTask.CompletedTask;
+            foreach (Object? unityObject in unityObjects.SelectMany(x => x.Value).Select(x => x.Value).Where(unityObject => unityObject != null))
+            {
+                Object.DestroyImmediate(unityObject);
+                await UniTask.Yield();
+            }
+
+            unityObjects = new();
+            gameObjects = new();
         }
     }
 }

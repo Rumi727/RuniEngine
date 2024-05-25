@@ -126,57 +126,53 @@ namespace RuniEngine.Resource.Texts
             if (resourcePack == null)
                 return;
 
+            await UniTask.SwitchToThreadPool();
+
             Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempLoadedLanguages = new();
             List<string> tempLanguageTypes = new();
 
-            if (ThreadTask.isMainThread)
-                await UniTask.RunOnThreadPool(Thread);
-            else
-                await Thread();
+            for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
+            {
+                string nameSpace = resourcePack.nameSpaces[i];
+                string langPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+                if (!Directory.Exists(langPath))
+                {
+                    ReportProgress();
+                    continue;
+                }
+
+                string[] filePaths = DirectoryUtility.GetFiles(langPath, ExtensionFilter.jsonFileFilter);
+                for (int j = 0; j < filePaths.Length; j++)
+                {
+                    string filePath = filePaths[j];
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                    Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(filePath);
+                    if (lang == null)
+                        continue;
+
+                    foreach (var item in lang)
+                    {
+                        tempLoadedLanguages.TryAdd(nameSpace, new Dictionary<string, Dictionary<string, string>>());
+                        tempLoadedLanguages[nameSpace].TryAdd(fileName, new Dictionary<string, string>());
+                        tempLoadedLanguages[nameSpace][fileName].TryAdd(item.Key, item.Value);
+
+                        if (!tempLanguageTypes.Contains(fileName))
+                            tempLanguageTypes.Add(fileName);
+                    }
+                }
+
+                ReportProgress();
+
+                void ReportProgress() => progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+            }
+
+            await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
 
             loadedLanguages = tempLoadedLanguages;
             languageList = tempLanguageTypes;
 
             isLoaded = true;
-            
-            async UniTask Thread()
-            {
-                for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
-                {
-                    string nameSpace = resourcePack.nameSpaces[i];
-                    string langPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-                    if (!Directory.Exists(langPath))
-                    {
-                        progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
-                        continue;
-                    }
-
-                    string[] filePaths = DirectoryUtility.GetFiles(langPath, ExtensionFilter.jsonFileFilter);
-                    for (int j = 0; j < filePaths.Length; j++)
-                    {
-                        string filePath = filePaths[j];
-                        string fileName = Path.GetFileNameWithoutExtension(filePath);
-
-                        Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(filePath);
-                        if (lang == null)
-                            continue;
-
-                        foreach (var item in lang)
-                        {
-                            tempLoadedLanguages.TryAdd(nameSpace, new Dictionary<string, Dictionary<string, string>>());
-                            tempLoadedLanguages[nameSpace].TryAdd(fileName, new Dictionary<string, string>());
-                            tempLoadedLanguages[nameSpace][fileName].TryAdd(item.Key, item.Value);
-
-                            if (!tempLanguageTypes.Contains(fileName))
-                                tempLanguageTypes.Add(fileName);
-                        }
-                    }
-
-                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
-                }
-
-                await UniTask.CompletedTask;
-            }
         }
 
         public async UniTask Unload()

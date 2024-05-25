@@ -99,59 +99,55 @@ namespace RuniEngine.Resource.Sounds
             if (resourcePack == null)
                 return;
 
+            await UniTask.SwitchToThreadPool();
+
             Dictionary<string, Dictionary<string, NBSData>> tempAllNBSes = new();
 
-            if (ThreadTask.isMainThread)
-                await UniTask.RunOnThreadPool(Thread);
-            else
-                Thread();
+            for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
+            {
+                string nameSpace = resourcePack.nameSpaces[i];
+                string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+
+                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(folderPath + ".json");
+                if (nbsDatas == null)
+                {
+                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+                    continue;
+                }
+
+                foreach (var nbsData in nbsDatas)
+                {
+                    if (nbsData.Value.nbses == null)
+                        continue;
+
+                    List<NBSMetaData> nbsMetaDatas = new List<NBSMetaData>();
+                    for (int j = 0; j < nbsData.Value.nbses.Length; j++)
+                    {
+                        NBSMetaData? nbsMetaData = nbsData.Value.nbses[j];
+                        string nbsPath = Path.Combine(folderPath, nbsMetaData.path);
+
+                        if (!ResourceManager.FileExtensionExists(nbsPath, out nbsPath, ExtensionFilter.nbsFileFilter))
+                            return;
+
+                        NBSFile? nbsFile = GetNBSFile(nbsPath);
+                        if (nbsFile != null)
+                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsFile);
+
+                        if (nbsMetaData != null)
+                            nbsMetaDatas.Add(nbsMetaData);
+                    }
+
+                    tempAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
+                    tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
+                }
+
+                progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+            }
+
+            await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
 
             allNBSes = tempAllNBSes;
             isLoaded = true;
-
-            void Thread()
-            {
-                for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
-                {
-                    string nameSpace = resourcePack.nameSpaces[i];
-                    string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-
-                    Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(folderPath + ".json");
-                    if (nbsDatas == null)
-                    {
-                        progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
-                        continue;
-                    }
-
-                    foreach (var nbsData in nbsDatas)
-                    {
-                        if (nbsData.Value.nbses == null)
-                            continue;
-
-                        List<NBSMetaData> nbsMetaDatas = new List<NBSMetaData>();
-                        for (int j = 0; j < nbsData.Value.nbses.Length; j++)
-                        {
-                            NBSMetaData? nbsMetaData = nbsData.Value.nbses[j];
-                            string nbsPath = Path.Combine(folderPath, nbsMetaData.path);
-
-                            if (!ResourceManager.FileExtensionExists(nbsPath, out nbsPath, ExtensionFilter.nbsFileFilter))
-                                return;
-
-                            NBSFile? nbsFile = GetNBSFile(nbsPath);
-                            if (nbsFile != null)
-                                nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsFile);
-
-                            if (nbsMetaData != null)
-                                nbsMetaDatas.Add(nbsMetaData);
-                        }
-
-                        tempAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
-                        tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
-                    }
-
-                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
-                }
-            }
         }
 
         public async UniTask Unload()
