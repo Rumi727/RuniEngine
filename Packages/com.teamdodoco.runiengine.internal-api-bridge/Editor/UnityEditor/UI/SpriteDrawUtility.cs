@@ -42,11 +42,11 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor.UI
         }
 
         static MethodInfo? m3_DrawSprite;
-        static readonly object[] m3p_DrawSprite = new object[8];
+        static readonly object?[] m3p_DrawSprite = new object?[8];
         static readonly Type[] m3pt_DrawSprite = new Type[] { typeof(Texture), typeof(Rect), typeof(Vector4), typeof(Rect), typeof(Rect), typeof(Rect), typeof(Color), typeof(Material) };
-        public static void DrawSprite(Texture tex, Rect drawArea, Vector4 padding, Rect outer, Rect inner, Rect uv, Color color, Material mat)
+        public static void DrawSprite(Texture tex, Rect drawArea, Vector4 padding, Rect outer, Rect inner, Rect uv, Color color, Material? mat)
         {
-            m3_DrawSprite ??= type.GetMethod("DrawSprite", BindingFlags.Public | BindingFlags.Static, null, m3pt_DrawSprite, null);
+            m3_DrawSprite ??= type.GetMethod("DrawSprite", BindingFlags.NonPublic | BindingFlags.Static, null, m3pt_DrawSprite, null);
 
             m3p_DrawSprite[0] = tex;
             m3p_DrawSprite[1] = drawArea;

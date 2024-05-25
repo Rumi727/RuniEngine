@@ -36,6 +36,8 @@ namespace RuniEngine.Editor.ProjectSettings
         [SerializeField] string tag = ImageLoader.spriteDefaultTag;
         [SerializeField] int index = 0;
         [SerializeField] float previewSize = 200;
+        [SerializeField] Texture2D? currentTexture;
+        [SerializeField] SpriteMetaData currentMetaData;
         public override void OnGUI(string searchContext)
         {
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
@@ -51,14 +53,20 @@ namespace RuniEngine.Editor.ProjectSettings
 
             index = EditorGUILayout.IntField(TryGetText("gui.index"), index).Clamp(0);
 
-            DrawGUI(nameSpace, type, name, tag, index);
-            DrawSprite(nameSpace, type, name, tag, index, ref previewSize);
+            DrawGUI(nameSpace, type, name, tag, index, out currentTexture, out currentMetaData);
+
+            if (currentTexture != null)
+                DrawSprite(currentTexture, currentMetaData, ref previewSize);
 
             EndLabelWidth();
         }
 
-        public static void DrawGUI(string nameSpace, string type, string name, string tag, int index)
+        static Dictionary<string, Texture2D?> cachedLocalTextures = new Dictionary<string, Texture2D?>();
+        public static void DrawGUI(string nameSpace, string type, string name, string tag, int index, out Texture2D? texture, out SpriteMetaData spriteMetaData)
         {
+            texture = null;
+            spriteMetaData = default;
+
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             string typePath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, ImageLoader.name, type);
@@ -89,7 +97,12 @@ namespace RuniEngine.Editor.ProjectSettings
                 }
             }
 
-            Texture2D? texture = ImageLoader.GetTexture(filePath, textureMetaData, TextureFormat.Alpha8);
+            if (!cachedLocalTextures.TryGetValue(filePath, out texture) || texture == null)
+            {
+                texture = ImageLoader.GetTexture(filePath, textureMetaData, TextureFormat.Alpha8);
+                cachedLocalTextures[filePath] = texture;
+            }
+
             if (texture == null || string.IsNullOrWhiteSpace(name))
             {
                 DrawLine();
@@ -101,78 +114,71 @@ namespace RuniEngine.Editor.ProjectSettings
             DrawLine();
 
             //스프라이트 메타데이터
-            try
+            Dictionary<string, List<SpriteMetaData>>? spriteMetaDataLists = JsonManager.JsonRead<Dictionary<string, List<SpriteMetaData>>>(filePath + ".json");
+            spriteMetaDataLists ??= new Dictionary<string, List<SpriteMetaData>>();
+
+            if (!spriteMetaDataLists.ContainsKey(ImageLoader.spriteDefaultTag))
+                spriteMetaDataLists.Add(ImageLoader.spriteDefaultTag, new List<SpriteMetaData>());
+
+            List<SpriteMetaData> spriteMetaDatas;
+            if (spriteMetaDataLists.ContainsKey(tag))
+                spriteMetaDatas = spriteMetaDataLists[tag];
+            else
+                spriteMetaDatas = spriteMetaDataLists[ImageLoader.spriteDefaultTag];
+
+            EditorGUI.BeginChangeCheck();
+
+            if (index < spriteMetaDatas.Count)
             {
-                Dictionary<string, List<SpriteMetaData>>? spriteMetaDataLists = JsonManager.JsonRead<Dictionary<string, List<SpriteMetaData>>>(filePath + ".json");
-                spriteMetaDataLists ??= new Dictionary<string, List<SpriteMetaData>>();
+                spriteMetaData = spriteMetaDatas[index];
+                spriteMetaData.RectMinMax(texture.width, texture.height);
 
-                if (!spriteMetaDataLists.ContainsKey(ImageLoader.spriteDefaultTag))
-                    spriteMetaDataLists.Add(ImageLoader.spriteDefaultTag, new List<SpriteMetaData>());
+                spriteMetaData.pivot = EditorGUILayout.Vector2Field(TryGetText("gui.pivot"), spriteMetaData.pivot);
+                spriteMetaData.rect = EditorGUILayout.Vector4Field(TryGetText("sprite_meta_data.rect"), spriteMetaData.rect);
+                spriteMetaData.border = EditorGUILayout.Vector4Field(TryGetText("gui.border"), spriteMetaData.border);
 
-                List<SpriteMetaData> spriteMetaDatas;
-                if (spriteMetaDataLists.ContainsKey(tag))
-                    spriteMetaDatas = spriteMetaDataLists[tag];
-                else
-                    spriteMetaDatas = spriteMetaDataLists[ImageLoader.spriteDefaultTag];
+                EditorGUILayout.Space();
 
-                EditorGUI.BeginChangeCheck();
+                spriteMetaData.pixelsPerUnit = EditorGUILayout.FloatField(TryGetText("sprite_meta_data.pixelsPerUnit"), spriteMetaData.pixelsPerUnit);
 
-                if (index < spriteMetaDatas.Count)
-                {
-                    SpriteMetaData spriteMetaData = spriteMetaDatas[index];
-                    spriteMetaData.RectMinMax(texture.width, texture.height);
+                DrawLine();
 
-                    spriteMetaData.pivot = EditorGUILayout.Vector2Field(TryGetText("gui.pivot"), spriteMetaData.pivot);
-                    spriteMetaData.rect = EditorGUILayout.Vector4Field(TryGetText("sprite_meta_data.rect"), spriteMetaData.rect);
-                    spriteMetaData.border = EditorGUILayout.Vector4Field(TryGetText("gui.border"), spriteMetaData.border);
+                spriteMetaDatas[index] = spriteMetaData;
 
-                    EditorGUILayout.Space();
-
-                    spriteMetaData.pixelsPerUnit = EditorGUILayout.FloatField(TryGetText("sprite_meta_data.pixelsPerUnit"), spriteMetaData.pixelsPerUnit);
-
-                    DrawLine();
-
-                    spriteMetaDatas[index] = spriteMetaData;
-
-                    if (GUILayout.Button(TryGetText("project_setting.sprite.sprite_delete")))
-                        spriteMetaDatas.RemoveAt(index);
-                }
-                else if (GUILayout.Button(TryGetText("project_setting.sprite.sprite_create")))
-                {
-                    SpriteMetaData spriteMetaData = new SpriteMetaData();
-
-                    spriteMetaData.RectMinMax(texture.width, texture.height);
-                    spriteMetaDatas.Add(spriteMetaData);
-                }
-
-                //태그
-                if (!spriteMetaDataLists.ContainsKey(tag))
-                {
-                    if (GUILayout.Button(TryGetText("project_setting.sprite.tag_create")))
-                        spriteMetaDataLists.Add(tag, new List<SpriteMetaData>());
-
-                    EditorGUILayout.Space();
-                    EditorGUILayout.HelpBox(TryGetText("project_setting.sprite.tag_warning").Replace("{tag}", tag), MessageType.None);
-                }
-                else
-                {
-                    EditorGUI.BeginDisabledGroup(tag == ImageLoader.spriteDefaultTag);
-
-                    if (GUILayout.Button(TryGetText("project_setting.sprite.tag_delete")))
-                        spriteMetaDataLists.Remove(tag);
-
-                    EditorGUI.EndDisabledGroup();
-                }
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    File.WriteAllText(filePath + ".json", JsonManager.ToJson(spriteMetaDataLists));
-                    AssetDatabase.Refresh();
-                }
+                if (GUILayout.Button(TryGetText("project_setting.sprite.sprite_delete")))
+                    spriteMetaDatas.RemoveAt(index);
             }
-            finally
+            else if (GUILayout.Button(TryGetText("project_setting.sprite.sprite_create")))
             {
-                Object.DestroyImmediate(texture);
+                spriteMetaData = new SpriteMetaData();
+
+                spriteMetaData.RectMinMax(texture.width, texture.height);
+                spriteMetaDatas.Add(spriteMetaData);
+            }
+
+            //태그
+            if (!spriteMetaDataLists.ContainsKey(tag))
+            {
+                if (GUILayout.Button(TryGetText("project_setting.sprite.tag_create")))
+                    spriteMetaDataLists.Add(tag, new List<SpriteMetaData>());
+
+                EditorGUILayout.Space();
+                EditorGUILayout.HelpBox(TryGetText("project_setting.sprite.tag_warning").Replace("{tag}", tag), MessageType.None);
+            }
+            else
+            {
+                EditorGUI.BeginDisabledGroup(tag == ImageLoader.spriteDefaultTag);
+
+                if (GUILayout.Button(TryGetText("project_setting.sprite.tag_delete")))
+                    spriteMetaDataLists.Remove(tag);
+
+                EditorGUI.EndDisabledGroup();
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                File.WriteAllText(filePath + ".json", JsonManager.ToJson(spriteMetaDataLists));
+                AssetDatabase.Refresh();
             }
 
             DrawLine();
@@ -180,14 +186,12 @@ namespace RuniEngine.Editor.ProjectSettings
             EditorGUILayout.LabelField($"{TryGetText("gui.path")} - " + relativePath.Replace("\\", "/"));
         }
 
-        public static void DrawSprite(string nameSpace, string type, string name, string tag, int index, ref float previewSize)
+        public static void DrawSprite(Texture2D texture, SpriteMetaData spriteMetaData, ref float previewSize)
         {
-            Sprite? sprite = SpriteSetterBase.GetSprite(type, name, index, nameSpace, tag);
-            if (sprite == null)
-                return;
-
             DrawLine();
 
+            Sprite sprite = ImageLoader.GetSprite(texture, spriteMetaData);
+            try
             {
                 Space();
 
@@ -200,12 +204,13 @@ namespace RuniEngine.Editor.ProjectSettings
                 Space();
 
                 SpriteDrawUtility.DrawSprite(sprite, EditorGUILayout.GetControlRect(false, previewSize), Color.white);
-
+                
                 GUILayout.EndHorizontal();
             }
-
-            Object.DestroyImmediate(sprite.texture);
-            Object.DestroyImmediate(sprite);
+            finally
+            {
+                Object.DestroyImmediate(sprite);
+            }
         }
     }
 }
