@@ -2,12 +2,18 @@
 using RuniEngine.Booting;
 using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RuniEngine.Rendering
 {
     public abstract class SpriteSetterBase : MonoBehaviour, IRenderer
     {
+        /// <summary>
+        /// cachedLocalSprites[nameSpace][type][name][tag] = Sprite[];
+        /// </summary>
+        protected static Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, Sprite?[]>>>> cachedLocalSprites = new Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, Sprite?[]>>>>();
+
         public Sprite? defaultSprite => _defaultSprite;
         [SerializeField] Sprite? _defaultSprite;
 
@@ -127,8 +133,28 @@ namespace RuniEngine.Rendering
             if (BootLoader.isAllLoaded)
                 sprites = ImageLoader.SearchSprites(type, name, nameSpace, tag);
             else
+            {
+                if (cachedLocalSprites.ContainsKey(nameSpace) && cachedLocalSprites[nameSpace].ContainsKey(type) && cachedLocalSprites[nameSpace][type].ContainsKey(name) && cachedLocalSprites[nameSpace][type][name].ContainsKey(tag))
+                {
+                    sprites = cachedLocalSprites[nameSpace][type][name][tag];
+                    if (sprites.Length > 0)
+                    {
+                        Sprite? sprite = sprites[index.Clamp(0, sprites.Length - 1)];
+                        if (sprite != null)
+                            return sprite;
+                    }
+                }
+
                 sprites = ImageLoader.GetSprites(type, name, nameSpace, tag);
-            
+                if (sprites != null)
+                {
+                    cachedLocalSprites.TryAdd(nameSpace, new());
+                    cachedLocalSprites[nameSpace].TryAdd(type, new());
+                    cachedLocalSprites[nameSpace][type].TryAdd(name, new());
+                    cachedLocalSprites[nameSpace][type][name][tag] = sprites;
+                }
+            }
+
             if (sprites != null && sprites.Length > 0)
                 return sprites[index.Clamp(0, sprites.Length - 1)];
 
