@@ -48,7 +48,7 @@ namespace RuniEngine.UI
                 tracker.Add(this, fill, DrivenTransformProperties.AnchorMinX | DrivenTransformProperties.AnchorMaxX);
             }
 
-            if (Kernel.isPlaying && noResponseTimer >= 2 && allowNoResponseAni && progress < 1)
+            if (Kernel.isPlaying && noResponseTimer >= 3 && allowNoResponseAni && progress < 1)
             {
                 if (!isNoResponse)
                 {
