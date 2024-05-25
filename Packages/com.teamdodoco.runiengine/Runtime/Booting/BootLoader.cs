@@ -183,7 +183,9 @@ namespace RuniEngine.Booting
         }
 
         /// <summary>
-        /// Static Reset 어트리뷰트가 붙은 모든 프로퍼티 및 필드를 기본값으로 초기화합니다
+        /// <see cref="StaticResettableAttribute"/> 어트리뷰트가 붙은 모든 프로퍼티 및 필드를 기본값으로 초기화합니다
+        /// <para></para>
+        /// <see cref="System.Diagnostics.ConditionalAttribute"/> 어트리뷰트 사용해서 에디터에서만 되게할 수 있지만, 런타임에서도 사용할 수 있으니 굳이 막진 않았습니다
         /// </summary>
         public static void StaticReset()
         {
@@ -194,7 +196,7 @@ namespace RuniEngine.Booting
                 for (int j = 0; j < propertyInfos.Length; j++)
                 {
                     PropertyInfo propertyInfo = propertyInfos[j];
-                    StaticResetAttribute attribute = propertyInfo.GetCustomAttribute<StaticResetAttribute>();
+                    StaticResettableAttribute attribute = propertyInfo.GetCustomAttribute<StaticResettableAttribute>();
 
                     if (attribute != null)
                     {
@@ -221,7 +223,7 @@ namespace RuniEngine.Booting
                 for (int j = 0; j < fieldInfos.Length; j++)
                 {
                     FieldInfo fieldInfo = fieldInfos[j];
-                    StaticResetAttribute attribute = fieldInfo.GetCustomAttribute<StaticResetAttribute>();
+                    StaticResettableAttribute attribute = fieldInfo.GetCustomAttribute<StaticResettableAttribute>();
 
                     if (attribute != null)
                     {

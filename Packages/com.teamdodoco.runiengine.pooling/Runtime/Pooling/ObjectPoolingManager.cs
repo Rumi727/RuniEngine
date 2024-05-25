@@ -29,7 +29,7 @@ namespace RuniEngine.Pooling
 
         
 
-        [StaticReset(false)] static readonly Dictionary<string, Dictionary<string, List<MonoBehaviour>>> pooledObjectList = new();
+        [StaticResettable(false)] static readonly Dictionary<string, Dictionary<string, List<MonoBehaviour>>> pooledObjectList = new();
 
 
 
