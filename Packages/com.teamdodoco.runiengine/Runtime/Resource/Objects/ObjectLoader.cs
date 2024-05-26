@@ -98,7 +98,8 @@ namespace RuniEngine.Resource.Objects
 
             Dictionary<string, Dictionary<string, Object?>> tempUnityObjects = new();
             Dictionary<string, Dictionary<string, GameObject?>> tempGameObjects = new();
-
+            List<AssetBundle> loadedAssetBundles = new List<AssetBundle>();
+            
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
@@ -110,10 +111,11 @@ namespace RuniEngine.Resource.Objects
                     continue;
                 }
 
-                AssetBundle assetBundle = await AssetBundle.LoadFromFileAsync(path).ToUniTask(Progress.Create<float>(x => Report(x * 0.5f)));
-                Object[] unityObjects = await assetBundle.LoadAllAssetsAsync().AwaitForAllAssets(Progress.Create<float>(x => Report((x * 0.5f) + 0.5f)));
+                AssetBundle? assetBundle = await AssetBundle.LoadFromFileAsync(path).ToUniTask(Progress.Create<float>(x => Report(x * 0.3333333333f)), PlayerLoopTiming.Initialization);
+                if (assetBundle == null)
+                    continue;
 
-                Report(1);
+                Object?[] unityObjects = await assetBundle.LoadAllAssetsAsync().AwaitForAllAssets(Progress.Create<float>(x => Report((x * 0.3333333333f) + 0.3333333333f)), PlayerLoopTiming.Initialization);
 
                 void Report(float value)
                 {
@@ -123,7 +125,9 @@ namespace RuniEngine.Resource.Objects
 
                 for (int j = 0; j < unityObjects.Length; j++)
                 {
-                    Object unityObject = unityObjects[j];
+                    Object? unityObject = unityObjects[j];
+                    if (unityObject == null)
+                        continue;
 
                     tempUnityObjects.TryAdd(nameSpace, new());
                     tempUnityObjects[nameSpace].TryAdd(unityObject.name, unityObject);
@@ -134,6 +138,10 @@ namespace RuniEngine.Resource.Objects
                         tempGameObjects[nameSpace].TryAdd(gameObject.name, gameObject);
                     }
                 }
+
+                await assetBundle.UnloadAsync(false).ToUniTask(Progress.Create<float>(x => Report(0.6666666667f + (x * 0.3333333333f))), PlayerLoopTiming.Initialization);
+
+                Report(1);
             }
 
             unityObjects = tempUnityObjects;

@@ -744,29 +744,7 @@ namespace RuniEngine.Resource.Images
                             int maxTextureSize = SystemInfo.maxTextureSize;
                             int padding = 8;
 
-                            int x = 0;
-                            int y = 0;
-                            int width = 1;
-                            int height = 1;
-
-                            string[] textureNames = new string[textures.Length];
-                            foreach (var item in types.Value)
-                            {
-                                x += item.Value.width + padding;
-                                if (x > maxTextureSize)
-                                {
-                                    x = 0;
-                                    y += item.Value.height + padding;
-                                }
-
-                                width = x.Max(width);
-                                height = y.Max(height);
-                            }
-
-                            width = x.NextPowerOfTwo();
-                            height = y.NextPowerOfTwo();
-
-                            background = new Texture2D(maxTextureSize, maxTextureSize, TextureFormat.RGBA32, textureMetaData.generateMipmap);
+                            background = new Texture2D(1, 1, TextureFormat.RGBA32, textureMetaData.generateMipmap);
                             rects = background.PackTextures(textures, padding, maxTextureSize);
 
                             background.name = types.Key;
@@ -861,9 +839,9 @@ namespace RuniEngine.Resource.Images
                                 SpriteMetaData spriteMetaData = item.Value[i];
 
                                 spriteMetaData.RectMinMax(rect.width, rect.height);
-                                spriteMetaDatas[item.Key][i] = spriteMetaData;
-
                                 spriteMetaData.rect = new JRect(rect.x + spriteMetaData.rect.x, rect.y + spriteMetaData.rect.y, rect.width - (rect.width - spriteMetaData.rect.width), rect.height - (rect.height - spriteMetaData.rect.height));
+
+                                spriteMetaDatas[item.Key][i] = spriteMetaData;
                             }
                         }
 
