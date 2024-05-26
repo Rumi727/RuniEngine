@@ -53,6 +53,7 @@ namespace RuniEngine
         [SerializeField] bool _disable;
 
         void OnPreCull() => SetDirty();
+        void LateUpdate() => SetDirty();
 
         bool isProjectionReset = false;
         public void SetDirty()

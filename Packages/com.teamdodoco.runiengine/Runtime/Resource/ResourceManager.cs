@@ -186,7 +186,7 @@ namespace RuniEngine.Resource
             {
                 Object? resource = garbages[i];
                 if (resource != null)
-                    Object.DestroyImmediate(resource);
+                    Object.DestroyImmediate(resource, true);
             }
 
             for (int i = 0; i < allLoadedResources.Count; i++)
@@ -219,7 +219,7 @@ namespace RuniEngine.Resource
                 if (sprite != null)
                 {
                     Debug.Log(sprite);
-                    Object.DestroyImmediate(sprite);
+                    Object.DestroyImmediate(sprite, true);
                 }
             }
 
@@ -229,7 +229,7 @@ namespace RuniEngine.Resource
                 if (resource != null)
                 {
                     Debug.Log(resource);
-                    Object.DestroyImmediate(resource);
+                    Object.DestroyImmediate(resource, true);
                 }
             }
 
