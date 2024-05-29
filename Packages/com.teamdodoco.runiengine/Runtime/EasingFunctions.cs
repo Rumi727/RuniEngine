@@ -96,6 +96,7 @@ namespace RuniEngine
             EaseInElastic,
             EaseOutElastic,
             EaseInOutElastic,
+            Curve,
         }
 
         private const double NATURAL_LOG_OF_2 = 0.693147181f;
