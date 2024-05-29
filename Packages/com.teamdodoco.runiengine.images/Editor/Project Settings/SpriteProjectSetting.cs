@@ -61,7 +61,7 @@ namespace RuniEngine.Editor.ProjectSettings
             EndLabelWidth();
         }
 
-        static Dictionary<string, Texture2D?> cachedLocalTextures = new Dictionary<string, Texture2D?>();
+        static readonly Dictionary<string, Texture2D?> cachedLocalTextures = new Dictionary<string, Texture2D?>();
         public static void DrawGUI(string nameSpace, string type, string name, string tag, int index, out Texture2D? texture, out SpriteMetaData spriteMetaData)
         {
             texture = null;
