@@ -25,7 +25,7 @@
     "gui.play_on_awake_delay": "Play Delay On Awake",
     "gui.play": "Play",
     "gui.pause": "Pause",
-    "gui.restart": "Unpause",
+    "gui.unpause": "Unpause",
     "gui.stop": "Stop",
     "gui.reverse": "Reverse",
     "gui.rewind": "Rewind",
@@ -109,6 +109,7 @@
     "gui.max_progress": "Max Progress",
     "gui.current_position": "Current Position",
     "gui.current_offset": "Current Offset",
+    "gui.restart": "Restart",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -129,6 +130,7 @@
     "inspector.better_content_size_fitter.y_size": "Y size change",
     "inspector.content_aspect_ratio_fitter.aspect_mode": "Aspect Mode",
     "inspector.ui_animator.animations": "Animation Elements",
+    "inspector.ui_animation.animator": "UI 애니메이터",
     "inspector.sound_player_base.pan_stereo": "Pan Stereo",
     "inspector.canvas_setter.disableScreenArea": "Disable Screen Area",
     "inspector.canvas_setter.worldRenderMode": "World Render Mode",
@@ -147,10 +149,10 @@
     "inspector.sprite_setter.spriteTag": "Tag",
     "inspector.sprite_setter.defaultSprite": "Default Sprite",
 
+    "inspector.style_setter_base.warning": "Driven by {name}",
+
     "inspector.texture_style.blurImage": "Blur Image",
     "inspector.texture_style.image": "Image",
-
-    "inspector.style_setter_base.warning": "Driven by {name}",
 
     "inspector.camera_setter.normalizedViewPortRect": "Viewport Rect",
     "inspector.camera_setter.globalScreenPositionMultiple": "Global Screen Position Multiple",
@@ -259,6 +261,7 @@
     "project_setting.audio.audios_file_delete": "Delete the audios.json file",
     "project_setting.audio.loop_start_index": "Loop Start Index",
     "project_setting.audio.loop_offset_index": "Loop Offset Index",
+    "project_setting.audio.rhythm_offset_index": "Rhythm Offset Index",
 
     "project_setting.nbs.name": "NBS List",
     "project_setting.nbs.nbses_folder_create": "Create nbses folder",
@@ -266,11 +269,19 @@
     "project_setting.nbs.nbses_folder_delete": "Delete the nbses folder",
     "project_setting.nbs.nbses_file_delete": "Delete the nbses.json File",
     "project_setting.nbs.loop_offset_tick": "Loop Offset Tick",
+    "project_setting.nbs.bpm_multiplier": "BPM Multiplier",
+    "project_setting.nbs.rhythm_offset_tick": "Rhythm Offset Tick",
 
     "project_setting.theme.styles_folder_create": "Create styles folder",
     "project_setting.theme.styles_folder_delete": "Delete the styles folder",
     "project_setting.theme.styles_file_create": "Create the json file",
     "project_setting.theme.styles_file_delete": "Delete the json File",
+
+    "project_setting.sprite.sprite_create": "Sprite Create",
+    "project_setting.sprite.sprite_delete": "Sprite Delete",
+    "project_setting.sprite.tag_create": "Tag Create",
+    "project_setting.sprite.tag_delete": "Tag Delete",
+    "project_setting.sprite.tag_warning": "The default tag was loaded because there was no '{tag}' tag in the sprite metadata",
 
     "project_setting.splash.splash_scene": "Splash Scene",
     "project_setting.splash.loading_scene": "Loading Scene",
@@ -278,5 +289,67 @@
     "project_setting.splash.start_scene_index": "Start scene index",
 
     "control_panel.refresh_delay": "Refresh Delay",
-    "control_panel.generic": "Generic"
+    "control_panel.generic": "Generic",
+    "control_panel.generic.delta_time": "Delta Time",
+    "control_panel.generic.smooth_delta_time": "Smooth Delta Time",
+    "control_panel.generic.fps_delta_time": "Delta Time * Frame Of Reference",
+    "control_panel.generic.fps_smooth_delta_time": "Smooth Delta Time * Frame Of Reference",
+    "control_panel.generic.unscaled_delta_time": "Unscaled Delta Time",
+    "control_panel.generic.unscaled_smooth_delta_time": "Unscaled Smooth Delta Time",
+    "control_panel.generic.fps_unscaled_delta_time": "Unscaled Delta Time * Frame Of Reference",
+    "control_panel.generic.fps_unscaled_smooth_delta_time": "Unscaled Smooth Delta Time * Frame Of Reference",
+
+    "control_panel.generic.fps": "FPS",
+
+    "control_panel.generic.memory": "Total allocated memory (MB)",
+
+    "control_panel.generic.main_thread_id": "Main Thread ID",
+
+    "control_panel.generic.data_path": "Data Path",
+    "control_panel.generic.streaming_assets_path": "Streaming Assets Path",
+    "control_panel.generic.persistent_data_path": "Persistent Data Path",
+    "control_panel.generic.temporary_cache_path": "temporary Cache Path",
+    "control_panel.generic.resource_pack_path": "REsource Pack Path",
+    "control_panel.generic.project_data_path": "Project Data Path",
+
+    "control_panel.generic.company_name": "Company Name",
+    "control_panel.generic.product_name": "Product Name",
+
+    "control_panel.generic.account_status": "Account Status",
+    "control_panel.generic.account_login": "Login",
+    "control_panel.generic.account_logout": "Logout",
+    "control_panel.generic.account_name": "Account Name",
+    "control_panel.generic.account_path": "Account Path",
+    "control_panel.generic.account_hashed_password": "Account Hashed Password",
+
+    "control_panel.generic.version": "Version",
+    "control_panel.generic.unity_version": "Unity Version",
+
+    "control_panel.generic.platform": "Platform",
+
+    "control_panel.generic.operating_system": "OS",
+
+    "control_panel.generic.device_model": "Device Model",
+    "control_panel.generic.device_name": "Device Name",
+
+    "control_panel.generic.internet_reachability": "Internet Reachability",
+    "control_panel.generic.battery_status": "Battery Status",
+
+    "control_panel.generic.processor_type": "Processor Type",
+    "control_panel.generic.processor_frequency": "Processor Frequency",
+    "control_panel.generic.processor_count": "Processor Count",
+
+    "control_panel.generic.graphics_device_name": "Graphics Device Name",
+    "control_panel.generic.graphics_memory_size": "Graphics Memory Size (MB)",
+
+    "control_panel.generic.system_memory_size": "System Memory Size (MB)",
+
+    "control_panel.generic.game_speed": "Game Speed",
+
+
+
+    "control_panel.resource": "Resource",
+
+    "control_panel.resource.refresh": "Resource Refresh",
+    "control_panel.resource.resource_pack": "Resource Pack"
 }

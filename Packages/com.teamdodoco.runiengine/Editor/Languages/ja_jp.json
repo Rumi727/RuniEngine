@@ -109,6 +109,7 @@
     "gui.max_progress": "最大進行度",
     "gui.current_position": "現在の座標",
     "gui.current_offset": "現在のオフセット",
+    "gui.restart": "リスタート",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -129,6 +130,7 @@
     "inspector.better_content_size_fitter.y_size": "Yサイズの変更",
     "inspector.content_aspect_ratio_fitter.aspect_mode": "方向モード",
     "inspector.ui_animator.animations": "アニメーション要素",
+    "inspector.ui_animation.animator": "UI 애니메이터",
     "inspector.sound_player_base.pan_stereo": "パンステレオ",
     "inspector.canvas_setter.disableScreenArea": "画面領域を無効にする",
     "inspector.canvas_setter.worldRenderMode": "ワールドレンダーモード",
@@ -259,6 +261,7 @@
     "project_setting.audio.audios_file_delete": "audios.jsonファイルの削除",
     "project_setting.audio.loop_start_index": "ループ開始インデックス",
     "project_setting.audio.loop_offset_index": "ループオフセットインデックス",
+    "project_setting.audio.rhythm_offset_index": "リズムオフセットインデックス",
 
     "project_setting.nbs.name": "NBSリスト",
     "project_setting.nbs.nbses_folder_create": "nbses フォルダの作成",
@@ -266,11 +269,19 @@
     "project_setting.nbs.nbses_folder_delete": "nbses フォルダーの削除",
     "project_setting.nbs.nbses_file_delete": "nbses.jsonファイルの削除",
     "project_setting.nbs.loop_offset_tick": "ループオフセットティック",
+    "project_setting.nbs.bpm_multiplier": "BPM乗数",
+    "project_setting.nbs.rhythm_offset_tick": "リズムオフセットティック",
     
     "project_setting.theme.styles_folder_create": "styles フォルダの作成",
     "project_setting.theme.styles_folder_delete": "styles フォルダーの削除",
     "project_setting.theme.styles_file_create": "jsonファイルの作成",
     "project_setting.theme.styles_file_delete": "jsonファイルの削除",
+
+    "project_setting.sprite.sprite_create": "スプライトの作成",
+    "project_setting.sprite.sprite_delete": "スプライトをクリア",
+    "project_setting.sprite.tag_create": "タグの作成",
+    "project_setting.sprite.tag_delete": "タグをクリア",
+    "project_setting.sprite.tag_warning": "スプライトメタデータに「{tag}」タグがないため、デフォルトタグを呼び出しました",
 
     "project_setting.splash.splash_scene": "スプラッシュシーン",
     "project_setting.splash.loading_scene": "ロードシーン",
@@ -278,5 +289,67 @@
     "project_setting.splash.start_scene_index": "開始シーンインデックス",
 
     "control_panel.refresh_delay": "リフレッシュディレイ",
-    "control_panel.generic": "ジェネリック"
+    "control_panel.generic": "ジェネリック",
+    "control_panel.generic.delta_time": "デルタタイム",
+    "control_panel.generic.smooth_delta_time": "ソフト デルタタイム",
+    "control_panel.generic.fps_delta_time": "デルタタイム * 基準フレーム",
+    "control_panel.generic.fps_smooth_delta_time": "ソフト デルタタイム * 基準フレーム",
+    "control_panel.generic.unscaled_delta_time": "スケールされていない デルタタイム",
+    "control_panel.generic.unscaled_smooth_delta_time": "スケールされていない ソフト デルタタイム",
+    "control_panel.generic.fps_unscaled_delta_time": "スケールされていない デルタタイム * 基準フレーム",
+    "control_panel.generic.fps_unscaled_smooth_delta_time": "スケールされていない ソフト デルタタイム * 基準フレーム",
+
+    "control_panel.generic.fps": "現在のフレーム",
+
+    "control_panel.generic.memory": "合計割り当てられたメモリ (MB)",
+
+    "control_panel.generic.main_thread_id": "メインスレッドID",
+
+    "control_panel.generic.data_path": "データパス",
+    "control_panel.generic.streaming_assets_path": "ストリーミングアセットパス",
+    "control_panel.generic.persistent_data_path": "永続データパス",
+    "control_panel.generic.temporary_cache_path": "一時キャッシュパス",
+    "control_panel.generic.resource_pack_path": "リソースパックパス",
+    "control_panel.generic.project_data_path": "プロジェクトデータパス",
+
+    "control_panel.generic.company_name": "会社名",
+    "control_panel.generic.product_name": "製品名",
+
+    "control_panel.generic.account_status": "アカウントステータス",
+    "control_panel.generic.account_login": "ログイン",
+    "control_panel.generic.account_logout": "ログアウト",
+    "control_panel.generic.account_name": "アカウント名",
+    "control_panel.generic.account_path": "アカウントパス",
+    "control_panel.generic.account_hashed_password": "アカウントハッシュパスワード",
+
+    "control_panel.generic.version": "バージョン",
+    "control_panel.generic.unity_version": "Unityバージョン",
+
+    "control_panel.generic.platform": "プラットフォーム",
+
+    "control_panel.generic.operating_system": "OS",
+
+    "control_panel.generic.device_model": "デバイスモデル",
+    "control_panel.generic.device_name": "デバイス名",
+
+    "control_panel.generic.internet_reachability": "インターネット接続方式",
+    "control_panel.generic.battery_status": "バッテリーの状態",
+
+    "control_panel.generic.processor_type": "プロセッサタイプ",
+    "control_panel.generic.processor_frequency": "プロセッサ速度",
+    "control_panel.generic.processor_count": "コア数",
+
+    "control_panel.generic.graphics_device_name": "グラフィックデバイス名",
+    "control_panel.generic.graphics_memory_size": "グラフィックメモリサイズ (MB)",
+
+    "control_panel.generic.system_memory_size": "システムメモリサイズ (MB)",
+
+    "control_panel.generic.game_speed": "ゲームスピード",
+
+
+
+    "control_panel.resource": "リソース",
+
+    "control_panel.resource.refresh": "リソースの更新",
+    "control_panel.resource.resource_pack": "リソースパック"
 }
