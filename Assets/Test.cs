@@ -1,12 +1,30 @@
 #nullable enable
 using RuniEngine;
 using RuniEngine.Inputs;
+using RuniEngine.Resource.Sounds;
+using RuniEngine.Rhythms;
+using RuniEngine.Sounds;
+using TMPro;
 using UnityEngine;
 
 public class Test : MonoBehaviour
 {
     Vector2 rotation = Vector2.zero;
 
+    void OnEnable() => rhythm = new RhythmWatch();
+    void OnDisable()
+    {
+        if (rhythm != null)
+        {
+            rhythm.Dispose();
+            rhythm = null;
+        }
+    }
+
+    RhythmWatch? rhythm;
+    [SerializeField] TMP_Text? text;
+    [SerializeField] SoundPlayerBase? soundPlayer;
+    [SerializeField] double lastBeat = 0;
     void Update()
     {
         float speed;
@@ -44,5 +62,27 @@ public class Test : MonoBehaviour
         }
 
         transform.localEulerAngles = rotation;
+
+        if (text != null && rhythm != null && soundPlayer != null)
+        {
+            int beat = (rhythm.currentBeat - rhythm.bpms?.GetBPMInfoUsingBeat(rhythm.currentBeat).beat ?? 0).Repeat(4).FloorToInt();
+            
+            rhythm.soundPlayer = soundPlayer;
+            text.text = $"Beat : {rhythm.currentBeat:0.00}\nTime : {rhythm.currentTime.ToTime()}";
+
+            if (lastBeat != beat)
+            {
+                text.rectTransform.anchoredPosition = new Vector2(0, 5);
+
+                if (beat == 0)
+                    AudioPlayer.PlayAudio("block.note_block.hat", NBSLoader.nbsNameSpace, 1, false, 1.25f, 1.25f, 0, transform);
+                else
+                    AudioPlayer.PlayAudio("block.note_block.hat", NBSLoader.nbsNameSpace, 1, false, 1, 1, 0, transform);
+            }
+
+            text.rectTransform.anchoredPosition = text.rectTransform.anchoredPosition.Lerp(Vector2.zero, 0.1f * Kernel.fpsDeltaTime);
+
+            lastBeat = beat;
+        }
     }
 }

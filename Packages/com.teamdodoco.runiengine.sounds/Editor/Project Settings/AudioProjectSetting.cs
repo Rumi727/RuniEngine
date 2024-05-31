@@ -10,6 +10,7 @@ using RuniEngine.Jsons;
 using UnityEditor.IMGUI.Controls;
 
 using static RuniEngine.Editor.EditorTool;
+using RuniEngine.Rhythms;
 
 namespace RuniEngine.Editor.ProjectSettings
 {
@@ -254,6 +255,8 @@ namespace RuniEngine.Editor.ProjectSettings
                 double tempo = metaData.tempo;
                 int loopStartIndex = metaData.loopStartIndex;
                 int loopOffsetIndex = metaData.loopOffsetIndex;
+                int rhythmOffsetIndex = metaData.rhythmOffsetIndex;
+                BeatBPMPairList bpms = new BeatBPMPairList(metaData.bpms.defaultValue, metaData.bpms);
 
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -347,8 +350,45 @@ namespace RuniEngine.Editor.ProjectSettings
                     tempIsChanged |= EditorGUI.EndChangeCheck();
                 }
 
-                return new AudioMetaData(audioPath, pitch, tempo, loopStartIndex, loopOffsetIndex, null);
-            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new AudioMetaData("", 1, 1, 0, 0, null)), out bool isListChanged, deleteSafety);
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUI.BeginChangeCheck();
+
+                    {
+                        string label = TryGetText("project_setting.audio.rhythm_offset_index");
+                        BeginLabelWidth(label);
+
+                        rhythmOffsetIndex = EditorGUILayout.IntField(label, rhythmOffsetIndex);
+                        EndLabelWidth();
+                    }
+
+                    tempIsChanged |= EditorGUI.EndChangeCheck();
+                    EditorGUILayout.EndHorizontal();
+
+                    DrawRawList(bpms, "", z =>
+                    {
+                        EditorGUI.BeginChangeCheck();
+
+                        var pair = (BeatValuePair<double>)z;
+                        double beat = EditorGUILayout.DelayedDoubleField("Beat", pair.beat);
+                        double value = EditorGUILayout.DoubleField("Value", pair.value);
+
+                        tempIsChanged |= EditorGUI.EndChangeCheck();
+                        
+                        return new BeatValuePair<double>(beat, value);
+                    }, i => true, i =>
+                    {
+                        if (bpms.Count > 0)
+                            bpms.Insert(i, new BeatValuePair<double>(bpms[i.Clamp(0, bpms.Count - 1)].beat, 60));
+                        else    
+                            bpms.Insert(i, new BeatValuePair<double>(0, 60));
+                    }, out bool isListChanged);
+
+                    tempIsChanged |= isListChanged;
+                }
+
+                return new AudioMetaData(audioPath, pitch, tempo, loopStartIndex, loopOffsetIndex, bpms, rhythmOffsetIndex, null);
+            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new AudioMetaData("", 1, 1, 0, 0, null, 0, null)), out bool isListChanged, deleteSafety);
 
             isChanged = tempIsChanged || isListChanged;
             return new AudioData(subtitle, isBGM, metaDatas.ToArray());
