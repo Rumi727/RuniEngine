@@ -26,12 +26,14 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             DrawLine();
 
-            TimeTextGUI();
-            TimeSliderGUI(null);
+            {
+                GUILayout.BeginHorizontal();
 
-            Space();
+                TimeSliderGUI(null);
+                TimeControlGUI(null);
 
-            TimeControlGUI();
+                GUILayout.EndHorizontal();
+            }
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -189,7 +191,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 }
             }
 
-
+            Space(-28);
 
             EndFieldWidth();
             GUILayout.EndHorizontal();
@@ -305,7 +307,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             GUILayout.EndHorizontal();
         }
 
-        protected virtual void TimeTextGUI()
+        protected virtual void TimeSliderGUI(Action? action)
         {
             if (targets == null || targets.Length <= 0)
                 return;
@@ -323,153 +325,196 @@ namespace RuniEngine.Editor.Inspector.Sounds
             double realLength = target.realLength;
 
             {
-                EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
-                GUILayout.BeginHorizontal();
-                
-                if (!mixed)
+                GUILayout.BeginVertical();
+
+                Space(0);
+
+                //슬라이더
                 {
-                    if (target.tempo.Abs() == 1)
-                        GUILayout.Label(time.ToTime(true, true));
-                    else
-                        GUILayout.Label($"{time.ToTime(true, true)} ({realTime.ToTime(true, true)})");
+                    EditorGUI.showMixedValue = mixed;
+                    EditorGUI.BeginDisabledGroup(!Kernel.isPlaying || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
+
+                    {
+                        EditorGUI.BeginChangeCheck();
+
+                        Rect rect = EditorGUILayout.GetControlRect();
+                        float value = GUI.HorizontalSlider(rect, (float)target.time, 0, (float)target.length);
+
+                        if (EditorGUI.EndChangeCheck())
+                            TargetsInvoke(x => x.time = value);
+                    }
+
+                    EditorGUI.EndDisabledGroup();
+                    EditorGUI.showMixedValue = false;
                 }
-                else
-                    GUILayout.Label("--:--");
 
-                GUILayout.FlexibleSpace();
+                Space(-5);
 
-                if (!mixed)
+                //텍스트
                 {
-                    if (target.tempo.Abs() == 1)
-                        GUILayout.Label((length - time).ToTime(true, true));
-                    else
-                        GUILayout.Label($"{(length - time).ToTime(true, true)} ({(realLength - realTime).ToTime(true, true)})");
+                    EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
+
+                    DrawTimeSliderText(target, mixed, time.ToTime(true, true), (length - time).ToTime(true, true), length.ToTime(true, true), realTime.ToTime(true, true), (realLength - realTime).ToTime(true, true), realLength.ToTime(true, true), true);
+                    action?.Invoke();
+
+                    EditorGUI.EndDisabledGroup();
                 }
-                else
-                    GUILayout.Label("--:--");
 
-                GUILayout.FlexibleSpace();
-
-                if (!mixed)
-                {
-                    if (target.tempo.Abs() == 1)
-                        GUILayout.Label(length.ToTime(true, true));
-                    else
-                        GUILayout.Label($"{length.ToTime(true, true)} ({realLength.ToTime(true, true)})");
-                }
-                else
-                    GUILayout.Label("--:--");
-
-                GUILayout.EndHorizontal();
-                EditorGUI.EndDisabledGroup();
+                GUILayout.EndVertical();
             }
         }
 
-        protected virtual void TimeSliderGUI(Action? func)
+        protected void DrawTimeSliderText(SoundPlayerBase target, bool mixed, string time, string remainingTime, string length, string realTime, string realRemainingTime, string realLength, bool realValueShow)
+        {
+            GUILayout.BeginHorizontal();
+            Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(15));
+
+            rect.x -= 2;
+            rect.width += 4;
+
+            BeginFontSize(11);
+            BeginAlignment(TextAnchor.UpperLeft, GUI.skin.label);
+
+            if (!mixed)
+            {
+                if (target.tempo.Abs() == 1 || !realValueShow)
+                    GUI.Label(rect, time);
+                else
+                    GUI.Label(rect, $"{time} ({realTime})");
+            }
+            else
+                GUI.Label(rect, "--:--");
+
+            EndAlignment(GUI.skin.label);
+
+            BeginAlignment(TextAnchor.UpperCenter, GUI.skin.label);
+
+            if (!mixed)
+            {
+                if (target.tempo.Abs() == 1 || !realValueShow)
+                    GUI.Label(rect, remainingTime);
+                else
+                    GUI.Label(rect, $"{remainingTime} ({realRemainingTime})");
+            }
+            else
+                GUI.Label(rect, "--:--");
+
+            EndAlignment(GUI.skin.label);
+
+            BeginAlignment(TextAnchor.UpperRight, GUI.skin.label);
+
+            if (!mixed)
+            {
+                if (target.tempo.Abs() == 1 || !realValueShow)
+                    GUI.Label(rect, length);
+                else
+                    GUI.Label(rect, $"{length} ({realLength})");
+            }
+            else
+                GUI.Label(rect, "--:--");
+
+            EndAlignment(GUI.skin.label);
+            EndFontSize();
+
+            GUILayout.EndHorizontal();
+        }
+
+        protected virtual void TimeControlGUI(Action? action, float size = 153)
         {
             if (targets == null || targets.Length <= 0)
                 return;
 
+            float buttonSize = (size - 9) / 4f;
+
+            bool disable = !Kernel.isPlaying;
             bool mixed = targets.Length > 1;
             SoundPlayerBase? target = targets[0];
 
             if (target == null)
                 return;
 
-            GUILayout.BeginHorizontal();
-
-            EditorGUI.showMixedValue = mixed;
-            EditorGUI.BeginDisabledGroup(!Kernel.isPlaying || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
-
-            BeginFieldWidth(60);
-            EditorGUI.BeginChangeCheck();
-
-            float value = EditorGUILayout.Slider((float)target.time, 0, (float)target.length);
-            
-            EndFieldWidth();
-
-            if (EditorGUI.EndChangeCheck())
             {
-                for (int i = 0; i < targets.Length; i++)
+                GUILayout.BeginVertical(GUILayout.Width(size));
+                
+                //시간
                 {
-                    SoundPlayerBase? target2 = targets[i];
-                    if (target2 != null)
-                        target2.time = value;
+                    GUILayout.BeginHorizontal();
+                    EditorGUI.showMixedValue = mixed;
+
+                    {
+                        EditorGUI.BeginChangeCheck();
+
+                        double value = EditorGUILayout.DoubleField(target.time);
+
+                        if (EditorGUI.EndChangeCheck())
+                            TargetsInvoke(x => x.time = value);
+                    }
+
+                    action?.Invoke();
+
+                    EditorGUI.showMixedValue = false;
+                    GUILayout.EndHorizontal();
                 }
-            }
 
-            func?.Invoke();
-
-            EditorGUI.EndDisabledGroup();
-            EditorGUI.showMixedValue = false;
-
-            GUILayout.EndHorizontal();
-        }
-
-        protected virtual void TimeControlGUI()
-        {
-            if (targets == null || targets.Length <= 0)
-                return;
-
-            bool disable = !Kernel.isPlaying;
-            SoundPlayerBase? target = targets[0];
-
-            if (target == null)
-                return;
-
-            GUILayout.BeginHorizontal();
-
-            //재생
-            {
-                EditorGUI.BeginDisabledGroup(disable || (!target.isActiveAndEnabled && TargetsIsEquals(x => x.isActiveAndEnabled, targets)));
-
-                if (GUILayout.Button(TryGetText("gui.play")))
-                    TargetsInvoke(x => x.Play());
-
-                EditorGUI.EndDisabledGroup();
-            }
-
-            Space();
-
-            //일시 정지
-            {
-                if (!target.isPaused || !TargetsIsEquals(x => x.isPaused, targets))
                 {
-                    if (GUILayout.Button(TryGetText("gui.pause")))
-                        TargetsInvoke(x => x.isPaused = true);
+                    GUILayout.BeginHorizontal();
+
+                    //재생
+                    if (target.isPlaying)
+                        DrawButton("▶↻", TryGetText("gui.restart"), x => x.Play());
+                    else
+                        DrawButton("▶", TryGetText("gui.play"), x => x.Play());
+
+                    //일시 정지
+                    if (!target.isPaused || !TargetsIsEquals(x => x.isPaused, targets))
+                        DrawButton("▮▮", TryGetText("gui.pause"), x => x.isPaused = true);
+                    else
+                        DrawButton("▶▮", TryGetText("gui.unpause"), x => x.isPaused = false);
+
+                    //정지
+                    DrawButton("■", TryGetText("gui.stop"), x => x.Stop());
+
+                    //새로고침
+                    DrawButton("↻", TryGetText("gui.refresh"), x => x.Refresh());
+
+                    GUILayout.EndHorizontal();
+
+                    void DrawButton(string buttonText, string text, Action<SoundPlayerBase> action)
+                    {
+                        GUILayout.BeginVertical();
+                        EditorGUI.BeginDisabledGroup(disable);
+
+                        Rect buttonRect = EditorGUILayout.GetControlRect(GUILayout.Width(buttonSize), GUILayout.Height(21));
+                        if (GUI.Button(buttonRect, buttonText))
+                            TargetsInvoke(action);
+
+                        EditorGUI.EndDisabledGroup();
+
+                        BeginFontSize(11);
+                        BeginAlignment(TextAnchor.UpperCenter, GUI.skin.label);
+
+                        Rect textRect = EditorGUILayout.GetControlRect(GUILayout.Width(buttonSize), GUILayout.Height(5));
+
+                        textRect.x -= 100;
+                        textRect.width += 200;
+
+                        textRect.y -= 2;
+                        textRect.height = 15;
+
+                        if (buttonRect.Contains(Event.current.mousePosition))
+                        {
+                            GUI.Label(textRect, text);
+                        }
+
+                        EndAlignment(GUI.skin.label);
+                        EndFontSize();
+
+                        GUILayout.EndVertical();
+                    }
                 }
-                else
-                {
-                    if (GUILayout.Button(TryGetText("gui.unpause")))
-                        TargetsInvoke(x => x.isPaused = false);
-                }
+
+                GUILayout.EndVertical();
             }
-
-            Space();
-
-            //정지
-            {
-                EditorGUI.BeginDisabledGroup(disable || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
-
-                if (GUILayout.Button(TryGetText("gui.stop")))
-                    TargetsInvoke(x => x.Stop());
-
-                EditorGUI.EndDisabledGroup();
-            }
-
-            Space();
-
-            //새로고침
-            {
-                EditorGUI.BeginDisabledGroup(disable);
-
-                if (GUILayout.Button(TryGetText("gui.refresh")))
-                    TargetsInvoke(x => x.Refresh());
-
-                EditorGUI.EndDisabledGroup();
-            }
-
-            GUILayout.EndHorizontal();
         }
     }
 }
