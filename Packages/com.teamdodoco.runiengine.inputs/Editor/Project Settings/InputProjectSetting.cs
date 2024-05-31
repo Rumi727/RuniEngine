@@ -162,7 +162,7 @@ namespace RuniEngine.Editor.ProjectSettings
         public static StorableClass? inputProjectSetting = null;
         public static void DrawGUI(string key, bool deleteSafety, out bool isListChanged, out string editedKey)
         {
-            EditorGUILayout.BeginVertical(otherHelpBox);
+            EditorGUILayout.BeginVertical(otherHelpBoxStyle);
 
             string oldKey = key;
 

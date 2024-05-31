@@ -19,6 +19,7 @@ namespace RuniEngine.Install
         public void DrawGUI()
         {
             PackageImportButton(TryGetText("gui.streaming_assets"), packagePath, Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "runi"));
+            PackageImportButton(TryGetText("gui.streaming_assets") + " (Sounds)", packagePath + ".sounds", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "runi-sounds"));
             PackageImportButton(TryGetText("gui.streaming_assets") + " (NBS)", packagePath + ".nbs", Kernel.streamingAssetsFolderName, Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, "runi-nbs"));
             PackageImportButton(TryGetText("gui.font"), packagePath, "Fonts", Path.Combine(assetsResourcePathParent, "Fonts"));
         }

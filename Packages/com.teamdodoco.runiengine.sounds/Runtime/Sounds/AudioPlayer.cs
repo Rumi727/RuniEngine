@@ -335,7 +335,10 @@ namespace RuniEngine.Sounds
 
                             GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo, spatialStereo);
                             for (int j = 0; j < channels; j++)
+                            {
                                 data[i + j] += tempData[j] * volume;
+                                //data[i + j] += datas[(index + j).Clamp(0, datas.Length - 1)] * volume;
+                            }
                         }
                     }
 

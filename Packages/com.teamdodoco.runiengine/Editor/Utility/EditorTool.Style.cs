@@ -7,12 +7,12 @@ namespace RuniEngine.Editor
 {
     public partial class EditorTool
     {
-        public static GUIStyle label => EditorStyles.label;
+        public static GUIStyle labelStyle => GUI.skin.label;
         public static GUIStyle labelButtonStyle
         {
             get
             {
-                _labelButtonStyle ??= new GUIStyle(EditorStyles.label)
+                _labelButtonStyle ??= new GUIStyle(labelStyle)
                 {
                     hover = new GUIStyleState()
                     {
@@ -29,13 +29,15 @@ namespace RuniEngine.Editor
         }
         static GUIStyle? _labelButtonStyle;
 
-        public static GUIStyle helpBox => EditorStyles.helpBox;
+        public static GUIStyle editorLabelStyle => EditorStyles.label;
 
-        public static GUIStyle otherHelpBox
+        public static GUIStyle helpBoxStyle => EditorStyles.helpBox;
+
+        public static GUIStyle otherHelpBoxStyle
         {
             get
             {
-                _otherHelpBox ??= new GUIStyle(EditorStyles.helpBox)
+                _otherHelpBox ??= new GUIStyle(helpBoxStyle)
                 {
                     padding = new RectOffset(10),
                     margin = new RectOffset(10)
@@ -49,12 +51,12 @@ namespace RuniEngine.Editor
 
 
         public static void BeginLabelWidth(string label) => BeginLabelWidth(new GUIContent(label));
-        public static void BeginLabelWidth(GUIContent label) => BeginLabelWidth(label, EditorStyles.label);
+        public static void BeginLabelWidth(GUIContent label) => BeginLabelWidth(label, editorLabelStyle);
         public static void BeginLabelWidth(string label, GUIStyle style) => BeginLabelWidth(new GUIContent(label), style);
         public static void BeginLabelWidth(GUIContent label, GUIStyle style) => BeginLabelWidth(GetXSize(label, style) + 2);
 
-        public static void BeginLabelWidth(params string[] label) => BeginLabelWidth(label, EditorStyles.label);
-        public static void BeginLabelWidth(params GUIContent[] label) => BeginLabelWidth(label, EditorStyles.label);
+        public static void BeginLabelWidth(params string[] label) => BeginLabelWidth(label, editorLabelStyle);
+        public static void BeginLabelWidth(params GUIContent[] label) => BeginLabelWidth(label, editorLabelStyle);
         public static void BeginLabelWidth(string[] label, GUIStyle style) => BeginLabelWidth(GetLabelXSize(label, style) + 2);
         public static void BeginLabelWidth(GUIContent[] label, GUIStyle style) => BeginLabelWidth(GetLabelXSize(label, style) + 2);
 
@@ -85,13 +87,13 @@ namespace RuniEngine.Editor
         public static float GetButtonYSize() => GetYSize(GUI.skin.button);
 
         public static float GetLabelXSize(string label) => GetLabelXSize(new GUIContent(label));
-        public static float GetLabelXSize(GUIContent label) => GetXSize(label, EditorStyles.label);
+        public static float GetLabelXSize(GUIContent label) => GetXSize(label, labelStyle);
 
         public static float GetLabelYSize(string label) => GetLabelYSize(new GUIContent(label));
-        public static float GetLabelYSize(GUIContent label) => GetYSize(label, EditorStyles.label);
+        public static float GetLabelYSize(GUIContent label) => GetYSize(label, labelStyle);
 
-        public static float GetLabelXSize(params string[] label) => GetLabelXSize(label, EditorStyles.label);
-        public static float GetLabelXSize(params GUIContent[] label) => GetLabelXSize(label, EditorStyles.label);
+        public static float GetLabelXSize(params string[] label) => GetLabelXSize(label, labelStyle);
+        public static float GetLabelXSize(params GUIContent[] label) => GetLabelXSize(label, labelStyle);
         public static float GetLabelXSize(string[] label, GUIStyle style)
         {
             float width = 0;
@@ -158,8 +160,8 @@ namespace RuniEngine.Editor
 
 
 
-        public static void BeginFontSize(int size) => BeginFontSize(size, EditorStyles.label);
-        public static void EndFontSize() => EndFontSize(EditorStyles.label);
+        public static void BeginFontSize(int size) => BeginFontSize(size, labelStyle);
+        public static void EndFontSize() => EndFontSize(labelStyle);
 
         static readonly Dictionary<GUIStyle, Stack<int>> fontSizeQueue = new Dictionary<GUIStyle, Stack<int>>();
         public static void BeginFontSize(int size, GUIStyle style)

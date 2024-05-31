@@ -7,7 +7,7 @@ using UnityEngine;
 
 using static RuniEngine.Editor.EditorTool;
 
-namespace RuniEngine.Editor
+namespace RuniEngine.Editor.ControlPanels
 {
     public sealed class ControlPanelMainWindow : EditorWindow
     {
@@ -25,10 +25,7 @@ namespace RuniEngine.Editor
             }
 
             controlPanels = controlPanels.OrderBy(x => x.sort).ToList();
-
-            tabLabels.Clear();
-            for (int i = 0; i < controlPanels.Count; i++)
-                tabLabels.Add(TryGetText(controlPanels[i].label));
+            tabLabels = new string[controlPanels.Count];
         }
 
         [MenuItem("Runi Engine/Control Panel")]
@@ -65,7 +62,7 @@ namespace RuniEngine.Editor
         static bool inspectorUpdate = true;
         static int tabIndex = 0;
         static List<IControlPanelWindow> controlPanels = new List<IControlPanelWindow>();
-        static readonly List<string> tabLabels = new List<string>();
+        static string[] tabLabels = new string[0];
         static Vector2 scrollPosition = Vector2.zero;
         static IControlPanelWindow? selectedControlPanel;
         public static void DrawGUI()
@@ -81,7 +78,10 @@ namespace RuniEngine.Editor
                 GUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
 
-                tabIndex = GUILayout.Toolbar(tabIndex, tabLabels.ToArray(), GUILayout.ExpandWidth(false));
+                for (int i = 0; i < controlPanels.Count; i++)
+                    tabLabels[i] = TryGetText(controlPanels[i].label);
+
+                tabIndex = GUILayout.Toolbar(tabIndex, tabLabels, GUILayout.ExpandWidth(false));
 
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
