@@ -52,6 +52,7 @@ namespace RuniEngine
         public bool disable { get => _disable; set => _disable = value; }
         [SerializeField] bool _disable;
 
+        void OnEnable() => SetDirty();
         void OnPreCull() => SetDirty();
         void LateUpdate() => SetDirty();
 
