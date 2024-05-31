@@ -782,6 +782,7 @@ namespace RuniEngine
                 Ease.EaseInElastic => EaseInElastic(start, end, value),
                 Ease.EaseOutElastic => EaseOutElastic(start, end, value),
                 Ease.EaseInOutElastic => EaseInOutElastic(start, end, value),
+                Ease.Curve => Linear(start, end, value),
                 _ => 0
             };
         }

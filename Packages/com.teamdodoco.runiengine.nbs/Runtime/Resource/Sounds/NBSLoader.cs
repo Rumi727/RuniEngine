@@ -1,6 +1,5 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
-using RuniEngine.Threading;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -131,7 +130,7 @@ namespace RuniEngine.Resource.Sounds
 
                         NBSFile? nbsFile = GetNBSFile(nbsPath);
                         if (nbsFile != null)
-                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsFile);
+                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.bpmMultiplier, nbsMetaData.rhythmOffsetTick, nbsFile);
 
                         if (nbsMetaData != null)
                             nbsMetaDatas.Add(nbsMetaData);

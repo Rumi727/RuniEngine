@@ -1,15 +1,19 @@
 #nullable enable
 using Newtonsoft.Json;
+using RuniEngine.Rhythms;
 using UnityEngine;
 
 namespace RuniEngine.Resource.Sounds
 {
     public sealed class AudioMetaData : SoundMetaDataBase
     {
-        public AudioMetaData(string path, double pitch, double tempo, int loopStartIndex, int loopOffsetIndex, AudioClip? audioClip) : base(path, pitch, tempo)
+        public AudioMetaData(string path, double pitch, double tempo, int loopStartIndex, int loopOffsetIndex, BeatBPMPairList? bpms, int rhythmOffsetIndex, AudioClip? audioClip) : base(path, pitch, tempo)
         {
             this.loopStartIndex = loopStartIndex;
             this.loopOffsetIndex = loopOffsetIndex;
+
+            this.bpms = bpms ?? new BeatBPMPairList();
+            this.rhythmOffsetIndex = rhythmOffsetIndex;
 
             if (audioClip != null)
             {
@@ -27,11 +31,13 @@ namespace RuniEngine.Resource.Sounds
             }
         }
 
-        public float bpm { get; } = 60;
-        public int rhythmOffsetIndex { get; } = 0;
-
         public int loopStartIndex { get; } = 0;
         public int loopOffsetIndex { get; } = 0;
+
+        public override BeatBPMPairList bpms { get; } = new BeatBPMPairList();
+        public int rhythmOffsetIndex { get; } = 0;
+
+        [JsonIgnore] public override double rhythmOffset => (double)rhythmOffsetIndex / frequency / tempo;
 
         [JsonIgnore] public float[]? datas { get; }
 

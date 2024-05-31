@@ -181,7 +181,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     if (nbsData == null)
                         continue;
 
-                    EditorGUILayout.BeginVertical(otherHelpBox);
+                    EditorGUILayout.BeginVertical(otherHelpBoxStyle);
                     BeginFieldWidth(10);
 
                     nbsDatas[item.key] = DrawGUI(nameSpace, item.key, nbsData, deleteSafety, out bool isChanged2, out string editedKey);
@@ -252,6 +252,9 @@ namespace RuniEngine.Editor.ProjectSettings
                 string nbsPath = metaData.path;
                 double pitch = metaData.pitch;
                 double tempo = metaData.tempo;
+                double loopStartTick = metaData.loopStartTick;
+                double bpmMultiplier = metaData.bpmMultiplier;
+                double rhythmOffsetTick = metaData.rhythmOffsetTick;
 
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -323,11 +326,30 @@ namespace RuniEngine.Editor.ProjectSettings
                     }
 
                     EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+
+                    {
+                        string label = TryGetText("project_setting.nbs.bpm_multiplier");
+                        BeginLabelWidth(label);
+
+                        bpmMultiplier = EditorGUILayout.DoubleField(label, bpmMultiplier);
+                        EndLabelWidth();
+                    }
+
+                    {
+                        string label = TryGetText("project_setting.nbs.rhythm_offset_tick");
+                        BeginLabelWidth(label);
+
+                        rhythmOffsetTick = EditorGUILayout.DoubleField(label, rhythmOffsetTick);
+                        EndLabelWidth();
+                    }
+
+                    EditorGUILayout.EndHorizontal();
                     tempIsChanged |= EditorGUI.EndChangeCheck();
                 }
 
-                return new NBSMetaData(nbsPath, pitch, tempo, null);
-            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new NBSMetaData("", 1, 1, null)), out bool isListChanged, deleteSafety);
+                return new NBSMetaData(nbsPath, pitch, tempo, bpmMultiplier, rhythmOffsetTick, null);
+            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new NBSMetaData("", 1, 1, 1, 0, null)), out bool isListChanged, deleteSafety);
 
             isChanged = tempIsChanged || isListChanged;
             return new NBSData(subtitle, isBGM, metaDatas.ToArray());
