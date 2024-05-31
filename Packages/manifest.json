@@ -4,7 +4,7 @@
     "com.singularitygroup.hotreload": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.9",
     "com.unity.feature.development": "1.0.2",
     "com.unity.memoryprofiler": "1.1.0",
-    "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.6",
+    "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.9",
     "studio.gilp.internal-icon-browser": "https://github.com/GilpStudio/unity-internal-icon-browser.git",
     "com.unity.modules.accessibility": "1.0.0"
   },
