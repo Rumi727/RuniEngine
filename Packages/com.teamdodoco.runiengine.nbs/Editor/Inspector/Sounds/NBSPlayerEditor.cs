@@ -3,7 +3,6 @@ using RuniEngine.Resource.Sounds;
 using RuniEngine.Sounds;
 using System;
 using UnityEditor;
-using UnityEngine;
 
 namespace RuniEngine.Editor.Inspector.Sounds
 {
@@ -20,7 +19,33 @@ namespace RuniEngine.Editor.Inspector.Sounds
             TargetsSetValue(x => x.key, x => UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, NBSLoader.GetNBSDataKeys(x.nameSpace)), (x, y) => x.key = y, targets);
         }
 
-        protected override void TimeSliderGUI(Action? func)
+        protected override void TimeSliderGUI(Action? action)
+        {
+            if (targets == null || targets.Length <= 0)
+                return;
+
+            bool mixed = targets.Length > 1;
+            NBSPlayer? target = (NBSPlayer?)targets[0];
+
+            if (target == null)
+                return;
+
+            base.TimeSliderGUI(() =>
+            {
+                double tick = target.tick;
+                double tickLength = target.tickLength;
+                double remainingTick = tickLength - tick;
+
+                int index = target.index;
+                int indexLength = target.nbsFile?.nbsNotes.Length ?? 0;
+                int remainingIndex = indexLength - index;
+
+                DrawTimeSliderText(target, mixed, tick.ToString("0.00"), remainingTick.ToString("0.00"), tickLength.ToString("0.00"), (tick / target.tempo.Abs()).ToString("0.00"), (remainingTick / target.tempo.Abs()).ToString("0.00"), (tickLength / target.tempo.Abs()).ToString("0.00"), true);
+                DrawTimeSliderText(target, mixed, index.ToString(), remainingIndex.ToString(), indexLength.ToString(), "", "", "", false);
+            });
+        }
+
+        protected override void TimeControlGUI(Action? func, float size = 153)
         {
             if (targets == null || targets.Length <= 0)
                 return;
@@ -29,12 +54,12 @@ namespace RuniEngine.Editor.Inspector.Sounds
             if (target == null)
                 return;
 
-            base.TimeSliderGUI(() =>
+            base.TimeControlGUI(() =>
             {
                 {
                     EditorGUI.BeginChangeCheck();
 
-                    double value = EditorGUILayout.DoubleField(target.tick, GUILayout.Width(50));
+                    double value = EditorGUILayout.DoubleField(target.tick);
 
                     if (EditorGUI.EndChangeCheck())
                         TargetsInvoke(x => ((NBSPlayer)x).tick = value);
@@ -43,14 +68,14 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     EditorGUI.BeginChangeCheck();
 
-                    int value = EditorGUILayout.IntField(target.index, GUILayout.Width(50));
+                    int value = EditorGUILayout.IntField(target.index);
 
                     if (EditorGUI.EndChangeCheck())
                         TargetsInvoke(x => ((NBSPlayer)x).index = value);
                 }
 
                 func?.Invoke();
-            });
+            }, 201);
         }
     }
 }

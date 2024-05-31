@@ -4,7 +4,6 @@ using RuniEngine.Resource.Sounds;
 using RuniEngine.Sounds;
 using System;
 using UnityEditor;
-using UnityEngine;
 
 using EditorGUI = UnityEditor.EditorGUI;
 
@@ -44,7 +43,28 @@ namespace RuniEngine.Editor.Inspector.Sounds
             TargetsSetValue(x => x.key, x => UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, AudioLoader.GetSoundDataKeys(x.nameSpace)), (x, y) => x.key = y, targets);
         }
 
-        protected override void TimeSliderGUI(Action? func)
+        protected override void TimeSliderGUI(Action? action)
+        {
+            if (targets == null || targets.Length <= 0)
+                return;
+
+            bool mixed = targets.Length > 1;
+            AudioPlayer? target = (AudioPlayer?)targets[0];
+
+            if (target == null)
+                return;
+
+            base.TimeSliderGUI(() =>
+            {
+                double time = target.timeSamples;
+                double length = target.samples;
+                double remainingTime = length - time;
+
+                DrawTimeSliderText(target, mixed, time.ToString(), remainingTime.ToString(), length.ToString(), "", "", "", false);
+            });
+        }
+
+        protected override void TimeControlGUI(Action? func, float size = 153)
         {
             if (targets == null || targets.Length <= 0)
                 return;
@@ -53,17 +73,17 @@ namespace RuniEngine.Editor.Inspector.Sounds
             if (target == null)
                 return;
 
-            base.TimeSliderGUI(() =>
+            base.TimeControlGUI(() =>
             {
                 EditorGUI.BeginChangeCheck();
 
-                long value = EditorGUILayout.LongField(target.timeSamples, GUILayout.Width(75));
+                long value = EditorGUILayout.LongField(target.timeSamples);
 
                 if (EditorGUI.EndChangeCheck())
                     TargetsInvoke(x => ((AudioPlayer)x).timeSamples = value);
 
                 func?.Invoke();
-            });
+            }, size);
         }
     }
 }
