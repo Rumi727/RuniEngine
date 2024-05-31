@@ -34,13 +34,13 @@ namespace RuniEngine.Sounds
 
 
         public abstract double time { get; set; }
-        public virtual double realTime { get => time / tempo; set => time = value * tempo; }
+        public virtual double realTime { get => time / tempo.Abs(); set => time = value * tempo.Abs(); }
 
         public event Action timeChanged { add => _timeChanged += value; remove => _timeChanged -= value; }
         Action? _timeChanged;
 
         public abstract double length { get; }
-        public virtual double realLength => length / tempo;
+        public virtual double realLength => length / tempo.Abs();
 
 
 

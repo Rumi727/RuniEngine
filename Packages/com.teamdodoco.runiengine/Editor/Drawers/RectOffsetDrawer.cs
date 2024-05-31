@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace RuniEngine.Editor.Drawer
+namespace RuniEngine.Editor.Drawers
 {
     [CustomPropertyDrawer(typeof(RectOffset))]
     public class RectOffsetDrawer : PropertyDrawer

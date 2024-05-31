@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using static RuniEngine.Editor.EditorTool;
 
-namespace RuniEngine.Editor
+namespace RuniEngine.Editor.ControlPanels
 {
     public class ControlPanelScreenWindow : IControlPanelWindow
     {

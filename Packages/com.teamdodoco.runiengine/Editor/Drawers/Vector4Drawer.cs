@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace RuniEngine.Editor.Drawer
+namespace RuniEngine.Editor.Drawers
 {
     [CustomPropertyDrawer(typeof(Vector4))]
     public class Vector4Drawer : PropertyDrawer

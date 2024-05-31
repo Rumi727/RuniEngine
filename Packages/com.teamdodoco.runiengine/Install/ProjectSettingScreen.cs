@@ -2,7 +2,6 @@
 using RuniEngine.Editor;
 using System;
 using UnityEngine;
-using UnityEngine.Video;
 
 namespace RuniEngine.Install
 {
@@ -27,14 +26,6 @@ namespace RuniEngine.Install
                     config.numRealVoices = 255;
 
                     AudioSettings.Reset(config);
-
-                    VideoPlayer? videoPlayer = InstallerMainWindow.videoPlayer;
-                    if (videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url))
-                    {
-                        videoPlayer.Stop();
-                        videoPlayer.Play();
-                    }
-
                 }, (config.numVirtualVoices, 4095), (config.numRealVoices, 255));
             }
         }

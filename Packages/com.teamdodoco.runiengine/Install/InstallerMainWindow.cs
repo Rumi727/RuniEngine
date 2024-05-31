@@ -1,5 +1,4 @@
 #nullable enable
-using Cysharp.Threading.Tasks;
 using RuniEngine.Datas;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Video;
 
 using static RuniEngine.Editor.EditorTool;
 
@@ -17,10 +15,12 @@ namespace RuniEngine.Install
     public sealed class InstallerMainWindow : EditorWindow
     {
         public static InstallerMainWindow? instance;
-        public static VideoPlayer? videoPlayer;
+        public static AudioSource? audioSource;
 
         public Texture2D? logoTexture;
         public static Stopwatch stopwatch = new Stopwatch();
+
+        public AudioClip? musicClip;
 
 
 
@@ -72,22 +72,33 @@ namespace RuniEngine.Install
 
             for (int i = 0; i < installerScreens.Count; i++)
                 installerScreens[i].installerMainWindow = this;
+
+            AssemblyReloadEvents.beforeAssemblyReload += MusicDestroy;
+            AssemblyReloadEvents.afterAssemblyReload += MusicPlay;
         }
 
-        void OnDisable() => VideoDestroy();
+        void OnDisable()
+        {
+            AssemblyReloadEvents.beforeAssemblyReload -= MusicDestroy;
+            AssemblyReloadEvents.afterAssemblyReload -= MusicPlay;
+
+            MusicDestroy();
+        }
 
         void Update()
         {
-            if (Kernel.isPlaying)
-                return;
-
-            if (videoPlayer != null)
+            if (audioSource != null)
             {
-                EditorApplication.QueuePlayerLoopUpdate();
-                SceneView.RepaintAll();
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.Play();
+                    audioSource.time = lastAudioTime;
+                }
+
+                lastAudioTime = audioSource.time;
             }
             else
-                MusicPlay().Forget();
+                MusicPlay();
         }
 
         void OnGUI() => DrawGUI();
@@ -101,50 +112,41 @@ namespace RuniEngine.Install
                 FocusWindowIfItsOpen<InstallerMainWindow>();
         }
 
-        const string music = "https://youtu.be/G0WZTlLJlHg";
-        async UniTaskVoid MusicPlay()
+        static float lastAudioTime = 0;
+        void MusicPlay()
         {
-            VideoDestroy();
+            MusicDestroy();
             Repaint();
 
             AudioReset();
 
-            videoPlayer = Instantiate(ResourceUtility.emptyTransform.gameObject, null).AddComponent<VideoPlayer>();
-            videoPlayer.name = $"{nameof(InstallerMainWindow)} Background Music";
+            audioSource = Instantiate(ResourceUtility.emptyTransform.gameObject, null).AddComponent<AudioSource>();
 
-            string url = await YoutubePlayer.YoutubePlayer.GetRawVideoUrlAsync(music);
+            audioSource.name = $"{nameof(InstallerMainWindow)} Background Music";
+            audioSource.gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            if (videoPlayer == null)
-                return;
+            audioSource.clip = musicClip;
+            audioSource.volume = musicVolume;
+            audioSource.loop = true;
 
-            videoPlayer.isLooping = true;
-            videoPlayer.url = url;
-
-            videoPlayer.Play();
-            videoPlayer.SetDirectAudioVolume(0, musicVolume);
+            audioSource.Play();
+            audioSource.time = lastAudioTime;
 
             Repaint();
         }
 
-        static void VideoDestroy()
+        static void MusicDestroy()
         {
-            if (videoPlayer != null)
+            if (audioSource != null)
             {
-                videoPlayer.Stop();
-                DestroyImmediate(videoPlayer.gameObject);
+                lastAudioTime = audioSource.time;
+                audioSource.Stop();
+
+                DestroyImmediate(audioSource.gameObject);
             }
         }
 
-        static void AudioReset()
-        {
-            AudioSettings.Reset(AudioSettings.GetConfiguration());
-
-            if (videoPlayer != null)
-            {
-                videoPlayer.Stop();
-                videoPlayer.Play();
-            }
-        }
+        static void AudioReset() => AudioSettings.Reset(AudioSettings.GetConfiguration());
 
         static List<IInstallerScreen> installerScreens = new List<IInstallerScreen>();
         static GUIStyle? headStyle;
@@ -198,6 +200,7 @@ namespace RuniEngine.Install
             //Button
             {
                 DrawLine(2, 0);
+
                 GUILayout.Space(4);
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(6);
@@ -229,11 +232,10 @@ namespace RuniEngine.Install
                         EditorGUI.EndDisabledGroup();
                     }
 
-                    if (!Kernel.isPlaying)
-                    {
-                        GUILayout.Space(5);
+                    GUILayout.Space(5);
 
-                        if (videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url))
+                    {
+                        if (audioSource != null && audioSource.clip != null)
                         {
                             {
                                 GUILayout.Label($"{TryGetText("gui.volume")} {(musicVolume * 100).Floor()}/100");
@@ -242,7 +244,7 @@ namespace RuniEngine.Install
                                 if (musicVolume != volume)
                                 {
                                     musicVolume = volume;
-                                    videoPlayer.SetDirectAudioVolume(0, musicVolume);
+                                    audioSource.volume = musicVolume;
                                 }
                             }
 
@@ -253,39 +255,39 @@ namespace RuniEngine.Install
                         }
                         else
                             GUILayout.Label(TryGetText("installer.music_loading"));
+                    }
 
-                        GUILayout.FlexibleSpace();
+                    GUILayout.FlexibleSpace();
 
+                    {
+                        languageStorableClass ??= new StorableClass(typeof(ProjectData));
+                        languageStorableClass.AutoNameLoad(Kernel.projectSettingPath);
+
+                        var languageIndex = ProjectData.currentLanguage switch
                         {
-                            languageStorableClass ??= new StorableClass(typeof(ProjectData));
-                            languageStorableClass.AutoNameLoad(Kernel.projectSettingPath);
+                            "en_us" => 0,
+                            "ko_kr" => 1,
+                            "ja_jp" => 2,
+                            _ => 0,
+                        };
 
-                            var languageIndex = ProjectData.currentLanguage switch
-                            {
-                                "en_us" => 0,
-                                "ko_kr" => 1,
-                                "ja_jp" => 2,
-                                _ => 0,
-                            };
-
-                            int selectedLanguageIndex = EditorGUILayout.Popup(languageIndex, new string[] {
+                        int selectedLanguageIndex = EditorGUILayout.Popup(languageIndex, new string[] {
                                 $"{TryGetText("language.name", "en_us")} ({TryGetText("language.region", "en_us")})",
                                 $"{TryGetText("language.name", "ko_kr")} ({TryGetText("language.region", "ko_kr")})",
                                 $"{TryGetText("language.name", "ja_jp")} ({TryGetText("language.region", "ja_jp")})"
                             }, GUILayout.Width(120));
 
-                            if (selectedLanguageIndex != languageIndex)
+                        if (selectedLanguageIndex != languageIndex)
+                        {
+                            ProjectData.currentLanguage = selectedLanguageIndex switch
                             {
-                                ProjectData.currentLanguage = selectedLanguageIndex switch
-                                {
-                                    0 => "en_us",
-                                    1 => "ko_kr",
-                                    2 => "ja_jp",
-                                    _ => "en_us",
-                                };
+                                0 => "en_us",
+                                1 => "ko_kr",
+                                2 => "ja_jp",
+                                _ => "en_us",
+                            };
 
-                                languageStorableClass.AutoNameSave(Kernel.projectSettingPath);
-                            }
+                            languageStorableClass.AutoNameSave(Kernel.projectSettingPath);
                         }
                     }
                 }

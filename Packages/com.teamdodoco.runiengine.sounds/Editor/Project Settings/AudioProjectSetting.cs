@@ -181,7 +181,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     if (audioData == null)
                         continue;
 
-                    EditorGUILayout.BeginVertical(otherHelpBox);
+                    EditorGUILayout.BeginVertical(otherHelpBoxStyle);
                     BeginFieldWidth(10);
 
                     audioDatas[item.key] = DrawGUI(nameSpace, item.key, audioData, deleteSafety, out bool isChanged2, out string editedKey);

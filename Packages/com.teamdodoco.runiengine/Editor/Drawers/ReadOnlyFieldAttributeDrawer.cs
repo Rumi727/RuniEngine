@@ -4,7 +4,7 @@ using UnityEngine;
 
 using static RuniEngine.Editor.EditorTool;
 
-namespace RuniEngine.Editor.Drawer
+namespace RuniEngine.Editor.Drawers
 {
     [CustomPropertyDrawer(typeof(ReadOnlyFieldAttribute))]
     public sealed class ReadOnlyFieldAttributeDrawer : PropertyDrawer

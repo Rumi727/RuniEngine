@@ -8,7 +8,7 @@ using static RuniEngine.Editor.EditorTool;
 using EditorGUI = UnityEditor.EditorGUI;
 using EditorGUIUtility = UnityEditor.EditorGUIUtility;
 
-namespace RuniEngine.Editor.Drawer
+namespace RuniEngine.Editor.Drawers
 {
     [CustomPropertyDrawer(typeof(object), true)]
     public sealed class ObjectAttributeDrawer : PropertyDrawer

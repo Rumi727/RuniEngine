@@ -7,7 +7,7 @@ using UnityEngine;
 using static RuniEngine.Editor.EditorTool;
 using RuniEngine.Accounts;
 
-namespace RuniEngine.Editor
+namespace RuniEngine.Editor.ControlPanels
 {
     public class ControlPanelGenericWindow : IControlPanelWindow
     {

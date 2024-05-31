@@ -23,7 +23,7 @@ namespace RuniEngine.Install
 
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
+                GUILayout.Space(110);
 
                 EditorGUILayout.GetControlRect(GUILayout.Width(100), GUILayout.Height(100));
                 GUILayout.Space(20);
@@ -35,7 +35,7 @@ namespace RuniEngine.Install
 
                     {
                         Rect rect = EditorGUILayout.GetControlRect(false, 40);
-                        Color preColor = GUI.contentColor;
+                        Color preColor = GUI.color;
 
                         Label("ko_kr", 0);
                         Label("en_us", 100);
