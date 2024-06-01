@@ -14,7 +14,7 @@ namespace RuniEngine.Resource.Sounds
 
             this.nbsFile = nbsFile;
             if (nbsFile != null)
-                bpms = new BeatBPMPairList(nbsFile.tickTempo * 0.15f * bpmMultiplier);
+                bpms = new BeatBPMPairList(new BeatBPMPairList.BPM(nbsFile.tickTempo * 0.15f * bpmMultiplier, 4));
         }
 
         [JsonIgnore] public int loopStartTick => nbsFile?.loopStartTick ?? 0;

@@ -10,14 +10,17 @@ namespace RuniEngine.NBS
         //public bool loop { get; set; } = false;
         public short loopStartTick { get; } = 0;
 
+        public byte timeSignature { get; } = 4;
+
         public NBSNote[] nbsNotes { get; }
         public NBSLayer[] nbsLayers { get; }
 
-        public NBSFile(short songLength, short tickTempo, short loopStartTick, NBSNote[] nbsNotes, NBSLayer[] nbsLayers)
+        public NBSFile(short songLength, short tickTempo, short loopStartTick, byte timeSignature, NBSNote[] nbsNotes, NBSLayer[] nbsLayers)
         {
             this.songLength = songLength;
             this.tickTempo = tickTempo;
             this.loopStartTick = loopStartTick;
+            this.timeSignature = timeSignature;
             this.nbsNotes = nbsNotes;
             this.nbsLayers = nbsLayers;
         }
