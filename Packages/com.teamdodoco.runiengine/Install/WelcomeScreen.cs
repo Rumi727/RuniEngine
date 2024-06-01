@@ -31,7 +31,7 @@ namespace RuniEngine.Install
                 {
                     GUILayout.BeginVertical();
 
-                    headStyle ??= new GUIStyle(EditorStyles.boldLabel) { fontSize = 30 };
+                    headStyle ??= new GUIStyle(boldLabelStyle) { fontSize = 30 };
 
                     {
                         Rect rect = EditorGUILayout.GetControlRect(false, 40);

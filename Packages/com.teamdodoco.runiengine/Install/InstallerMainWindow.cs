@@ -159,7 +159,7 @@ namespace RuniEngine.Install
         public static void DrawGUI()
         {
             GUILayout.Space(3);
-            headStyle ??= new GUIStyle(EditorStyles.boldLabel) { fontSize = 18 };
+            headStyle ??= new GUIStyle(boldLabelStyle) { fontSize = 18 };
 
             //Screen
             {
