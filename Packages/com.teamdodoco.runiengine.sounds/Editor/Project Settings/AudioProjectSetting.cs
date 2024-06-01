@@ -369,19 +369,20 @@ namespace RuniEngine.Editor.ProjectSettings
                     {
                         EditorGUI.BeginChangeCheck();
 
-                        var pair = (BeatValuePair<double>)z;
-                        double beat = EditorGUILayout.DelayedDoubleField("Beat", pair.beat);
-                        double value = EditorGUILayout.DoubleField("Value", pair.value);
+                        var pair = (BeatValuePair<BeatBPMPairList.BPM>)z;
+                        double beat = EditorGUILayout.DelayedDoubleField(TryGetText("gui.beat"), pair.beat);
+                        double value = EditorGUILayout.DoubleField(TryGetText("gui.value"), pair.value.bpm);
+                        double timeSignatures = EditorGUILayout.DoubleField(TryGetText("gui.time_signatures"), pair.value.timeSignatures);
 
                         tempIsChanged |= EditorGUI.EndChangeCheck();
                         
-                        return new BeatValuePair<double>(beat, value);
+                        return new BeatValuePair<BeatBPMPairList.BPM>(beat, new(value, timeSignatures));
                     }, i => true, i =>
                     {
                         if (bpms.Count > 0)
-                            bpms.Insert(i, new BeatValuePair<double>(bpms[i.Clamp(0, bpms.Count - 1)].beat, 60));
+                            bpms.Insert(i, new BeatValuePair<BeatBPMPairList.BPM>(bpms[i.Clamp(0, bpms.Count - 1)].beat, new(60)));
                         else    
-                            bpms.Insert(i, new BeatValuePair<double>(0, 60));
+                            bpms.Insert(i, new BeatValuePair<BeatBPMPairList.BPM>(0, new(60)));
                     }, out bool isListChanged);
 
                     tempIsChanged |= isListChanged;

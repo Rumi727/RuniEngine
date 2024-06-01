@@ -35,7 +35,7 @@ namespace RuniEngine.NBS
             /*Song tempo*/ short tickTempo = binaryReader.ReadInt16();
             /*Auto-saving*/ binaryReader.ReadByte();
             /*Auto-saving duration*/ binaryReader.ReadByte();
-            /*Time signature*/ binaryReader.ReadByte();
+            /*Time signature*/ byte timeSignature = binaryReader.ReadByte();
             /*Minutes spent*/ binaryReader.ReadInt32();
             /*Left-clicks*/ binaryReader.ReadInt32();
             /*Right-clicks*/ binaryReader.ReadInt32();
@@ -107,7 +107,7 @@ namespace RuniEngine.NBS
                 nbsLayers.Add(nbsLayer);
             }
 
-            return new NBSFile(songLength, tickTempo, loopStartTick, nbsNotes.ToArray(), nbsLayers.ToArray());
+            return new NBSFile(songLength, tickTempo, loopStartTick, timeSignature, nbsNotes.ToArray(), nbsLayers.ToArray());
         }
     }
 }
