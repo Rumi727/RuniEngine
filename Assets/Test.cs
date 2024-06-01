@@ -65,7 +65,10 @@ public class Test : MonoBehaviour
 
         if (text != null && rhythm != null && soundPlayer != null)
         {
-            int beat = (rhythm.currentBeat - rhythm.bpms?.GetBPMInfoUsingBeat(rhythm.currentBeat).beat ?? 0).Repeat(4).FloorToInt();
+            double outBeat = 0;
+            BeatBPMPairList.BPM bpm = rhythm.bpms?.GetValue(rhythm.currentBeat, out outBeat) ?? new(60);
+
+            int beat = (rhythm.currentBeat - outBeat).Repeat(bpm.timeSignatures).FloorToInt();
             
             rhythm.soundPlayer = soundPlayer;
             text.text = $"Beat : {rhythm.currentBeat:0.00}\nTime : {rhythm.currentTime.ToTime()}";
