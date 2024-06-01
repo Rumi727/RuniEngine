@@ -373,7 +373,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             rect.width += 4;
 
             BeginFontSize(11);
-            BeginAlignment(TextAnchor.UpperLeft, GUI.skin.label);
+            BeginAlignment(TextAnchor.UpperLeft, labelStyle);
 
             if (!mixed)
             {
@@ -385,9 +385,9 @@ namespace RuniEngine.Editor.Inspector.Sounds
             else
                 GUI.Label(rect, "--:--");
 
-            EndAlignment(GUI.skin.label);
+            EndAlignment(labelStyle);
 
-            BeginAlignment(TextAnchor.UpperCenter, GUI.skin.label);
+            BeginAlignment(TextAnchor.UpperCenter, labelStyle);
 
             if (!mixed)
             {
@@ -399,9 +399,9 @@ namespace RuniEngine.Editor.Inspector.Sounds
             else
                 GUI.Label(rect, "--:--");
 
-            EndAlignment(GUI.skin.label);
+            EndAlignment(labelStyle);
 
-            BeginAlignment(TextAnchor.UpperRight, GUI.skin.label);
+            BeginAlignment(TextAnchor.UpperRight, labelStyle);
 
             if (!mixed)
             {
@@ -413,7 +413,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             else
                 GUI.Label(rect, "--:--");
 
-            EndAlignment(GUI.skin.label);
+            EndAlignment(labelStyle);
             EndFontSize();
 
             GUILayout.EndHorizontal();
@@ -432,7 +432,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             if (target == null)
                 return;
-
+            
             {
                 GUILayout.BeginVertical(GUILayout.Width(size));
                 
@@ -491,7 +491,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                         EditorGUI.EndDisabledGroup();
 
                         BeginFontSize(11);
-                        BeginAlignment(TextAnchor.UpperCenter, GUI.skin.label);
+                        BeginAlignment(TextAnchor.UpperCenter, labelStyle);
 
                         Rect textRect = EditorGUILayout.GetControlRect(GUILayout.Width(buttonSize), GUILayout.Height(5));
 
@@ -506,7 +506,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                             GUI.Label(textRect, text);
                         }
 
-                        EndAlignment(GUI.skin.label);
+                        EndAlignment(labelStyle);
                         EndFontSize();
 
                         GUILayout.EndVertical();

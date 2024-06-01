@@ -8,6 +8,8 @@ namespace RuniEngine.Editor
     public partial class EditorTool
     {
         public static GUIStyle labelStyle => GUI.skin.label;
+        public static GUIStyle boldLabelStyle => EditorStyles.boldLabel;
+        public static GUIStyle largeLabelStyle => EditorStyles.largeLabel;
         public static GUIStyle labelButtonStyle
         {
             get
