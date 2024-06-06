@@ -98,8 +98,8 @@ namespace RuniEngine.Sounds
 
         public override double length => nbsFile != null ? tickLength / 20d : 0;
 
-        public double tickLength => nbsFile != null ? internalTickLength / (nbsFile.tickTempo * 0.0005) : 0;
-        public double internalTickLength => nbsFile != null ? nbsFile.songLength : 0;
+        public double tickLength => (internalTickLength / (nbsFile?.tickTempo * 0.0005)) ?? 0;
+        public int internalTickLength => ((nbsFile?.songLength / (nbsMetaData?.bpms.defaultValue.timeSignatures * 4) ?? 0).CeilToInt() * ((nbsMetaData?.bpms.defaultValue.timeSignatures * 4) ?? 0)).RoundToInt();
 
 
 
@@ -130,7 +130,7 @@ namespace RuniEngine.Sounds
                 GetAudioDataToMonoAndInvoke();
             }
 
-            if (isDisposable && (internalTick < 0 || internalTick > internalTickLength))
+            if (isDisposable && !loop && (internalTick < 0 || internalTick > internalTickLength || !isPlaying))
                 Remove();
         }
 
@@ -167,6 +167,9 @@ namespace RuniEngine.Sounds
             Stop();
             if (!Refresh())
                 return;
+
+            if (tempo < 0)
+                internalTick = internalTickLength;
 
             base.Play();
         }
@@ -273,68 +276,88 @@ namespace RuniEngine.Sounds
                 else if (nbsLayer.layerLock != 2 && allLayerLock)
                     continue;
 
-                float pitch = 2f.Pow((nbsNoteMetaData.key - 45) * 0.0833333333f) * 1.059463f.Pow(nbsNoteMetaData.pitch * 0.01f);
+                string nameSpace;
+                string instrumentName;
+                int customInstrumentKey = 0;
+                if (nbsNoteMetaData.instrument < nbsFile.vanillaInstrumentCount)
+                {
+                    nameSpace = NBSLoader.nbsNameSpace;
+                    instrumentName = "block.note_block.";
+
+                    switch (nbsNoteMetaData.instrument)
+                    {
+                        case 0:
+                            instrumentName += "harp";
+                            break;
+                        case 1:
+                            instrumentName += "bass";
+                            break;
+                        case 2:
+                            instrumentName += "bassdrum";
+                            break;
+                        case 3:
+                            instrumentName += "snare";
+                            break;
+                        case 4:
+                            instrumentName += "hat";
+                            break;
+                        case 5:
+                            instrumentName += "guitar";
+                            break;
+                        case 6:
+                            instrumentName += "flute";
+                            break;
+                        case 7:
+                            instrumentName += "bell";
+                            break;
+                        case 8:
+                            instrumentName += "chime";
+                            break;
+                        case 9:
+                            instrumentName += "xylophone";
+                            break;
+                        case 10:
+                            instrumentName += "iron_xylophone";
+                            break;
+                        case 11:
+                            instrumentName += "cow_bell";
+                            break;
+                        case 12:
+                            instrumentName += "didgeridoo";
+                            break;
+                        case 13:
+                            instrumentName += "bit";
+                            break;
+                        case 14:
+                            instrumentName += "banjo";
+                            break;
+                        case 15:
+                            instrumentName += "pling";
+                            break;
+                    }
+                }
+                else if (nbsNoteMetaData.instrument - nbsFile.vanillaInstrumentCount < nbsFile.customInstrumentKeys.Length)
+                {
+                    int index = nbsNoteMetaData.instrument - nbsFile.vanillaInstrumentCount;
+                    NBSCustomInstrument customInstrument = nbsFile.customInstrumentKeys[index];
+
+                    nameSpace = this.nameSpace;
+
+                    instrumentName = customInstrument.name;
+                    customInstrumentKey = customInstrument.key - 45;
+                }
+                else
+                    continue;
+
+                float pitch = 2f.Pow((nbsNoteMetaData.key + customInstrumentKey - 45) * 0.0833333333f) * 1.059463f.Pow(nbsNoteMetaData.pitch * 0.01f);
                 float volume = nbsNoteMetaData.velocity * 0.01f * (nbsLayer.layerVolume * 0.01f);
                 float panStereo = ((nbsNoteMetaData.panning - 100) * 0.01f) + ((nbsLayer.layerStereo - 100) * 0.01f);
-                
-                string blockType = "block.note_block.";
-                switch (nbsNoteMetaData.instrument)
-                {
-                    case 0:
-                        blockType += "harp";
-                        break;
-                    case 1:
-                        blockType += "bass";
-                        break;
-                    case 2:
-                        blockType += "bassdrum";
-                        break;
-                    case 3:
-                        blockType += "snare";
-                        break;
-                    case 4:
-                        blockType += "hat";
-                        break;
-                    case 5:
-                        blockType += "guitar";
-                        break;
-                    case 6:
-                        blockType += "flute";
-                        break;
-                    case 7:
-                        blockType += "bell";
-                        break;
-                    case 8:
-                        blockType += "chime";
-                        break;
-                    case 9:
-                        blockType += "xylophone";
-                        break;
-                    case 10:
-                        blockType += "iron_xylophone";
-                        break;
-                    case 11:
-                        blockType += "cow_bell";
-                        break;
-                    case 12:
-                        blockType += "didgeridoo";
-                        break;
-                    case 13:
-                        blockType += "bit";
-                        break;
-                    case 14:
-                        blockType += "banjo";
-                        break;
-                    case 15:
-                        blockType += "pling";
-                        break;
-                }
 
                 AudioPlayer? audioPlayer;
                 if (spatial)
-                    audioPlayer = AudioPlayer.PlayAudio(blockType, NBSLoader.nbsNameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform, Vector3.zero, minDistance, maxDistance);
+                    audioPlayer = AudioPlayer.PlayAudio(instrumentName, nameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform, Vector3.zero, minDistance, maxDistance);
                 else
-                    audioPlayer = AudioPlayer.PlayAudio(blockType, NBSLoader.nbsNameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform);
+                    audioPlayer = AudioPlayer.PlayAudio(instrumentName, nameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo + this.panStereo, transform);
 
                 allPlayingAudios.Add(audioPlayer);
             }
@@ -354,7 +377,7 @@ namespace RuniEngine.Sounds
                     isLooped = true;
                 }
 
-                while (tempo < 0 && internalTick < 0)
+                while (tempo < 0 && internalTick < nbsMetaData.loopStartTick)
                 {
                     _internalTick += internalTickLength - nbsMetaData.loopStartTick;
                     isLooped = true;

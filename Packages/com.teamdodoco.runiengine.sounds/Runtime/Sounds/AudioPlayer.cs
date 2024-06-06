@@ -133,7 +133,7 @@ namespace RuniEngine.Sounds
 
         void Update()
         {
-            if (isDisposable && !loop && datas != null && (timeSamples < 0 || timeSamples >= samples))
+            if (isDisposable && !loop && (timeSamples < 0 || timeSamples > samples || !isPlaying))
             {
                 Remove();
                 return;

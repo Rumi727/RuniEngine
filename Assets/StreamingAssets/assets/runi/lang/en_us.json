@@ -130,5 +130,8 @@
     "thread_manager.unlock": "Thread lock released on class {class}!",
 
     "storable_class.warning.attribute": "It appears that the {class}.{property} property does not have a {method} method.\nThis variable will not be loaded.\nIf you want to ignore it, add the [JsonIgnore] attribute.",
-    "storable_class.warning.method": "The [JsonProperty] attribute is not added to the {class}.{property} property.\nnThis variable will not be loaded.\nIf you want to ignore it, add the [JsonIgnore] attribute."
+    "storable_class.warning.method": "The [JsonProperty] attribute is not added to the {class}.{property} property.\nnThis variable will not be loaded.\nIf you want to ignore it, add the [JsonIgnore] attribute.",
+
+    "nbs_manager.warning.old_version": "NBS file version {version} could not be loaded! Please try again with the latest version",
+    "nbs_manager.warning.new_version": "NBS file {version} version may not load properly!"
 }
