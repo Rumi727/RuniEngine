@@ -16,7 +16,7 @@ namespace RuniEngine.Threading
         public static void Awaken()
         {
             CustomPlayerLoopSetter.updateEvent += Update;
-            Application.quitting += Quit;
+            Application.quitting += ForceScheduledTasksExecute;
         }
 
         static readonly Stopwatch stopwatch = new Stopwatch();
@@ -42,7 +42,7 @@ namespace RuniEngine.Threading
             }
         }
 
-        public static void Quit()
+        public static void ForceScheduledTasksExecute()
         {
             while (scheduledTasks.TryDequeue(out Action action))
             {
