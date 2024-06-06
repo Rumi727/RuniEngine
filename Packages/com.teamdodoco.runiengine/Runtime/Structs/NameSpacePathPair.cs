@@ -50,7 +50,17 @@ namespace RuniEngine
             return nameSpace == pair.nameSpace && path == pair.path;
         }
 
-        public override readonly int GetHashCode() => HashCode.Combine(nameSpace, path);
+        public override readonly int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 919747318;
+                hash *= -569647612 + nameSpace.GetHashCode();
+                hash *= -826125659 + path.GetHashCode();
+
+                return hash;
+            }
+        }
 
         public readonly bool Equals(NameSpacePathPair other) => nameSpace == other.nameSpace && path == other.path;
     }

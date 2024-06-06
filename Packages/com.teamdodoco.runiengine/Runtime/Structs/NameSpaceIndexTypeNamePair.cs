@@ -75,7 +75,19 @@ namespace RuniEngine
             return nameSpace == pair.nameSpace && type == pair.type && name == pair.name && index == pair.index;
         }
 
-        public override readonly int GetHashCode() => HashCode.Combine(nameSpace, type, name, index);
+        public override readonly int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = -212261093;
+                hash *= -918515282 + nameSpace.GetHashCode();
+                hash *= -975599599 + type.GetHashCode();
+                hash *= -457296464 + name.GetHashCode();
+                hash *= -500810711 + index.GetHashCode();
+
+                return hash;
+            }
+        }
 
         public readonly bool Equals(NameSpaceIndexTypeNamePair other) => nameSpace == other.nameSpace && type == other.type && name == other.name && index == other.index;
     }
