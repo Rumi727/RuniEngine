@@ -178,6 +178,8 @@ namespace RuniEngine
             if (UserAccountManager.currentAccount != null)
                 UserAccountManager.LogoutWithoutUnload();
 
+            GlobalData.lastRuniEngineVersion = runiEngineVersion;
+
             if (BootLoader.isDataLoaded)
                 StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
 
