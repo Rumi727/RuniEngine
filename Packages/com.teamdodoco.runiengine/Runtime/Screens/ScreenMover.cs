@@ -7,9 +7,10 @@ namespace RuniEngine.Screens
 {
     public sealed class ScreenMover : IDisposable
     {
-        public static List<ScreenMover> instances { get; } = new List<ScreenMover>();
+        public static IReadOnlyList<ScreenMover> instances => _instances;
+        static readonly List<ScreenMover> _instances = new();
 
-        public ScreenMover() => instances.Add(this);
+        public ScreenMover() => _instances.Add(this);
 
         public Vector3 position
         {
@@ -36,7 +37,7 @@ namespace RuniEngine.Screens
         public void Dispose()
         {
             isDisposed = true;
-            instances.Remove(this);
+            _instances.Remove(this);
         }
     }
 }
