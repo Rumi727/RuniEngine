@@ -9,6 +9,7 @@ namespace RuniEngine
     [RequireComponent(typeof(Camera))]
     public sealed class CameraSetter : MonoBehaviour
     {
+//new 키워드 추가시 빌드 오류 발생
 #pragma warning disable CS0108 // 멤버가 상속된 멤버를 숨깁니다. new 키워드가 없습니다.
         public Camera? camera => _camera = this.GetComponentFieldSave(_camera, GetComponentMode.destroyIfNull);
         Camera? _camera;
