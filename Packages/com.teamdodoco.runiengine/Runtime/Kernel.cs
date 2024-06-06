@@ -13,7 +13,7 @@ namespace RuniEngine
     public static partial class Kernel
     {
         [GlobalData]
-        public struct UserData
+        public struct GlobalData
         {
             [JsonProperty] public static Version lastRuniEngineVersion { get; set; } = runiEngineVersion;
         }
