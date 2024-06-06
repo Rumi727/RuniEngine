@@ -54,11 +54,22 @@ namespace RuniEngine
         {
             if (obj is not NameSpaceTypePathPair pair)
                 return false;
-
+            
             return nameSpace == pair.nameSpace && type == pair.type && path == pair.path;
         }
 
-        public override readonly int GetHashCode() => HashCode.Combine(nameSpace, type, path);
+        public override readonly int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 304694149;
+                hash *= -339493816 + nameSpace.GetHashCode();
+                hash *= 802810075 + type.GetHashCode();
+                hash *= 132254305 + path.GetHashCode();
+
+                return hash;
+            }
+        }
 
         public readonly bool Equals(NameSpaceTypePathPair other) => nameSpace == other.nameSpace && type == other.type && path == other.path;
     }

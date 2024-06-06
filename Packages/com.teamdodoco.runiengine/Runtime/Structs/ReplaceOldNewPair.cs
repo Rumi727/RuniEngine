@@ -27,7 +27,17 @@ namespace RuniEngine
             return replaceOld == pair.replaceOld && replaceNew == pair.replaceNew;
         }
 
-        public override readonly int GetHashCode() => HashCode.Combine(replaceOld, replaceNew);
+        public override readonly int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = -758401689;
+                hash *= -848816268 + replaceOld.GetHashCode();
+                hash *= 659216872 + replaceNew.GetHashCode();
+
+                return hash;
+            }
+        }
 
         public readonly bool Equals(ReplaceOldNewPair other) => replaceOld == other.replaceOld && replaceNew == other.replaceNew;
     }
