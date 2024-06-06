@@ -10,20 +10,15 @@
   },
   "scopedRegistries": [
     {
-      "name": "iBicha",
-      "url": "https://registry.npmjs.com",
-      "scopes": [
-        "com.ibicha"
-      ]
-    },
-    {
       "name": "package.openupm.com",
       "url": "https://package.openupm.com",
       "scopes": [
-        "com.coffee.git-dependency-resolver",
         "com.coffee.softmask-for-ugui",
         "com.cysharp.unitask",
-        "com.unity.uiextensions"
+        "com.unity.uiextensions",
+        "com.solidalloy.util",
+        "org.nuget.system",
+        "com.solidalloy.unity-dropdown"
       ]
     }
   ]

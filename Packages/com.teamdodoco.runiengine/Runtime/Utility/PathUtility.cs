@@ -25,11 +25,21 @@ namespace RuniEngine
 
         public static string GetPathWithFileName(string path)
         {
-            string fileName = Path.GetFileName(path);
+            string fileName = Path.GetFullPath(path);
             if (fileName != "")
                 return path.Remove(path.Length - fileName.Length - 1);
             else
                 return path;
+        }
+
+        static readonly char[] directorySeparatorChars = new char[] { '/', '\\' };
+        public static string GetParentPath(string path)
+        {
+            int index = path.LastIndexOfAny(directorySeparatorChars);
+            if (index < 0)
+                return "";
+
+            return path.Substring(0, index);
         }
 
         public static string UrlPathPrefix(this string path) => urlPathPrefix + UnityWebRequest.EscapeURL(path);
