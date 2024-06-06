@@ -1,18 +1,20 @@
 #nullable enable
+using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
 namespace RuniEngine
 {
-    public readonly struct Version : IEquatable<Version>, IComparable, IComparable<Version>
+    [Serializable]
+    public struct Version : IEquatable<Version>, IComparable, IComparable<Version>
     {
-        public static Version all => new Version();
-        public static Version zero => new Version(0, 0, 0);
-        public static Version one => new Version(1, 0, 0);
+        [JsonIgnore] public static Version all => new Version();
+        [JsonIgnore] public static Version zero => new Version(0, 0, 0);
+        [JsonIgnore] public static Version one => new Version(1, 0, 0);
 
-        public ulong? major { get; }
-        public ulong? minor { get; }
-        public ulong? patch { get; }
+        public ulong? major;
+        public ulong? minor;
+        public ulong? patch;
 
 
         public Version(string? value)
