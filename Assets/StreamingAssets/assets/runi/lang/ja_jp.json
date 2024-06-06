@@ -130,5 +130,8 @@
     "thread_manager.unlock": "{class}クラスからスレッドのロックを解除しました！",
 
     "storable_class.warning.attribute": "{class}.{property} プロパティに {method} メソッドがないようです。\nこの変数はロードされません。\n無視したい場合は[JsonIgnore]属性を追加してください。",
-    "storable_class.warning.method": "{class}.{property} プロパティに [JsonProperty] 属性が追加されていません。\nこの変数はロードされません。\n無視したい場合は[JsonIgnore]属性を追加してください。"
+    "storable_class.warning.method": "{class}.{property} プロパティに [JsonProperty] 属性が追加されていません。\nこの変数はロードされません。\n無視したい場合は[JsonIgnore]属性を追加してください。",
+
+    "nbs_manager.warning.old_version": "NBSファイル{version}バージョンはロードできません！最新バージョンでもう一度お試しください",
+    "nbs_manager.warning.new_version": "NBSファイルの{version}バージョンは正常にロードできない可能性があります！"
 }

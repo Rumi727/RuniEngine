@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Resource.Texts;
 using System.Collections.Generic;
 using System.IO;
 
@@ -15,13 +16,26 @@ namespace RuniEngine.NBS
         /// <returns>
         /// 불러온 NBS 파일 클래스
         /// </returns>
-        public static NBSFile ReadNBSFile(string path)
+        public static NBSFile? ReadNBSFile(string path)
         {
             using FileStream fileStream = File.OpenRead(path);
             BinaryReader binaryReader = new BinaryReader(fileStream);
-            binaryReader.ReadInt16();
-            /*NBS Version*/ binaryReader.ReadByte();
-            /*Vanilla instrument count*/ binaryReader.ReadByte();
+            bool isOld = binaryReader.ReadInt16() != 0;
+            if (isOld)
+            {
+                Debug.ForceLogError(LanguageLoader.TryGetText("nbs_manager.warning.old_version").Replace("{version}", 0.ToString()));
+                return null;
+            }
+            /*NBS Version*/ byte version = binaryReader.ReadByte();
+            if (version < 4)
+            {
+                Debug.ForceLogError(LanguageLoader.TryGetText("nbs_manager.warning.old_version").Replace("{version}", version.ToString()));
+                return null;
+            }
+            else if (version > 5)
+                Debug.ForceLogWarning(LanguageLoader.TryGetText("nbs_manager.warning.new_version").Replace("{version}", version.ToString()));
+            /*Vanilla instrument count*/
+            byte vanillaInstrumentCount = binaryReader.ReadByte();
             /*Song Length*/ short songLength = binaryReader.ReadInt16();
             /*Layer count*/ short layerCount = binaryReader.ReadInt16();
             for (int i = 0; i < 4; i++)
@@ -84,7 +98,7 @@ namespace RuniEngine.NBS
                 nbsNotes.Add(new NBSNote(tick2, nbsNoteMetaDatas.ToArray()));
             }
 
-            List<NBSLayer> nbsLayers = new List<NBSLayer>();
+            NBSLayer[] nbsLayers = new NBSLayer[layerCount];
             for (int i = 0; i < layerCount; i++)
             {
                 string layerName;
@@ -104,10 +118,36 @@ namespace RuniEngine.NBS
                     /*Layer stereo*/ binaryReader.ReadByte()
                 );
 
-                nbsLayers.Add(nbsLayer);
+                nbsLayers[i] = nbsLayer;
             }
 
-            return new NBSFile(songLength, tickTempo, loopStartTick, timeSignature, nbsNotes.ToArray(), nbsLayers.ToArray());
+            /*Custom instruments*/; NBSCustomInstrument[] customInstruments = new NBSCustomInstrument[binaryReader.ReadByte()];
+            for (int i = 0; i < customInstruments.Length; i++)
+            {
+                /*Instrument name*/
+                string instrumentName;
+                {
+                    int length = 0;
+                    for (int j = 0; j < 4; j++)
+                        length += binaryReader.ReadByte();
+
+                    instrumentName = new string(binaryReader.ReadChars(length));
+                }
+                /*Sound file*/
+                {
+                    int length = 0;
+                    for (int j = 0; j < 4; j++)
+                        length += binaryReader.ReadByte();
+
+                    binaryReader.ReadChars(length);
+                }
+                /*Sound key*/ byte soundKey = binaryReader.ReadByte();
+                /*Press piano key*/ binaryReader.ReadByte();
+
+                customInstruments[i] = new NBSCustomInstrument(instrumentName, soundKey);
+            }
+
+            return new NBSFile(songLength, tickTempo, loopStartTick, timeSignature, vanillaInstrumentCount, nbsNotes.ToArray(), nbsLayers, customInstruments);
         }
     }
 }

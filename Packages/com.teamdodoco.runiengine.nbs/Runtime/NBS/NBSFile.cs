@@ -12,17 +12,22 @@ namespace RuniEngine.NBS
 
         public byte timeSignature { get; } = 4;
 
+        public byte vanillaInstrumentCount { get; } = 16;
+
         public NBSNote[] nbsNotes { get; }
         public NBSLayer[] nbsLayers { get; }
+        public NBSCustomInstrument[] customInstrumentKeys { get; }
 
-        public NBSFile(short songLength, short tickTempo, short loopStartTick, byte timeSignature, NBSNote[] nbsNotes, NBSLayer[] nbsLayers)
+        public NBSFile(short songLength, short tickTempo, short loopStartTick, byte timeSignature, byte vanillaInstrumentCount, NBSNote[] nbsNotes, NBSLayer[] nbsLayers, NBSCustomInstrument[] customInstrumentKeys)
         {
             this.songLength = songLength;
             this.tickTempo = tickTempo;
             this.loopStartTick = loopStartTick;
             this.timeSignature = timeSignature;
+            this.vanillaInstrumentCount = vanillaInstrumentCount;
             this.nbsNotes = nbsNotes;
             this.nbsLayers = nbsLayers;
+            this.customInstrumentKeys = customInstrumentKeys;
         }
 
         public override string ToString()
