@@ -6,9 +6,10 @@ namespace RuniEngine.Screens
 {
     public sealed class ScreenCroper : IDisposable
     {
-        public static List<ScreenCroper> instances { get; } = new List<ScreenCroper>();
+        public static IReadOnlyList<ScreenCroper> instances => _instances;
+        static readonly List<ScreenCroper> _instances = new();
 
-        public ScreenCroper() => instances.Add(this);
+        public ScreenCroper() => _instances.Add(this);
 
         public RectOffset offset
         {
@@ -40,7 +41,7 @@ namespace RuniEngine.Screens
         public void Dispose()
         {
             isDisposed = true;
-            instances.Remove(this);
+            _instances.Remove(this);
         }
     }
 }
