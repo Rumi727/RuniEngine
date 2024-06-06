@@ -1,5 +1,7 @@
 #nullable enable
+using ExtendedNumerics;
 using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,6 +10,19 @@ namespace RuniEngine.Editor
     public partial class EditorTool
     {
         public static GUIStyle labelStyle => GUI.skin.label;
+        public static GUIStyle richLabelStyle
+        {
+            get
+            {
+                _richLabelStyle ??= new GUIStyle(labelStyle)
+                {
+                    richText = true
+                };
+
+                return _richLabelStyle;
+            }
+        }
+        static GUIStyle? _richLabelStyle;
         public static GUIStyle boldLabelStyle => EditorStyles.boldLabel;
         public static GUIStyle largeLabelStyle => EditorStyles.largeLabel;
         public static GUIStyle labelButtonStyle
@@ -209,6 +224,30 @@ namespace RuniEngine.Editor
                 EditorGUIUtility.wideMode = result;
             else
                 EditorGUIUtility.wideMode = false;
+        }
+
+
+
+        public static string RichMSpace(object value) => RichMSpace(value, "7.6");
+        public static string RichMSpace(object value, string width) => $"<mspace={width}>{value}</mspace>";
+
+        static readonly StringBuilder richNumberMSpaceStringBuilder = new StringBuilder();
+        public static string RichNumberMSpace(object value) => RichNumberMSpace(value, "7.6");
+        public static string RichNumberMSpace(object value, string width)
+        {
+            richNumberMSpaceStringBuilder.Clear();
+
+            string text = value.ToString();
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                if (c >= '0' && c <= '9')
+                    richNumberMSpaceStringBuilder.Append($"<mspace={width}>{c}</mspace>");
+                else
+                    richNumberMSpaceStringBuilder.Append(c);
+            }
+
+            return richNumberMSpaceStringBuilder.ToString();
         }
     }
 }

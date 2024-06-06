@@ -21,8 +21,12 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             DrawLine();
 
+            GUILayout.BeginVertical();
+
             VolumePitchTempoGUI();
             SpatialGUI();
+
+            GUILayout.EndVertical();
 
             DrawLine();
 
@@ -30,6 +34,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 GUILayout.BeginHorizontal();
 
                 TimeSliderGUI(null);
+                Space();
                 TimeControlGUI(null);
 
                 GUILayout.EndHorizontal();
@@ -372,49 +377,49 @@ namespace RuniEngine.Editor.Inspector.Sounds
             rect.x -= 2;
             rect.width += 4;
 
-            BeginFontSize(11);
-            BeginAlignment(TextAnchor.UpperLeft, labelStyle);
+            BeginFontSize(11, richLabelStyle);
+            BeginAlignment(TextAnchor.UpperLeft, richLabelStyle);
 
             if (!mixed)
             {
                 if (target.tempo.Abs() == 1 || !realValueShow)
-                    GUI.Label(rect, time);
+                    GUI.Label(rect, RichNumberMSpace(time, "7"), richLabelStyle);
                 else
-                    GUI.Label(rect, $"{time} ({realTime})");
+                    GUI.Label(rect, $"{RichNumberMSpace(time, "7")} ({RichNumberMSpace(realTime, "7")})", richLabelStyle);
             }
             else
                 GUI.Label(rect, "--:--");
 
-            EndAlignment(labelStyle);
+            EndAlignment(richLabelStyle);
 
-            BeginAlignment(TextAnchor.UpperCenter, labelStyle);
+            BeginAlignment(TextAnchor.UpperCenter, richLabelStyle);
 
             if (!mixed)
             {
                 if (target.tempo.Abs() == 1 || !realValueShow)
-                    GUI.Label(rect, remainingTime);
+                    GUI.Label(rect, RichNumberMSpace(remainingTime, "7"), richLabelStyle);
                 else
-                    GUI.Label(rect, $"{remainingTime} ({realRemainingTime})");
+                    GUI.Label(rect, $"{RichNumberMSpace(remainingTime, "7")} ({RichNumberMSpace(realRemainingTime, "7")})", richLabelStyle);
             }
             else
                 GUI.Label(rect, "--:--");
 
-            EndAlignment(labelStyle);
+            EndAlignment(richLabelStyle);
 
-            BeginAlignment(TextAnchor.UpperRight, labelStyle);
+            BeginAlignment(TextAnchor.UpperRight, richLabelStyle);
 
             if (!mixed)
             {
                 if (target.tempo.Abs() == 1 || !realValueShow)
-                    GUI.Label(rect, length);
+                    GUI.Label(rect, RichNumberMSpace(length, "7"), richLabelStyle);
                 else
-                    GUI.Label(rect, $"{length} ({realLength})");
+                    GUI.Label(rect, $"{RichNumberMSpace(length, "7")} ({RichNumberMSpace(realLength, "7")})", richLabelStyle);
             }
             else
-                GUI.Label(rect, "--:--");
+                GUI.Label(rect, "--:--", richLabelStyle);
 
-            EndAlignment(labelStyle);
-            EndFontSize();
+            EndAlignment(richLabelStyle);
+            EndFontSize(richLabelStyle);
 
             GUILayout.EndHorizontal();
         }

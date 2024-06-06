@@ -71,7 +71,6 @@ namespace RuniEngine.Editor.ControlPanels
                 return;
 
             selectedControlPanel = controlPanels[tabIndex];
-
             {
                 Space();
 

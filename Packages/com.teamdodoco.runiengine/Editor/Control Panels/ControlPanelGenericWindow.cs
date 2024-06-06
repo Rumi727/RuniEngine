@@ -118,6 +118,6 @@ namespace RuniEngine.Editor.ControlPanels
             Kernel.gameSpeed = EditorGUILayout.FloatField(TryGetText("control_panel.generic.game_speed"), Kernel.gameSpeed);
         }
 
-        static void DrawText(string key, object value) => GUILayout.Label(TryGetText(key) + " - " + value);
+        static void DrawText(string key, object value) => GUILayout.Label(TryGetText(key) + " - " + RichNumberMSpace(value), richLabelStyle);
     }
 }
