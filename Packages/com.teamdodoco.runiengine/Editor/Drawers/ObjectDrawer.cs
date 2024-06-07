@@ -1,5 +1,5 @@
 #nullable enable
-using RuniEngine.Editor.APIBridge.UnityEditor;
+/*using RuniEngine.Editor.APIBridge.UnityEditor;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEngine;
@@ -10,14 +10,18 @@ using EditorGUIUtility = UnityEditor.EditorGUIUtility;
 
 namespace RuniEngine.Editor.Drawers
 {
+#if !UNITY_6000_0_OR_NEWER
     [CustomPropertyDrawer(typeof(object), true)]
-    public sealed class ObjectAttributeDrawer : PropertyDrawer
+#else
+    [CustomPropertyDrawer(typeof(System.ValueType), true)]
+#endif
+    public sealed class ObjectDrawer : PropertyDrawer
     {
         AnimBool? animBool;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            if (IsChildrenIncluded(property))
+            if (property.IsChildrenIncluded())
             {
                 animBool ??= new AnimBool(property.isExpanded);
                 
@@ -34,6 +38,8 @@ namespace RuniEngine.Editor.Drawers
                     
                     property.isExpanded = isExpanded;
                 }
+
+                position.y += 2;
 
                 {
                     position.height = headHeight;
@@ -67,7 +73,7 @@ namespace RuniEngine.Editor.Drawers
                         position.height = EditorGUI.GetPropertyHeight(property);
 
                         BeginLabelWidth(EditorGUIUtility.labelWidth - 15);
-                        EditorGUI.PropertyField(position, property, IsChildrenIncluded(property));
+                        EditorGUI.PropertyField(position, property, property.IsChildrenIncluded());
                         EndLabelWidth();
 
                         position.y += position.height + 2;
@@ -87,7 +93,7 @@ namespace RuniEngine.Editor.Drawers
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if (IsChildrenIncluded(property))
+            if (property.IsChildrenIncluded())
             {
                 animBool ??= new AnimBool(property.isExpanded);
                 animBool.target = property.isExpanded;
@@ -95,7 +101,7 @@ namespace RuniEngine.Editor.Drawers
                 bool isExpanded = property.isExpanded;
 
                 property.isExpanded = true;
-                float orgHeight = EditorGUI.GetPropertyHeight(property, label);
+                float orgHeight = EditorGUI.GetPropertyHeight(property, label, true);
 
                 property.isExpanded = isExpanded;
 
@@ -103,7 +109,7 @@ namespace RuniEngine.Editor.Drawers
                 return orgHeight - childHeight.Lerp(0f, animBool.faded);
             }
             else
-                return EditorGUI.GetPropertyHeight(property, label);
+                return EditorGUI.GetPropertyHeight(property, label, false);
         }
     }
-}
+}*/
