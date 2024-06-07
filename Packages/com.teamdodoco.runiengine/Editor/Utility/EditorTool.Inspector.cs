@@ -340,7 +340,5 @@ namespace RuniEngine.Editor
             Rect position = EditorGUILayout.GetControlRect(true, height);
             return RectOffsetField(position, label, value);
         }
-
-        public static bool IsChildrenIncluded(SerializedProperty prop) => prop.propertyType == SerializedPropertyType.Generic || prop.propertyType == SerializedPropertyType.Vector4;
     }
 }
