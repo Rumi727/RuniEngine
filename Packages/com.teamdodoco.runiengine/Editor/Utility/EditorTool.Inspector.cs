@@ -161,7 +161,7 @@ namespace RuniEngine.Editor
                 bool startWith = false;
                 for (int k = 0; k < array.Length; k++)
                 {
-                    if (path == Path.Combine(array[k], "..").Replace("\\", "/"))
+                    if (path == PathUtility.GetParentPath(array[k]).UniformDirectorySeparatorCharacter())
                     {
                         startWith = true;
                         break;
@@ -176,14 +176,15 @@ namespace RuniEngine.Editor
 
                 if (path.Contains('/'))
                 {
-                    string parentPath = Path.Combine(path, "..").Replace("\\", "/");
+                    string parentPath = PathUtility.GetParentPath(path).UniformDirectorySeparatorCharacter();
                     if (!displayList.Contains(parentPath + "/root"))
                     {
-                        displayList.Insert(displayList.Count - 1, parentPath + "/root");
-                        displayList.Insert(displayList.Count - 1, parentPath + "/");
+                        int index2 = (displayList.Count - 1).Clamp(0);
+                        displayList.Insert(index2, parentPath + "/root");
+                        displayList.Insert(index2 + 1, parentPath + "/");
 
-                        indexList.Insert(indexList.Count - 1, Array.IndexOf(array, parentPath));
-                        indexList.Insert(indexList.Count - 1, int.MinValue);
+                        indexList.Insert(index2, Array.IndexOf(array, parentPath));
+                        indexList.Insert(index2 + 1, int.MinValue);
                     }
                 }
             }
