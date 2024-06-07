@@ -12,7 +12,7 @@ namespace RuniEngine.Editor.Drawers
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUI.PropertyField(position, property, label, IsChildrenIncluded(property));
+            EditorGUI.PropertyField(position, property, label, property.IsChildrenIncluded());
             EditorGUI.EndDisabledGroup();
         }
 

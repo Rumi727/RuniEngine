@@ -14,7 +14,7 @@ namespace RuniEngine.Editor.Drawers
             FieldNameAttribute attribute = (FieldNameAttribute)this.attribute;
             label.text = TryGetText(attribute.name);
 
-            EditorGUI.PropertyField(position, property, label, IsChildrenIncluded(property));
+            EditorGUI.PropertyField(position, property, label, property.IsChildrenIncluded());
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) => EditorGUI.GetPropertyHeight(property, label);
