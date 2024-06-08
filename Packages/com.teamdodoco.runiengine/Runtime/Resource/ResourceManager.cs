@@ -56,48 +56,53 @@ namespace RuniEngine.Resource
         {
             NotMainThreadException.Exception();
 
-            List<UniTask> cachedUniTasks = new List<UniTask>();
-            SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
-            int progressIndex = 0;
-
-            ResourcePackLoop(x =>
+            try
             {
-                foreach (var item in x.resourceElements)
+                List<UniTask> cachedUniTasks = new List<UniTask>();
+                SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
+                int progressIndex = 0;
+
+                ResourcePackLoop(x =>
                 {
-                    if (progress != null)
+                    foreach (var item in x.resourceElements)
                     {
-                        int index = progressIndex;
-                        IProgress<float> progress2 = Progress.Create<float>(y =>
+                        if (progress != null)
                         {
-                            try
+                            int index = progressIndex;
+                            IProgress<float> progress2 = Progress.Create<float>(y =>
                             {
-                                ThreadTask.Lock(ref progressLists.internalSync);
+                                try
+                                {
+                                    ThreadTask.Lock(ref progressLists.internalSync);
 
-                                progressLists.internalList[index] = y;
-                                progress.Report(progressLists.internalList.Sum() / x.resourceElements.Count);
-                                
-                            }
-                            finally
-                            {
-                                ThreadTask.Unlock(ref progressLists.internalSync);
-                            }
-                        });
+                                    progressLists.internalList[index] = y;
+                                    progress.Report(progressLists.internalList.Sum() / x.resourceElements.Count);
 
-                        progressLists.Add(0);
-                        progressIndex++;
+                                }
+                                finally
+                                {
+                                    ThreadTask.Unlock(ref progressLists.internalSync);
+                                }
+                            });
 
-                        cachedUniTasks.Add(item.Value.Load(progress2));
+                            progressLists.Add(0);
+                            progressIndex++;
+
+                            cachedUniTasks.Add(item.Value.Load(progress2));
+                        }
+                        else
+                            cachedUniTasks.Add(item.Value.Load());
                     }
-                    else
-                        cachedUniTasks.Add(item.Value.Load());
-                }
 
-                return false;
-            });
+                    return false;
+                });
 
-            await UniTask.WhenAll(cachedUniTasks);
-
-            GarbageRemoval();
+                await UniTask.WhenAll(cachedUniTasks);
+            }
+            finally
+            {
+                GarbageRemoval();
+            }
         }
 
         /// <summary>
