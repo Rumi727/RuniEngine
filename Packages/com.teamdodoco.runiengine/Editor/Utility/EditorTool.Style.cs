@@ -228,6 +228,7 @@ namespace RuniEngine.Editor
 
 
 
+#if UNITY_2023_1_OR_NEWER
         public static string RichMSpace(object value) => RichMSpace(value, "7.6");
         public static string RichMSpace(object value, string width) => $"<mspace={width}>{value}</mspace>";
 
@@ -249,5 +250,12 @@ namespace RuniEngine.Editor
 
             return richNumberMSpaceStringBuilder.ToString();
         }
+#else
+        public static string RichMSpace(object value) => value.ToString();
+        public static string RichMSpace(object value, string width) => value.ToString();
+
+        public static string RichNumberMSpace(object value) => value.ToString();
+        public static string RichNumberMSpace(object value, string width) => value.ToString();
+#endif
     }
 }

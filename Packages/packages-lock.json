@@ -124,6 +124,7 @@
         "com.unity.modules.screencapture": "1.0.0",
         "com.unity.ugui": "1.0.0",
         "com.unity.uiextensions": "2.3.2",
+        "com.unity.modules.jsonserialize": "1.0.0",
         "com.cysharp.unitask": "2.5.0"
       }
     },
@@ -350,7 +351,7 @@
     },
     "com.unity.modules.jsonserialize": {
       "version": "1.0.0",
-      "depth": 2,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {}
     },

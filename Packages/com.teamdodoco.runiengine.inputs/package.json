@@ -4,7 +4,7 @@
   "author": {
     "name": "Rumi"
   },
-  "unity": "2023.2",
+  "unity": "2022.3",
   "displayName": "Runi Engine Inputs",
   "description": "This is a package that adds input-related scripts",
   "dependencies": {
@@ -18,5 +18,5 @@
     "Input"
   ],
   "license": "MIT",
-  "unityRelease": "5f1"
+  "unityRelease": "0f1"
 }
