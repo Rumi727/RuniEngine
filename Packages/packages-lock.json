@@ -34,23 +34,6 @@
       },
       "hash": "15115347b80179b483f7f4022c18fe48604dee8d"
     },
-    "com.solidalloy.unity-dropdown": {
-      "version": "1.2.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.solidalloy.util": "1.40.0",
-        "org.nuget.system.memory": "4.5.4"
-      },
-      "url": "https://package.openupm.com"
-    },
-    "com.solidalloy.util": {
-      "version": "1.40.0",
-      "depth": 2,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
-    },
     "com.teamdodoco.runiengine": {
       "version": "file:com.teamdodoco.runiengine",
       "depth": 0,
@@ -62,11 +45,10 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.modules.assetbundle": "1.0.0",
-        "com.unity.ugui": "2.0.0",
+        "com.unity.ugui": "1.0.0",
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.cysharp.unitask": "2.5.0",
-        "com.coffee.softmask-for-ugui": "1.0.2",
-        "com.solidalloy.unity-dropdown": "1.2.0"
+        "com.coffee.softmask-for-ugui": "1.0.2"
       }
     },
     "com.teamdodoco.runiengine.images": {
@@ -93,7 +75,9 @@
       "version": "file:com.teamdodoco.runiengine.internal-api-bridge",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.ugui": "1.0.0"
+      }
     },
     "com.teamdodoco.runiengine.nbs": {
       "version": "file:com.teamdodoco.runiengine.nbs",
@@ -138,7 +122,7 @@
         "com.unity.modules.particlesystem": "1.0.0",
         "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.screencapture": "1.0.0",
-        "com.unity.ugui": "2.0.0",
+        "com.unity.ugui": "1.0.0",
         "com.unity.uiextensions": "2.3.2",
         "com.cysharp.unitask": "2.5.0"
       }
@@ -303,38 +287,6 @@
     "com.unity.uiextensions": {
       "version": "2.3.2",
       "depth": 1,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
-    },
-    "org.nuget.system.buffers": {
-      "version": "4.5.1",
-      "depth": 3,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
-    },
-    "org.nuget.system.memory": {
-      "version": "4.5.4",
-      "depth": 2,
-      "source": "registry",
-      "dependencies": {
-        "org.nuget.system.buffers": "4.5.1",
-        "org.nuget.system.numerics.vectors": "4.4.0",
-        "org.nuget.system.runtime.compilerservices.unsafe": "4.5.3"
-      },
-      "url": "https://package.openupm.com"
-    },
-    "org.nuget.system.numerics.vectors": {
-      "version": "4.4.0",
-      "depth": 3,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
-    },
-    "org.nuget.system.runtime.compilerservices.unsafe": {
-      "version": "4.5.3",
-      "depth": 3,
       "source": "registry",
       "dependencies": {},
       "url": "https://package.openupm.com"
