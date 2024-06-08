@@ -4,6 +4,7 @@ using RuniEngine.Inputs;
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Rhythms;
 using RuniEngine.Sounds;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -21,10 +22,26 @@ public class Test : MonoBehaviour
         }
     }
 
+    [System.Serializable]
+    public struct Asdf
+    {
+        public float wasans;
+        public Asdf2 asdf;
+
+        [System.Serializable]
+        public struct Asdf2
+        {
+            public float wasans2;
+        }
+    }
+
     RhythmWatch? rhythm;
-    [SerializeField] TMP_Text? text;
-    [SerializeField] SoundPlayerBase? soundPlayer;
-    [SerializeField] double lastBeat = 0;
+    public TMP_Text? text;
+    public SoundPlayerBase? soundPlayer;
+    public double lastBeat = 0;
+    public Asdf rectCorner;
+    public SerializableDictionary<string, SerializableDictionary<string, int>> a = new();
+    public List<string> lists = new();
     void Update()
     {
         float speed;
