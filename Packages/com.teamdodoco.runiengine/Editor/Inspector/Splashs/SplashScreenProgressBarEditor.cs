@@ -1,8 +1,8 @@
 #nullable enable
-using RuniEngine.UI;
+using RuniEngine.Splashs.UI;
 using UnityEditor;
 
-namespace RuniEngine.Editor.Inspector.UI
+namespace RuniEngine.Editor.Inspector.Splashs.UI
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(SplashScreenProgressBar))]
@@ -12,8 +12,6 @@ namespace RuniEngine.Editor.Inspector.UI
         {
             if (target == null || targets == null || targets.Length <= 0)
                 return;
-
-            EditorGUI.BeginChangeCheck();
 
             UseProperty("_progress", TryGetText("gui.progress"));
             UseProperty("_right", TryGetText("gui.right"));

@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Packages/com.teamdodoco.runiengine/Runtime/Splashs/Default Splash Scene.unity
     guid: 9c39878cacc84604e9ee8a3e3aefca65
   - enabled: 1
-    path: Packages/com.teamdodoco.runiengine/Empty Engine.unity
+    path: Assets/Test Scene.unity
     guid: 522e693f5d6bdea44996ab60bfaf5bf0
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 92589534cd2b04f4bb93ffe2d32f8ad1, type: 2}
