@@ -21,7 +21,7 @@ namespace RuniEngine.Editor
 
 
 
-        static readonly Dictionary<string, AnimBool> usePropertyAnimBoolList = new Dictionary<string, AnimBool>();
+        static readonly Dictionary<string, AnimArraySerializedProperty> usePropertyAnimArraySerializedProperty = new Dictionary<string, AnimArraySerializedProperty>();
 
         public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, null, true, options);
         public static SerializedProperty? UseProperty(SerializedObject serializedObject, string propertyName, string? label, params GUILayoutOption[] options) => InternalUseProperty(serializedObject, propertyName, label, false, options);
@@ -49,17 +49,22 @@ namespace RuniEngine.Editor
 
                 if (tps.isArray)
                 {
-                    AnimBool animBool;
+                    AnimArraySerializedProperty animArraySerializedProperty;
                     {
                         string key = ReorderableListWrapper.GetPropertyIdentifier(tps);
-                        if (!usePropertyAnimBoolList.TryGetValue(key, out animBool))
+                        if (!usePropertyAnimArraySerializedProperty.TryGetValue(key, out animArraySerializedProperty))
                         {
-                            animBool = new AnimBool(tps.isExpanded);
-                            usePropertyAnimBoolList[key] = animBool;
+                            animArraySerializedProperty = new AnimArraySerializedProperty(tps);
+                            usePropertyAnimArraySerializedProperty[key] = animArraySerializedProperty;
                         }
                     }
 
-                    animBool.target = tps.isExpanded;
+                    if (defaultLabel)
+                        animArraySerializedProperty.DrawLayout();
+                    else
+                        animArraySerializedProperty.DrawLayout(guiContent);
+
+                    /*animBool.target = tps.isExpanded;
 
                     if (tps.isExpanded || animBool.faded != 0)
                     {
@@ -110,7 +115,7 @@ namespace RuniEngine.Editor
                             EditorGUI.PropertyField(position, tps);
                         else
                             EditorGUI.PropertyField(position, tps, guiContent);
-                    }
+                    }*/
                 }
                 else
                 {

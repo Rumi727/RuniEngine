@@ -8,6 +8,6 @@ namespace RuniEngine.Editor
     {
         static EditorTool() => Selection.selectionChanged += ClearCache;
 
-        static void ClearCache() => usePropertyAnimBoolList.Clear();
+        static void ClearCache() => usePropertyAnimArraySerializedProperty.Clear();
     }
 }
