@@ -13,5 +13,8 @@
     "Engine"
   ],
   "license": "MIT",
-  "unityRelease": "1f1"
+  "unityRelease": "1f1",
+  "dependencies": {
+    "com.unity.ugui": "1.0.0"
+  }
 }
