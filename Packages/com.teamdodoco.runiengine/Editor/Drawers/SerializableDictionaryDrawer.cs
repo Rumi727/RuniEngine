@@ -1,16 +1,24 @@
 #nullable enable
+using RuniEngine.Editor.APIBridge.UnityEditor;
+using System;
+using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEditorInternal;
 using UnityEngine;
 
 using static RuniEngine.Editor.EditorTool;
+using EditorGUI = UnityEditor.EditorGUI;
+using EditorGUIUtility = UnityEditor.EditorGUIUtility;
 
 namespace RuniEngine.Editor.Drawers
 {
     [CustomPropertyDrawer(typeof(ISerializableDictionary), true)]
     public sealed class SerializableDictionaryDrawer : PropertyDrawer
     {
-        ReorderableList? reorderableList;
+        readonly Dictionary<string, AnimFloat> animFloats = new Dictionary<string, AnimFloat>();
+        readonly Dictionary<string, ReorderableList> reorderableLists = new Dictionary<string, ReorderableList>();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             GetListProperty(property, out SerializedObject serializedObject, out SerializedProperty? key, out SerializedProperty? value);
@@ -21,9 +29,86 @@ namespace RuniEngine.Editor.Drawers
 #pragma warning restore UNT0027 // Do not call PropertyDrawer.OnGUI()
                 return;
             }
-            
-            reorderableList ??= CreateReorderableList(serializedObject, property.displayName, key, value);
-            reorderableList.DoList(position);
+
+            bool isInArray = property.IsInArray();
+
+            float headHeight = GetYSize(label, EditorStyles.foldoutHeader);
+            position.height = headHeight;
+
+            {
+                Rect headerPosition = position;
+                headerPosition.width -= 48;
+
+                if (!isInArray)
+                {
+                    property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, property.isExpanded, label);
+                    EditorGUI.EndFoldoutHeaderGroup();
+                }
+                else
+                    property.isExpanded = EditorGUI.Foldout(headerPosition, property.isExpanded, label, true);
+            }
+
+            {
+                Rect countPosition = position;
+                countPosition.x += countPosition.width - 48;
+                countPosition.width = 48;
+
+                int count = EditorGUI.DelayedIntField(countPosition, key.arraySize);
+                int addCount = count - key.arraySize;
+                if (addCount > 0)
+                {
+                    for (int i = 0; i < addCount; i++)
+                    {
+                        int index = key.arraySize;
+
+                        key.InsertArrayElementAtIndex(index);
+                        value.InsertArrayElementAtIndex(index);
+
+                        //InsertArrayElementAtIndex 함수는 값을 복제하기 때문에 키를 기본값으로 정해줘야 제대로 생성할 수 있게 됨
+                        key.GetArrayElementAtIndex(index).SetDefaultValue();
+                    }
+                }
+                else
+                {
+                    addCount = -addCount;
+                    for (int i = 0; i < addCount; i++)
+                    {
+                        int index = key.arraySize - 1;
+
+                        key.DeleteArrayElementAtIndex(index);
+                        value.DeleteArrayElementAtIndex(index);
+                    }
+                }
+            }
+
+            position.y += headHeight + 2;
+
+            if (!isInArray)
+            {
+                AnimFloat? animFloat = GetAnimFloat(property);
+                if (animFloat == null)
+                    return;
+
+                if (property.isExpanded || animFloat.isAnimating)
+                {
+                    if (animFloat.isAnimating)
+                        GUI.BeginClip(new Rect(0, 0, position.x + position.width, position.y + animFloat.value));
+
+                    ReorderableList reorderableList = GetReorderableList(serializedObject, property, key, value);
+                    reorderableList.DoList(position);
+
+                    if (animFloat.isAnimating)
+                        GUI.EndClip();
+                }
+
+                if (animFloat.isAnimating)
+                    InspectorWindow.RepaintAllInspectors();
+            }
+            else if (property.isExpanded)
+            {
+                ReorderableList reorderableList = GetReorderableList(serializedObject, property, key, value);
+                reorderableList.DoList(position);
+            }
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -32,148 +117,196 @@ namespace RuniEngine.Editor.Drawers
             if (key == null || value == null)
                 return base.GetPropertyHeight(property, label);
 
-            reorderableList ??= CreateReorderableList(serializedObject, property.displayName, key, value);
-            return reorderableList.GetHeight();
+            float headerHeight = GetYSize(label, EditorStyles.foldoutHeader);
+            float height;
+            ReorderableList reorderableList = GetReorderableList(serializedObject, property, key, value);
+            if (property.isExpanded)
+                height = reorderableList.GetHeight() + 2;
+            else
+                height = 0;
+
+            if (!property.IsInArray())
+            {
+                AnimFloat animFloat = CreateAnimFloat(property, height);
+                animFloat.target = height;
+
+                return animFloat.value + headerHeight;
+            }
+            else
+                return height + headerHeight;
+        }
+
+        public AnimFloat CreateAnimFloat(SerializedProperty property, float height)
+        {
+            if (animFloats.ContainsKey(property.propertyPath))
+                return animFloats[property.propertyPath];
+            else
+                return animFloats[property.propertyPath] = new AnimFloat(height);
+        }
+
+        public AnimFloat? GetAnimFloat(SerializedProperty property)
+        {
+            if (animFloats.ContainsKey(property.propertyPath))
+                return animFloats[property.propertyPath];
+
+            return null;
         }
 
         public static void GetListProperty(SerializedProperty property, out SerializedObject serializedObject, out SerializedProperty? key, out SerializedProperty? value)
         {
-            property = property.Copy();
-
             serializedObject = property.serializedObject;
-            key = null;
-            value = null;
-
-            while (property.Next(true))
-            {
-                if (key != null && value != null)
-                    break;
-
-                if (property.name == nameof(ISerializableDictionary.serializableKeys))
-                    key = property.Copy();
-                else if (property.name == nameof(ISerializableDictionary.serializableValues))
-                    value = property.Copy();
-            }
+            
+            key = property.FindPropertyRelative(nameof(ISerializableDictionary.serializableKeys));
+            value = property.FindPropertyRelative(nameof(ISerializableDictionary.serializableValues));
         }
 
-        public static ReorderableList CreateReorderableList(SerializedObject serializedObject, string label, SerializedProperty? key, SerializedProperty? value) => new ReorderableList(serializedObject, key)
+        public ReorderableList GetReorderableList(SerializedObject serializedObject, SerializedProperty property, SerializedProperty? key, SerializedProperty? value)
         {
-            multiSelect = true,
-            drawHeaderCallback = x => GUI.Label(x, label),
-            drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+            if (reorderableLists.TryGetValue(property.propertyPath, out ReorderableList result))
+                return result;
+            else
             {
-                if (key == null || value == null)
-                    return;
-
-                string keyLabel = TryGetText("gui.key");
-                string valueLabel = TryGetText("gui.value");
-
-                rect.width /= 2;
-                rect.width -= 10;
-
-                BeginLabelWidth(keyLabel);
-
-                SerializedProperty keyElement = key.GetArrayElementAtIndex(index);
-                object? lastValue = keyElement.boxedValue;
-
-                EditorGUI.BeginChangeCheck();
-                EditorGUI.PropertyField(rect, keyElement, new GUIContent(keyLabel), key.IsChildrenIncluded());
-
-                //중복 감지
-                if (EditorGUI.EndChangeCheck())
+                return reorderableLists[property.propertyPath] = new ReorderableList(serializedObject, key)
                 {
-                    for (int i = 0; i < key.arraySize; i++)
+                    multiSelect = true,
+                    headerHeight = 0,
+                    drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
                     {
-                        if (index != i && Equals(key.GetArrayElementAtIndex(i).boxedValue, keyElement.boxedValue))
+                        if (key == null || value == null)
+                            return;
+
+                        string keyLabel = TryGetText("gui.key");
+                        string valueLabel = TryGetText("gui.value");
+
+                        rect.width /= 2;
+                        rect.width -= 10;
+
+                        BeginLabelWidth(keyLabel);
+
+                        SerializedProperty keyElement = key.GetArrayElementAtIndex(index);
+                        object? lastValue = keyElement.boxedValue;
+
+                        rect.height = EditorGUI.GetPropertyHeight(keyElement);
+
+                        EditorGUI.BeginChangeCheck();
+                        EditorGUI.PropertyField(rect, keyElement, new GUIContent(keyLabel), keyElement.IsChildrenIncluded());
+
+                        //중복 감지
+                        if (EditorGUI.EndChangeCheck())
                         {
-                            keyElement.boxedValue = lastValue;
-                            break;
+                            for (int i = 0; i < key.arraySize; i++)
+                            {
+                                if (index != i && Equals(key.GetArrayElementAtIndex(i).boxedValue, keyElement.boxedValue))
+                                {
+                                    keyElement.boxedValue = lastValue;
+                                    break;
+                                }
+                            }
                         }
-                    }
-                }
 
-                EndLabelWidth();
+                        EndLabelWidth();
 
-                rect.x += rect.width + 20;
+                        rect.x += rect.width + 20;
 
-                BeginLabelWidth(valueLabel);
-                EditorGUI.PropertyField(rect, value.GetArrayElementAtIndex(index), new GUIContent(valueLabel), value.IsChildrenIncluded());
-                EndLabelWidth();
-            },
-            onAddCallback = x =>
-            {
-                if (key == null || value == null)
-                    return;
+                        BeginLabelWidth(valueLabel);
 
-                int index = key.arraySize;
+                        SerializedProperty valueElement = value.GetArrayElementAtIndex(index);
+                        rect.height = EditorGUI.GetPropertyHeight(valueElement);
 
-                key.InsertArrayElementAtIndex(index);
-                value.InsertArrayElementAtIndex(index);
+                        EditorGUI.PropertyField(rect, valueElement, new GUIContent(valueLabel), valueElement.IsChildrenIncluded());
 
-                //InsertArrayElementAtIndex 함수는 값을 복제하기 때문에 키를 기본값으로 정해줘야 제대로 생성할 수 있게 됨
-                key.GetArrayElementAtIndex(index).SetDefaultValue();
-            },
-            onRemoveCallback = x =>
-            {
-                if (key == null || value == null)
-                    return;
-
-                int removeCount = 0;
-                for (int i = 0; i < x.selectedIndices.Count; i++)
-                {
-                    int index = x.selectedIndices[i] - removeCount;
-                    if (index < 0 || index >= key.arraySize)
-                        continue;
-                    
-                    key.DeleteArrayElementAtIndex(index);
-                    value.DeleteArrayElementAtIndex(index);
-
-                    removeCount++;
-                }
-            },
-            onReorderCallbackWithDetails = (ReorderableList list, int oldIndex, int newIndex) =>
-            {
-                if (key == null || value == null)
-                    return;
-
-                value.MoveArrayElement(oldIndex, newIndex);
-            },
-            onCanAddCallback = x =>
-            {
-                if (key == null)
-                    return false;
-                
-                for (int i = 0; i < key.arraySize; i++)
-                {
-                    SerializedProperty keyElement = key.GetArrayElementAtIndex(i);
-                    if (keyElement.propertyType == SerializedPropertyType.String)
+                        EndLabelWidth();
+                    },
+                    onAddCallback = x =>
                     {
-                        if (string.IsNullOrEmpty(keyElement.stringValue))
-                            return false;
-                    }
-                    else
+                        if (key == null || value == null)
+                            return;
+
+                        int index = key.arraySize;
+
+                        key.InsertArrayElementAtIndex(index);
+                        value.InsertArrayElementAtIndex(index);
+
+                        //InsertArrayElementAtIndex 함수는 값을 복제하기 때문에 키를 기본값으로 정해줘야 제대로 생성할 수 있게 됨
+                        key.GetArrayElementAtIndex(index).SetDefaultValue();
+
+                        x.Select(index);
+                        x.GrabKeyboardFocus();
+                    },
+                    onRemoveCallback = x =>
                     {
-                        object? boxedValue = keyElement.boxedValue;
+                        if (key == null || value == null)
+                            return;
 
-                        if (boxedValue == null)
+                        if (x.selectedIndices.Count > 0)
+                        {
+                            int removeCount = 0;
+                            for (int i = 0; i < x.selectedIndices.Count; i++)
+                            {
+                                int index = x.selectedIndices[i] - removeCount;
+                                if (index < 0 || index >= key.arraySize)
+                                    continue;
+
+                                key.DeleteArrayElementAtIndex(index);
+                                value.DeleteArrayElementAtIndex(index);
+
+                                removeCount++;
+                            }
+                        }
+                        else
+                        {
+                            key.DeleteArrayElementAtIndex(key.arraySize - 1);
+                            value.DeleteArrayElementAtIndex(value.arraySize - 1);
+                        }
+
+                        x.Select((x.index - 1).Clamp(0));
+                        x.GrabKeyboardFocus();
+                    },
+                    onReorderCallbackWithDetails = (ReorderableList list, int oldIndex, int newIndex) =>
+                    {
+                        if (value == null)
+                            return;
+
+                        value.MoveArrayElement(oldIndex, newIndex);
+                    },
+                    onCanAddCallback = x =>
+                    {
+                        if (key == null)
                             return false;
-                        if (boxedValue == boxedValue.GetType().GetDefaultValue())
-                            return false;
+
+                        for (int i = 0; i < key.arraySize; i++)
+                        {
+                            SerializedProperty keyElement = key.GetArrayElementAtIndex(i);
+                            if (keyElement.propertyType == SerializedPropertyType.String)
+                            {
+                                if (string.IsNullOrEmpty(keyElement.stringValue))
+                                    return false;
+                            }
+                            else
+                            {
+                                object? boxedValue = keyElement.boxedValue;
+
+                                if (boxedValue == null)
+                                    return false;
+                                if (boxedValue == boxedValue.GetType().GetDefaultValue())
+                                    return false;
+                            }
+                        }
+
+                        return true;
+                    },
+                    elementHeightCallback = i =>
+                    {
+                        if (key == null || value == null)
+                            return EditorGUIUtility.singleLineHeight;
+
+                        float height = EditorGUI.GetPropertyHeight(key.GetArrayElementAtIndex(i));
+                        height = height.Max(EditorGUI.GetPropertyHeight(value.GetArrayElementAtIndex(i)));
+
+                        return height;
                     }
-                }
-
-                return true;
-            },
-            elementHeightCallback = i =>
-            {
-                if (key == null || value == null)
-                    return EditorGUIUtility.singleLineHeight;
-
-                float height = EditorGUI.GetPropertyHeight(key.GetArrayElementAtIndex(i));
-                height = height.Max(EditorGUI.GetPropertyHeight(value.GetArrayElementAtIndex(i)));
-
-                return height;
+                };
             }
-        };
+        }
     }
 }
