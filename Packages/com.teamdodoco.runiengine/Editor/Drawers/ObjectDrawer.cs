@@ -1,5 +1,6 @@
 #nullable enable
-/*using RuniEngine.Editor.APIBridge.UnityEditor;
+using RuniEngine.Editor.APIBridge.UnityEditor;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEngine;
@@ -17,14 +18,21 @@ namespace RuniEngine.Editor.Drawers
 #endif
     public sealed class ObjectDrawer : PropertyDrawer
     {
-        AnimBool? animBool;
+        readonly Dictionary<string, AnimBool> animBools = new Dictionary<string, AnimBool>();
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            if (property.IsChildrenIncluded())
+            if (property.IsChildrenIncluded() && !property.IsInArray())
             {
-                animBool ??= new AnimBool(property.isExpanded);
-                
+                AnimBool animBool;
+                if (animBools.ContainsKey(property.propertyPath))
+                    animBool = animBools[property.propertyPath];
+                else
+                {
+                    animBool = new AnimBool(property.isExpanded);
+                    animBools.Add(property.propertyPath, animBool);
+                }
+
                 float orgHeight;
                 float headHeight = GetYSize(label, EditorStyles.foldout);
                 int childCount;
@@ -47,7 +55,7 @@ namespace RuniEngine.Editor.Drawers
                     property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label, true);
                     animBool.target = property.isExpanded;
                 }
-                
+
                 if (animBool.faded != 0)
                 {
                     float childHeight = orgHeight - headHeight;
@@ -88,28 +96,36 @@ namespace RuniEngine.Editor.Drawers
                     InspectorWindow.RepaintAllInspectors();
             }
             else
-                EditorGUI.PropertyField(position, property, label, true);
+                EditorGUI.PropertyField(position, property, label, property.IsChildrenIncluded());
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if (property.IsChildrenIncluded())
+            if (property.IsChildrenIncluded() && !property.IsInArray())
             {
-                animBool ??= new AnimBool(property.isExpanded);
+                AnimBool animBool;
+                if (animBools.ContainsKey(property.propertyPath))
+                    animBool = animBools[property.propertyPath];
+                else
+                {
+                    animBool = new AnimBool(property.isExpanded);
+                    animBools.Add(property.propertyPath, animBool);
+                }
+
                 animBool.target = property.isExpanded;
 
                 bool isExpanded = property.isExpanded;
 
                 property.isExpanded = true;
                 float orgHeight = EditorGUI.GetPropertyHeight(property, label, true);
-
+                
                 property.isExpanded = isExpanded;
 
                 float childHeight = orgHeight - GetYSize(label, EditorStyles.foldout) - 3;
                 return orgHeight - childHeight.Lerp(0f, animBool.faded);
             }
             else
-                return EditorGUI.GetPropertyHeight(property, label, false);
+                return EditorGUI.GetPropertyHeight(property, label, property.IsChildrenIncluded());
         }
     }
-}*/
+}
