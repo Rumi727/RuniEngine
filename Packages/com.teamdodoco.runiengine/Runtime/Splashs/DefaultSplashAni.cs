@@ -1,6 +1,6 @@
 #nullable enable
 using RuniEngine.Booting;
-using RuniEngine.UI;
+using RuniEngine.Splashs.UI;
 using UnityEngine;
 
 namespace RuniEngine.Splashs

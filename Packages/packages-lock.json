@@ -41,12 +41,12 @@
       "dependencies": {
         "com.teamdodoco.runiengine.internal-api-bridge": "0.0.0",
         "com.unity.modules.ui": "1.0.0",
-        "com.unity.modules.video": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.modules.assetbundle": "1.0.0",
         "com.unity.ugui": "1.0.0",
         "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.textmeshpro": "3.0.9",
         "com.cysharp.unitask": "2.5.0",
         "com.coffee.softmask-for-ugui": "1.0.2"
       }
@@ -265,6 +265,14 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.textmeshpro": {
+      "version": "5.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
+    },
     "com.unity.toolchain.win-x86_64-linux-x86_64": {
       "version": "2.0.9",
       "depth": 0,
@@ -396,16 +404,6 @@
       "dependencies": {
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.modules.audio": "1.0.0"
-      }
-    },
-    "com.unity.modules.video": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.audio": "1.0.0",
-        "com.unity.modules.ui": "1.0.0",
-        "com.unity.modules.unitywebrequest": "1.0.0"
       }
     }
   }

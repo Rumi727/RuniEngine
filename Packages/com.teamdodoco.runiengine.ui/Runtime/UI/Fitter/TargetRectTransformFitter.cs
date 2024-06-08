@@ -10,13 +10,9 @@ namespace RuniEngine.UI.Fitter
         public RectTransform? targetRectTransform { get => _targetRectTransform; set => _targetRectTransform = value; }
         [SerializeField, NotNullField] RectTransform? _targetRectTransform;
 
-        
 
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            Canvas.preWillRenderCanvases += SetDirty;
-        }
+
+        protected override void Awake() => Canvas.preWillRenderCanvases += SetDirty;
 
         protected override void OnDestroy()
         {
