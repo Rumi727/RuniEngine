@@ -16,7 +16,6 @@ UI inspired by [osu!lazer](https://github.com/ppy/osu)
 
 ### Required
 - [UniTask](https://github.com/Cysharp/UniTask)
-- [YoutubePlayer](https://github.com/iBicha/UnityYoutubePlayer)
 - [Asynchronous Image Loader (Forked by TEAM Dodoco)](https://github.com/Rumi727/UnityAsyncImageLoader)
   - ``https://github.com/Rumi727/UnityAsyncImageLoader.git`` 링크를 사용해서 설치하세요
   - [Original](https://github.com/Looooong/UnityAsyncImageLoader)
