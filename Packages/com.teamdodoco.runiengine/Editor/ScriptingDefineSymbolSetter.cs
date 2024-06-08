@@ -16,7 +16,9 @@ namespace RuniEngine.Editor
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.LinuxHeadlessSimulation, symbolName);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.NintendoSwitch, symbolName);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.PS4, symbolName);
+#if UNITY_2023_1_OR_NEWER
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.PS5, symbolName);
+#endif
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.QNX, symbolName);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Server, symbolName);
 #if !UNITY_2023_1_OR_NEWER
