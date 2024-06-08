@@ -464,6 +464,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     GUILayout.BeginHorizontal();
 
+#if UNITY_6000_1_OR_NEWER
                     //재생
                     if (target.isPlaying)
                         DrawButton("▶↻", TryGetText("gui.restart"), x => x.Play());
@@ -475,6 +476,19 @@ namespace RuniEngine.Editor.Inspector.Sounds
                         DrawButton("▮▮", TryGetText("gui.pause"), x => x.isPaused = true);
                     else
                         DrawButton("▶▮", TryGetText("gui.unpause"), x => x.isPaused = false);
+#else
+                    //재생
+                    if (target.isPlaying)
+                        DrawButton("►↻", TryGetText("gui.restart"), x => x.Play());
+                    else
+                        DrawButton("►", TryGetText("gui.play"), x => x.Play());
+
+                    //일시 정지
+                    if (!target.isPaused || !TargetsIsEquals(x => x.isPaused, targets))
+                        DrawButton("▮▮", TryGetText("gui.pause"), x => x.isPaused = true);
+                    else
+                        DrawButton("►▮", TryGetText("gui.unpause"), x => x.isPaused = false);
+#endif
 
                     //정지
                     DrawButton("■", TryGetText("gui.stop"), x => x.Stop());
