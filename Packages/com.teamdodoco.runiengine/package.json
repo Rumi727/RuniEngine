@@ -14,11 +14,10 @@
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.unitywebrequest": "1.0.0",
     "com.unity.modules.assetbundle": "1.0.0",
-    "com.unity.ugui": "2.0.0",
+    "com.unity.ugui": "1.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.cysharp.unitask": "2.5.0",
-    "com.coffee.softmask-for-ugui": "1.0.2",
-    "com.solidalloy.unity-dropdown": "1.2.0"
+    "com.coffee.softmask-for-ugui": "1.0.2"
   },
   "keywords": [
     "Runi",
