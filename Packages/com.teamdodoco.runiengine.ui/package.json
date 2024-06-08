@@ -4,7 +4,7 @@
   "author": {
     "name": "Rumi"
   },
-  "unity": "2023.2",
+  "unity": "2022.3",
   "displayName": "Runi Engine UI",
   "description": "This is a package that adds image-related scripts",
   "dependencies": {
@@ -17,6 +17,7 @@
     "com.unity.modules.screencapture": "1.0.0",
     "com.unity.ugui": "1.0.0",
     "com.unity.uiextensions": "2.3.2",
+    "com.unity.modules.jsonserialize": "1.0.0",
     "com.cysharp.unitask": "2.5.0"
   },
   "keywords": [
@@ -27,5 +28,5 @@
     "UGUI"
   ],
   "license": "MIT",
-  "unityRelease": "1f1"
+  "unityRelease": "0f1"
 }

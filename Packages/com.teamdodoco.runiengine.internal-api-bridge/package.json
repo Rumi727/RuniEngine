@@ -4,7 +4,7 @@
   "author": {
     "name": "Rumi"
   },
-  "unity": "2023.2",
+  "unity": "2022.3",
   "displayName": "Runi Engine Internal API Bridge",
   "description": "Contains intermediate classes that make certain internal Unity APIs publicly available.",
   "keywords": [
@@ -13,7 +13,7 @@
     "Engine"
   ],
   "license": "MIT",
-  "unityRelease": "1f1",
+  "unityRelease": "0f1",
   "dependencies": {
     "com.unity.ugui": "1.0.0"
   }
