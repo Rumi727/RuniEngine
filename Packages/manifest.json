@@ -15,10 +15,7 @@
       "scopes": [
         "com.coffee.softmask-for-ugui",
         "com.cysharp.unitask",
-        "com.unity.uiextensions",
-        "com.solidalloy.util",
-        "org.nuget.system",
-        "com.solidalloy.unity-dropdown"
+        "com.unity.uiextensions"
       ]
     }
   ]
