@@ -24,7 +24,9 @@ namespace RuniEngine.Editor
 #endif
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Standalone, symbolName);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.tvOS, symbolName);
+#if UNITY_6000_1_ORNEWER
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.VisionOS, symbolName);
+#endif
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.WebGL, symbolName);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.WindowsStoreApps, symbolName);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.XboxOne, symbolName);
