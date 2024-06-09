@@ -67,6 +67,9 @@ namespace RuniEngine.Editor
 
 
 
+        public static void BeginMinLabelWidth(float min = 120, float offset = 0) => BeginLabelWidth(Mathf.Max(APIBridge.UnityEditor.EditorGUIUtility.contextWidth * 0.45f - 40f, min) + offset);
+        public static void BeginMinLabelWidth(float min = 120, float contextWidth = 0, float offset = 0) => BeginLabelWidth(Mathf.Max(contextWidth * 0.45f - 40f, min) + offset);
+
         public static void BeginLabelWidth(string label) => BeginLabelWidth(new GUIContent(label));
         public static void BeginLabelWidth(GUIContent label) => BeginLabelWidth(label, editorLabelStyle);
         public static void BeginLabelWidth(string label, GUIStyle style) => BeginLabelWidth(new GUIContent(label), style);
@@ -80,7 +83,7 @@ namespace RuniEngine.Editor
         static readonly Stack<float> labelWidthQueue = new Stack<float>();
         public static void BeginLabelWidth(float width)
         {
-            labelWidthQueue.Push(EditorGUIUtility.labelWidth);
+            labelWidthQueue.Push(APIBridge.UnityEditor.EditorGUIUtility.s_LabelWidth);
             EditorGUIUtility.labelWidth = width;
         }
 
@@ -132,7 +135,7 @@ namespace RuniEngine.Editor
         static readonly Stack<float> fieldWidthQueue = new Stack<float>();
         public static void BeginFieldWidth(float width)
         {
-            fieldWidthQueue.Push(EditorGUIUtility.fieldWidth);
+            fieldWidthQueue.Push(APIBridge.UnityEditor.EditorGUIUtility.s_FieldWidth);
             EditorGUIUtility.fieldWidth = width;
         }
 

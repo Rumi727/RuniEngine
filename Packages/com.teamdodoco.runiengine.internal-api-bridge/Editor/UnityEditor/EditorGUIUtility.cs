@@ -25,5 +25,45 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
             }
         }
         static FieldInfo? f_s_LastControlID;
+
+        public static float s_LabelWidth
+        {
+            get
+            {
+                f_s_LabelWidth ??= type.GetField("s_LabelWidth", BindingFlags.NonPublic | BindingFlags.Static);
+                return (float)f_s_LabelWidth.GetValue(null);
+            }
+            set
+            {
+                f_s_LabelWidth ??= type.GetField("s_LabelWidth", BindingFlags.NonPublic | BindingFlags.Static);
+                f_s_LabelWidth.SetValue(null, value);
+            }
+        }
+        static FieldInfo? f_s_LabelWidth;
+
+        public static float s_FieldWidth
+        {
+            get
+            {
+                f_s_FieldWidth ??= type.GetField("s_FieldWidth", BindingFlags.NonPublic | BindingFlags.Static);
+                return (float)f_s_FieldWidth.GetValue(null);
+            }
+            set
+            {
+                f_s_FieldWidth ??= type.GetField("s_FieldWidth", BindingFlags.NonPublic | BindingFlags.Static);
+                f_s_FieldWidth.SetValue(null, value);
+            }
+        }
+        static FieldInfo? f_s_FieldWidth;
+
+        public static float contextWidth
+        {
+            get
+            {
+                f_contextWidth ??= type.GetProperty("contextWidth", BindingFlags.NonPublic | BindingFlags.Static);
+                return (float)f_contextWidth.GetValue(null);
+            }
+        }
+        static PropertyInfo? f_contextWidth;
     }
 }
