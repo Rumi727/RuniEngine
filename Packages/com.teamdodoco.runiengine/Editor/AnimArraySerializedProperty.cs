@@ -140,11 +140,17 @@ namespace RuniEngine.Editor
             headerHeight = 0,
             drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
+                rect.x += 8;
+                rect.width -= 8;
                 rect.y += 1;
                 rect.height -= 2;
 
+                BeginMinLabelWidth(0, rect.width + 11, 0);
+                
                 SerializedProperty element = property.GetArrayElementAtIndex(index);
                 EditorGUI.PropertyField(rect, element, element.IsChildrenIncluded());
+
+                EndLabelWidth();
             },
             onAddCallback = x =>
             {

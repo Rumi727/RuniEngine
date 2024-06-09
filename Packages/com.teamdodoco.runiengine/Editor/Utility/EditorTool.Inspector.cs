@@ -1,12 +1,9 @@
 #nullable enable
-using RuniEngine.Editor.APIBridge.UnityEditor;
 using RuniEngine.Editor.APIBridge.UnityEditorInternal;
 using RuniEngine.Resource;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEditor;
-using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 using EditorGUI = UnityEditor.EditorGUI;
@@ -47,7 +44,7 @@ namespace RuniEngine.Editor
             {
                 EditorGUI.BeginChangeCheck();
 
-                if (tps.isArray)
+                if (tps.isArray && tps.propertyType != SerializedPropertyType.String)
                 {
                     AnimArraySerializedProperty animArraySerializedProperty;
                     {
