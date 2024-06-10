@@ -33,7 +33,7 @@ namespace RuniEngine
                     return _streamingAssetsPath;
                 else
                 {
-                    _streamingAssetsPath = PathUtility.Combine(persistentDataPath, streamingAssetsFolderName);
+                    _streamingAssetsPath = Path.Combine(persistentDataPath, streamingAssetsFolderName);
 
                     if (!Directory.Exists(_streamingAssetsPath))
                         Directory.CreateDirectory(_streamingAssetsPath);
