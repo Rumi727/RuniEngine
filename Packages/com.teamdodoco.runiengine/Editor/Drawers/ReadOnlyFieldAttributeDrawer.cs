@@ -2,8 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 
-using static RuniEngine.Editor.EditorTool;
-
 namespace RuniEngine.Editor.Drawers
 {
     [CustomPropertyDrawer(typeof(ReadOnlyFieldAttribute))]

@@ -1,6 +1,5 @@
 #nullable enable
 using System;
-using static UnityEditor.PlayerSettings;
 
 namespace RuniEngine
 {
