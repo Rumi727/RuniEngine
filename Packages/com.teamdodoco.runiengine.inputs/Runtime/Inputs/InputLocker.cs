@@ -6,7 +6,8 @@ namespace RuniEngine
 {
     public sealed class InputLocker : IComparable<InputLocker>, IDisposable
     {
-        public static List<InputLocker> instances { get; } = new List<InputLocker>();
+        public static IReadOnlyList<InputLocker> instances => _instances;
+        static readonly List<InputLocker> _instances = new List<InputLocker>();
 
         public InputLocker() : this(0) { }
 
@@ -14,8 +15,8 @@ namespace RuniEngine
         {
             _priority = priority;
 
-            instances.Add(this);
-            instances.Sort();
+            _instances.Add(this);
+            _instances.Sort();
         }
 
         public int priority
@@ -43,7 +44,7 @@ namespace RuniEngine
         public void Dispose()
         {
             isDisposed = true;
-            instances.Remove(this);
+            _instances.Remove(this);
         }
 
 
