@@ -26,6 +26,13 @@ public static class Debug
         UnityEngine.Debug.LogError(LogText(className, message));
     }
 
+    [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+    public static void Assert(bool condition, object? message, string? className = null)
+    {
+        className ??= NameOfCallingClass();
+        UnityEngine.Debug.Assert(condition, LogText(className, message));
+    }
+
     public static void ForceLog(object? message, string? className = null)
     {
         className ??= NameOfCallingClass();
@@ -42,6 +49,12 @@ public static class Debug
     {
         className ??= NameOfCallingClass();
         UnityEngine.Debug.LogError(ForceLogText(className, message));
+    }
+
+    public static void ForceAssert(bool condition, object? message, string? className = null)
+    {
+        className ??= NameOfCallingClass();
+        UnityEngine.Debug.Assert(condition, ForceLogText(className, message));
     }
 
     static string LogText(string className, object? message) => "[" + className + "] " + message;
