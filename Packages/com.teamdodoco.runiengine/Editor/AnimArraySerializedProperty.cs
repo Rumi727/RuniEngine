@@ -60,6 +60,8 @@ namespace RuniEngine.Editor
                 Rect headerPosition = position;
                 headerPosition.width -= 48;
 
+                EditorGUI.BeginProperty(headerPosition, label, property);
+
                 if (!isInArray)
                 {
                     property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, property.isExpanded, label);
@@ -67,6 +69,8 @@ namespace RuniEngine.Editor
                 }
                 else
                     property.isExpanded = EditorGUI.Foldout(headerPosition, property.isExpanded, label, true);
+
+                EditorGUI.EndProperty();
             }
 
             {
@@ -134,10 +138,9 @@ namespace RuniEngine.Editor
                 return height + headerHeight;
         }
 
-        ReorderableList CreateReorderableList() => new ReorderableList(property.serializedObject, property)
+        ReorderableList CreateReorderableList() => new ReorderableList(property.serializedObject, property, true, false, true, true)
         {
             multiSelect = true,
-            headerHeight = 0,
             drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
                 rect.x += 8;
