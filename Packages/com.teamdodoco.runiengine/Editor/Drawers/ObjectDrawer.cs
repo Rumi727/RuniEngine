@@ -52,8 +52,12 @@ namespace RuniEngine.Editor.Drawers
                 {
                     position.height = headHeight;
 
+                    EditorGUI.BeginProperty(position, label, property);
+
                     property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label, true);
                     animBool.target = property.isExpanded;
+
+                    EditorGUI.EndProperty();
                 }
 
                 if (animBool.faded != 0)
