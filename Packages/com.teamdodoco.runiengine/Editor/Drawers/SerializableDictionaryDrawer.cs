@@ -38,6 +38,8 @@ namespace RuniEngine.Editor.Drawers
                 Rect headerPosition = position;
                 headerPosition.width -= 48;
 
+                EditorGUI.BeginProperty(headerPosition, label, property);
+
                 if (!isInArray)
                 {
                     property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, property.isExpanded, label);
@@ -45,6 +47,8 @@ namespace RuniEngine.Editor.Drawers
                 }
                 else
                     property.isExpanded = EditorGUI.Foldout(headerPosition, property.isExpanded, label, true);
+
+                EditorGUI.EndProperty();
             }
 
             {
