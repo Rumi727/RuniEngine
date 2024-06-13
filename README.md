@@ -57,29 +57,29 @@ UI는 [osu!lazer](https://github.com/ppy/osu)에서 영감을 받았습니다
       - ``com.cysharp.unitask``
       - ``com.unity.uiextensions``
 3. 패키지 관리자에서 git URL로 설치합니다 (* 표시된건 필수 패키지이며 꼭 순서대로 설치해야합니다)
-    - \* Runi Engine Internal API Bridge : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.internal-api-bridge`
+    - \* Runi Engine Internal API Bridge : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.internal-api-bridge`
       - 유니티의 몇몇 내부 API를 손쉽게 접근할 수 있게 하는 패키지입니다
-    - \* Runi Engine :  `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine`
+    - \* Runi Engine :  `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine`
       - 오로지 Runi Enigne을 위해, Runi Engine을 위한
-    - Runi Engine Object Pooling : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.pooling`
+    - Runi Engine Object Pooling : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.pooling`
       - 프리팹 로드를 오브젝트 풀링을 통해 쉽게 할 수 있게 만들어주며, 리소스팩에서 게임 오브젝트를 포함한 모든 유니티 오브젝트를 불러올 수 있게 해주는 API 입니다
-    - Runi Engine Sounds : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.sounds`
+    - Runi Engine Sounds : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.sounds`
       - 로컬 오디오 파일을 쉽게 로드할 수 있게 해주는 API가 있으며, 리소스팩에서 오디오를 불러올 수 있게 해줍니다
       - 전용 플레이어가 존재합니다
       - `Runi Engine Object Pooling` 패키지를 먼저 설치해야합니다!
-    - Runi Engine NBS : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.nbs`
+    - Runi Engine NBS : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.nbs`
       - Minecraft Note Block Studio 프로그램에서 만들어진 음악을 쉽게 로드할 수 있게 해주는 API가 있으며, 리소스팩에서 NBS 파일을 불러올 수 있게 해줍니다
       - 전용 플레이어가 존재합니다
       - `Runi Engine Sounds` 패키지를 먼저 설치해야합니다!
-    - Runi Engine Images : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.images`
+    - Runi Engine Images : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.images`
       - 로컬 이미지 파일을 쉽게 로드할 수 있게 해주는 API가 있으며, 리소스팩에서 이미지를 불러올 수 있게 해줍니다
       - 전용 렌더러가 존재합니다
       - 설치 전에 다음 git URL 패키지도 같이 설치해주세요!
         - Asynchronous Image Loader (Forked by TEAM Dodoco) : `https://github.com/Rumi727/UnityAsyncImageLoader.git`
-    - Runi Engine Inputs : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.inputs`
+    - Runi Engine Inputs : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.inputs`
       - 아직 제대로 개발이 완료되지 않았습니다
       - 입력 처리를 쉽게해줍니다
-    - Runi Engine UI : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.ui`
+    - Runi Engine UI : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.ui`
       - 아직 제대로 개발이 완료되지 않았습니다
       - UGUI 관련한 편리한 API 및 컴포넌트가 있습니다
       - Runi Engine의 모든 UI를 담당합니다
