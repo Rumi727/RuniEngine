@@ -98,7 +98,7 @@ namespace RuniEngine.Editor
         public static float GetYSize(GUIStyle style) => GetYSize(new GUIContent(), style);
 
         public static float GetXSize(string label, GUIStyle style) => GetXSize(new GUIContent(label), style);
-        public static float GetYSize(string label, GUIStyle style) => GetXSize(new GUIContent(label), style);
+        public static float GetYSize(string label, GUIStyle style) => GetYSize(new GUIContent(label), style);
 
         public static float GetXSize(GUIContent content, GUIStyle style) => style.CalcSize(content).x;
         public static float GetYSize(GUIContent content, GUIStyle style) => style.CalcSize(content).y;
