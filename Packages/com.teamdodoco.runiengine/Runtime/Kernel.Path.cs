@@ -129,7 +129,7 @@ namespace RuniEngine
         /// <summary>
         /// PathTool.Combine(Kernel.streamingAssetsPath, "setting")
         /// </summary>
-        public static string projectSettingPath { get; } = Path.Combine(streamingAssetsPath, "setting");
+        public static string projectSettingPath { get; } = Path.Combine(streamingAssetsPath, "settings");
 
         public static void PathInitialize()
         {
