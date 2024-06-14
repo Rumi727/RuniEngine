@@ -56,43 +56,7 @@ namespace RuniEngine.Editor
             float headHeight = GetYSize(label, EditorStyles.foldoutHeader);
             position.height = headHeight;
 
-            {
-                Rect headerPosition = position;
-                headerPosition.width -= 48;
-
-                EditorGUI.BeginProperty(headerPosition, label, property);
-
-                if (!isInArray)
-                {
-                    property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, property.isExpanded, label);
-                    EditorGUI.EndFoldoutHeaderGroup();
-                }
-                else
-                    property.isExpanded = EditorGUI.Foldout(headerPosition, property.isExpanded, label, true);
-
-                EditorGUI.EndProperty();
-            }
-
-            {
-                Rect countPosition = position;
-                countPosition.x += countPosition.width - 48;
-                countPosition.width = 48;
-
-                int count = EditorGUI.DelayedIntField(countPosition, property.arraySize);
-                int addCount = count - property.arraySize;
-                if (addCount > 0)
-                {
-                    for (int i = 0; i < addCount; i++)
-                        property.InsertArrayElementAtIndex(property.arraySize);
-                }
-                else
-                {
-                    addCount = -addCount;
-                    for (int i = 0; i < addCount; i++)
-                        property.DeleteArrayElementAtIndex(property.arraySize - 1);
-                }
-            }
-
+            ListHeader(position, property, label);
             position.y += headHeight + 2;
 
             if (!isInArray && animFloat != null)

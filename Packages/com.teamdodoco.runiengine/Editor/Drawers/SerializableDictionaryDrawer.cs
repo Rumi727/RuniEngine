@@ -34,55 +34,18 @@ namespace RuniEngine.Editor.Drawers
             float headHeight = GetYSize(label, EditorStyles.foldoutHeader);
             position.height = headHeight;
 
+            ListHeader(position, key, label, index =>
             {
-                Rect headerPosition = position;
-                headerPosition.width -= 48;
+                key.InsertArrayElementAtIndex(index);
+                value.InsertArrayElementAtIndex(index);
 
-                EditorGUI.BeginProperty(headerPosition, label, property);
-
-                if (!isInArray)
-                {
-                    property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, property.isExpanded, label);
-                    EditorGUI.EndFoldoutHeaderGroup();
-                }
-                else
-                    property.isExpanded = EditorGUI.Foldout(headerPosition, property.isExpanded, label, true);
-
-                EditorGUI.EndProperty();
-            }
-
+                //InsertArrayElementAtIndex 함수는 값을 복제하기 때문에 키를 기본값으로 정해줘야 제대로 생성할 수 있게 됨
+                key.GetArrayElementAtIndex(index).SetDefaultValue();
+            }, index =>
             {
-                Rect countPosition = position;
-                countPosition.x += countPosition.width - 48;
-                countPosition.width = 48;
-
-                int count = EditorGUI.DelayedIntField(countPosition, key.arraySize);
-                int addCount = count - key.arraySize;
-                if (addCount > 0)
-                {
-                    for (int i = 0; i < addCount; i++)
-                    {
-                        int index = key.arraySize;
-
-                        key.InsertArrayElementAtIndex(index);
-                        value.InsertArrayElementAtIndex(index);
-
-                        //InsertArrayElementAtIndex 함수는 값을 복제하기 때문에 키를 기본값으로 정해줘야 제대로 생성할 수 있게 됨
-                        key.GetArrayElementAtIndex(index).SetDefaultValue();
-                    }
-                }
-                else
-                {
-                    addCount = -addCount;
-                    for (int i = 0; i < addCount; i++)
-                    {
-                        int index = key.arraySize - 1;
-
-                        key.DeleteArrayElementAtIndex(index);
-                        value.DeleteArrayElementAtIndex(index);
-                    }
-                }
-            }
+                key.DeleteArrayElementAtIndex(index);
+                value.DeleteArrayElementAtIndex(index);
+            });
 
             position.y += headHeight + 2;
 
@@ -92,7 +55,7 @@ namespace RuniEngine.Editor.Drawers
                 if (animFloat == null)
                     return;
 
-                if (property.isExpanded || animFloat.isAnimating)
+                if (key.isExpanded || animFloat.isAnimating)
                 {
                     if (animFloat.isAnimating)
                         GUI.BeginClip(new Rect(0, 0, position.x + position.width, position.y + animFloat.value));
@@ -107,7 +70,7 @@ namespace RuniEngine.Editor.Drawers
                 if (animFloat.isAnimating)
                     InspectorWindow.RepaintAllInspectors();
             }
-            else if (property.isExpanded)
+            else if (key.isExpanded)
             {
                 ReorderableList reorderableList = GetReorderableList(serializedObject, property, key, value);
                 reorderableList.DoList(position);
@@ -123,7 +86,7 @@ namespace RuniEngine.Editor.Drawers
             float headerHeight = GetYSize(label, EditorStyles.foldoutHeader);
             float height;
             ReorderableList reorderableList = GetReorderableList(serializedObject, property, key, value);
-            if (property.isExpanded)
+            if (key.isExpanded)
                 height = reorderableList.GetHeight() + 2;
             else
                 height = 0;

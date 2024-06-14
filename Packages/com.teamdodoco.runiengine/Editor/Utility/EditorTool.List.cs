@@ -13,7 +13,134 @@ namespace RuniEngine.Editor
         public delegate bool DrawRawListDefaultValueFunc(int index);
         public delegate void DrawRawListAddRemoveFunc(int index);
 
-        public static void DeleteSafety(ref bool value) => value = EditorGUILayout.Toggle(TryGetText("gui.delete_safety"), value);
+        public static void DeleteSafetyLayout(ref bool value) => value = EditorGUILayout.Toggle(TryGetText("gui.delete_safety"), value);
+        public static void DeleteSafety(Rect position, ref bool value) => value = EditorGUI.Toggle(position, TryGetText("gui.delete_safety"), value);
+
+        public static bool ListHeaderLayout(IList list, string label, bool foldout) => ListHeaderLayout(list, new GUIContent(label), foldout, null, null);
+        public static bool ListHeaderLayout(IList list, GUIContent label, bool foldout) => ListHeaderLayout(list, label, foldout, null, null);
+        public static bool ListHeaderLayout(IList list, string label, bool foldout, Action<int>? addAction, Action<int>? removeAction) => ListHeaderLayout(list, new GUIContent(label), foldout, addAction, removeAction);
+        public static bool ListHeaderLayout(IList list, GUIContent label, bool foldout, Action<int>? addAction, Action<int>? removeAction) => ListHeader(EditorGUILayout.GetControlRect(false, GetYSize(EditorStyles.foldoutHeader)), list, label, foldout, addAction, removeAction);
+
+        public static bool ListHeader(Rect position, IList list, string label, bool foldout) => ListHeader(position, list, new GUIContent(label), foldout, null, null);
+        public static bool ListHeader(Rect position, IList list, GUIContent label, bool foldout) => ListHeader(position, list, label, foldout, null, null);
+        public static bool ListHeader(Rect position, IList list, string label, bool foldout, Action<int>? addAction, Action<int>? removeAction) => ListHeader(position, list, new GUIContent(label), foldout, addAction, removeAction);
+        public static bool ListHeader(Rect position, IList list, GUIContent label, bool foldout, Action<int>? addAction, Action<int>? removeAction)
+        {
+            {
+                Rect headerPosition = position;
+                headerPosition.width -= 48;
+
+                foldout = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, foldout, label);
+                EditorGUI.EndFoldoutHeaderGroup();
+
+                EditorGUI.EndProperty();
+            }
+
+            {
+                Rect countPosition = position;
+                countPosition.x += countPosition.width - 48;
+                countPosition.width = 48;
+
+                int count = EditorGUI.DelayedIntField(countPosition, list.Count);
+                int addCount = count - list.Count;
+                if (addCount > 0)
+                {
+                    for (int i = 0; i < addCount; i++)
+                    {
+                        int index = list.Count;
+                        if (addAction != null)
+                            addAction(index);
+                        else
+                            list.Add(index);
+                    }
+                }
+                else
+                {
+                    addCount = -addCount;
+                    for (int i = 0; i < addCount; i++)
+                    {
+                        int index = list.Count - 1;
+                        if (removeAction != null)
+                            removeAction(index);
+                        else
+                            list.RemoveAt(index);
+                    }
+                }
+            }
+
+            return foldout;
+        }
+
+        public static void ListHeaderLayout(SerializedProperty property, string label) => ListHeaderLayout(property, new GUIContent(label), null, null);
+        public static void ListHeaderLayout(SerializedProperty property, GUIContent label) => ListHeaderLayout(property, label, null, null);
+        public static void ListHeaderLayout(SerializedProperty property, string label, Action<int>? addAction, Action<int>? removeAction) => ListHeaderLayout(property, new GUIContent(label), addAction, removeAction);
+        public static void ListHeaderLayout(SerializedProperty property, GUIContent label, Action<int>? addAction, Action<int>? removeAction)
+        {
+            float height;
+            if (property.IsInArray())
+                height = GetYSize(EditorStyles.foldout);
+            else
+                height = GetYSize(EditorStyles.foldoutHeader);
+
+            ListHeader(EditorGUILayout.GetControlRect(false, height), property, label, addAction, removeAction);
+        }
+
+        public static void ListHeader(Rect position, SerializedProperty property, string label) => ListHeader(position, property, new GUIContent(label), null, null);
+        public static void ListHeader(Rect position, SerializedProperty property, GUIContent label) => ListHeader(position, property, label, null, null);
+        public static void ListHeader(Rect position, SerializedProperty property, string label, Action<int>? addAction, Action<int>? removeAction) => ListHeader(position, property, new GUIContent(label), addAction, removeAction);
+        public static void ListHeader(Rect position, SerializedProperty property, GUIContent label, Action<int>? addAction, Action<int>? removeAction)
+        {
+            bool isInArray = property.IsInArray();
+
+            {
+                Rect headerPosition = position;
+                headerPosition.width -= 48;
+
+                EditorGUI.BeginProperty(headerPosition, label, property);
+
+                if (!isInArray)
+                {
+                    property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, property.isExpanded, label);
+                    EditorGUI.EndFoldoutHeaderGroup();
+                }
+                else
+                    property.isExpanded = EditorGUI.Foldout(headerPosition, property.isExpanded, label, true);
+
+                EditorGUI.EndProperty();
+            }
+
+            {
+                Rect countPosition = position;
+                countPosition.x += countPosition.width - 48;
+                countPosition.width = 48;
+
+                int count = EditorGUI.DelayedIntField(countPosition, property.arraySize);
+                int addCount = count - property.arraySize;
+                if (addCount > 0)
+                {
+                    for (int i = 0; i < addCount; i++)
+                    {
+                        int index = property.arraySize;
+                        if (addAction != null)
+                            addAction(index);
+                        else
+                            property.InsertArrayElementAtIndex(index);
+                    }
+                }
+                else
+                {
+                    addCount = -addCount;
+                    for (int i = 0; i < addCount; i++)
+                    {
+                        int index = property.arraySize - 1;
+                        if (removeAction != null)
+                            removeAction(index);
+                        else
+                            property.DeleteArrayElementAtIndex(index);
+                    }
+                }
+            }
+        }
 
         public static int DrawRawList(IList list, string label, DrawRawListFunc drawFunc, DrawRawListDefaultValueFunc defaultValueFunc, DrawRawListAddRemoveFunc addFunc, out bool isListChanged, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(list, label, drawFunc, defaultValueFunc, addFunc, false, Vector2.zero, out isListChanged, deleteSafety, displayRestrictions, displayRestrictionsIndex).displayRestrictionsIndex;
         public static (Vector2 scrollViewPos, int displayRestrictionsIndex) DrawRawList(IList list, string label, DrawRawListFunc drawFunc, DrawRawListDefaultValueFunc defaultValueFunc, DrawRawListAddRemoveFunc addFunc, Vector2 scrollViewPos, out bool isListChanged, bool deleteSafety = true, int displayRestrictions = int.MaxValue, int displayRestrictionsIndex = 0) => InternalDrawRawList(list, label, drawFunc, defaultValueFunc, addFunc, true, scrollViewPos, out isListChanged, deleteSafety, displayRestrictions, displayRestrictionsIndex);

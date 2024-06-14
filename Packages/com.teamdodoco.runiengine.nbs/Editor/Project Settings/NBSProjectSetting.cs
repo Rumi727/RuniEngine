@@ -35,7 +35,7 @@ namespace RuniEngine.Editor.ProjectSettings
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
             BeginLabelWidth(0);
 
-            DeleteSafety(ref deleteSafety);
+            DeleteSafetyLayout(ref deleteSafety);
 
             nameSpace = DrawNameSpace(TryGetText("gui.namespace"), nameSpace);
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
