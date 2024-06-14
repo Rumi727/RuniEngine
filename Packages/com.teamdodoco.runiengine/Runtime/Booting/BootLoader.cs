@@ -16,7 +16,7 @@ namespace RuniEngine.Booting
 {
     public static class BootLoader
     {
-        public static StorableClass[] projectData
+        public static IReadOnlyList<StorableClass> projectData
         {
             get
             {
@@ -26,7 +26,7 @@ namespace RuniEngine.Booting
         }
         internal static StorableClass[] _projectData = null!;
 
-        public static StorableClass[] globalData
+        public static IReadOnlyList<StorableClass> globalData
         {
             get
             {
