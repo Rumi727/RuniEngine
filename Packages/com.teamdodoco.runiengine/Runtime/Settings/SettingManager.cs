@@ -12,6 +12,8 @@ namespace RuniEngine.Settings
 {
     public static class SettingManager
     {
+        public const string rootName = "settings";
+
         public static IReadOnlyList<StorableClass> projectData
         {
             get
