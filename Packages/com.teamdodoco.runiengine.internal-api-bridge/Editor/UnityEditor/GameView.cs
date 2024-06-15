@@ -7,14 +7,14 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
     {
         public static new Type type { get; } = EditorAssemblyManager.UnityEditor_CoreModule.GetType("UnityEditor.GameView");
 
-        public static new GameView GetInstance(global::UnityEditor.EditorWindow instance) => new GameView(instance);
+        public static new GameView GetInstance(global::UnityEditor.EditorWindow? instance) => new GameView(instance);
 
-        GameView(global::UnityEditor.EditorWindow instance) : base(instance) => this.instance = instance;
+        GameView(global::UnityEditor.EditorWindow? instance) : base(instance) => this.instance = instance;
 
-        public new global::UnityEditor.EditorWindow instance { get; }
+        public new global::UnityEditor.EditorWindow? instance { get; }
 
 
 
-        public override string ToString() => instance.ToString();
+        public override string ToString() => instance != null ? instance.ToString() : "Null";
     }
 }

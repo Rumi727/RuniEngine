@@ -8,11 +8,11 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
     {
         public static new Type type { get; } = EditorAssemblyManager.UnityEditor_CoreModule.GetType("UnityEditor.InspectorWindow");
 
-        public static InspectorWindow GetInstance(global::UnityEditor.EditorWindow instance) => new InspectorWindow(instance);
+        public static InspectorWindow GetInstance(global::UnityEditor.EditorWindow? instance) => new InspectorWindow(instance);
 
-        protected InspectorWindow(global::UnityEditor.EditorWindow instance) => this.instance = instance;
+        protected InspectorWindow(global::UnityEditor.EditorWindow? instance) => this.instance = instance;
 
-        public global::UnityEditor.EditorWindow instance { get; }
+        public global::UnityEditor.EditorWindow? instance { get; }
 
 
         
@@ -25,6 +25,6 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
 
 
 
-        public override string ToString() => instance.ToString();
+        public override string ToString() => instance != null ? instance.ToString() : "Null";
     }
 }

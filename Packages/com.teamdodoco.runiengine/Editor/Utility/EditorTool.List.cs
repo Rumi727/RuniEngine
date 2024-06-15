@@ -354,20 +354,20 @@ namespace RuniEngine.Editor
             return (scrollViewPos, displayRestrictionsIndex);
         }
 
-        public static string DrawStringArray(string value, string[] array, params GUILayoutOption[] options) => InternalDrawStringArray("", value, array, false, out _, options);
-        public static string DrawStringArray(string label, string value, string[] array, params GUILayoutOption[] options) => InternalDrawStringArray(label, value, array, true, out _, options);
-        public static string DrawStringArray(string value, string[] array, out int index, params GUILayoutOption[] options) => InternalDrawStringArray("", value, array, false, out index, options);
-        public static string DrawStringArray(string label, string value, string[] array, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(label, value, array, true, out index, options);
-        static string InternalDrawStringArray(string label, string value, string[] array, bool labelShow, out int index, params GUILayoutOption[] options)
+        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, string.Empty, value, array, false, isPath, out _, options);
+        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string label, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, label, value, array, true, isPath, out _, options);
+        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, string.Empty, value, array, false, isPath, out index, options);
+        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string label, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, label, value, array, true, isPath, out index, options);
+        static string InternalDrawStringArray(ref RuniAdvancedDropdown? dropdown, string label, string value, string[] array, bool labelShow, bool isPath, out int index, params GUILayoutOption[] options)
         {
             EditorGUILayout.BeginHorizontal();
 
             if (labelShow)
                 EditorGUILayout.PrefixLabel(label);
 
-            value = EditorGUILayout.TextField(value);
+            value = EditorGUILayout.TextField(value, options);
 
-            //원래 이딴거 안해도 루트 폴더 잘 감지했는데 tq 갑자기 안됨 유니티 병신
+            /*//원래 이딴거 안해도 루트 폴더 잘 감지했는데 tq 갑자기 안됨 유니티 병신
             List<string?> displayList = new List<string?>();
             List<int> indexList = new List<int>();
             for (int i = 0; i < array.Length; i++)
@@ -405,14 +405,23 @@ namespace RuniEngine.Editor
                 }
             }
 
-            index = EditorGUILayout.IntPopup(Array.IndexOf(array, value), displayList.ToArray(), indexList.ToArray(), options);
+            index = EditorGUILayout.IntPopup(Array.IndexOf(array, value), displayList.ToArray(), indexList.ToArray(), options);*/
+
+            dropdown ??= new RuniAdvancedDropdown();
+            if (isPath)
+            {
+                value = dropdown.DrawLayoutPath(value, array, options);
+                index = Array.IndexOf(array, value);
+            }
+            else
+            {
+                index = dropdown.DrawLayout(Array.IndexOf(array, value), array, options);
+                if (index >= 0 && index < array.Length)
+                    value = array[index];
+            }
 
             EditorGUILayout.EndHorizontal();
-
-            if (index >= 0)
-                return array[index];
-            else
-                return value;
+            return value;
         }
 
         class InternalStringArrayInfo
