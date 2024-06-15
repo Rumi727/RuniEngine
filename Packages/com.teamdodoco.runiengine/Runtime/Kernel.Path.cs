@@ -83,7 +83,7 @@ namespace RuniEngine
         static string _temporaryCachePath = "";
 
         /// <summary>
-        /// PathTool.Combine(Kernel.persistentDataPath, "Global Data")
+        /// PathUtility.Combine(Kernel.persistentDataPath, "Global Data")
         /// </summary>
         public static string globalDataPath
         {
@@ -93,7 +93,7 @@ namespace RuniEngine
                     return _globalDataPath;
                 else
                 {
-                    _globalDataPath = Path.Combine(persistentDataPath, "Global Data");
+                    _globalDataPath = PathUtility.Combine(persistentDataPath, "Global Data");
 
                     if (!Directory.Exists(_globalDataPath))
                         Directory.CreateDirectory(_globalDataPath);
@@ -105,7 +105,7 @@ namespace RuniEngine
         static string _globalDataPath = "";
 
         /// <summary>
-        /// PathTool.Combine(Kernel.persistentDataPath, "Resource Pack")
+        /// PathUtility.Combine(Kernel.persistentDataPath, "Resource Pack")
         /// </summary>
         public static string resourcePackPath
         {
@@ -115,7 +115,7 @@ namespace RuniEngine
                     return _resourcePackPath;
                 else
                 {
-                    _resourcePackPath = Path.Combine(persistentDataPath, "Resource Pack");
+                    _resourcePackPath = PathUtility.Combine(persistentDataPath, "Resource Pack");
 
                     if (!Directory.Exists(_resourcePackPath))
                         Directory.CreateDirectory(_resourcePackPath);
@@ -127,9 +127,9 @@ namespace RuniEngine
         static string _resourcePackPath = "";
 
         /// <summary>
-        /// PathTool.Combine(Kernel.streamingAssetsPath, "setting")
+        /// PathUtility.Combine(Kernel.streamingAssetsPath, "setting")
         /// </summary>
-        public static string projectSettingPath { get; } = Path.Combine(streamingAssetsPath, "settings");
+        public static string projectSettingPath { get; } = PathUtility.Combine(streamingAssetsPath, "settings");
 
         public static void PathInitialize()
         {

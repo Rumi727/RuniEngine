@@ -1,6 +1,5 @@
 #nullable enable
-using RuniEngine.Inputs;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEditor.IMGUI.Controls;
 
 namespace RuniEngine.Editor.ProjectSettings
@@ -9,6 +8,8 @@ namespace RuniEngine.Editor.ProjectSettings
     {
         public InputProjectSettingTreeView(TreeViewState state) : base(state) { }
 
-        protected override TreeViewItem BuildRoot() => CreateDictionaryTree(new RuniDictionaryTreeViewItem(0, -1, "", "root"), InputManager.ProjectData.controlList.Keys.ToArray());
+        public IList<string> keyList { get; set; } = new List<string>();
+
+        protected override TreeViewItem BuildRoot() => CreateDictionaryTree(new RuniDictionaryTreeViewItem(0, -1, "", "root"), keyList);
     }
 }

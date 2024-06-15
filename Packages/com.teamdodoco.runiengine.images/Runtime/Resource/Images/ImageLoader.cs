@@ -453,7 +453,11 @@ namespace RuniEngine.Resource.Images
                     typePaths[i] = typePath.Substring(textureRootPath.Length + 1, typePath.Length - textureRootPath.Length - 1).Replace("\\", "/");
                 }
 
-                result2 = typePaths;
+                //빈 타입 경로 만들기
+                string[] typePaths2 = new string[typePaths.Length + 1];
+                Array.Copy(typePaths, 0, typePaths2, 1, typePaths.Length);
+
+                result2 = typePaths2;
             }
 
             return result2;
@@ -653,7 +657,7 @@ namespace RuniEngine.Resource.Images
 
                         if (j >= 0)
                         {
-                            typePath = typePaths[j];
+                            typePath = typePaths[j].UniformDirectorySeparatorCharacter();
                             typeName = typePath.Substring(rootPath.Length + 1);
                         }
                         else

@@ -1,10 +1,10 @@
 #nullable enable
 using System;
 
-namespace RuniEngine.Datas
+namespace RuniEngine.Settings
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public class UserDataAttribute : Attribute
+    public class GlobalDataAttribute : Attribute
     {
 
     }

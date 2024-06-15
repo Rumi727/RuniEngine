@@ -8,7 +8,7 @@ namespace RuniEngine.Screens
     public sealed class ScreenMover : IDisposable
     {
         public static IReadOnlyList<ScreenMover> instances => _instances;
-        static readonly List<ScreenMover> _instances = new();
+        [StaticResettable] static readonly List<ScreenMover> _instances = new();
 
         public ScreenMover() => _instances.Add(this);
 

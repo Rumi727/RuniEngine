@@ -1,6 +1,6 @@
 #nullable enable
 using Newtonsoft.Json;
-using RuniEngine.Datas;
+using RuniEngine.Settings;
 
 namespace RuniEngine.Splashs
 {

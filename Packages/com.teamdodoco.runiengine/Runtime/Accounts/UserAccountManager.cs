@@ -4,6 +4,7 @@ using RuniEngine.Booting;
 using RuniEngine.Datas;
 using RuniEngine.Jsons;
 using RuniEngine.Resource;
+using RuniEngine.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +42,9 @@ namespace RuniEngine.Accounts
             }
         }
         static StorableClass[] _userData = null!;
+
+        [Awaken]
+        public static void Awaken() => _userData = StorableClassUtility.AutoInitialize<UserDataAttribute>();
 
         public static void Add(UserAccountInfo info)
         {
@@ -151,8 +155,6 @@ namespace RuniEngine.Accounts
             currentAccount.Dispose();
             currentAccount = null;
         }
-
-        public static void UserDataInit() => _userData = StorableClassUtility.AutoInitialize<UserDataAttribute>();
 
         public static void UserDataSave()
         {

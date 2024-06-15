@@ -26,9 +26,12 @@ namespace RuniEngine.Editor.ProjectSettings
 
         static SettingsProvider? instance;
         [SettingsProvider]
-        public static SettingsProvider CreateSettingsProvider() => instance ??= new SpriteProjectSetting("Runi Engine/Sprite Setting", SettingsScope.Project);
+        public static SettingsProvider CreateSettingsProvider() => instance ??= new SpriteProjectSetting("Runi Engine/Resources/Sprite Setting", SettingsScope.Project);
 
 
+        RuniAdvancedDropdown? nameSpaceDropdown;
+        RuniAdvancedDropdown? typeDropdown;
+        RuniAdvancedDropdown? nameDropdown;
 
         [SerializeField] string nameSpace = ResourceManager.defaultNameSpace;
         [SerializeField] string type = "";
@@ -38,15 +41,28 @@ namespace RuniEngine.Editor.ProjectSettings
         [SerializeField] float previewSize = 200;
         [SerializeField] Texture2D? currentTexture;
         [SerializeField] SpriteMetaData currentMetaData;
+        [SerializeField] string[]? types = null;
+        [SerializeField] string[]? names = null;
         public override void OnGUI(string searchContext)
         {
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
             BeginLabelWidth(0);
 
-            nameSpace = DrawNameSpace(TryGetText("gui.namespace"), nameSpace);
-            type = DrawStringArray(TryGetText("gui.type"), type, ImageLoader.GetTypes(nameSpace));
-            name = DrawStringArray(TryGetText("gui.name"), name, ImageLoader.GetSpriteNames(type, nameSpace));
+            string tempNameSpace = DrawNameSpace(ref nameSpaceDropdown, TryGetText("gui.namespace"), nameSpace);
+            if (tempNameSpace != nameSpace)
+            {
+                nameSpace = tempNameSpace;
+                types = null;
+            }
 
+            string tempType = DrawStringArray(ref typeDropdown, TryGetText("gui.type"), type, types ??= ImageLoader.GetTypes(nameSpace), true);
+            if (tempType != type)
+            {
+                type = tempType;
+                names = null;
+            }
+
+            name = DrawStringArray(ref nameDropdown, TryGetText("gui.name"), name, names ??= ImageLoader.GetSpriteNames(type, nameSpace));
             tag = EditorGUILayout.TextField(TryGetText("gui.tag"), tag);
 
             EditorGUILayout.Space();
