@@ -16,7 +16,7 @@ namespace RuniEngine
                     return result;
             }
 
-            return new StringBuilder();
+            return new StringBuilder(128);
         }
 
         public static string Release(StringBuilder builder)
