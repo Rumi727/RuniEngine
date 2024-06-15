@@ -1,8 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
-using RuniEngine.Accounts;
-using RuniEngine.Datas;
 using RuniEngine.Resource;
+using RuniEngine.Settings;
 using RuniEngine.Splashs;
 using RuniEngine.Threading;
 using System;
@@ -16,28 +15,7 @@ namespace RuniEngine.Booting
 {
     public static class BootLoader
     {
-        public static IReadOnlyList<StorableClass> projectData
-        {
-            get
-            {
-                BasicDataNotLoadedException.Exception();
-                return _projectData;
-            }
-        }
-        internal static StorableClass[] _projectData = null!;
-
-        public static IReadOnlyList<StorableClass> globalData
-        {
-            get
-            {
-                BasicDataNotLoadedException.Exception();
-                return _globalData;
-            }
-        }
-        internal static StorableClass[] _globalData = null!;
-
         public static bool isLoadingStart { get; private set; } = false;
-        public static bool isDataLoaded { get; private set; } = false;
         public static bool isAllLoaded { get; private set; } = false;
 
         public static AsyncTask? resourceTask { get; private set; } = null;
@@ -50,7 +28,7 @@ namespace RuniEngine.Booting
             //CS0162 접근할 수 없는 코드 경고를 비활성화 하기 위해 변수로 우회합니다
             bool warningDisable = true;
             if (warningDisable)
-                throw new NotSupportedException(LanguageLoader.TryGetText("boot_loader.webgl"));
+                throw new NotSupportedException(Resource.Texts.LanguageLoader.TryGetText("boot_loader.webgl"));
 #endif
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
@@ -75,7 +53,6 @@ namespace RuniEngine.Booting
 
                 //Custom Update Setting
                 CustomPlayerLoopSetter.EventRegister(ref loopSystems);
-                PlayerLoop.SetPlayerLoop(loopSystems);
             }
             Debug.Log("Player Loop Setting End", nameof(BootLoader));
 
@@ -93,7 +70,7 @@ namespace RuniEngine.Booting
             //Resource Setup
             TryLoad().Forget();
 
-            await UniTask.WaitUntil(() => isDataLoaded || !Kernel.isPlaying);
+            await UniTask.WaitUntil(() => SettingManager.isDataLoaded || !Kernel.isPlaying);
             if (!Kernel.isPlaying)
                 return;
 
@@ -122,20 +99,7 @@ namespace RuniEngine.Booting
 
             //Storable Class
             Debug.Log("Storable Class Loading...", nameof(BootLoader));
-            {
-                await UniTask.WhenAll(
-                    UniTask.RunOnThreadPool(() => _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>()),
-                    UniTask.RunOnThreadPool(() => _globalData = StorableClassUtility.AutoInitialize<GlobalDataAttribute>()),
-                    UniTask.RunOnThreadPool(UserAccountManager.UserDataInit)
-                    );
-
-                await UniTask.WhenAll(
-                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectSettingPath)),
-                    UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(_globalData, Kernel.globalDataPath))
-                    );
-
-                isDataLoaded = true;
-            }
+            await SettingManager.Init();
             Debug.Log("Storable Class Loaded", nameof(BootLoader));
 
             Debug.Log("Resource Loading...", nameof(BootLoader));

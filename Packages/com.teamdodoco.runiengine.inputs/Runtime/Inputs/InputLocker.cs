@@ -7,16 +7,27 @@ namespace RuniEngine
     public sealed class InputLocker : IComparable<InputLocker>, IDisposable
     {
         public static IReadOnlyList<InputLocker> instances => _instances;
-        static readonly List<InputLocker> _instances = new List<InputLocker>();
+        [StaticResettable] static readonly List<InputLocker> _instances = new List<InputLocker>();
 
-        public InputLocker() : this(0) { }
+        public static IReadOnlyList<InputLocker> oppositeInstances => _oppositeInstances;
+        [StaticResettable] static readonly List<InputLocker> _oppositeInstances = new List<InputLocker>();
 
-        public InputLocker(int priority)
+        public InputLocker(bool opposite = false) : this(0, opposite) { }
+
+        public InputLocker(int priority, bool opposite = false)
         {
             _priority = priority;
 
-            _instances.Add(this);
-            _instances.Sort();
+            if (opposite)
+            {
+                _oppositeInstances.Add(this);
+                _oppositeInstances.Sort();
+            }
+            else
+            {
+                _instances.Add(this);
+                _instances.Sort();
+            }
         }
 
         public int priority
@@ -28,8 +39,27 @@ namespace RuniEngine
 
                 return _priority;
             }
+            set
+            {
+                if (isDisposed)
+                    throw new ObjectDisposedException(GetType().FullName);
+
+                _priority = value;
+            }
         }
-        readonly int _priority = 0;
+        int _priority = 0;
+
+        public bool opposite
+        {
+            get
+            {
+                if (isDisposed)
+                    throw new ObjectDisposedException(GetType().FullName);
+
+                return _opposite;
+            }
+        }
+        readonly bool _opposite;
 
 
         public int CompareTo(InputLocker other)
@@ -49,20 +79,20 @@ namespace RuniEngine
 
 
 
-        public static bool operator <(InputLocker left, InputLocker right) => left.priority <= right.priority;
-        public static bool operator >(InputLocker left, InputLocker right) => left.priority >= right.priority;
+        public static bool operator <(InputLocker left, InputLocker right) => left.priority < right.priority;
+        public static bool operator >(InputLocker left, InputLocker right) => left.priority > right.priority;
 
         public static bool operator <=(InputLocker left, InputLocker right) => left.priority <= right.priority;
         public static bool operator >=(InputLocker left, InputLocker right) => left.priority >= right.priority;
 
-        public static bool operator <(InputLocker left, int right) => left.priority <= right;
-        public static bool operator >(InputLocker left, int right) => left.priority >= right;
+        public static bool operator <(InputLocker left, int right) => left.priority < right;
+        public static bool operator >(InputLocker left, int right) => left.priority > right;
 
         public static bool operator <=(InputLocker left, int right) => left.priority <= right;
         public static bool operator >=(InputLocker left, int right) => left.priority >= right;
 
-        public static bool operator <(int left, InputLocker right) => left <= right.priority;
-        public static bool operator >(int left, InputLocker right) => left >= right.priority;
+        public static bool operator <(int left, InputLocker right) => left < right.priority;
+        public static bool operator >(int left, InputLocker right) => left > right.priority;
 
         public static bool operator <=(int left, InputLocker right) => left <= right.priority;
         public static bool operator >=(int left, InputLocker right) => left >= right.priority;

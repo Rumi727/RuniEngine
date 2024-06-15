@@ -19,7 +19,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
         static SettingsProvider? instance;
         [SettingsProvider]
-        public static SettingsProvider CreateSettingsProvider() => instance ??= new NBSProjectSetting("Runi Engine/NBS Setting", SettingsScope.Project);
+        public static SettingsProvider CreateSettingsProvider() => instance ??= new NBSProjectSetting("Runi Engine/Resources/NBS Setting", SettingsScope.Project);
 
 
 
@@ -30,6 +30,7 @@ namespace RuniEngine.Editor.ProjectSettings
         EditorGUISplitView? splitView;
         [SerializeField] string selectedKey = "";
         string lastJsonPath = "";
+        RuniAdvancedDropdown? nameSpaceDropdown;
         public override void OnGUI(string searchContext)
         {
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
@@ -37,7 +38,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
             DeleteSafetyLayout(ref deleteSafety);
 
-            nameSpace = DrawNameSpace(TryGetText("gui.namespace"), nameSpace);
+            nameSpace = DrawNameSpace(ref nameSpaceDropdown, TryGetText("gui.namespace"), nameSpace);
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             string nameSpace2 = nameSpace;

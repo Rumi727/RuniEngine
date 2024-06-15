@@ -7,7 +7,7 @@ namespace RuniEngine.Screens
     public sealed class ScreenCroper : IDisposable
     {
         public static IReadOnlyList<ScreenCroper> instances => _instances;
-        static readonly List<ScreenCroper> _instances = new();
+        [StaticResettable] static readonly List<ScreenCroper> _instances = new();
 
         public ScreenCroper() => _instances.Add(this);
 

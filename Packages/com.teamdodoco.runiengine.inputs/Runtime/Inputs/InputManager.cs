@@ -1,6 +1,7 @@
 #nullable enable
 using Newtonsoft.Json;
-using RuniEngine.Datas;
+using RuniEngine.Accounts;
+using RuniEngine.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,10 @@ namespace RuniEngine.Inputs
 {
     public static class InputManager
     {
-        [ProjectData]
-        public struct ProjectData
+        [NameSpaceProjectData]
+        public sealed class ProjectData
         {
-            [JsonProperty] public static Dictionary<string, KeyCode[]> controlList { get; set; } = new();
+            public Dictionary<string, KeyCode[]> controlList { get; set; } = new();
         }
 
         [UserData]
@@ -43,13 +44,13 @@ namespace RuniEngine.Inputs
 
 
 
-        public static bool GetKeyDown(string key, int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, true, false);
-        public static bool GetKey(string key, int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, false, false);
-        public static bool GetKeyUp(string key, int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, false, true);
+        public static bool GetKeyDown(string key, string nameSpace = "", int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, nameSpace, true, false);
+        public static bool GetKey(string key, string nameSpace = "", int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, nameSpace, false, false);
+        public static bool GetKeyUp(string key, string nameSpace = "", int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, nameSpace, false, true);
 
-        public static bool GetKeyDown(string key, params InputLocker[] locks) => !IsInputLocked(locks) && InternalGeyKey(key, true, false);
-        public static bool GetKey(string key, params InputLocker[] locks) => !IsInputLocked(locks) && InternalGeyKey(key, false, false);
-        public static bool GetKeyUp(string key, params InputLocker[] locks) => !IsInputLocked(locks) && InternalGeyKey(key, false, true);
+        public static bool GetKeyDown(string key, string nameSpace = "", params InputLocker[] locks) => !IsInputLocked(locks) && InternalGeyKey(key, nameSpace, true, false);
+        public static bool GetKey(string key, string nameSpace = "", params InputLocker[] locks) => !IsInputLocked(locks) && InternalGeyKey(key, nameSpace, false, false);
+        public static bool GetKeyUp(string key, string nameSpace = "", params InputLocker[] locks) => !IsInputLocked(locks) && InternalGeyKey(key, nameSpace, false, true);
 
         public static bool GetKeyDown(KeyCode keyCode, int priority = 0) => !IsInputLocked(priority) && Input.GetKeyDown(keyCode);
         public static bool GetKey(KeyCode keyCode, int priority = 0) => !IsInputLocked(priority) && Input.GetKey(keyCode);
@@ -60,14 +61,15 @@ namespace RuniEngine.Inputs
         public static bool GetKeyUp(KeyCode keyCode, params InputLocker[] locks) => !IsInputLocked(locks) && Input.GetKeyUp(keyCode);
 
 
-        internal static bool InternalGeyKey(string key, bool down, bool up)
+        internal static bool InternalGeyKey(string key, string nameSpace, bool down, bool up)
         {
+            ProjectData? projectData = SettingManager.GetProjectSetting<ProjectData>(nameSpace);
             KeyCode[]? keyCodes = null;
             if (UserData.controlList.ContainsKey(key))
                 keyCodes = UserData.controlList[key];
-            else if (ProjectData.controlList.ContainsKey(key))
-                keyCodes = ProjectData.controlList[key];
-
+            else if (projectData != null && projectData.controlList.ContainsKey(key))
+                keyCodes = projectData.controlList[key];
+            
             if (keyCodes == null)
                 return false;
             
@@ -97,7 +99,7 @@ namespace RuniEngine.Inputs
 
 
 
-        public static bool IsInputLocked() => InputLocker.instances.Count > 0;
+        public static bool IsInputLocked() => IsInputLocked(int.MinValue);
 
         public static bool IsInputLocked(int priority)
         {

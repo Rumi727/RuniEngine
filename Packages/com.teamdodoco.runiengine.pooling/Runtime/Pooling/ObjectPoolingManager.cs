@@ -42,7 +42,6 @@ namespace RuniEngine.Pooling
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
-            BasicDataNotLoadedException.Exception();
 
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
@@ -76,7 +75,6 @@ namespace RuniEngine.Pooling
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
-            BasicDataNotLoadedException.Exception();
 
             poolingObject.gameObject.SetActive(false);
             poolingObject.transform.SetParent(instance.transform, false);
@@ -107,7 +105,6 @@ namespace RuniEngine.Pooling
         {
             NotMainThreadException.Exception();
             NotPlayModeException.Exception();
-            BasicDataNotLoadedException.Exception();
 
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 

@@ -75,6 +75,8 @@ namespace RuniEngine.Booting
                 loopSystem.updateDelegate += updateDelegate;
                 loopSystems.subSystemList[i] = loopSystem;
             }
+
+            PlayerLoop.SetPlayerLoop(loopSystems);
         }
     }
 }

@@ -8,14 +8,14 @@ namespace RuniEngine.Datas
     public static class StorableClassUtility
     {
         /// <summary>
-        /// 조건에 맞는 모든 클래스에 대한 저장 가능한 클래스를 생성합니다
+        /// 조건에 맞는 모든 클래스에 대한 저장 가능한 정적 클래스를 생성합니다
         /// </summary>
         /// <param name="attribute">클래스가 가지고 있어야하는 어트리뷰트</param>
         /// <returns></returns>
         public static StorableClass[] AutoInitialize<T>() => AutoInitialize(typeof(T));
 
         /// <summary>
-        /// 조건에 맞는 모든 클래스에 대한 저장 가능한 클래스를 생성합니다
+        /// 조건에 맞는 모든 클래스에 대한 저장 가능한 정적 클래스를 생성합니다
         /// </summary>
         /// <param name="attribute">클래스가 가지고 있어야하는 어트리뷰트</param>
         /// <returns></returns>
@@ -31,6 +31,35 @@ namespace RuniEngine.Datas
                     continue;
 
                 storableObjectInfos.Add(new StorableClass(type));
+            }
+
+            return storableObjectInfos.ToArray();
+        }
+
+        /// <summary>
+        /// 조건에 맞는 모든 클래스에 대한 저장 가능한 클래스를 생성합니다
+        /// </summary>
+        /// <param name="attribute">클래스가 가지고 있어야하는 어트리뷰트</param>
+        /// <returns></returns>
+        public static StorableClass[] AutoInstanceInitialize<T>() => AutoInstanceInitialize(typeof(T));
+
+        /// <summary>
+        /// 조건에 맞는 모든 클래스에 대한 저장 가능한 클래스를 생성합니다
+        /// </summary>
+        /// <param name="attribute">클래스가 가지고 있어야하는 어트리뷰트</param>
+        /// <returns></returns>
+        public static StorableClass[] AutoInstanceInitialize(Type attribute)
+        {
+            List<StorableClass> storableObjectInfos = new List<StorableClass>();
+            IReadOnlyList<Type> types = ReflectionManager.types;
+
+            for (int i = 0; i < types.Count; i++)
+            {
+                Type type = types[i];
+                if (Attribute.GetCustomAttributes(type, attribute).Length <= 0)
+                    continue;
+
+                storableObjectInfos.Add(new StorableClass(Activator.CreateInstance(type)));
             }
 
             return storableObjectInfos.ToArray();

@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using RuniEngine.Accounts;
 using RuniEngine.Booting;
-using RuniEngine.Datas;
+using RuniEngine.Settings;
 using RuniEngine.Threading;
 using System;
 using System.Diagnostics;
@@ -178,10 +178,8 @@ namespace RuniEngine
             if (UserAccountManager.currentAccount != null)
                 UserAccountManager.LogoutWithoutUnload();
 
-            GlobalData.lastRuniEngineVersion = runiEngineVersion;
-
-            if (BootLoader.isDataLoaded)
-                StorableClassUtility.SaveAll(BootLoader.globalData, globalDataPath);
+            if (SettingManager.isDataLoaded)
+                SettingManager.Save();
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.update += Update;
