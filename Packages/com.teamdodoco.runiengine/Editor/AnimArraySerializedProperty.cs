@@ -119,35 +119,6 @@ namespace RuniEngine.Editor
 
                 EndLabelWidth();
             },
-            onAddCallback = x =>
-            {
-                int index = property.arraySize;
-                property.InsertArrayElementAtIndex(index);
-
-                x.Select(index);
-                x.GrabKeyboardFocus();
-            },
-            onRemoveCallback = x =>
-            {
-                if (x.selectedIndices.Count > 0)
-                {
-                    int removeCount = 0;
-                    for (int i = 0; i < x.selectedIndices.Count; i++)
-                    {
-                        int index = x.selectedIndices[i] - removeCount;
-                        if (index < 0 || index >= property.arraySize)
-                            continue;
-
-                        property.DeleteArrayElementAtIndex(index);
-                        removeCount++;
-                    }
-                }
-                else
-                    property.DeleteArrayElementAtIndex(property.arraySize - 1);
-
-                x.Select((x.index - 1).Clamp(0));
-                x.GrabKeyboardFocus();
-            },
             elementHeightCallback = i => EditorGUI.GetPropertyHeight(property.GetArrayElementAtIndex(i))
         };
     }
