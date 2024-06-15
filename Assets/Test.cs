@@ -7,6 +7,7 @@ using RuniEngine.Sounds;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Test : MonoBehaviour
 {
@@ -104,5 +105,23 @@ public class Test : MonoBehaviour
 
             lastBeat = beat;
         }
+    }
+
+    void OnGUI()
+    {
+        if (GUILayout.Button("2 Scene Add"))
+            SceneManager.LoadSceneAsync(2, new LoadSceneParameters(LoadSceneMode.Additive));
+
+        if (GUILayout.Button("2 Scene Unload"))
+            SceneManager.UnloadSceneAsync(2);
+
+        if (GUILayout.Button("1 Scene Load"))
+            SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+
+        if (GUILayout.Button("1 Scene Add"))
+            SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+
+        if (GUILayout.Button("1 Scene Unload"))
+            SceneManager.UnloadSceneAsync(1);
     }
 }
