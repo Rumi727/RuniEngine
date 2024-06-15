@@ -76,7 +76,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.ugui": "1.0.0"
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0"
       }
     },
     "com.teamdodoco.runiengine.nbs": {
@@ -345,7 +346,7 @@
     },
     "com.unity.modules.imgui": {
       "version": "1.0.0",
-      "depth": 2,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {}
     },
