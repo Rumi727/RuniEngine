@@ -1,5 +1,4 @@
 #nullable enable
-using Newtonsoft.Json;
 using RuniEngine.Datas;
 using RuniEngine.Jsons;
 using RuniEngine.Resource;
@@ -14,7 +13,7 @@ namespace RuniEngine.Editor
         [ProjectData]
         public struct ProjectData
         {
-            [JsonProperty] public static string currentLanguage { get; set; } = "en_us";
+            public static string currentLanguage { get; set; } = "en_us";
         }
 
         public const string packageLanguagePath = packagePath + "/" + packageEditorPath + "/Languages";

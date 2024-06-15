@@ -11,12 +11,12 @@ namespace RuniEngine.UI
         [UserData]
         public struct UserData
         {
-            [JsonProperty] public static JColor mainColor { get; set; } = new Color32(255, 15, 70, 255);
+            public static JColor mainColor { get; set; } = new Color32(255, 15, 70, 255);
 
-            [JsonProperty] public static float defaultLerpAniSpeed { get => _defaultLerpAniSpeed.Clamp(0); set => _defaultLerpAniSpeed = value.Clamp(0); }
+            public static float defaultLerpAniSpeed { get => _defaultLerpAniSpeed.Clamp(0); set => _defaultLerpAniSpeed = value.Clamp(0); }
             static float _defaultLerpAniSpeed = 0.08f;
 
-            [JsonProperty] public static float uiSize { get => _uiSize.Clamp(0); set => _uiSize = value.Clamp(0); }
+            public static float uiSize { get => _uiSize.Clamp(0); set => _uiSize = value.Clamp(0); }
             static float _uiSize = 1;
         }
 
