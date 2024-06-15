@@ -39,26 +39,26 @@ namespace RuniEngine.Editor
                     else
                         comparisonKey += keySplit;
 
-                    if (!items.ContainsKey(comparisonKey))
+                    if (items.ContainsKey(comparisonKey))
+                        continue;
+
+                    if (j > 0)
                     {
-                        if (j > 0)
-                        {
-                            RuniDictionaryTreeViewItem item = new RuniDictionaryTreeViewItem(id, comparisonKey, keySplit);
+                        RuniDictionaryTreeViewItem item = new RuniDictionaryTreeViewItem(id, comparisonKey, keySplit);
 
-                            items[comparisonParentKey].AddChild(item);
-                            items.Add(comparisonKey, item);
+                        items[comparisonParentKey].AddChild(item);
+                        items.Add(comparisonKey, item);
 
-                            id++;
-                        }
-                        else
-                        {
-                            RuniDictionaryTreeViewItem item = new RuniDictionaryTreeViewItem(id, comparisonKey, keySplit);
+                        id++;
+                    }
+                    else
+                    {
+                        RuniDictionaryTreeViewItem item = new RuniDictionaryTreeViewItem(id, comparisonKey, keySplit);
 
-                            items.Add(comparisonKey, item);
-                            root.AddChild(item);
+                        items.Add(comparisonKey, item);
+                        root.AddChild(item);
 
-                            id++;
-                        }
+                        id++;
                     }
                 }
             }
