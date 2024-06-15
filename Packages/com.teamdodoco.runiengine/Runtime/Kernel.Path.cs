@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine.Settings;
 using System.IO;
 using UnityEngine;
 
@@ -129,7 +130,7 @@ namespace RuniEngine
         /// <summary>
         /// PathUtility.Combine(Kernel.streamingAssetsPath, "setting")
         /// </summary>
-        public static string projectSettingPath { get; } = PathUtility.Combine(streamingAssetsPath, "settings");
+        public static string projectSettingPath { get; } = PathUtility.Combine(streamingAssetsPath, SettingManager.rootName);
 
         public static void PathInitialize()
         {

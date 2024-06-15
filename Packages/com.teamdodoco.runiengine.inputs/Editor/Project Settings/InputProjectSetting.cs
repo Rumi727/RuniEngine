@@ -190,7 +190,7 @@ namespace RuniEngine.Editor.ProjectSettings
             void IsChanged()
             {
                 if (!Kernel.isPlaying && inputProjectSetting != null)
-                    inputProjectSetting.AutoNameSave(Path.Combine(Kernel.projectSettingPath, nameSpace));
+                    inputProjectSetting.AutoNameSave(jsonFolderPath);
             }
 
             EndLabelWidth();
@@ -235,6 +235,8 @@ namespace RuniEngine.Editor.ProjectSettings
 
             reorderableList.list = keyCodes;
             reorderableList.DoLayoutList();
+
+            projectData.controlList[key] = keyCodes.ToArray();
 
             EditorGUILayout.EndVertical();
         }
