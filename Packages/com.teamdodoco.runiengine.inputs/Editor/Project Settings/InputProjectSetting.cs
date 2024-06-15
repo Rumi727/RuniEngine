@@ -59,13 +59,13 @@ namespace RuniEngine.Editor.ProjectSettings
 
             if (!Kernel.isPlaying)
             {
-                inputProjectSetting = new StorableClass(new InputManager.ProjectData());
+                inputProjectSetting ??= new StorableClass(InputManager.ProjectData.empty);
                 inputProjectSetting.AutoNameLoad(jsonFolderPath);
 
-                projectData = (InputManager.ProjectData)(inputProjectSetting.instance ?? new InputManager.ProjectData());
+                projectData = (InputManager.ProjectData)(inputProjectSetting.instance ?? InputManager.ProjectData.empty);
             }
             else
-                projectData = SettingManager.GetProjectSetting<InputManager.ProjectData>(nameSpace) ?? new InputManager.ProjectData();
+                projectData = SettingManager.GetProjectSetting<InputManager.ProjectData>(nameSpace) ?? InputManager.ProjectData.empty;
 
             Dictionary<string, KeyCode[]> list = projectData.controlList;
 
@@ -113,6 +113,7 @@ namespace RuniEngine.Editor.ProjectSettings
                         OrderBy();
 
                         treeView.keyList = list.Keys.ToArray();
+
                         treeView.Reload();
                         treeView.SetSelection(selectedKey);
 
@@ -130,7 +131,7 @@ namespace RuniEngine.Editor.ProjectSettings
                         {
                             treeView.keyList = list.Keys.ToArray();
                             treeView.Reload();
-
+                            
                             TreeViewSelectionChanged(treeView.GetSelection());
                         }
 
@@ -164,20 +165,24 @@ namespace RuniEngine.Editor.ProjectSettings
                     if (item == null)
                         continue;
 
-                    if (list.ContainsKey(item.key))
+                    if (!list.ContainsKey(item.key))
+                        continue;
+
+                    DrawGUI(projectData, item.key, ref reorderableList, out string editedKey, IsChanged);
+                    if (item.key != editedKey)
                     {
-                        DrawGUI(projectData, item.key, ref reorderableList, out string editedKey, IsChanged);
-                        if (item.key != editedKey)
-                        {
-                            if (item.key == selectedKey)
-                                selectedKey = editedKey;
+                        if (item.key == selectedKey)
+                            selectedKey = editedKey;
 
-                            OrderBy();
-                            treeView.Reload();
+                        OrderBy();
 
-                            reorderableList = null;
-                            isChanged |= true;
-                        }
+                        treeView.keyList = list.Keys.ToArray();
+
+                        treeView.Reload();
+                        treeView.SetSelection(selectedKey);
+
+                        reorderableList = null;
+                        isChanged |= true;
                     }
                 }
             }

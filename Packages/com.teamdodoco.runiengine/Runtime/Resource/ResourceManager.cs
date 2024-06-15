@@ -21,7 +21,7 @@ namespace RuniEngine.Resource
         [UserData]
         public struct UserData
         {
-            [JsonProperty] public static List<string> resourcePacks { get; set; } = new List<string>();
+            public static List<string> resourcePacks { get; set; } = new List<string>();
         }
 
         public const string rootName = "assets";

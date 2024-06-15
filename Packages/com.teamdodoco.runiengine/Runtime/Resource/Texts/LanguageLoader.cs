@@ -15,7 +15,7 @@ namespace RuniEngine.Resource.Texts
         [GlobalData]
         public struct GlobalData
         {
-            [JsonProperty] public static string currentLanguage { get; set; } = "en_us";
+            public static string currentLanguage { get; set; } = "en_us";
         }
 
 

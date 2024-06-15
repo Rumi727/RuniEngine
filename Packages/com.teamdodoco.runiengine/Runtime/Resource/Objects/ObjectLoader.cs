@@ -17,7 +17,7 @@ namespace RuniEngine.Resource.Objects
         [UserData]
         public struct UserData
         {
-            [JsonProperty] public static bool allowOtherResourcePackLoad { get; set; } = false;
+            public static bool allowOtherResourcePackLoad { get; set; } = false;
         }
 
         public bool isLoaded { get; private set; } = false;
