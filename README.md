@@ -1,20 +1,31 @@
 # Runi Engine
 
-Language available: \[[**한국어 (대한민국)**](README.md)\] \[[English (US)](README-EN.md)\]  
+Language available in README: \[[**한국어 (대한민국)**](README.md)\] \[[English (US)](README-EN.md)\]
 
 **개발 중인 프로젝트 입니다**\
 지금은 [SC KRM 1.0](https://github.com/SimsimhanChobo/SC-KRM-1.0/)을 사용해주세요
 
+## 소개
+
 Unity 전용 만능 커널 시스템, 하지만 **누구나** 사용할 수 있는\
 UI는 [osu!lazer](https://github.com/ppy/osu)에서 영감을 받았습니다
+
+### 왜 만능 "커널" 시스템인가요?
+
+[Kernel]: Packages/com.teamdodoco.runiengine/Runtime/Kernel.cs
+[BootLoader]: Packages/com.teamdodoco.runiengine/Runtime/Booting/BootLoader.cs
+
+글쎄요?\
+[Kernel], [BootLoader] 같은 운영체제스럽게 메인 클래스 이름이 짜여져서 그런것 같기도 하고요?\
+실제로 (서버가 없으니 로컬에 저장되긴 하지만) 계정 시스템도 있기도 하구요\
+음... 그리고 아직 관련 게임을 만들 계획은 없지만 ~~자캐 설정에도 딱 맞기도 하고 하니 그냥?~~\
+뭐 아무렴 어때요 ~~내가 커널이라면 커널이라는거지 말이 많아 어쩔티비 저쩔티비~~
 
 ## 라이선스
 
 [MIT License](https://opensource.org/licenses/MIT)
 
 ## 사용한 패키지와 DLL, 오픈 소스 출처
-
-### 필수
 
 - [UniTask](https://github.com/Cysharp/UniTask)
 - [Asynchronous Image Loader (Forked by TEAM Dodoco)](https://github.com/Rumi727/UnityAsyncImageLoader)
@@ -84,6 +95,7 @@ UI는 [osu!lazer](https://github.com/ppy/osu)에서 영감을 받았습니다
       - UGUI 관련한 편리한 API 및 컴포넌트가 있습니다
       - Runi Engine의 모든 UI를 담당합니다
         - 이로 인해 완성되면 꽤 무거울것이기 때문에 Runi Engine의 기본 UI가 필요하지 않다면 설치하지 않는걸 추천드립니다
+        - 그리고... UI 코딩을 더럽게 못하는 편이라 완성되면 많이 무거울수도...
 4. 인스톨러에서 최종 설치를 끝내세요\
   4.1 언제든지 ``메뉴 모음 -> Runi Engine -> Show Installer``로 가서 인스톨러를 실행할 수 있습니다
 5. 최초 설치시에는 에디터를 재시작하는 것을 추천합니다
