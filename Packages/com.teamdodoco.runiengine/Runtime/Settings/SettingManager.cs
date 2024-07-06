@@ -46,20 +46,16 @@ namespace RuniEngine.Settings
 
 
 
-        [StaticResettable] static readonly List<UniTask> initTasks = new List<UniTask>();
-        public static void SettingInitRegister(Action task) => initTasks.Add(UniTask.RunOnThreadPool(task));
-        public static void SettingInitRegister(Func<UniTask> task) => initTasks.Add(UniTask.RunOnThreadPool(task));
+        [StaticResettable] static readonly List<Action> initTasks = new List<Action>();
+        public static void SettingInitRegister(Action task) => initTasks.Add(task);
 
-        [StaticResettable] static readonly List<UniTask> initLoadTasks = new List<UniTask>();
-        public static void SettingInitLoadRegister(IEnumerable<StorableClass> storableClass, string path) => initLoadTasks.Add(UniTask.RunOnThreadPool(() => StorableClassUtility.LoadAll(storableClass, path)));
-        public static void SettingInitLoadRegister(Func<UniTask> task) => initLoadTasks.Add(UniTask.RunOnThreadPool(task));
+        [StaticResettable] static readonly List<Action> initLoadTasks = new List<Action>();
+        public static void SettingInitLoadRegister(Action task) => initLoadTasks.Add(task);
 
         [StaticResettable(true)] static Action? loadTasks;
-        public static void SettingLoadRegister(IEnumerable<StorableClass> storableClass, string path) => loadTasks += () => StorableClassUtility.LoadAll(storableClass, path);
         public static void SettingLoadRegister(Action task) => loadTasks += task;
 
         [StaticResettable(true)] static Action? saveTasks;
-        public static void SettingSaveRegister(IEnumerable<StorableClass> storableClass, string path) => saveTasks += () => StorableClassUtility.LoadAll(storableClass, path);
         public static void SettingSaveRegister(Action task) => saveTasks += task;
 
         [Awaken]
@@ -74,19 +70,22 @@ namespace RuniEngine.Settings
                 {
                     string path = paths[i];
                     string nameSpace = Path.GetFileName(path);
-
+                    
                     _nameSpaceProjectData.Add(nameSpace, StorableClassUtility.AutoInstanceInitialize<NameSpaceProjectDataAttribute>());
                 }
             });
 
-            SettingInitLoadRegister(_projectData, Kernel.projectSettingPath);
-            SettingInitLoadRegister(_globalData, Kernel.globalDataPath);
-            foreach (var item in _nameSpaceProjectData)
-                SettingInitLoadRegister(item.Value, Path.Combine(Kernel.projectSettingPath, item.Key));
+            SettingInitLoadRegister(() => StorableClassUtility.LoadAll(_projectData, Kernel.projectSettingPath));
+            SettingInitLoadRegister(() => StorableClassUtility.LoadAll(_globalData, Kernel.globalDataPath));
+            SettingInitLoadRegister(() =>
+            {
+                foreach (var item in _nameSpaceProjectData)
+                    StorableClassUtility.LoadAll(item.Value, Path.Combine(Kernel.projectSettingPath, item.Key));
+            });
 
-            SettingLoadRegister(_globalData, Kernel.globalDataPath);
+            SettingLoadRegister(() => _globalData.LoadAll(Kernel.globalDataPath));
             foreach (var item in _nameSpaceProjectData)
-                SettingLoadRegister(item.Value, Path.Combine(Kernel.projectSettingPath, item.Key));
+                SettingLoadRegister(() => item.Value.LoadAll(Path.Combine(Kernel.projectSettingPath, item.Key)));
 
             SettingSaveRegister(() =>
             {
@@ -94,7 +93,7 @@ namespace RuniEngine.Settings
                 StorableClassUtility.SaveAll(_globalData, Kernel.globalDataPath);
             });
             foreach (var item in _nameSpaceProjectData)
-                SettingSaveRegister(item.Value, Path.Combine(Kernel.projectSettingPath, item.Key));
+                SettingSaveRegister(() => StorableClassUtility.SaveAll(item.Value, Path.Combine(Kernel.projectSettingPath, item.Key)));
         }
 
 
@@ -102,8 +101,17 @@ namespace RuniEngine.Settings
 
         public static async UniTask Init()
         {
-            await UniTask.WhenAll(initTasks);
-            await UniTask.WhenAll(initLoadTasks);
+            UniTask[] uniTasks = new UniTask[initTasks.Count];
+            for (int i = 0; i < uniTasks.Length; i++)
+                uniTasks[i] = UniTask.RunOnThreadPool(initTasks[i]);
+
+            await UniTask.WhenAll(uniTasks);
+
+            uniTasks = new UniTask[initLoadTasks.Count];
+            for (int i = 0; i < uniTasks.Length; i++)
+                uniTasks[i] = UniTask.RunOnThreadPool(initLoadTasks[i]);
+
+            await UniTask.WhenAll(uniTasks);
 
             isDataLoaded = true;
         }
