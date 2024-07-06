@@ -59,13 +59,13 @@ namespace RuniEngine.Editor.ProjectSettings
 
             if (!Kernel.isPlaying)
             {
-                inputProjectSetting ??= new StorableClass(InputManager.ProjectData.empty);
+                inputProjectSetting ??= new StorableClass(new InputManager.ProjectData());
                 inputProjectSetting.AutoNameLoad(jsonFolderPath);
 
-                projectData = (InputManager.ProjectData)(inputProjectSetting.instance ?? InputManager.ProjectData.empty);
+                projectData = (InputManager.ProjectData)(inputProjectSetting.instance ?? new InputManager.ProjectData());
             }
             else
-                projectData = SettingManager.GetProjectSetting<InputManager.ProjectData>(nameSpace) ?? InputManager.ProjectData.empty;
+                projectData = SettingManager.GetProjectSetting<InputManager.ProjectData>(nameSpace) ?? new InputManager.ProjectData();
 
             Dictionary<string, KeyCode[]> list = projectData.controlList;
 
