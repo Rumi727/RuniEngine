@@ -15,10 +15,6 @@ namespace RuniEngine.Inputs
         [NameSpaceProjectData]
         public sealed class ProjectData
         {
-            [JsonIgnore] public static ProjectData empty => new ProjectData();
-
-            ProjectData() { }
-
             public Dictionary<string, KeyCode[]> controlList { get; set; } = new();
         }
 
