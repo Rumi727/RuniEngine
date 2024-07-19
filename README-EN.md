@@ -41,6 +41,11 @@ Well, whatever, ~~When I say kernel, it is kernel. There is so much talk. so wha
 - [VorbisPlugin](https://github.com/gindemit/unity-project-vorbis)
   - Added ToAudioClipAsync method to [VorbisPlugin.cs](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/src/VorbisPlugin.cs) file to load audio asynchronously and added UniTask package dependency to [assembly](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/VorbisPluginImpl.asmdef).
 
+### etc
+
+ Runi Engine Installer, OOBE music source: Windows XP OOBE\
+ Remove in case of problem
+
 I may have been stupid and left out some sources...\
 If so, please post it in the issue.
 
