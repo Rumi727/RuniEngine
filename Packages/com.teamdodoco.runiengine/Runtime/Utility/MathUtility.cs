@@ -2476,10 +2476,10 @@ namespace RuniEngine
 
         public static byte MoveTowards(this byte current, byte target, byte maxDelta)
         {
-            if ((target - current) <= maxDelta)
+            if ((target - current).Abs() <= maxDelta)
                 return target;
 
-            return (byte)(current + maxDelta);
+            return (byte)(current + ((target - current).Sign() * maxDelta));
         }
 
         public static short MoveTowards(this short current, short target, short maxDelta)
@@ -2492,10 +2492,10 @@ namespace RuniEngine
 
         public static ushort MoveTowards(this ushort current, ushort target, ushort maxDelta)
         {
-            if ((target - current) <= maxDelta)
+            if ((target - current).Abs() <= maxDelta)
                 return target;
 
-            return (ushort)(current + maxDelta);
+            return (ushort)(current + ((target - current).Sign() * maxDelta));
         }
 
         public static int MoveTowards(this int current, int target, int maxDelta)
@@ -2508,10 +2508,20 @@ namespace RuniEngine
 
         public static uint MoveTowards(this uint current, uint target, uint maxDelta)
         {
-            if ((target - current) <= maxDelta)
-                return target;
+            if (target >= current)
+            {
+                if ((target - current) <= maxDelta)
+                    return target;
 
-            return current + maxDelta;
+                return current + maxDelta;
+            }
+            else
+            {
+                if ((current - target) <= maxDelta)
+                    return target;
+
+                return current - maxDelta;
+            }
         }
 
         public static long MoveTowards(this long current, long target, long maxDelta)
@@ -2524,10 +2534,20 @@ namespace RuniEngine
 
         public static ulong MoveTowards(this ulong current, ulong target, ulong maxDelta)
         {
-            if ((target - current) <= maxDelta)
-                return target;
+            if (target >= current)
+            {
+                if ((target - current) <= maxDelta)
+                    return target;
 
-            return current + maxDelta;
+                return current + maxDelta;
+            }
+            else
+            {
+                if ((current - target) <= maxDelta)
+                    return target;
+
+                return current - maxDelta;
+            }
         }
 
         public static float MoveTowards(this float current, float target, float maxDelta)
@@ -2580,10 +2600,20 @@ namespace RuniEngine
 
         public static nuint MoveTowards(this nuint current, nuint target, nuint maxDelta)
         {
-            if ((target - current) <= maxDelta)
-                return target;
+            if (target >= current)
+            {
+                if ((target - current) <= maxDelta)
+                    return target;
 
-            return current + maxDelta;
+                return current + maxDelta;
+            }
+            else
+            {
+                if ((current - target) <= maxDelta)
+                    return target;
+
+                return current - maxDelta;
+            }
         }
 
         public static Vector2 MoveTowards(this Vector2 current, Vector2 target, float maxDistanceDelta)
