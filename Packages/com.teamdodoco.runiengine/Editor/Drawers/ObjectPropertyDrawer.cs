@@ -16,7 +16,7 @@ namespace RuniEngine.Editor.Drawers
 #else
     [CustomPropertyDrawer(typeof(System.ValueType), true)]
 #endif
-    public sealed class ObjectDrawer : PropertyDrawer
+    public sealed class ObjectPropertyDrawer : PropertyDrawer
     {
         readonly Dictionary<string, AnimBool> animBools = new Dictionary<string, AnimBool>();
 
