@@ -14,29 +14,9 @@ namespace RuniEngine.Editor.Inspector.Rendering
 
             EditorGUI.BeginChangeCheck();
 
-            TargetsSetValue
-            (
-                x => x.nameSpace,
-                x => UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), x.nameSpace),
-                (x, y) => x.nameSpace = y,
-                targets
-            );
-
-            TargetsSetValue
-            (
-                x => x.type,
-                x => UsePropertyAndDrawStringArray(serializedObject, "_type", TryGetText("gui.type"), x.type, ImageLoader.GetTypes(x.nameSpace)),
-                (x, y) => x.type = y,
-                targets
-            );
-
-            TargetsSetValue
-            (
-                x => x.spriteName,
-                x => UsePropertyAndDrawStringArray(serializedObject, "_path", TryGetText("gui.name"), x.spriteName, ImageLoader.GetSpriteNames(x.type, x.nameSpace)),
-                (x, y) => x.spriteName = y,
-                targets
-            );
+            UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace);
+            UsePropertyAndDrawStringArray(serializedObject, "_type", TryGetText("gui.type"), target.type, ImageLoader.GetTypes(target.nameSpace), true);
+            UsePropertyAndDrawStringArray(serializedObject, "_path", TryGetText("gui.name"), target.spriteName, ImageLoader.GetSpriteNames(target.type, target.nameSpace));
 
             UseProperty("_spriteTag", TryGetText("inspector.sprite_setter.spriteTag"));
 

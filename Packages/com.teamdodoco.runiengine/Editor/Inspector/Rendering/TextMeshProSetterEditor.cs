@@ -14,7 +14,7 @@ namespace RuniEngine.Editor.Inspector.Rendering
 
             EditorGUI.BeginChangeCheck();
 
-            TargetsSetValue(x => x.nameSpace, x => UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace), (x, y) => x.nameSpace = y, targets);
+            UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace);
             UseProperty("_path", TryGetText("gui.key"));
 
             Space();
