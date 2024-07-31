@@ -13,7 +13,7 @@ using EditorGUIUtility = UnityEditor.EditorGUIUtility;
 namespace RuniEngine.Editor.Drawers
 {
     [CustomPropertyDrawer(typeof(ISerializableDictionary), true)]
-    public sealed class SerializableDictionaryDrawer : PropertyDrawer
+    public sealed class SerializableDictionaryPropertyDrawer : PropertyDrawer
     {
         readonly Dictionary<string, AnimFloat> animFloats = new Dictionary<string, AnimFloat>();
         readonly Dictionary<string, ReorderableList> reorderableLists = new Dictionary<string, ReorderableList>();
