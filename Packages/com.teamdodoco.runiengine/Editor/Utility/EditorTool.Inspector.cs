@@ -150,12 +150,8 @@ namespace RuniEngine.Editor
 
             EditorGUI.BeginChangeCheck();
 
-            bool mixed = EditorGUI.showMixedValue;
-
             SerializedProperty? serializedProperty = UseProperty(serializedObject, propertyName, null, options);
             usePropertyChanged = EditorGUI.EndChangeCheck();
-
-            EditorGUI.showMixedValue = mixed;
 
             /*//원래 이딴거 안해도 루트 폴더 잘 감지했는데 tq 갑자기 안됨 유니티 병신
             List<string?> displayList = new List<string?>();
@@ -207,6 +203,8 @@ namespace RuniEngine.Editor
                     usePropertyAndDrawStringArrayRuniAdvancedDropdown[key] = dropdown;
                 }
 
+                EditorGUI.showMixedValue = serializedObject.targetObjects.Length > 1;
+
                 string lastValue = value;
                 if (isPath)
                 {
@@ -219,6 +217,8 @@ namespace RuniEngine.Editor
                     if (index >= 0 && index < array.Length)
                         value = array[index];
                 }
+
+                EditorGUI.showMixedValue = false;
 
                 if (!usePropertyChanged && lastValue != value)
                 {
