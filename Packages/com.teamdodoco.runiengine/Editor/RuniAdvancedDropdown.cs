@@ -22,7 +22,7 @@ namespace RuniEngine.Editor
 
         public BridgeAdvancedDropdown bridgeAdvancedDropdown;
 
-        string[]? selectedPaths;
+        string?[]? selectedPaths;
         Enum? selectedEnum;
         SerializedProperty? selectedProperty;
         RuniAdvancedDropdownItem? selectedItem;
@@ -210,9 +210,9 @@ namespace RuniEngine.Editor
         readonly Dictionary<string, RuniAdvancedDropdownItem> buildRootPaths = new();
         protected override AdvancedDropdownItem BuildRoot()
         {
-            RuniAdvancedDropdownItem root = new RuniAdvancedDropdownItem(string.Empty, string.Empty, -1);
+            RuniAdvancedDropdownItem root = new RuniAdvancedDropdownItem(string.Empty, TryGetText("gui.root"), -1);
 
-            string[] array;
+            string?[] array;
             if (selectedPaths != null)
                 array = selectedPaths;
             else if (selectedEnum != null)
@@ -229,7 +229,7 @@ namespace RuniEngine.Editor
                 buildRootPaths.Clear();
                 for (int i = 0; i < array.Length; i++)
                 {
-                    string path = array[i];
+                    string path = array[i] ?? string.Empty;
                     if (string.IsNullOrEmpty(path))
                     {
                         root.AddChild(new RuniAdvancedDropdownItem(string.Empty, TryGetText("gui.none"), i));
@@ -259,7 +259,7 @@ namespace RuniEngine.Editor
                             if (i + 1 < array.Length)
                             {
                                 int nextPathIndex = i + 1;
-                                if (PathUtility.StartsWith(array[nextPathIndex], path))
+                                if (PathUtility.StartsWith(array[nextPathIndex] ?? string.Empty, path))
                                     parentItem.AddChild(new RuniAdvancedDropdownItem(path, PathUtility.GetFileName(path), i));
                             }
 
@@ -274,8 +274,22 @@ namespace RuniEngine.Editor
             {
                 for (int i = 0; i < array.Length; i++)
                 {
-                    string name = array[i];
-                    root.AddChild(new RuniAdvancedDropdownItem(name, name, i));
+                    string? name = array[i];
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        root.AddChild(new RuniAdvancedDropdownItem(string.Empty, TryGetText("gui.none"), i));
+                        if (array.Length > 1)
+                            root.AddSeparator();
+
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    string name = array[i] ?? string.Empty;
+                    if (!string.IsNullOrEmpty(name))
+                        root.AddChild(new RuniAdvancedDropdownItem(name, name, i));
                 }
             }
 
