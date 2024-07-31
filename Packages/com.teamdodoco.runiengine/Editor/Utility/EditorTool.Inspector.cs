@@ -133,13 +133,13 @@ namespace RuniEngine.Editor
 
         static readonly Dictionary<string, RuniAdvancedDropdown> usePropertyAndDrawStringArrayRuniAdvancedDropdown = new();
 
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, isPath, out _, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, isPath, out _, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, isPath, out index, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, isPath, out index, out _, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, bool isPath, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, isPath, out index, out usePropertyChanged, options);
-        public static string UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, isPath, out index, out usePropertyChanged, options);
-        static string InternalUsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath, out int index, out bool usePropertyChanged, params GUILayoutOption[] options)
+        public static void UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, isPath, out _, out _, options);
+        public static void UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, isPath, out _, out _, options);
+        public static void UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, isPath, out index, out _, options);
+        public static void UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, isPath, out index, out _, options);
+        public static void UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string value, string[] array, bool isPath, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, null, value, array, isPath, out index, out usePropertyChanged, options);
+        public static void UsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath, out int index, out bool usePropertyChanged, params GUILayoutOption[] options) => InternalUsePropertyAndDrawStringArray(serializedObject, propertyName, label, value, array, isPath, out index, out usePropertyChanged, options);
+        static void InternalUsePropertyAndDrawStringArray(SerializedObject serializedObject, string propertyName, string? label, string value, string[] array, bool isPath, out int index, out bool usePropertyChanged, params GUILayoutOption[] options)
         {
             index = -1;
 
@@ -207,6 +207,7 @@ namespace RuniEngine.Editor
                     usePropertyAndDrawStringArrayRuniAdvancedDropdown[key] = dropdown;
                 }
 
+                string lastValue = value;
                 if (isPath)
                 {
                     value = dropdown.DrawLayoutPath(value, array, options);
@@ -218,20 +219,21 @@ namespace RuniEngine.Editor
                     if (index >= 0 && index < array.Length)
                         value = array[index];
                 }
+
+                if (!usePropertyChanged && lastValue != value)
+                {
+                    serializedProperty.stringValue = value;
+                    serializedObject.ApplyModifiedProperties();
+                }
             }
 
             EditorGUILayout.EndHorizontal();
-
-            if (!usePropertyChanged)
-                return value;
-            else
-                return serializedProperty == null ? "" : (serializedProperty.stringValue ?? "");
         }
 
 
 
-        public static string UsePropertyAndDrawNameSpace(SerializedObject serializedObject, string propertyName, string nameSpace, params GUILayoutOption[] options) => UsePropertyAndDrawStringArray(serializedObject, propertyName, nameSpace, ResourceManager.GetNameSpaces(), false, options);
-        public static string UsePropertyAndDrawNameSpace(SerializedObject serializedObject, string propertyName, string label, string nameSpace, params GUILayoutOption[] options) => UsePropertyAndDrawStringArray(serializedObject, propertyName, label, nameSpace, ResourceManager.GetNameSpaces(), false, options);
+        public static void UsePropertyAndDrawNameSpace(SerializedObject serializedObject, string propertyName, string nameSpace, params GUILayoutOption[] options) => UsePropertyAndDrawStringArray(serializedObject, propertyName, nameSpace, ResourceManager.GetNameSpaces(), false, options);
+        public static void UsePropertyAndDrawNameSpace(SerializedObject serializedObject, string propertyName, string label, string nameSpace, params GUILayoutOption[] options) => UsePropertyAndDrawStringArray(serializedObject, propertyName, label, nameSpace, ResourceManager.GetNameSpaces(), false, options);
 
 
 
