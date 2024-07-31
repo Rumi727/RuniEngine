@@ -2,7 +2,6 @@
 using RuniEngine.Datas;
 using RuniEngine.Jsons;
 using RuniEngine.Resource;
-using RuniEngine.Settings;
 using System.Collections.Generic;
 using System.IO;
 

@@ -1,5 +1,5 @@
 #nullable enable
-using RuniEngine.Settings;
+using RuniEngine.Datas;
 
 namespace RuniEngine.Splashs
 {

@@ -1,7 +1,7 @@
 #nullable enable
 using Newtonsoft.Json;
 using RuniEngine.Accounts;
-using RuniEngine.Settings;
+using RuniEngine.Datas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +12,10 @@ namespace RuniEngine.Inputs
 {
     public static class InputManager
     {
-        [NameSpaceProjectData]
-        public sealed class ProjectData
+        [ProjectData]
+        public struct ProjectData
         {
-            public Dictionary<string, KeyCode[]> controlList { get; set; } = new();
+            public static Dictionary<string, KeyCode[]> controlList { get; set; } = new();
         }
 
         [UserData]
@@ -63,12 +63,11 @@ namespace RuniEngine.Inputs
 
         internal static bool InternalGeyKey(string key, string nameSpace, bool down, bool up)
         {
-            ProjectData? projectData = SettingManager.GetProjectSetting<ProjectData>(nameSpace);
             KeyCode[]? keyCodes = null;
             if (UserData.controlList.ContainsKey(key))
                 keyCodes = UserData.controlList[key];
-            else if (projectData != null && projectData.controlList.ContainsKey(key))
-                keyCodes = projectData.controlList[key];
+            else if (ProjectData.controlList.ContainsKey(key))
+                keyCodes = ProjectData.controlList[key];
             
             if (keyCodes == null)
                 return false;

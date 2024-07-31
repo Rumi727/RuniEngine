@@ -1,7 +1,6 @@
 #nullable enable
 using RuniEngine.Datas;
 using RuniEngine.Inputs;
-using RuniEngine.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +21,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
         static SettingsProvider? instance;
         [SettingsProvider]
-        public static SettingsProvider CreateSettingsProvider() => instance ??= new InputProjectSetting("Runi Engine/Namespace/Input Setting", SettingsScope.Project);
+        public static SettingsProvider CreateSettingsProvider() => instance ??= new InputProjectSetting("Runi Engine/Input Setting", SettingsScope.Project);
 
 
 
@@ -40,12 +39,6 @@ namespace RuniEngine.Editor.ProjectSettings
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
             BeginLabelWidth(0);
 
-            {
-                nameSpace = DrawStringArray(ref nameSpaceDropdown, TryGetText("gui.namespace"), nameSpace, SettingManager.GetNameSpaces());
-                if (string.IsNullOrEmpty(nameSpace))
-                    return;
-            }
-
             string jsonFolderPath = Path.Combine(Kernel.projectSettingPath, nameSpace);
             if (!Directory.Exists(jsonFolderPath))
             {
@@ -59,15 +52,11 @@ namespace RuniEngine.Editor.ProjectSettings
 
             if (!Kernel.isPlaying)
             {
-                inputProjectSetting ??= new StorableClass(new InputManager.ProjectData());
+                inputProjectSetting ??= new StorableClass(typeof(InputManager.ProjectData));
                 inputProjectSetting.AutoNameLoad(jsonFolderPath);
-
-                projectData = (InputManager.ProjectData)(inputProjectSetting.instance ?? new InputManager.ProjectData());
             }
-            else
-                projectData = SettingManager.GetProjectSetting<InputManager.ProjectData>(nameSpace) ?? new InputManager.ProjectData();
 
-            Dictionary<string, KeyCode[]> list = projectData.controlList;
+            Dictionary<string, KeyCode[]> list = InputManager.ProjectData.controlList;
 
             if (treeView == null)
             {
@@ -168,7 +157,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     if (!list.ContainsKey(item.key))
                         continue;
 
-                    DrawGUI(projectData, item.key, ref reorderableList, out string editedKey, IsChanged);
+                    DrawGUI(item.key, ref reorderableList, out string editedKey, IsChanged);
                     if (item.key != editedKey)
                     {
                         if (item.key == selectedKey)
@@ -202,27 +191,27 @@ namespace RuniEngine.Editor.ProjectSettings
         }
 
         public static StorableClass? inputProjectSetting = null;
-        public static void DrawGUI(InputManager.ProjectData projectData, string key, ref ReorderableList? reorderableList, out string editedKey, Action? onChangedCallback = null)
+        public static void DrawGUI(string key, ref ReorderableList? reorderableList, out string editedKey, Action? onChangedCallback = null)
         {
             EditorGUILayout.BeginVertical(otherHelpBoxStyle);
 
             string oldKey = key;
 
             key = EditorGUILayout.DelayedTextField(TryGetText("gui.key"), key);
-            if (projectData.controlList.ContainsKey(key))
+            if (InputManager.ProjectData.controlList.ContainsKey(key))
                 key = oldKey;
 
             editedKey = key;
 
             if (oldKey != key)
-                projectData.controlList.RenameKey(oldKey, key);
+                InputManager.ProjectData.controlList.RenameKey(oldKey, key);
 
-            List<KeyCode> keyCodes = projectData.controlList[key].ToList();
+            List<KeyCode> keyCodes = InputManager.ProjectData.controlList[key].ToList();
             reorderableList ??= new ReorderableList(keyCodes, typeof(List<KeyCode>), true, false, true, true);
             reorderableList.elementHeight = EditorGUIUtility.singleLineHeight;
             reorderableList.onChangedCallback = x =>
             {
-                projectData.controlList[key] = keyCodes.ToArray();
+                InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
                 onChangedCallback?.Invoke();
             };
             reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
@@ -233,7 +222,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 keyCodes[index] = (KeyCode)EditorGUI.EnumPopup(rect, keyCodes[index]);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    projectData.controlList[key] = keyCodes.ToArray();
+                    InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
                     onChangedCallback?.Invoke();
                 }
             };
@@ -241,7 +230,7 @@ namespace RuniEngine.Editor.ProjectSettings
             reorderableList.list = keyCodes;
             reorderableList.DoLayoutList();
 
-            projectData.controlList[key] = keyCodes.ToArray();
+            InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
 
             EditorGUILayout.EndVertical();
         }
@@ -258,10 +247,6 @@ namespace RuniEngine.Editor.ProjectSettings
             reorderableList = null;
         }
 
-        void OrderBy()
-        {
-            if (projectData != null)
-                projectData.controlList = projectData.controlList.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-        }
+        void OrderBy() => InputManager.ProjectData.controlList = InputManager.ProjectData.controlList.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
     }
 }

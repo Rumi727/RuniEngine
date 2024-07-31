@@ -1,6 +1,5 @@
 #nullable enable
 using RuniEngine.Resource;
-using RuniEngine.Settings;
 using System.IO;
 using UnityEditor;
 
@@ -14,8 +13,7 @@ namespace RuniEngine.Editor
             {
                 string[] path = new string[]
                 {
-                    Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, "runi"),
-                    Path.Combine("Assets", Kernel.streamingAssetsFolderName, SettingManager.rootName, "runi-ui")
+                    Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, "runi")
                 };
 
                 AssetDatabase.ExportPackage(path,

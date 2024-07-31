@@ -1,7 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
+using RuniEngine.Datas;
 using RuniEngine.Resource;
-using RuniEngine.Settings;
 using RuniEngine.Splashs;
 using RuniEngine.Threading;
 using System;
@@ -16,9 +16,30 @@ namespace RuniEngine.Booting
     public static class BootLoader
     {
         public static bool isLoadingStart { get; private set; } = false;
+        public static bool isDataLoaded { get; private set; } = false;
         public static bool isAllLoaded { get; private set; } = false;
 
         public static AsyncTask? resourceTask { get; private set; } = null;
+
+        public static IReadOnlyList<StorableClass> projectData
+        {
+            get
+            {
+                BasicDataNotLoadedException.Exception();
+                return _projectData;
+            }
+        }
+        static StorableClass[] _projectData = null!;
+
+        public static IReadOnlyList<StorableClass> globalData
+        {
+            get
+            {
+                BasicDataNotLoadedException.Exception();
+                return _globalData;
+            }
+        }
+        static StorableClass[] _globalData = null!;
 
         //UniTask는 BeforeSplashScreen 단계에서부터 사용 가능
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
@@ -70,7 +91,7 @@ namespace RuniEngine.Booting
             //Resource Setup
             TryLoad().Forget();
 
-            await UniTask.WaitUntil(() => SettingManager.isDataLoaded || !Kernel.isPlaying);
+            await UniTask.WaitUntil(() => isDataLoaded || !Kernel.isPlaying);
             if (!Kernel.isPlaying)
                 return;
 
@@ -99,7 +120,15 @@ namespace RuniEngine.Booting
 
             //Storable Class
             Debug.Log("Storable Class Loading...", nameof(BootLoader));
-            await SettingManager.Init();
+
+            _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>();
+            _globalData = StorableClassUtility.AutoInitialize<GlobalDataAttribute>();
+
+            StorableClassUtility.LoadAll(_projectData, Kernel.projectSettingPath);
+            StorableClassUtility.LoadAll(_globalData, Kernel.globalDataPath);
+
+            isDataLoaded = true;
+
             Debug.Log("Storable Class Loaded", nameof(BootLoader));
 
             Debug.Log("Resource Loading...", nameof(BootLoader));
@@ -124,6 +153,7 @@ namespace RuniEngine.Booting
 
             ResourceManager.AllDestroy();
 
+            isDataLoaded = false;
             isAllLoaded = false;
             isLoadingStart = false;
 
