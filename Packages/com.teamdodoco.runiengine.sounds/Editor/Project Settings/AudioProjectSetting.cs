@@ -20,7 +20,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
         static SettingsProvider? instance;
         [SettingsProvider]
-        public static SettingsProvider CreateSettingsProvider() => instance ??= new AudioProjectSetting("Runi Engine/Audio Setting", SettingsScope.Project);
+        public static SettingsProvider CreateSettingsProvider() => instance ??= new AudioProjectSetting("Runi Engine/Resource/Audio Setting", SettingsScope.Project);
 
 
 

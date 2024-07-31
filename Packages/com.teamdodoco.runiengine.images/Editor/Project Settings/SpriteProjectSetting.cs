@@ -26,7 +26,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
         static SettingsProvider? instance;
         [SettingsProvider]
-        public static SettingsProvider CreateSettingsProvider() => instance ??= new SpriteProjectSetting("Runi Engine/Sprite Setting", SettingsScope.Project);
+        public static SettingsProvider CreateSettingsProvider() => instance ??= new SpriteProjectSetting("Runi Engine/Resource/Sprite Setting", SettingsScope.Project);
 
 
         RuniAdvancedDropdown? nameSpaceDropdown;
