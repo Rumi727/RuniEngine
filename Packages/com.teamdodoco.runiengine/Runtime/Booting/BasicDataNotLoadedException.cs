@@ -2,13 +2,13 @@
 using RuniEngine.Resource.Texts;
 using System;
 
-namespace RuniEngine.Settings
+namespace RuniEngine.Booting
 {
     public class BasicDataNotLoadedException : Exception
     {
         public static void Exception()
         {
-            if (!SettingManager.isDataLoaded)
+            if (!BootLoader.isDataLoaded)
                 throw new BasicDataNotLoadedException();
         }
 
