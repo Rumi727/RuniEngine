@@ -1,5 +1,4 @@
 #nullable enable
-using Newtonsoft.Json;
 using RuniEngine.Accounts;
 using RuniEngine.Datas;
 using System;
@@ -37,12 +36,41 @@ namespace RuniEngine.Inputs
         public static bool anyKeyDown => Input.anyKeyDown;
         public static bool anyKey => Input.anyKey;
 
+        public static Vector2 pointerPosition
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return Pointer.current.position.value;
+#else
+                return Input.mousePosition;
+#endif
+            }
+        }
 
+        public static Vector2 pointerPositionDelta
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return Pointer.current.delta.value;
+#else
+                return Input.mousePositionDelta;
+#endif
+            }
+        }
 
-        public static Vector2 pointerPosition => Pointer.current.position.value;
-        public static Vector2 pointerPositionDelta => Pointer.current.delta.value;
-
-
+        public static Vector2 mouseScrollDelta
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return Mouse.current.scroll.value;
+#else
+                return Input.mouseScrollDelta;
+#endif
+            }
+        }
 
         public static bool GetKeyDown(string key, string nameSpace = "", int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, nameSpace, true, false);
         public static bool GetKey(string key, string nameSpace = "", int priority = 0) => !IsInputLocked(priority) && InternalGeyKey(key, nameSpace, false, false);
