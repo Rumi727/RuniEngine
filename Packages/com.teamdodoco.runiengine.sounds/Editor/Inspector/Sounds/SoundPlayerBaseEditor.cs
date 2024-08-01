@@ -464,7 +464,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     GUILayout.BeginHorizontal();
 
-#if UNITY_6000_1_OR_NEWER
+#if UNITY_6000_0_OR_NEWER
                     //재생
                     if (target.isPlaying)
                         DrawButton("▶↻", TryGetText("gui.restart"), x => x.Play());
