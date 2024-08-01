@@ -56,7 +56,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 inputProjectSetting.AutoNameLoad(jsonFolderPath);
             }
 
-            Dictionary<string, KeyCode[]> list = InputManager.ProjectData.controlList;
+            Dictionary<string, List<KeyCode[]>> list = InputManager.ProjectData.controlList;
 
             if (treeView == null)
             {
@@ -98,7 +98,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
                     if (GUILayout.Button(TryGetText("gui.add"), GUILayout.ExpandWidth(false)))
                     {
-                        list.Add(selectedKey, new KeyCode[0]);
+                        list.Add(selectedKey, new List<KeyCode[]>());
                         OrderBy();
 
                         treeView.keyList = list.Keys.ToArray();
@@ -110,7 +110,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     }
 
                     EditorGUI.EndDisabledGroup();
-                    EditorGUI.BeginDisabledGroup(!containsKey || (deleteSafety && list[selectedKey].Length > 0));
+                    EditorGUI.BeginDisabledGroup(!containsKey || (deleteSafety && list[selectedKey].Count > 0));
 
                     if (GUILayout.Button(TryGetText("gui.remove"), GUILayout.ExpandWidth(false)))
                     {
@@ -206,31 +206,83 @@ namespace RuniEngine.Editor.ProjectSettings
             if (oldKey != key)
                 InputManager.ProjectData.controlList.RenameKey(oldKey, key);
 
-            List<KeyCode> keyCodes = InputManager.ProjectData.controlList[key].ToList();
-            reorderableList ??= new ReorderableList(keyCodes, typeof(List<KeyCode>), true, false, true, true);
-            reorderableList.elementHeight = EditorGUIUtility.singleLineHeight;
-            reorderableList.onChangedCallback = x =>
-            {
-                InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
-                onChangedCallback?.Invoke();
-            };
+            List<KeyCode[]> keyCodesList = InputManager.ProjectData.controlList[key];
+
+            reorderableList ??= new ReorderableList(keyCodesList, typeof(List<KeyCode[]>), true, false, true, true);
+            reorderableList.elementHeight = EditorGUIUtility.singleLineHeight + 1;
+            reorderableList.onChangedCallback = x => onChangedCallback?.Invoke();
             reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
-                rect.y += 1;
+                List<KeyCode> keyCodes = keyCodesList[index].ToList();
+                float x = rect.x;
+                float width = rect.width;
+                
+                rect.width = ((width - 40 - ((keyCodes.Count - 1) * 16)) / (keyCodes.Count)).Clamp(0, 100);
+                rect.y += 2;
 
                 EditorGUI.BeginChangeCheck();
-                keyCodes[index] = (KeyCode)EditorGUI.EnumPopup(rect, keyCodes[index]);
+
+                for (int i = 0; i < keyCodes.Count + 1; i++)
+                {
+                    if (i < keyCodes.Count)
+                    {
+                        keyCodes[i] = (KeyCode)EditorGUI.EnumPopup(rect, keyCodes[i]);
+                        rect.x += rect.width + 2;
+
+                        if (i < keyCodes.Count - 1)
+                        {
+                            Rect textRect = rect;
+                            textRect.y -= 3;
+
+                            GUI.Label(textRect, "+");
+
+                            rect.x += 14;
+                        }
+                    }
+                    else
+                    {
+                        Rect buttonRect = rect;
+
+                        buttonRect.x = x + width - 36;
+                        buttonRect.width = 18;
+                        buttonRect.height -= 3;
+
+                        if (GUI.Button(buttonRect, "+"))
+                        {
+                            keyCodes.Add(KeyCode.None);
+                            break;
+                        }
+
+                        buttonRect.x += 20;
+
+                        EditorGUI.BeginDisabledGroup(keyCodes.Count <= 1);
+
+                        if (GUI.Button(buttonRect, "-"))
+                        {
+                            keyCodes.RemoveAt(i - 1);
+                            break;
+                        }
+
+                        EditorGUI.EndDisabledGroup();
+                    }
+                }
+
                 if (EditorGUI.EndChangeCheck())
                 {
-                    InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
+                    keyCodesList[index] = keyCodes.ToArray();
                     onChangedCallback?.Invoke();
                 }
             };
+            reorderableList.onAddCallback = x =>
+            {
+                keyCodesList.Add(new KeyCode[1]);
+                x.Select(keyCodesList.Count - 1);
+            };
 
-            reorderableList.list = keyCodes;
+            reorderableList.list = keyCodesList;
             reorderableList.DoLayoutList();
 
-            InputManager.ProjectData.controlList[key] = keyCodes.ToArray();
+            
 
             EditorGUILayout.EndVertical();
         }
