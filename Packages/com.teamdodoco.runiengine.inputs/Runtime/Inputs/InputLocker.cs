@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RuniEngine
 {
-    public sealed class InputLocker : IComparable<InputLocker>, IDisposable
+    public sealed class InputLocker : IComparable, IComparable<InputLocker>, IDisposable
     {
         public static IReadOnlyList<InputLocker> instances => _instances;
         [StaticResettable] static readonly List<InputLocker> _instances = new List<InputLocker>();
@@ -62,6 +62,15 @@ namespace RuniEngine
         readonly bool _opposite;
 
 
+
+        public int CompareTo(object value)
+        {
+            if (isDisposed)
+                throw new ObjectDisposedException(GetType().FullName);
+
+            return priority.CompareTo(value);
+        }
+
         public int CompareTo(InputLocker other)
         {
             if (isDisposed)
@@ -76,8 +85,6 @@ namespace RuniEngine
             isDisposed = true;
             _instances.Remove(this);
         }
-
-
 
         public static bool operator <(InputLocker left, InputLocker right) => left.priority < right.priority;
         public static bool operator >(InputLocker left, InputLocker right) => left.priority > right.priority;
