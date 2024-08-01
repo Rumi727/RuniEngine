@@ -14,13 +14,13 @@ namespace RuniEngine.Inputs
         [ProjectData]
         public struct ProjectData
         {
-            public static Dictionary<string, KeyCode[]> controlList { get; set; } = new();
+            public static Dictionary<string, List<KeyCode[]>> controlList { get; set; } = new();
         }
 
         [UserData]
         public struct UserData
         {
-            public static Dictionary<string, KeyCode[]> controlList { get; set; } = new();
+            public static Dictionary<string, List<KeyCode[]>> controlList { get; set; } = new();
         }
 
 
@@ -89,17 +89,28 @@ namespace RuniEngine.Inputs
         public static bool GetKeyUp(KeyCode keyCode, params InputLocker[] locks) => !IsInputLocked(locks) && Input.GetKeyUp(keyCode);
 
 
-        internal static bool InternalGeyKey(string key, string nameSpace, bool down, bool up)
+        static bool InternalGeyKey(string key, string nameSpace, bool down, bool up)
         {
-            KeyCode[]? keyCodes = null;
+            List<KeyCode[]>? keyCodesList = null;
             if (UserData.controlList.ContainsKey(key))
-                keyCodes = UserData.controlList[key];
+                keyCodesList = UserData.controlList[key];
             else if (ProjectData.controlList.ContainsKey(key))
-                keyCodes = ProjectData.controlList[key];
+                keyCodesList = ProjectData.controlList[key];
             
-            if (keyCodes == null)
+            if (keyCodesList == null)
                 return false;
-            
+
+            for (int i = 0; i < keyCodesList.Count; i++)
+            {
+                if (InternalGetKey(keyCodesList[i], down, up))
+                    return true;
+            }
+
+            return false;
+        }
+
+        static bool InternalGetKey(KeyCode[] keyCodes, bool down, bool up)
+        {
             for (int i = 0; i < keyCodes.Length; i++)
             {
                 KeyCode keyCode = keyCodes[i];
@@ -120,7 +131,7 @@ namespace RuniEngine.Inputs
                     return Input.GetKey(keyCode);
                 }
             }
-            
+
             return false;
         }
 
