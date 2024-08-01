@@ -1,6 +1,5 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
 using RuniEngine.Accounts;
 using RuniEngine.Resource.Texts;
 using RuniEngine.Threading;
