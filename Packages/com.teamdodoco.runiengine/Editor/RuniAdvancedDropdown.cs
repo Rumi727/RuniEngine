@@ -22,6 +22,18 @@ namespace RuniEngine.Editor
 
         public BridgeAdvancedDropdown bridgeAdvancedDropdown;
 
+        public new Vector2 minimumSize
+        {
+            get => base.minimumSize;
+            set => base.minimumSize = value;
+        }
+
+        public Vector2 maximumSize
+        {
+            get => bridgeAdvancedDropdown.maximumSize;
+            set => bridgeAdvancedDropdown.maximumSize = value;
+        }
+
         string?[]? selectedPaths;
         Enum? selectedEnum;
         SerializedProperty? selectedProperty;
@@ -116,9 +128,9 @@ namespace RuniEngine.Editor
             return result;
         }
 
-        public T Draw<T>(Rect position, T enumValue) where T : Enum => (T)Draw(position, (Enum)enumValue, FocusType.Keyboard, EditorStyles.miniPullDown);
+        public T Draw<T>(Rect position, T enumValue) where T : Enum => Draw(position, enumValue, FocusType.Keyboard, EditorStyles.miniPullDown);
         public T Draw<T>(Rect position, T enumValue, FocusType focusType) where T : Enum => Draw(position, enumValue, focusType, EditorStyles.miniPullDown);
-        public T Draw<T>(Rect position, T enumValue, FocusType focusType, GUIStyle style) where T : Enum => Draw<T>(position, enumValue, focusType, style);
+        public T Draw<T>(Rect position, T enumValue, FocusType focusType, GUIStyle style) where T : Enum => (T)Draw(position, (Enum)enumValue, focusType, style);
 
         public object Draw(Rect position, Enum enumValue) => Draw(position, enumValue, FocusType.Keyboard, EditorStyles.miniPullDown);
         public object Draw(Rect position, Enum enumValue, FocusType focusType) => Draw(position, enumValue, focusType, EditorStyles.miniPullDown);
@@ -126,8 +138,12 @@ namespace RuniEngine.Editor
         {
             BuildRoot(enumValue);
 
-            DrawButton(position, new GUIContent(enumValue.ToString()), focusType, style);
-            return Enum.ToObject(enumValue.GetType(), selectedItem?.index ?? 0);
+            Type enumType = enumValue.GetType();
+            int enumInt = Convert.ToInt32(enumValue);
+
+            DrawButton(position, new GUIContent(Enum.GetNames(enumType)[enumInt]), focusType, style);
+
+            return Enum.ToObject(enumType, selectedItem?.index ?? enumInt);
         }
 
         public void DrawLayout(SerializedProperty property, params GUILayoutOption[] options) => DrawLayout(property, FocusType.Keyboard, EditorStyles.miniPullDown, options);
