@@ -151,11 +151,11 @@ namespace RuniEngine.Pooling
                 if (gameObject == null)
                     return null;
 
-                MonoBehaviour monoBehaviour = gameObject.GetComponent<MonoBehaviour>();
-                if (monoBehaviour is not T)
+                T? monoBehaviour = gameObject.GetComponent<T>();
+                if (monoBehaviour == null)
                     return null;
 
-                T poolingObject = (T)Object.Instantiate(monoBehaviour, parent);
+                T poolingObject = Object.Instantiate(monoBehaviour, parent);
 
                 poolingObject.poolingNameSpace = nameSpace;
                 poolingObject.poolingKey = key;
