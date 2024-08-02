@@ -34,6 +34,7 @@ namespace RuniEngine.Editor.ProjectSettings
         InputManager.ProjectData? projectData;
         [SerializeField] string nameSpace = "";
         RuniAdvancedDropdown? nameSpaceDropdown;
+        List<List<RuniAdvancedDropdown>> keyCodesDropdownsList = new List<List<RuniAdvancedDropdown>>();
         public override void OnGUI(string searchContext)
         {
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
@@ -88,7 +89,9 @@ namespace RuniEngine.Editor.ProjectSettings
                     if (EditorGUI.EndChangeCheck() && treeView.ContainsKey(selectedKey))
                     {
                         treeView.SetSelection(selectedKey);
+
                         reorderableList = null;
+                        keyCodesDropdownsList.Clear();
                     }
                 }
 
@@ -157,7 +160,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     if (!list.ContainsKey(item.key))
                         continue;
 
-                    DrawGUI(item.key, ref reorderableList, out string editedKey, IsChanged);
+                    DrawGUI(item.key, ref reorderableList, keyCodesDropdownsList, out string editedKey, IsChanged);
                     if (item.key != editedKey)
                     {
                         if (item.key == selectedKey)
@@ -171,6 +174,8 @@ namespace RuniEngine.Editor.ProjectSettings
                         treeView.SetSelection(selectedKey);
 
                         reorderableList = null;
+                        keyCodesDropdownsList.Clear();
+
                         isChanged |= true;
                     }
                 }
@@ -191,7 +196,7 @@ namespace RuniEngine.Editor.ProjectSettings
         }
 
         public static StorableClass? inputProjectSetting = null;
-        public static void DrawGUI(string key, ref ReorderableList? reorderableList, out string editedKey, Action? onChangedCallback = null)
+        public static void DrawGUI(string key, ref ReorderableList? reorderableList, List<List<RuniAdvancedDropdown>> keyCodesDropdownsList, out string editedKey, Action? onChangedCallback = null)
         {
             EditorGUILayout.BeginVertical(otherHelpBoxStyle);
 
@@ -220,13 +225,25 @@ namespace RuniEngine.Editor.ProjectSettings
                 rect.width = ((width - 40 - ((keyCodes.Count - 1) * 16)) / (keyCodes.Count)).Clamp(0, 100);
                 rect.y += 2;
 
-                EditorGUI.BeginChangeCheck();
-
+                bool isChanged = false;
                 for (int i = 0; i < keyCodes.Count + 1; i++)
                 {
                     if (i < keyCodes.Count)
                     {
-                        keyCodes[i] = (KeyCode)EditorGUI.EnumPopup(rect, keyCodes[i]);
+                        {
+                            while (index >= keyCodesDropdownsList.Count)
+                                keyCodesDropdownsList.Add(new List<RuniAdvancedDropdown>());
+
+                            while (i >= keyCodesDropdownsList[index].Count)
+                                keyCodesDropdownsList[index].Add(new RuniAdvancedDropdown() { minimumSize = new Vector2(150, 0), maximumSize = new Vector2(0, 350) });
+                            
+                            KeyCode keyCode = keyCodes[i];
+                            keyCodes[i] = keyCodesDropdownsList[index][i].Draw(rect, keyCode);
+
+                            if (keyCode != keyCodes[i])
+                                isChanged |= true;
+                        }
+                        
                         rect.x += rect.width + 2;
 
                         if (i < keyCodes.Count - 1)
@@ -250,6 +267,8 @@ namespace RuniEngine.Editor.ProjectSettings
                         if (GUI.Button(buttonRect, "+"))
                         {
                             keyCodes.Add(KeyCode.None);
+                            isChanged |= true;
+
                             break;
                         }
 
@@ -259,7 +278,9 @@ namespace RuniEngine.Editor.ProjectSettings
 
                         if (GUI.Button(buttonRect, "-"))
                         {
-                            keyCodes.RemoveAt(i - 1);
+                            keyCodes.RemoveAt(keyCodes.Count - 1);
+                            isChanged |= true;
+
                             break;
                         }
 
@@ -267,10 +288,12 @@ namespace RuniEngine.Editor.ProjectSettings
                     }
                 }
 
-                if (EditorGUI.EndChangeCheck())
+                if (isChanged)
                 {
                     keyCodesList[index] = keyCodes.ToArray();
                     onChangedCallback?.Invoke();
+
+                    keyCodesDropdownsList.Clear();
                 }
             };
             reorderableList.onAddCallback = x =>
@@ -297,6 +320,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 selectedKey = item.key;
 
             reorderableList = null;
+            keyCodesDropdownsList.Clear();
         }
 
         void OrderBy() => InputManager.ProjectData.controlList = InputManager.ProjectData.controlList.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
