@@ -35,7 +35,7 @@ namespace RuniEngine.Editor
                     string comparisonParentKey = comparisonKey;
 
                     if (j > 0)
-                        comparisonKey += "." + keySplit;
+                        comparisonKey += separator + keySplit;
                     else
                         comparisonKey += keySplit;
 
