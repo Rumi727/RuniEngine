@@ -13,13 +13,13 @@ namespace RuniEngine.Rhythms
         public static RhythmWatch? instance { get; private set; }
 
         public RhythmWatch(bool isGlobal = true) : this(null, null, 0, isGlobal) => _isCustomBPM = false;
-        public RhythmWatch(SoundPlayerBase? soundPlayer, bool isGlobal = true) : this(soundPlayer, null, 0, isGlobal) => _isCustomBPM = false;
+        public RhythmWatch(IRhythmable? rhythmable, bool isGlobal = true) : this(rhythmable, null, 0, isGlobal) => _isCustomBPM = false;
         public RhythmWatch(BeatBPMPairList? bpms, double offset, bool isGlobal = true) : this(null, bpms, offset, isGlobal) => _isCustomBPM = true;
-        public RhythmWatch(SoundPlayerBase? soundPlayer, BeatBPMPairList? bpms, double offset, bool isGlobal = true)
+        public RhythmWatch(IRhythmable? rhythmable, BeatBPMPairList? bpms, double offset, bool isGlobal = true)
         {
             this.isGlobal = isGlobal;
 
-            _soundPlayer = soundPlayer;
+            _rhythmable = rhythmable;
             _bpms = bpms;
             _offset = offset;
 
@@ -53,24 +53,24 @@ namespace RuniEngine.Rhythms
 
 
 
-        public SoundPlayerBase? soundPlayer
+        public IRhythmable? rhythmable
         {
             get
             {
                 if (isDisposed)
                     throw new ObjectDisposedException(GetType().FullName);
 
-                return _soundPlayer;
+                return _rhythmable;
             }
             set
             {
                 if (isDisposed)
                     throw new ObjectDisposedException(GetType().FullName);
 
-                _soundPlayer = value;
+                _rhythmable = value;
             }
         }
-        SoundPlayerBase? _soundPlayer;
+        IRhythmable? _rhythmable;
 
         public BeatBPMPairList? bpms
         {
@@ -82,7 +82,7 @@ namespace RuniEngine.Rhythms
                 if (isCustomBPM)
                     return _bpms;
                 else
-                    return soundPlayer != null ? soundPlayer.soundMetaData?.bpms : null;
+                    return rhythmable?.bpms;
             }
             set
             {
@@ -105,7 +105,7 @@ namespace RuniEngine.Rhythms
                 if (isCustomBPM)
                     return _offset;
                 else
-                    return soundPlayer != null ? (soundPlayer.soundMetaData?.rhythmOffset ?? 0) : 0;
+                    return rhythmable?.rhythmOffset ?? 0;
             }
             set
             {
@@ -139,15 +139,15 @@ namespace RuniEngine.Rhythms
                 if (isDisposed)
                     throw new ObjectDisposedException(GetType().FullName);
 
-                return soundPlayer != null ? soundPlayer.time - offset : 0;
+                return (rhythmable?.time - offset) ?? 0;
             }
             set
             {
                 if (isDisposed)
                     throw new ObjectDisposedException(GetType().FullName);
 
-                if (soundPlayer != null)
-                    soundPlayer.time = value + offset;
+                if (rhythmable != null)
+                    rhythmable.time = value + offset;
             }
         }
 
@@ -178,7 +178,7 @@ namespace RuniEngine.Rhythms
             if (isDisposed)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            _soundPlayer = null;
+            _rhythmable = null;
             _bpms = null;
 
             isGlobal = false;
