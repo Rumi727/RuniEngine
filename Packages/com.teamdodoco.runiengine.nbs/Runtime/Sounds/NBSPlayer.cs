@@ -99,7 +99,7 @@ namespace RuniEngine.Sounds
         public override double length => nbsFile != null ? tickLength / 20d : 0;
 
         public double tickLength => (internalTickLength / (nbsFile?.tickTempo * 0.0005)) ?? 0;
-        public int internalTickLength => ((nbsFile?.songLength / (nbsMetaData?.bpms.defaultValue.timeSignatures * 4) ?? 0).CeilToInt() * ((nbsMetaData?.bpms.defaultValue.timeSignatures * 4) ?? 0)).RoundToInt();
+        public int internalTickLength => ((nbsFile?.songLength / (nbsFile?.timeSignature * 4f) ?? 0).CeilToInt() * ((nbsFile?.timeSignature * 4f) ?? 0)).RoundToInt();
 
 
 

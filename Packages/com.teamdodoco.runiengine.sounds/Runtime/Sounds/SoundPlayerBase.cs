@@ -1,7 +1,11 @@
 #nullable enable
+#if ENABLE_RUNI_ENGINE_POOLING
 using RuniEngine.Pooling;
+#endif
 using RuniEngine.Resource.Sounds;
+#if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+#endif
 using RuniEngine.Threading;
 using System;
 using System.Threading;
@@ -9,7 +13,15 @@ using UnityEngine;
 
 namespace RuniEngine.Sounds
 {
-    public abstract class SoundPlayerBase : ObjectPoolingBase, IRhythmable
+    public abstract class SoundPlayerBase :
+#if ENABLE_RUNI_ENGINE_POOLING
+        ObjectPoolingBase
+#else
+        MonoBehaviour
+#endif
+#if ENABLE_RUNI_ENGINE_RHYTHMS
+        , IRhythmable
+#endif
     {
         public string key { get => _key; set => _key = value; }
         [SerializeField] string _key = "";
@@ -309,8 +321,10 @@ namespace RuniEngine.Sounds
 
 
 
+#if ENABLE_RUNI_ENGINE_RHYTHMS
         double IRhythmable.rhythmOffset => soundMetaData?.rhythmOffset ?? 0;
         BeatBPMPairList? IRhythmable.bpms => soundMetaData?.bpms;
+#endif
 
 
 
@@ -358,6 +372,7 @@ namespace RuniEngine.Sounds
 
 
 
+#if ENABLE_RUNI_ENGINE_POOLING
         public override void Remove()
         {
             base.Remove();
@@ -386,5 +401,6 @@ namespace RuniEngine.Sounds
             _timeChanged = null;
             _onAudioFilterReadEvent = null;
         }
+#endif
     }
 }

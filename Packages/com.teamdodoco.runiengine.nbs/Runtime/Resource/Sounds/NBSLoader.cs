@@ -130,7 +130,13 @@ namespace RuniEngine.Resource.Sounds
 
                         NBSFile? nbsFile = GetNBSFile(nbsPath);
                         if (nbsFile != null)
+                        {
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                             nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.bpmMultiplier, nbsMetaData.rhythmOffsetTick, nbsFile);
+#else
+                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsFile);
+#endif
+                        }
 
                         if (nbsMetaData != null)
                             nbsMetaDatas.Add(nbsMetaData);

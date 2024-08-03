@@ -1,5 +1,7 @@
 #nullable enable
+#if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+#endif
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -18,7 +20,9 @@ namespace RuniEngine.Resource.Sounds
         public virtual double pitch { get; } = 1;
         public virtual double tempo { get; } = 1;
 
+#if ENABLE_RUNI_ENGINE_RHYTHMS
         public abstract BeatBPMPairList bpms { get; }
         public abstract double rhythmOffset { get; }
+#endif
     }
 }

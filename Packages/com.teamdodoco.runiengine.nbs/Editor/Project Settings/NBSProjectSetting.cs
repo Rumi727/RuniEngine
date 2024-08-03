@@ -254,8 +254,10 @@ namespace RuniEngine.Editor.ProjectSettings
                 double pitch = metaData.pitch;
                 double tempo = metaData.tempo;
                 double loopStartTick = metaData.loopStartTick;
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                 double bpmMultiplier = metaData.bpmMultiplier;
                 double rhythmOffsetTick = metaData.rhythmOffsetTick;
+#endif
 
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -329,6 +331,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
 
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                     {
                         string label = TryGetText("project_setting.nbs.bpm_multiplier");
                         BeginLabelWidth(label);
@@ -344,13 +347,25 @@ namespace RuniEngine.Editor.ProjectSettings
                         rhythmOffsetTick = EditorGUILayout.DoubleField(label, rhythmOffsetTick);
                         EndLabelWidth();
                     }
+#endif
 
                     EditorGUILayout.EndHorizontal();
                     tempIsChanged |= EditorGUI.EndChangeCheck();
                 }
 
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                 return new NBSMetaData(nbsPath, pitch, tempo, bpmMultiplier, rhythmOffsetTick, null);
-            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new NBSMetaData("", 1, 1, 1, 0, null)), out bool isListChanged, deleteSafety);
+#else
+                return new NBSMetaData(nbsPath, pitch, tempo, null);
+#endif
+            },
+            i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i,
+#if ENABLE_RUNI_ENGINE_RHYTHMS
+            new NBSMetaData("", 1, 1, 1, 0, null))
+#else
+            new NBSMetaData("", 1, 1, null))
+#endif
+            , out bool isListChanged, deleteSafety);
 
             isChanged = tempIsChanged || isListChanged;
             return new NBSData(subtitle, isBGM, metaDatas.ToArray());

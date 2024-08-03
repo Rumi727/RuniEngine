@@ -10,7 +10,10 @@ using RuniEngine.Jsons;
 using UnityEditor.IMGUI.Controls;
 
 using static RuniEngine.Editor.EditorTool;
+
+#if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+#endif
 
 namespace RuniEngine.Editor.ProjectSettings
 {
@@ -256,8 +259,10 @@ namespace RuniEngine.Editor.ProjectSettings
                 double tempo = metaData.tempo;
                 int loopStartIndex = metaData.loopStartIndex;
                 int loopOffsetIndex = metaData.loopOffsetIndex;
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                 int rhythmOffsetIndex = metaData.rhythmOffsetIndex;
                 BeatBPMPairList bpms = new BeatBPMPairList(metaData.bpms.defaultValue, metaData.bpms);
+#endif
 
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -351,6 +356,7 @@ namespace RuniEngine.Editor.ProjectSettings
                     tempIsChanged |= EditorGUI.EndChangeCheck();
                 }
 
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                 {
                     EditorGUILayout.BeginHorizontal();
                     EditorGUI.BeginChangeCheck();
@@ -388,9 +394,20 @@ namespace RuniEngine.Editor.ProjectSettings
 
                     tempIsChanged |= isListChanged;
                 }
+#endif
 
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                 return new AudioMetaData(audioPath, pitch, tempo, loopStartIndex, loopOffsetIndex, bpms, rhythmOffsetIndex, null);
-            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i, new AudioMetaData("", 1, 1, 0, 0, null, 0, null)), out bool isListChanged, deleteSafety);
+#else
+                return new AudioMetaData(audioPath, pitch, tempo, loopStartIndex, loopOffsetIndex, null);
+#endif
+            }, i => string.IsNullOrEmpty(metaDatas[i].path), i => metaDatas.Insert(i,
+#if ENABLE_RUNI_ENGINE_RHYTHMS
+            new AudioMetaData("", 1, 1, 0, 0, null, 0, null)
+#else
+            new AudioMetaData("", 1, 1, 0, 0, null)
+#endif
+            ), out bool isListChanged, deleteSafety);
 
             isChanged = tempIsChanged || isListChanged;
             return new AudioData(subtitle, isBGM, metaDatas.ToArray());

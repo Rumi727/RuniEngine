@@ -5,6 +5,7 @@
         "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
         "GUID:c518712db64a12047921fb83a0a2e7d8",
         "GUID:33d28b00c078f314fa38a6a00f3b508a",
+        "GUID:313de9f3c5d536642ac75e792daf4b65",
         "GUID:d19976c8233edf14ba31681d949961c5",
         "GUID:e0d7720a211379b4bab82afbf6fc6b14"
     ],
@@ -17,6 +18,17 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.teamdodoco.runiengine.pooling",
+            "expression": "",
+            "define": "ENABLE_RUNI_ENGINE_POOLING"
+        },
+        {
+            "name": "com.teamdodoco.runiengine.rhythms",
+            "expression": "",
+            "define": "ENABLE_RUNI_ENGINE_RHYTHMS"
+        }
+    ],
     "noEngineReferences": false
 }

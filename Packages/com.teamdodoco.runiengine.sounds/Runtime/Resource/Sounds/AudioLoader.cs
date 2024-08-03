@@ -277,7 +277,11 @@ namespace RuniEngine.Resource.Sounds
                                 AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType));
                                 if (audioClip != null)
                                 {
+#if ENABLE_RUNI_ENGINE_RHYTHMS
                                     audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioMetaData.bpms, audioMetaData.rhythmOffsetIndex, audioClip);
+#else
+                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
+#endif
                                     Object.DestroyImmediate(audioClip);
                                 }
 
