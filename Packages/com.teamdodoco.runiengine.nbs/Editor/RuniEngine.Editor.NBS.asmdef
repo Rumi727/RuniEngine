@@ -18,6 +18,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.teamdodoco.runiengine.rhythms",
+            "expression": "",
+            "define": "ENABLE_RUNI_ENGINE_RHYTHMS"
+        }
+    ],
     "noEngineReferences": false
 }

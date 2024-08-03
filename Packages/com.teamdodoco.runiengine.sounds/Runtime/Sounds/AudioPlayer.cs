@@ -1,7 +1,9 @@
 #nullable enable
+#if ENABLE_RUNI_ENGINE_POOLING
 using RuniEngine.Booting;
 using RuniEngine.Pooling;
 using RuniEngine.Resource;
+#endif
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Threading;
 using System;
@@ -118,7 +120,9 @@ namespace RuniEngine.Sounds
 
 
 
+#if ENABLE_RUNI_ENGINE_POOLING
         bool isDisposable = false;
+#endif
 
 
 
@@ -133,11 +137,13 @@ namespace RuniEngine.Sounds
 
         void Update()
         {
+#if ENABLE_RUNI_ENGINE_POOLING
             if (isDisposable && !loop && (timeSamples < 0 || timeSamples > samples || !isPlaying))
             {
                 Remove();
                 return;
             }
+#endif
 
             //매 프레임 시간 보정
             if (isPlaying && !isPaused)
@@ -496,6 +502,7 @@ namespace RuniEngine.Sounds
             return;
         }
 
+#if ENABLE_RUNI_ENGINE_POOLING
         public static AudioPlayer? PlayAudio(string key, string nameSpace = "", float volume = 1, bool loop = false, double pitch = 1, double tempo = 1, float panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
 
         public static AudioPlayer? PlayAudio(string key, string nameSpace, float volume, bool loop, double pitch, double tempo, float panStereo, Transform? parent, Vector3 position, float minDistance = 0, float maxDistance = 16) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, true, position, minDistance, maxDistance);
@@ -533,5 +540,6 @@ namespace RuniEngine.Sounds
 
             return audioPlayer;
         }
+#endif
     }
 }

@@ -98,6 +98,14 @@
         "com.teamdodoco.runiengine": "0.0.0"
       }
     },
+    "com.teamdodoco.runiengine.rhythms": {
+      "version": "file:com.teamdodoco.runiengine.rhythms",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.teamdodoco.runiengine": "0.0.0"
+      }
+    },
     "com.teamdodoco.runiengine.sounds": {
       "version": "file:com.teamdodoco.runiengine.sounds",
       "depth": 0,
@@ -107,7 +115,6 @@
         "com.unity.modules.unitywebrequestaudio": "1.0.0",
         "com.cysharp.unitask": "2.3.3",
         "com.teamdodoco.runiengine": "0.0.0",
-        "com.teamdodoco.runiengine.pooling": "0.0.0",
         "com.teamdodoco.runiengine.internal-api-bridge": "0.0.0"
       }
     },
