@@ -1,6 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Resource;
+using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -21,6 +22,8 @@ namespace RuniEngine.Editor.ControlPanels
         static readonly ReorderableList? reorderableList;
         public static void DrawGUI()
         {
+            EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
+
             {
                 GUILayout.BeginHorizontal();
 
@@ -79,6 +82,8 @@ namespace RuniEngine.Editor.ControlPanels
                 Rect rect = EditorGUILayout.GetControlRect(true, reorderableList.GetHeight());
                 reorderableList.DoList(rect);*/
             }
+
+            EditorGUI.EndDisabledGroup();
         }
     }
 }
