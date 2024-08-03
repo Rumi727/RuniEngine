@@ -43,6 +43,7 @@ public class Test : MonoBehaviour
     public Asdf rectCorner;
     public SerializableDictionary<string, SerializableDictionary<string, int>> a = new();
     public List<string> lists = new();
+    public Gradient? gradient;
     void Update()
     {
         float speed;
@@ -88,7 +89,7 @@ public class Test : MonoBehaviour
 
             int beat = (rhythm.currentBeat - outBeat).Repeat(bpm.timeSignatures).FloorToInt();
             
-            rhythm.soundPlayer = soundPlayer;
+            rhythm.rhythmable = soundPlayer;
             text.text = $"Beat : {rhythm.currentBeat:0.00}\nTime : {rhythm.currentTime.ToTime()}";
 
             if (lastBeat != beat)
