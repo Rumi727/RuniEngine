@@ -134,9 +134,7 @@ namespace RuniEngine.Rhythms
                     beat = 0;
 
                 if (i > 0)
-                {
                     time += (beat - this[i - 1].beat) * (60d / this[i - 1].value.bpm);
-                }
 
                 cachedBPMDataListSecond.Add(time, new ItemInfo(pair.value, beat, time));
                 cachedBPMDataListBeat.Add(beat, new ItemInfo(pair.value, beat, time));

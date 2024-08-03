@@ -1,6 +1,7 @@
 #nullable enable
 using RuniEngine.Pooling;
 using RuniEngine.Resource.Sounds;
+using RuniEngine.Rhythms;
 using RuniEngine.Threading;
 using System;
 using System.Threading;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace RuniEngine.Sounds
 {
-    public abstract class SoundPlayerBase : ObjectPoolingBase
+    public abstract class SoundPlayerBase : ObjectPoolingBase, IRhythmable
     {
         public string key { get => _key; set => _key = value; }
         [SerializeField] string _key = "";
@@ -272,6 +273,7 @@ namespace RuniEngine.Sounds
         [SerializeField, Range(0, 32)] float _minDistance = 1;
 
         public virtual float maxDistance { get => _maxDistance; set => _maxDistance = value; }
+
         [SerializeField, Range(0, 32)] float _maxDistance = 16;
 
 
@@ -304,6 +306,13 @@ namespace RuniEngine.Sounds
         }
         event OnAudioFilterReadAction? _onAudioFilterReadEvent;
         [NonSerialized] int onAudioFilterReadEventLock = 0;
+
+
+
+        double IRhythmable.rhythmOffset => soundMetaData?.rhythmOffset ?? 0;
+        BeatBPMPairList? IRhythmable.bpms => soundMetaData?.bpms;
+
+
 
         protected virtual void OnDisable() => Stop();
 
