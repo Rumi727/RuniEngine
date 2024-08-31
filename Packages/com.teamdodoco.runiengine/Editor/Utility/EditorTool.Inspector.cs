@@ -13,8 +13,8 @@ namespace RuniEngine.Editor
 {
     public partial class EditorTool
     {
-        public static string DrawNameSpace(ref RuniAdvancedDropdown? dropdown, string nameSpace, params GUILayoutOption[] options) => DrawStringArray(ref dropdown, nameSpace, ResourceManager.GetNameSpaces(), false, options);
-        public static string DrawNameSpace(ref RuniAdvancedDropdown? dropdown, string label, string nameSpace, params GUILayoutOption[] options) => DrawStringArray(ref dropdown, label, nameSpace, ResourceManager.GetNameSpaces(), false, options);
+        public static string DrawNameSpace(RuniAdvancedDropdown dropdown, string nameSpace, params GUILayoutOption[] options) => DrawStringArray(dropdown, nameSpace, ResourceManager.GetNameSpaces(), false, options);
+        public static string DrawNameSpace(RuniAdvancedDropdown dropdown, string label, string nameSpace, params GUILayoutOption[] options) => DrawStringArray(dropdown, label, nameSpace, ResourceManager.GetNameSpaces(), false, options);
 
 
 

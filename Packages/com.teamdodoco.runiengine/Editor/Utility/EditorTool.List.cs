@@ -354,11 +354,11 @@ namespace RuniEngine.Editor
             return (scrollViewPos, displayRestrictionsIndex);
         }
 
-        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, string.Empty, value, array, false, isPath, out _, options);
-        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string label, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, label, value, array, true, isPath, out _, options);
-        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, string.Empty, value, array, false, isPath, out index, options);
-        public static string DrawStringArray(ref RuniAdvancedDropdown? dropdown, string label, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(ref dropdown, label, value, array, true, isPath, out index, options);
-        static string InternalDrawStringArray(ref RuniAdvancedDropdown? dropdown, string label, string value, string[] array, bool labelShow, bool isPath, out int index, params GUILayoutOption[] options)
+        public static string DrawStringArray(RuniAdvancedDropdown dropdown, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalDrawStringArray(dropdown, string.Empty, value, array, false, isPath, out _, options);
+        public static string DrawStringArray(RuniAdvancedDropdown dropdown, string label, string value, string[] array, bool isPath = false, params GUILayoutOption[] options) => InternalDrawStringArray(dropdown, label, value, array, true, isPath, out _, options);
+        public static string DrawStringArray(RuniAdvancedDropdown dropdown, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(dropdown, string.Empty, value, array, false, isPath, out index, options);
+        public static string DrawStringArray(RuniAdvancedDropdown dropdown, string label, string value, string[] array, bool isPath, out int index, params GUILayoutOption[] options) => InternalDrawStringArray(dropdown, label, value, array, true, isPath, out index, options);
+        static string InternalDrawStringArray(RuniAdvancedDropdown dropdown, string label, string value, string[] array, bool labelShow, bool isPath, out int index, params GUILayoutOption[] options)
         {
             EditorGUILayout.BeginHorizontal();
 
@@ -407,7 +407,6 @@ namespace RuniEngine.Editor
 
             index = EditorGUILayout.IntPopup(Array.IndexOf(array, value), displayList.ToArray(), indexList.ToArray(), options);*/
 
-            dropdown ??= new RuniAdvancedDropdown();
             if (isPath)
             {
                 value = dropdown.DrawLayoutPath(value, array, options);

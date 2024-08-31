@@ -88,8 +88,14 @@ namespace RuniEngine.Editor
             BuildRoot(values);
             DrawLayoutButton(index >= 0 && index < values.Length ? values[index] : "", focusType, style, options);
 
-            int result = selectedItem?.index ?? index;
-            selectedItem = null;
+            int result = index;
+            if (selectedItem != null)
+            {
+                result = selectedItem.index;
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
 
             return result;
         }
@@ -102,7 +108,13 @@ namespace RuniEngine.Editor
             DrawButton(position, index >= 0 && index < values.Length ? values[index] : string.Empty, focusType, style);
 
             int result = selectedItem?.index ?? index;
-            selectedItem = null;
+            if (selectedItem != null)
+            {
+                result = selectedItem.index;
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
 
             return result;
         }
@@ -117,13 +129,19 @@ namespace RuniEngine.Editor
         {
             BuildRoot(enumValue);
 
-            DrawLayoutButton(new GUIContent(enumValue.ToString()), focusType, style, options);
+            Type enumType = enumValue.GetType();
+            int enumInt = Convert.ToInt32(enumValue);
 
-            Enum result;
+            DrawLayoutButton(new GUIContent(Enum.GetNames(enumType)[enumInt]), focusType, style);
+
+            Enum result = enumValue;
             if (selectedItem != null)
+            {
                 result = (Enum)Enum.ToObject(enumValue.GetType(), selectedItem.index);
-            else
-                result = enumValue;
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
 
             return result;
         }
@@ -143,7 +161,16 @@ namespace RuniEngine.Editor
 
             DrawButton(position, new GUIContent(Enum.GetNames(enumType)[enumInt]), focusType, style);
 
-            return Enum.ToObject(enumType, selectedItem?.index ?? enumInt);
+            Enum result = enumValue;
+            if (selectedItem != null)
+            {
+                result = (Enum)Enum.ToObject(enumValue.GetType(), selectedItem.index);
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
+
+            return result;
         }
 
         public void DrawLayout(SerializedProperty property, params GUILayoutOption[] options) => DrawLayout(property, FocusType.Keyboard, EditorStyles.miniPullDown, options);
@@ -153,8 +180,13 @@ namespace RuniEngine.Editor
             BuildRoot(property);
             DrawLayoutButton(property.enumDisplayNames[property.enumValueIndex], focusType, style, options);
 
-            property.enumValueIndex = selectedItem?.index ?? property.enumValueIndex;
-            selectedItem = null;
+            if (selectedItem != null)
+            {
+                property.enumValueIndex = selectedItem.index;
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
         }
 
         public void Draw(Rect position, SerializedProperty property) => Draw(position, property, FocusType.Keyboard, EditorStyles.miniPullDown);
@@ -164,8 +196,13 @@ namespace RuniEngine.Editor
             BuildRoot(property);
             DrawButton(position, property.enumDisplayNames[property.enumValueIndex], focusType, style);
 
-            property.enumValueIndex = selectedItem?.index ?? property.enumValueIndex;
-            selectedItem = null;
+            if (selectedItem != null)
+            {
+                property.enumValueIndex = selectedItem.index;
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
         }
 
         public string DrawLayoutPath(string path, string[] paths, params GUILayoutOption[] options) => DrawLayoutPath(path, paths, FocusType.Keyboard, EditorStyles.miniPullDown, options);
@@ -175,8 +212,14 @@ namespace RuniEngine.Editor
             BuildRoot(paths, true);
             DrawLayoutButton(PathUtility.GetFileName(path), focusType, style, options);
 
-            string result = selectedItem?.path ?? path;
-            selectedItem = null;
+            string result = path;
+            if (selectedItem != null)
+            {
+                result = selectedItem.path;
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
 
             return result;
         }
@@ -188,8 +231,14 @@ namespace RuniEngine.Editor
             BuildRoot(paths, true);
             DrawButton(position, PathUtility.GetFileName(path), focusType, style);
 
-            string result = selectedItem?.path ?? path;
-            selectedItem = null;
+            string result = path;
+            if (selectedItem != null)
+            {
+                result = selectedItem.path;
+                selectedItem = null;
+
+                GUI.changed = true;
+            }
 
             return result;
         }
