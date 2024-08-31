@@ -365,5 +365,10 @@
     "control_panel.resource": "リソース",
 
     "control_panel.resource.refresh": "リソースの更新",
-    "control_panel.resource.resource_pack": "リソースパック"
+    "control_panel.resource.resource_pack": "リソースパック",
+
+
+
+    "internal.auto_setter.property.info": "Runi Engineが正しく機能するように{name}属性の値を変更しました。",
+    "internal.auto_setter.property.value_info": "Runi Engineが正しく機能するように、{name}属性の値を{value}に変更しました。"
 }

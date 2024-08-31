@@ -365,5 +365,10 @@
     "control_panel.resource": "Resource",
 
     "control_panel.resource.refresh": "Resource Refresh",
-    "control_panel.resource.resource_pack": "Resource Pack"
+    "control_panel.resource.resource_pack": "Resource Pack",
+
+
+
+    "internal.auto_setter.property.info": "Changed the {name} property value to allow Runi Engine to work properly",
+    "internal.auto_setter.property.value_info": "Changed the {name} property value to {value} to allow Runi Engine to work correctly"
 }

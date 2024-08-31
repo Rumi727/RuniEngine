@@ -365,5 +365,10 @@
     "control_panel.resource": "리소스",
 
     "control_panel.resource.refresh": "리소스 새로고침",
-    "control_panel.resource.resource_pack": "리소스팩"
+    "control_panel.resource.resource_pack": "리소스팩",
+
+
+
+    "internal.auto_setter.property.info": "Runi Engine이 올바르게 작동할 수 있도록 {name} 속성 값을 변경했습니다.",
+    "internal.auto_setter.property.value_info": "Runi Engine이 올바르게 작동할 수 있도록 {name} 속성 값을 {value}으(로) 변경했습니다."
 }

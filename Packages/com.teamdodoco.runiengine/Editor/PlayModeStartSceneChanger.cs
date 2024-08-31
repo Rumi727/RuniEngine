@@ -20,7 +20,12 @@ namespace RuniEngine.Editor
                 storableClass.AutoNameLoad(Kernel.projectSettingPath);
             }
 
-            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SplashScreen.ProjectData.splashScenePath);
+            SceneAsset scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SplashScreen.ProjectData.splashScenePath);
+            if (EditorSceneManager.playModeStartScene != scene)
+            {
+                Debug.Log(EditorTool.TryGetText("internal.auto_setter.property.info").Replace("{name}", $"{nameof(EditorSceneManager)}.{nameof(EditorSceneManager.playModeStartScene)}"));
+                EditorSceneManager.playModeStartScene = scene;
+            }
         }
     }
 }

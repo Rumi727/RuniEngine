@@ -37,6 +37,9 @@ namespace RuniEngine.Editor
                 }
 
                 List<EditorBuildSettingsScene> buildScenes = EditorBuildSettings.scenes.ToList();
+                if (buildScenes.Count <= 0 || buildScenes[0].path != splashScenePath || !buildScenes[0].enabled)
+                    Debug.Log(EditorTool.TryGetText("internal.auto_setter.property.info").Replace("{name}", $"{nameof(EditorBuildSettings)}.{nameof(EditorBuildSettings.scenes)}"));
+
                 for (int i = 0; i < buildScenes.Count; i++)
                 {
                     EditorBuildSettingsScene scene = buildScenes[i];
