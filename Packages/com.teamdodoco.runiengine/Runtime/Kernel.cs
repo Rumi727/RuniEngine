@@ -165,6 +165,24 @@ namespace RuniEngine
             internetReachability = Application.internetReachability;
         }
 
+        public static void Quit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
+        public static void Quit(int exitCode)
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit(exitCode);
+#endif
+        }
+
         static void Quitting()
         {
             quitting?.Invoke();

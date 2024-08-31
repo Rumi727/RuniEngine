@@ -58,6 +58,13 @@ namespace RuniEngine.Resource.Sounds
 
 
 
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        static void InitializeOnLoadMethod() => OnAudioConfigurationChanged(false);
+#endif
+
+
+
         [Awaken]
         static void Awaken()
         {

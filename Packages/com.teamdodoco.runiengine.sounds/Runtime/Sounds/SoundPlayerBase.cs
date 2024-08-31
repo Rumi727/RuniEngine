@@ -58,7 +58,7 @@ namespace RuniEngine.Sounds
 
 
         public bool isPlaying => Interlocked.Add(ref _isPlaying, 0) != 0;
-        [NonSerialized] int _isPlaying = 0;
+        [HideInInspector, NonSerialized] int _isPlaying = 0;
 
         public bool isPaused
         {
@@ -107,7 +107,7 @@ namespace RuniEngine.Sounds
 
 
         public event Action looped { add => _looped += value; remove => _looped -= value; }
-        [NonSerialized] Action? _looped;
+        [HideInInspector, NonSerialized] Action? _looped;
 
 
 
@@ -128,7 +128,7 @@ namespace RuniEngine.Sounds
                 ThreadTask.Unlock(ref pitchLock);
             }
         }
-        [SerializeField, Range(0, 3)] double _pitch = 1;
+        [HideInInspector, SerializeField, Range(0, 3)] double _pitch = 1;
         int pitchLock;
 
         public void PitchLock() => ThreadTask.Lock(ref pitchLock);
@@ -154,7 +154,7 @@ namespace RuniEngine.Sounds
                 ThreadTask.Unlock(ref tempoLock);
             }
         }
-        [SerializeField, Range(-3, 3)] double _tempo = 1;
+        [HideInInspector, SerializeField, Range(-3, 3)] double _tempo = 1;
         int tempoLock;
 
         public void TempoLock() => ThreadTask.Lock(ref tempoLock);
@@ -207,7 +207,7 @@ namespace RuniEngine.Sounds
                     _tempoPitchRatio = 0;
             }
         }
-        [SerializeField] bool _pitchFixed = false;
+        [HideInInspector, SerializeField] bool _pitchFixed = false;
 
         /// <summary>
         /// 이 프로퍼티는 에디터에서만 사용되며 런타임에 영향가지 않습니다
@@ -215,7 +215,7 @@ namespace RuniEngine.Sounds
         /// 피치와 템포의 비율입니다 피치를 고정할 때 사용됩니다 (pitchFixed 프로퍼티의 값이 바뀔 때만 변경됩니다)
         /// </summary>
         public double pitchTempoRatio => _pitchTempoRatio;
-        [SerializeField] double _pitchTempoRatio = 1;
+        [HideInInspector, SerializeField] double _pitchTempoRatio = 1;
 
         /// <summary>
         /// 이 프로퍼티는 에디터에서만 사용되며 런타임에 영향가지 않습니다
@@ -223,7 +223,7 @@ namespace RuniEngine.Sounds
         /// 템포와 피치의 비율입니다 템포를 고정할 때 사용됩니다 (pitchFixed 프로퍼티의 값이 바뀔 때만 변경됩니다)
         /// </summary>
         public double tempoPitchRatio => _tempoPitchRatio;
-        [SerializeField] double _tempoPitchRatio = 1;
+        [HideInInspector, SerializeField] double _tempoPitchRatio = 1;
 
         public float volume
         {
@@ -242,7 +242,7 @@ namespace RuniEngine.Sounds
                 ThreadTask.Unlock(ref volumeLock);
             }
         }
-        [SerializeField, Range(0, 2)] float _volume = 1;
+        [HideInInspector, SerializeField, Range(0, 2)] float _volume = 1;
         int volumeLock;
 
         public void VolumeLock() => ThreadTask.Lock(ref volumeLock);
@@ -267,7 +267,7 @@ namespace RuniEngine.Sounds
                 ThreadTask.Unlock(ref panStereoLock);
             }
         }
-        [SerializeField, Range(-1, 1)] float _panStereo = 0;
+        [HideInInspector, SerializeField] float _panStereo = 0;
         int panStereoLock;
 
         public void PanStereoLock() => ThreadTask.Lock(ref panStereoLock);
@@ -317,7 +317,7 @@ namespace RuniEngine.Sounds
             }
         }
         event OnAudioFilterReadAction? _onAudioFilterReadEvent;
-        [NonSerialized] int onAudioFilterReadEventLock = 0;
+        [HideInInspector, NonSerialized] int onAudioFilterReadEventLock = 0;
 
 
 

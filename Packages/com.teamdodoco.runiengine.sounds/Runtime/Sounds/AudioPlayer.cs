@@ -14,6 +14,7 @@ using Random = UnityEngine.Random;
 
 namespace RuniEngine.Sounds
 {
+    [ExecuteAlways]
     [RequireComponent(typeof(AudioSource))]
     public sealed class AudioPlayer : SoundPlayerBase
     {
@@ -64,7 +65,7 @@ namespace RuniEngine.Sounds
                 }
             }
         }
-        [NonSerialized] long _timeSamples;
+        [HideInInspector, NonSerialized] long _timeSamples;
 
         public override double length => audioMetaData != null ? audioMetaData.length / metaDataTempo : 0;
         public int samples => audioMetaData != null ? audioMetaData.samples : 0;
@@ -116,7 +117,7 @@ namespace RuniEngine.Sounds
         }
 
         public double spatialStereo => Interlocked.CompareExchange(ref _spatialStereo, 0, 0);
-        double _spatialStereo;
+        [HideInInspector, NonSerialized] double _spatialStereo;
 
 
 
@@ -510,7 +511,6 @@ namespace RuniEngine.Sounds
         static AudioPlayer? InternalPlayAudio(string key, string nameSpace, float volume, bool loop, double pitch, double tempo, float panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
         {
             NotMainThreadException.Exception();
-            NotPlayModeException.Exception();
             ResourceDataNotLoadedException.Exception();
 
             ResourceManager.SetDefaultNameSpace(ref nameSpace);

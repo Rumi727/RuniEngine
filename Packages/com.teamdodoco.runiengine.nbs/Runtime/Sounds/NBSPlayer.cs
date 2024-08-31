@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace RuniEngine.Sounds
 {
+    [ExecuteAlways]
     public sealed class NBSPlayer : SoundPlayerBase
     {
         public override SoundData? soundData => nbsData;

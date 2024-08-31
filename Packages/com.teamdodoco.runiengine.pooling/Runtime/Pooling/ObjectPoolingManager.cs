@@ -17,9 +17,9 @@ namespace RuniEngine.Pooling
                 if (_instance == null)
                 {
                     _instance = Object.Instantiate(ResourceUtility.emptyRectTransform);
-                    Object.DontDestroyOnLoad(_instance);
 
-                    _instance.name = "Object Pool";
+                    _instance.name = "Runi Engine Object Pool";
+                    _instance.gameObject.hideFlags = HideFlags.HideAndDontSave;
                 }
 
                 return _instance;
@@ -27,10 +27,26 @@ namespace RuniEngine.Pooling
         }
         static Transform? _instance;
 
-        
 
-        [StaticResettable(false)] static readonly Dictionary<string, Dictionary<string, List<MonoBehaviour>>> pooledObjectList = new();
 
+        static readonly Dictionary<string, Dictionary<string, List<MonoBehaviour>>> pooledObjectList = new();
+
+
+
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        static void InitializeOnLoadMethod()
+        {
+            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += static () =>
+            {
+                if (instance != null)
+                {
+                    Object.DestroyImmediate(instance.gameObject);
+                    _instance = null;
+                }
+            };
+        }
+#endif
 
 
 
@@ -41,8 +57,6 @@ namespace RuniEngine.Pooling
         public static void CachingObject(string key, string nameSpace = "")
         {
             NotMainThreadException.Exception();
-            NotPlayModeException.Exception();
-
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             GameObject? gameObject = ObjectLoader.SearchGameObject(key, nameSpace);
@@ -74,7 +88,6 @@ namespace RuniEngine.Pooling
         public static void AddObject<T>(T poolingObject) where T : MonoBehaviour, IObjectPooling
         {
             NotMainThreadException.Exception();
-            NotPlayModeException.Exception();
 
             poolingObject.gameObject.SetActive(false);
             poolingObject.transform.SetParent(instance.transform, false);
@@ -91,6 +104,8 @@ namespace RuniEngine.Pooling
         /// <returns></returns>
         public static bool ContainsObject(string key, string nameSpace = "")
         {
+            NotMainThreadException.Exception();
+
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
             return pooledObjectList.ContainsKey(nameSpace) && pooledObjectList.ContainsKey(key);
         }
@@ -104,8 +119,6 @@ namespace RuniEngine.Pooling
         public static T? ObjectClone<T>(string key, string nameSpace = "", Transform? parent = null) where T : MonoBehaviour, IObjectPooling
         {
             NotMainThreadException.Exception();
-            NotPlayModeException.Exception();
-
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             if (pooledObjectList.TryGetValue(nameSpace, out var value) && value.TryGetValue(key, out var poolingObjectList))

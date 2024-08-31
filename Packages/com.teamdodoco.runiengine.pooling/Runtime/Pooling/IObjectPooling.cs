@@ -23,6 +23,7 @@ namespace RuniEngine.Pooling
 
         public static void OnCreateDefault(Transform transform, IObjectPooling objectPooling)
         {
+            transform.gameObject.hideFlags = HideFlags.DontSaveInBuild | HideFlags.DontSaveInEditor;
             transform.gameObject.name = objectPooling.poolingKey;
 
             transform.localPosition = Vector3.zero;
@@ -34,8 +35,6 @@ namespace RuniEngine.Pooling
         public static bool RemoveDefault<T>(T poolingObject) where T : MonoBehaviour, IObjectPooling
         {
             if (!poolingObject.isActived)
-                return false;
-            if (!Kernel.isPlaying)
                 return false;
 
             poolingObject.removed?.Invoke();
