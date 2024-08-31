@@ -11,11 +11,7 @@ using EditorGUIUtility = UnityEditor.EditorGUIUtility;
 
 namespace RuniEngine.Editor.Drawers
 {
-#if !UNITY_6000_0_OR_NEWER
     [CustomPropertyDrawer(typeof(object), true)]
-#else
-    [CustomPropertyDrawer(typeof(System.ValueType), true)]
-#endif
     public sealed class ObjectPropertyDrawer : PropertyDrawer
     {
         readonly Dictionary<string, AnimBool> animBools = new Dictionary<string, AnimBool>();
