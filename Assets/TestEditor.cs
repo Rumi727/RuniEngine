@@ -6,7 +6,7 @@ using UnityEditor;
 namespace RuniEngine.Editor
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(Test))]
+    //[CustomEditor(typeof(Test))]
     public class TestEditor : CustomInspectorBase<Test>
     {
         public override void OnInspectorGUI()
