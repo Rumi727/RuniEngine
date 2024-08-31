@@ -393,7 +393,7 @@ namespace RuniEngine.Sounds
                             }
 
                             if (isLooped)
-                                LoopedEventInvoke();
+                                ThreadDispatcher.Execute(LoopedEventInvoke);
                         }
                     }
 
