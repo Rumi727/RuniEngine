@@ -78,7 +78,7 @@ namespace RuniEngine.Sounds
             }
         }
         [SerializeField] bool _isPaused = false;
-        int isPausedLock;
+        [HideInInspector, NonSerialized] int isPausedLock;
 
 
 
@@ -100,7 +100,7 @@ namespace RuniEngine.Sounds
             }
         }
         [SerializeField] bool _loop = false;
-        int loopLock;
+        [HideInInspector, NonSerialized] int loopLock;
 
         public void LoopLock() => ThreadTask.Lock(ref loopLock);
         public void LoopUnlock() => ThreadTask.Unlock(ref loopLock);
@@ -129,7 +129,7 @@ namespace RuniEngine.Sounds
             }
         }
         [HideInInspector, SerializeField, Range(0, 3)] double _pitch = 1;
-        int pitchLock;
+        [HideInInspector, NonSerialized] int pitchLock;
 
         public void PitchLock() => ThreadTask.Lock(ref pitchLock);
         public void PitchUnlock() => ThreadTask.Unlock(ref pitchLock);
@@ -155,7 +155,7 @@ namespace RuniEngine.Sounds
             }
         }
         [HideInInspector, SerializeField, Range(-3, 3)] double _tempo = 1;
-        int tempoLock;
+        [HideInInspector, NonSerialized] int tempoLock;
 
         public void TempoLock() => ThreadTask.Lock(ref tempoLock);
         public void TempoUnlock() => ThreadTask.Unlock(ref tempoLock);
@@ -243,7 +243,7 @@ namespace RuniEngine.Sounds
             }
         }
         [HideInInspector, SerializeField, Range(0, 2)] float _volume = 1;
-        int volumeLock;
+        [HideInInspector, NonSerialized] int volumeLock;
 
         public void VolumeLock() => ThreadTask.Lock(ref volumeLock);
         public void VolumeUnlock() => ThreadTask.Unlock(ref volumeLock);
@@ -268,7 +268,7 @@ namespace RuniEngine.Sounds
             }
         }
         [HideInInspector, SerializeField] float _panStereo = 0;
-        int panStereoLock;
+        [HideInInspector, NonSerialized] int panStereoLock;
 
         public void PanStereoLock() => ThreadTask.Lock(ref panStereoLock);
         public void PanStereoUnlock() => ThreadTask.Unlock(ref panStereoLock);
