@@ -337,7 +337,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 //슬라이더
                 {
                     EditorGUI.showMixedValue = mixed;
-                    EditorGUI.BeginDisabledGroup(!Kernel.isPlaying || (!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets)));
+                    EditorGUI.BeginDisabledGroup(!target.isPlaying && TargetsIsEquals(x => x.isPlaying, targets));
 
                     {
                         EditorGUI.BeginChangeCheck();
@@ -357,12 +357,12 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
                 //텍스트
                 {
-                    EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
+                    //EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
 
                     DrawTimeSliderText(target, mixed, time.ToTime(true, true), (length - time).ToTime(true, true), length.ToTime(true, true), realTime.ToTime(true, true), (realLength - realTime).ToTime(true, true), realLength.ToTime(true, true), true);
                     action?.Invoke();
 
-                    EditorGUI.EndDisabledGroup();
+                    //EditorGUI.EndDisabledGroup();
                 }
 
                 GUILayout.EndVertical();
@@ -431,7 +431,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             float buttonSize = (size - 9) / 4f;
 
-            bool disable = !Kernel.isPlaying;
+            //bool disable = !Kernel.isPlaying;
             bool mixed = targets.Length > 1;
             SoundPlayerBase? target = targets[0];
 
@@ -501,13 +501,13 @@ namespace RuniEngine.Editor.Inspector.Sounds
                     void DrawButton(string buttonText, string text, Action<SoundPlayerBase> action)
                     {
                         GUILayout.BeginVertical();
-                        EditorGUI.BeginDisabledGroup(disable);
+                        //EditorGUI.BeginDisabledGroup(disable);
 
                         Rect buttonRect = EditorGUILayout.GetControlRect(GUILayout.Width(buttonSize), GUILayout.Height(21));
                         if (GUI.Button(buttonRect, buttonText))
                             TargetsInvoke(action);
 
-                        EditorGUI.EndDisabledGroup();
+                        //EditorGUI.EndDisabledGroup();
 
                         BeginFontSize(11);
                         BeginAlignment(TextAnchor.UpperCenter, labelStyle);

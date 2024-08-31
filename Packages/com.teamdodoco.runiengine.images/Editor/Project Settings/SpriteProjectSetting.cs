@@ -29,9 +29,9 @@ namespace RuniEngine.Editor.ProjectSettings
         public static SettingsProvider CreateSettingsProvider() => instance ??= new SpriteProjectSetting("Runi Engine/Resource/Sprite Setting", SettingsScope.Project);
 
 
-        RuniAdvancedDropdown? nameSpaceDropdown;
-        RuniAdvancedDropdown? typeDropdown;
-        RuniAdvancedDropdown? nameDropdown;
+        RuniAdvancedDropdown nameSpaceDropdown = new RuniAdvancedDropdown();
+        RuniAdvancedDropdown typeDropdown = new RuniAdvancedDropdown();
+        RuniAdvancedDropdown nameDropdown = new RuniAdvancedDropdown();
 
         [SerializeField] string nameSpace = ResourceManager.defaultNameSpace;
         [SerializeField] string type = "";
@@ -48,21 +48,21 @@ namespace RuniEngine.Editor.ProjectSettings
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
             BeginLabelWidth(0);
 
-            string tempNameSpace = DrawNameSpace(ref nameSpaceDropdown, TryGetText("gui.namespace"), nameSpace);
+            string tempNameSpace = DrawNameSpace(nameSpaceDropdown, TryGetText("gui.namespace"), nameSpace);
             if (tempNameSpace != nameSpace)
             {
                 nameSpace = tempNameSpace;
                 types = null;
             }
 
-            string tempType = DrawStringArray(ref typeDropdown, TryGetText("gui.type"), type, types ??= ImageLoader.GetTypes(nameSpace), true);
+            string tempType = DrawStringArray(typeDropdown, TryGetText("gui.type"), type, types ??= ImageLoader.GetTypes(nameSpace), true);
             if (tempType != type)
             {
                 type = tempType;
                 names = null;
             }
 
-            name = DrawStringArray(ref nameDropdown, TryGetText("gui.name"), name, names ??= ImageLoader.GetSpriteNames(type, nameSpace));
+            name = DrawStringArray(nameDropdown, TryGetText("gui.name"), name, names ??= ImageLoader.GetSpriteNames(type, nameSpace));
             tag = EditorGUILayout.TextField(TryGetText("gui.tag"), tag);
 
             EditorGUILayout.Space();
