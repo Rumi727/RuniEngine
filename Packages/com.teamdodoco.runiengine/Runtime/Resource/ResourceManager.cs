@@ -215,23 +215,34 @@ namespace RuniEngine.Resource
         public static void AllDestroy()
         {
             GarbageRemoval();
-            
+
+            System.Text.StringBuilder builder = StringBuilderCache.Acquire();
+
             List<Sprite> allLoadedSprite = allLoadedResources.OfType<Sprite>().ToList();
             for (int i = 0; i < allLoadedSprite.Count; i++)
             {
                 Sprite sprite = allLoadedSprite[i];
                 if (sprite != null)
+                {
+                    builder.AppendLine(sprite.ToString());
                     Object.DestroyImmediate(sprite, true);
+                }
             }
 
             for (int i = 0; i < allLoadedResources.Count; i++)
             {
                 Object? resource = allLoadedResources[i];
                 if (resource != null)
+                {
+                    builder.AppendLine(resource.ToString());
                     Object.DestroyImmediate(resource, true);
+                }
             }
 
-            Debug.Log("Unloaded all loaded unity objects");
+            if (allLoadedResources.Count > 0)
+                Debug.Log($"Unloaded all {allLoadedResources.Count} Unity objects managed by Runi Engine.\nList of unloaded objects\n\n{builder}");
+
+            StringBuilderCache.Release(builder);
 
             allLoadedResources.Clear();
         }
