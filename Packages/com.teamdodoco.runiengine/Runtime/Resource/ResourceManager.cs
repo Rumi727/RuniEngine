@@ -221,21 +221,17 @@ namespace RuniEngine.Resource
             {
                 Sprite sprite = allLoadedSprite[i];
                 if (sprite != null)
-                {
-                    Debug.Log(sprite);
                     Object.DestroyImmediate(sprite, true);
-                }
             }
 
             for (int i = 0; i < allLoadedResources.Count; i++)
             {
                 Object? resource = allLoadedResources[i];
                 if (resource != null)
-                {
-                    Debug.Log(resource);
                     Object.DestroyImmediate(resource, true);
-                }
             }
+
+            Debug.Log("Unloaded all loaded unity objects");
 
             allLoadedResources.Clear();
         }

@@ -128,6 +128,8 @@ namespace RuniEngine.Resource.Objects
                     if (unityObject == null)
                         continue;
 
+                    ResourceManager.allLoadedResources.Add(unityObject);
+
                     tempUnityObjects.TryAdd(nameSpace, new());
                     tempUnityObjects[nameSpace].TryAdd(unityObject.name, unityObject);
 
