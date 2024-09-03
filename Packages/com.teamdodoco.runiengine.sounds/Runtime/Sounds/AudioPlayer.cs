@@ -150,7 +150,7 @@ namespace RuniEngine.Sounds
             if (isPlaying && !isPaused)
             {
                 long index = timeSamples;
-                index += (long)(Kernel.deltaTimeDouble * frequency * realTempo);
+                index += (long)(Kernel.unscaledDeltaTimeDouble * frequency * realTempo);
 
                 Interlocked.Exchange(ref _timeSamples, index);
             }
