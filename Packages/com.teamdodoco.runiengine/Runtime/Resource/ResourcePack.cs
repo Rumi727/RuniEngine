@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RuniEngine.Jsons;
+using RuniEngine.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -92,32 +93,51 @@ namespace RuniEngine.Resource
 
         public async UniTask Load(IProgress<float>? progress = null)
         {
-            List<UniTask> cachedUniTasks = new List<UniTask>();
-            SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
-            int progressIndex = 0;
+            NotMainThreadException.Exception();
 
-            foreach (var item in resourceElements)
+            try
             {
-                if (progress != null)
+                List<UniTask> cachedUniTasks = new List<UniTask>();
+                SynchronizedCollection<float> progressLists = new SynchronizedCollection<float>();
+                int progressIndex = 0;
+
+                foreach (var item in resourceElements)
                 {
-                    int index = progressIndex;
-                    IProgress<float> progress2 = Progress.Create<float>(x =>
+                    if (progress != null)
                     {
-                        progressLists[index] = x;
-                        progress.Report(progressLists.Sum() / resourceElements.Count);
-                    });
+                        int index = progressIndex;
+                        IProgress<float> progress2 = Progress.Create<float>(y =>
+                        {
+                            try
+                            {
+                                ThreadTask.Lock(ref progressLists.internalSync);
 
-                    progressLists.Add(0);
-                    progressIndex++;
+                                progressLists.internalList[index] = y;
+                                progress.Report(progressLists.internalList.Sum() / resourceElements.Count);
 
-                    cachedUniTasks.Add(item.Value.Load(progress2));
+                            }
+                            finally
+                            {
+                                ThreadTask.Unlock(ref progressLists.internalSync);
+                            }
+                        });
+
+                        progressLists.Add(0);
+                        progressIndex++;
+
+                        cachedUniTasks.Add(item.Value.Load(progress2));
+                    }
+                    else
+                        cachedUniTasks.Add(item.Value.Load());
                 }
-                else
-                    cachedUniTasks.Add(item.Value.Load());
-            }
 
-            await UniTask.WhenAll(cachedUniTasks);
-            isLoaded = true;
+                await UniTask.WhenAll(cachedUniTasks);
+                isLoaded = true;
+            }
+            finally
+            {
+                ResourceManager.GarbageRemoval();
+            }
         }
 
         public async UniTask Unload()

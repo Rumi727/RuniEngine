@@ -145,21 +145,6 @@ namespace RuniEngine.Booting
 
             return true;
         }
-
-        public static bool TryUnload()
-        {
-            if (!isLoadingStart)
-                return false;
-
-            ResourceManager.AllDestroy();
-
-            isDataLoaded = false;
-            isAllLoaded = false;
-            isLoadingStart = false;
-
-            return true;
-        }
-
         static async UniTask AttributeInvoke<T>() where T : Attribute
         {
             //GC 이슈로 인해 스레드로 전환하지 않으면 메인 스레드에서 프레임 드랍이 일어남

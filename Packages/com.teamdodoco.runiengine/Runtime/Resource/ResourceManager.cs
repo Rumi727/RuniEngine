@@ -63,35 +63,32 @@ namespace RuniEngine.Resource
 
                 ResourcePackLoop(x =>
                 {
-                    foreach (var item in x.resourceElements)
+                    if (progress != null)
                     {
-                        if (progress != null)
+                        int index = progressIndex;
+                        IProgress<float> progress2 = Progress.Create<float>(y =>
                         {
-                            int index = progressIndex;
-                            IProgress<float> progress2 = Progress.Create<float>(y =>
+                            try
                             {
-                                try
-                                {
-                                    ThreadTask.Lock(ref progressLists.internalSync);
+                                ThreadTask.Lock(ref progressLists.internalSync);
 
-                                    progressLists.internalList[index] = y;
-                                    progress.Report(progressLists.internalList.Sum() / x.resourceElements.Count);
+                                progressLists.internalList[index] = y;
+                                progress.Report(progressLists.internalList.Sum() / resourcePacks.Count);
 
-                                }
-                                finally
-                                {
-                                    ThreadTask.Unlock(ref progressLists.internalSync);
-                                }
-                            });
+                            }
+                            finally
+                            {
+                                ThreadTask.Unlock(ref progressLists.internalSync);
+                            }
+                        });
 
-                            progressLists.Add(0);
-                            progressIndex++;
+                        progressLists.Add(0);
+                        progressIndex++;
 
-                            cachedUniTasks.Add(item.Value.Load(progress2));
-                        }
-                        else
-                            cachedUniTasks.Add(item.Value.Load());
+                        cachedUniTasks.Add(x.Load(progress2));
                     }
+                    else
+                        cachedUniTasks.Add(x.Load());
 
                     return false;
                 });
@@ -217,18 +214,6 @@ namespace RuniEngine.Resource
             GarbageRemoval();
 
             System.Text.StringBuilder builder = StringBuilderCache.Acquire();
-
-            List<Sprite> allLoadedSprite = allLoadedResources.OfType<Sprite>().ToList();
-            for (int i = 0; i < allLoadedSprite.Count; i++)
-            {
-                Sprite sprite = allLoadedSprite[i];
-                if (sprite != null)
-                {
-                    builder.AppendLine(sprite.ToString());
-                    Object.DestroyImmediate(sprite, true);
-                }
-            }
-
             for (int i = 0; i < allLoadedResources.Count; i++)
             {
                 Object? resource = allLoadedResources[i];
