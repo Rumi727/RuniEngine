@@ -267,7 +267,7 @@ namespace RuniEngine.Sounds
                 ThreadTask.Unlock(ref panStereoLock);
             }
         }
-        [HideInInspector, SerializeField] float _panStereo = 0;
+        [HideInInspector, SerializeField, Range(-1, 1)] float _panStereo = 0;
         [HideInInspector, NonSerialized] int panStereoLock;
 
         public void PanStereoLock() => ThreadTask.Lock(ref panStereoLock);
