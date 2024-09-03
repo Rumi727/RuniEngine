@@ -86,6 +86,8 @@ namespace RuniEngine.Sounds
                 if (nbsFile == null)
                     return;
 
+                value = value.Clamp(0, nbsFile.nbsNotes.Length - 1);
+
                 if (index != value)
                 {
                     _index = value;

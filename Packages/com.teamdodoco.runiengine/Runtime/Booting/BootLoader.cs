@@ -64,7 +64,7 @@ namespace RuniEngine.Booting
             //Player Loop Setting
             Debug.Log("Player Loop Setting...", nameof(BootLoader));
             {
-                PlayerLoopSystem loopSystems = PlayerLoop.GetCurrentPlayerLoop();
+                PlayerLoopSystem loopSystems = PlayerLoop.GetDefaultPlayerLoop();
 
                 //UniTask Setting
                 PlayerLoopHelper.Initialize(ref loopSystems);
