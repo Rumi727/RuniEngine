@@ -1,6 +1,6 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
-using RuniEngine.Datas;
+using RuniEngine.Accounts;
 using RuniEngine.Jsons;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace RuniEngine.Resource.Texts
 {
     public sealed class LanguageLoader : IResourceElement
     {
-        [GlobalData]
+        [UserData]
         public struct GlobalData
         {
             public static string currentLanguage { get; set; } = "en_us";
