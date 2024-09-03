@@ -394,7 +394,7 @@ namespace RuniEngine.Resource.Images
         /// </param>
         /// <returns></returns>
         /// <exception cref="NotMainThreadMethodException"></exception>
-        public static Dictionary<string, Sprite?[]> GetSprites(Texture2D texture, HideFlags hideFlags, Dictionary<string, SpriteMetaData[]> spriteMetaDatas)
+        public static Dictionary<string, Sprite?[]> GetSprites(Texture2D texture, HideFlags hideFlags, Dictionary<string, SpriteMetaData[]> spriteMetaDatas, string? name = null)
         {
             NotMainThreadException.Exception();
 
@@ -413,7 +413,11 @@ namespace RuniEngine.Resource.Images
                     spriteMetaData.RectMinMax(texture.width, texture.height);
 
                     Sprite sprite = Sprite.Create(texture, spriteMetaData.rect, spriteMetaData.pivot, spriteMetaData.pixelsPerUnit, 0, SpriteMeshType.FullRect, spriteMetaData.border);
-                    sprite.name = texture.name;
+                    if (string.IsNullOrEmpty(name))
+                        sprite.name = texture.name + " " + item.Key;
+                    else
+                        sprite.name = name + " " + item.Key;
+
                     sprite.hideFlags = hideFlags;
 
                     ResourceManager.allLoadedResources.Add(sprite);
@@ -849,7 +853,7 @@ namespace RuniEngine.Resource.Images
                             }
                         }
 
-                        Dictionary<string, Sprite?[]> sprites = await ThreadDispatcher.Execute(() => GetSprites(background, HideFlags.DontSave, spriteMetaDatas));
+                        Dictionary<string, Sprite?[]> sprites = await ThreadDispatcher.Execute(() => GetSprites(background, HideFlags.DontSave, spriteMetaDatas, rects.Key));
 
                         tempAllTextureSprites.TryAdd(nameSpace.Key, new Dictionary<string, Dictionary<string, Dictionary<string, Sprite?[]>>>());
                         tempAllTextureSprites[nameSpace.Key].TryAdd(type.Key, new Dictionary<string, Dictionary<string, Sprite?[]>>());
