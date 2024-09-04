@@ -2,6 +2,7 @@
 using System.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace RuniEngine
 {
@@ -49,5 +50,10 @@ namespace RuniEngine
 
         public static bool AttributeContains<T>(this Module element) where T : Attribute => element.AttributeContains(typeof(T));
         public static bool AttributeContains(this Module element, Type attribute) => element.GetCustomAttributes(attribute, false).Length > 0;
+
+        public static bool IsAsyncMethod(this MethodBase methodBase) => methodBase.AttributeContains<AsyncStateMachineAttribute>();
+
+        public static bool IsCompilerGenerated(this Type type) => type.AttributeContains<CompilerGeneratedAttribute>();
+        public static bool IsCompilerGenerated(this MemberInfo memberInfo) => memberInfo.AttributeContains<CompilerGeneratedAttribute>();
     }
 }

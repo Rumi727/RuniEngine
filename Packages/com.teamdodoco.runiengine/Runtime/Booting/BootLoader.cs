@@ -62,7 +62,7 @@ namespace RuniEngine.Booting
             Kernel.PathInitialize();
 
             //Player Loop Setting
-            Debug.Log("Player Loop Setting...", nameof(BootLoader));
+            Debug.Log("Player Loop Setting...");
             {
                 PlayerLoopSystem loopSystems = PlayerLoop.GetDefaultPlayerLoop();
 
@@ -75,7 +75,7 @@ namespace RuniEngine.Booting
                 //Custom Update Setting
                 CustomPlayerLoopSetter.EventRegister(ref loopSystems);
             }
-            Debug.Log("Player Loop Setting End", nameof(BootLoader));
+            Debug.Log("Player Loop Setting End");
 
             await UniTask.Delay(100, true);
             if (!Kernel.isPlaying)
@@ -119,7 +119,7 @@ namespace RuniEngine.Booting
             isLoadingStart = true;
 
             //Storable Class
-            Debug.Log("Storable Class Loading...", nameof(BootLoader));
+            Debug.Log("Storable Class Loading...");
 
             _projectData = StorableClassUtility.AutoInitialize<ProjectDataAttribute>();
             _globalData = StorableClassUtility.AutoInitialize<GlobalDataAttribute>();
@@ -129,15 +129,15 @@ namespace RuniEngine.Booting
 
             isDataLoaded = true;
 
-            Debug.Log("Storable Class Loaded", nameof(BootLoader));
+            Debug.Log("Storable Class Loaded");
 
-            Debug.Log("Resource Loading...", nameof(BootLoader));
+            Debug.Log("Resource Loading...");
 
             await ResourceManager.Refresh(resourceTask = new AsyncTask("resource_manager.load.name"));
             resourceTask.Dispose();
             resourceTask = null;
 
-            Debug.Log("Resource Loaded", nameof(BootLoader));
+            Debug.Log("Resource Loaded");
 
             //All Loading End
             isAllLoaded = true;

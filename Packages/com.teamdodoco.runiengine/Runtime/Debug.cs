@@ -1,4 +1,5 @@
 #nullable enable
+using RuniEngine;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -65,25 +66,27 @@ public static class Debug
 
     public static string NameOfCallingClass(int skipFrames = 0)
     {
-        string name;
-
-        Type declaringType;
-
         skipFrames += 2;
-        do
+
+        StackTrace stackTrace = new StackTrace();
+        if (stackTrace.FrameCount > skipFrames)
         {
-            MethodBase method = new StackFrame(skipFrames, false).GetMethod();
-            declaringType = method.DeclaringType;
+            StackFrame stackFrame = stackTrace.GetFrame(skipFrames);
+            MethodBase methodBase = stackFrame.GetMethod();
+            Type type = methodBase.DeclaringType;
 
-            if (declaringType == null)
-                return method.Name;
+            if (type.IsCompilerGenerated())
+            {
+                string name = type.FullName;
+                int startIndex = name.LastIndexOf('.') + 1;
 
-            name = declaringType.Name;
-            skipFrames++;
+                return type.FullName.Substring(startIndex, name.LastIndexOf('+') - startIndex);
+            }
+
+            return type.Name;
         }
-        while (declaringType.Module.Name.Equals("mscorlib.dll", StringComparison.OrdinalIgnoreCase));
-
-        return name;
+        else
+            return nameof(Debug);
     }
 
     public static StackFrame GetMethodCallerStackFrame()

@@ -613,7 +613,7 @@ namespace RuniEngine.Resource.Images
         {
             if (resourcePack == null)
                 return;
-
+            
             await UniTask.SwitchToThreadPool();
 
             foreach (Texture2D? texture in packTextures.SelectMany(item => item.Value)
