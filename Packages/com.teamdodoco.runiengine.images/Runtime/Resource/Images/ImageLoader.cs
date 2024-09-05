@@ -807,9 +807,7 @@ namespace RuniEngine.Resource.Images
             // Create Sprites
             {
                 int progressValue = 0;
-                int maxProgress = tempPackTextureRects.SelectMany(nameSpaces => nameSpaces.Value)
-                                                      .SelectMany(types => types.Value)
-                                                      .Count();
+                int maxProgress = 0;
 
                 List<UniTask> tasks = new List<UniTask>();
                 foreach
@@ -826,6 +824,8 @@ namespace RuniEngine.Resource.Images
                     )
                 )
                 {
+                    maxProgress++;
+
                     tasks.Add(Task());
                     async UniTask Task()
                     {
@@ -866,6 +866,8 @@ namespace RuniEngine.Resource.Images
 
                 await UniTask.WhenAll(tasks);
             }
+
+            progress?.Report(1);
 
             await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
             allTextureSprites = tempAllTextureSprites;
