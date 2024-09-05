@@ -234,7 +234,7 @@ namespace RuniEngine.Resource.Sounds
                 Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(folderPath + ".json");
                 if (audioDatas == null)
                 {
-                    progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+                    ReportProgress();
                     continue;
                 }
 
@@ -305,7 +305,10 @@ namespace RuniEngine.Resource.Sounds
                 }
 
                 await UniTask.WhenAll(tasks);
-                progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
+
+                ReportProgress();
+
+                void ReportProgress() => progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
             }
 
             await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
