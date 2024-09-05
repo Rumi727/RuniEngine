@@ -126,12 +126,17 @@ namespace RuniEngine.Threading
 
 
         #region 생성자
-        public ThreadTask(ThreadStart method) : this(method, "", "", false, true) { }
+        /// <exception cref="NotMainThreadException"></exception>
+        public ThreadTask(ThreadStart method) : this(method, "", "", false, false) { }
 
-        public ThreadTask(ThreadStart method, NameSpacePathReplacePair name) : this(method, name, "", false, true) { }
+        /// <exception cref="NotMainThreadException"></exception>
+        public ThreadTask(ThreadStart method, NameSpacePathReplacePair name) : this(method, name, "", false, false) { }
 
-        public ThreadTask(ThreadStart method, NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool loop = false, bool cantCancel = true) : base(name, info, loop, cantCancel)
+        /// <exception cref="NotMainThreadException"></exception>
+        public ThreadTask(ThreadStart method, NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool loop = false, bool cancellable = false) : base(name, info, loop, cancellable)
         {
+            NotMainThreadException.Exception();
+
             thread = new Thread(method);
             thread.Start();
 
@@ -143,31 +148,24 @@ namespace RuniEngine.Threading
 
 
 
-        public ThreadTask(Action<ThreadTask> method) : base()
+        /// <exception cref="NotMainThreadException"></exception>
+        public ThreadTask(Action<ThreadTask> method) : this(method, "", "", false, false) { }
+
+        /// <exception cref="NotMainThreadException"></exception>
+        public ThreadTask(Action<ThreadTask> method, NameSpacePathReplacePair name) : this(method, name, "", false, false) { }
+
+        /// <exception cref="NotMainThreadException"></exception>
+        public ThreadTask(Action<ThreadTask> method, NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool loop = false, bool cancellable = false) : base(name, info, loop, cancellable)
         {
+            NotMainThreadException.Exception();
+
             thread = new Thread(() => method(this));
             thread.Start();
 
             _runningThreads.Add(this);
             ThreadAddEventInvoke();
-        }
 
-        public ThreadTask(Action<ThreadTask> method, NameSpacePathReplacePair name) : base(name)
-        {
-            thread = new Thread(() => method(this));
-            thread.Start();
-
-            _runningThreads.Add(this);
-            ThreadAddEventInvoke();
-        }
-
-        public ThreadTask(Action<ThreadTask> method, NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool loop = false, bool cantCancel = true) : base(name, info, loop, cantCancel)
-        {
-            thread = new Thread(() => method(this));
-            thread.Start();
-
-            _runningThreads.Add(this);
-            ThreadAddEventInvoke();
+            Debug.Log($"{LanguageLoader.TryGetText(name.path, name.nameSpace)} thread meta data created");
         }
         #endregion
 
@@ -179,9 +177,11 @@ namespace RuniEngine.Threading
         /// 이 함수는 메인 스레드에서만 실행할수 있습니다
         /// This function can only be executed on the main thread
         /// </summary>
-        /// <exception cref="NotMainThreadMethodException"></exception>
+        /// <exception cref="NotMainThreadException"></exception>
         public override void Dispose()
         {
+            NotMainThreadException.Exception();
+
             Debug.ForceLog($"{LanguageLoader.TryGetText(name.path, name.nameSpace)} Thread Remove! Beware the Join method");
 
             _runningThreads.Remove(this);

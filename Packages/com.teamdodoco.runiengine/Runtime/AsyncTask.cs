@@ -47,13 +47,12 @@ namespace RuniEngine
 
         public AsyncTask(NameSpacePathReplacePair name) : this(name, "", false, false) { }
 
-        public AsyncTask(NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool isLoop = false, bool cancellable = false, bool isEditor = false)
+        public AsyncTask(NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool isLoop = false, bool cancellable = false)
         {
             this.name = name;
             this.info = info;
             this.isLoop = isLoop;
             this.cancellable = cancellable;
-            this.isEditor = isEditor;
 
             _asyncTasks.Add(this);
 
@@ -212,9 +211,6 @@ namespace RuniEngine
             }
         }
         float _maxProgress = 0;
-
-
-        public bool isEditor { get; } = false;
 
 
 
