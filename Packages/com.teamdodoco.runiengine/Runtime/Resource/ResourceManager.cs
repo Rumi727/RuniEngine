@@ -73,8 +73,7 @@ namespace RuniEngine.Resource
                                 ThreadTask.Lock(ref progressLists.internalSync);
 
                                 progressLists.internalList[index] = y;
-                                progress.Report(progressLists.internalList.Sum() / resourcePacks.Count);
-
+                                progress.Report(progressLists.internalList.Sum() / (resourcePacks.Count + 1)); //스트리밍 에셋은 내장 리소스팩이기에 +1 해줘야함
                             }
                             finally
                             {
