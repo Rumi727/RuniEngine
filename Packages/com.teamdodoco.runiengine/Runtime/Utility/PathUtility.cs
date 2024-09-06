@@ -1,4 +1,5 @@
 #nullable enable
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Text;
 using UnityEngine.Networking;
@@ -93,6 +94,9 @@ namespace RuniEngine
 
         public static string GetRelativePath(string relativeTo, string path)
         {
+            relativeTo = relativeTo.UniformDirectorySeparatorCharacter();
+            path = path.UniformDirectorySeparatorCharacter();
+
             if (relativeTo.Length <= 0)
                 return path;
 

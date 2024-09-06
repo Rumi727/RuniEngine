@@ -1,4 +1,6 @@
 #nullable enable
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RuniEngine.Resource.Sounds
@@ -6,7 +8,7 @@ namespace RuniEngine.Resource.Sounds
     public sealed class RawAudioClip
     {
         /// <summary>샘플 데이터</summary>
-        public float[] datas { get; }
+        public IReadOnlyList<float> datas { get; }
 
         /// <summary>샘플 레이트</summary>
         public int frequency { get; }
@@ -37,14 +39,16 @@ namespace RuniEngine.Resource.Sounds
             samples = audioClip.samples;
             length = audioClip.length;
 
-            datas = new float[samples * channels];
+            float[] datas = new float[samples * channels];
             audioClip.GetData(datas, 0);
+
+            this.datas = datas;
         }
 
         public AudioClip ToAudioClip(string name)
         {
-            AudioClip clip = AudioClip.Create(name, datas.Length, channels, frequency, false);
-            clip.SetData(datas, 0);
+            AudioClip clip = AudioClip.Create(name, datas.Count, channels, frequency, false);
+            clip.SetData(datas.ToArray(), 0);
 
             return clip;
         }
