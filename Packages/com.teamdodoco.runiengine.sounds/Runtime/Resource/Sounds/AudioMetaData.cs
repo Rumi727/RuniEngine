@@ -2,8 +2,8 @@
 using Newtonsoft.Json;
 #if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+using System.Collections.Generic;
 #endif
-using UnityEngine;
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -38,7 +38,7 @@ namespace RuniEngine.Resource.Sounds
 
         [JsonIgnore] RawAudioClip? rawAudioClip { get; }
 
-        [JsonIgnore] public float[]? datas => rawAudioClip?.datas;
+        [JsonIgnore] public IReadOnlyList<float>? datas => rawAudioClip?.datas;
 
         [JsonIgnore] public int frequency => rawAudioClip?.frequency ?? 0;
         [JsonIgnore] public int channels => rawAudioClip?.channels ?? 0;

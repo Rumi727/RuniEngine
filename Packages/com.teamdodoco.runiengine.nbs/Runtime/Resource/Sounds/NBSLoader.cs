@@ -7,6 +7,9 @@ using RuniEngine.Jsons;
 using RuniEngine.NBS;
 using System.Linq;
 using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -100,60 +103,74 @@ namespace RuniEngine.Resource.Sounds
 
             await UniTask.SwitchToThreadPool();
 
-            Dictionary<string, Dictionary<string, NBSData>> tempAllNBSes = new();
+            ConcurrentDictionary<string, NBSFile>? pathNBSes = new();
+            ConcurrentDictionary<string, Dictionary<string, NBSData>> tempAllNBSes = new();
 
-            for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
+            long progressValue = 0;
+            long maxProgress = 0;
+
+            //진정한 병렬 로드
+            Parallel.ForEach(resourcePack.nameSpaces, nameSpace =>
             {
-                string nameSpace = resourcePack.nameSpaces[i];
                 string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+                if (!Directory.Exists(folderPath))
+                    return;
 
                 Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(folderPath + ".json");
                 if (nbsDatas == null)
-                {
-                    ReportProgress();
-                    continue;
-                }
+                    return;
 
-                foreach (var nbsData in nbsDatas)
-                {
-                    if (nbsData.Value.nbses == null)
-                        continue;
+                tempAllNBSes.TryAdd(nameSpace, nbsDatas);
 
+                string[] files = DirectoryUtility.GetFiles(folderPath, ExtensionFilter.nbsFileFilter, SearchOption.AllDirectories);
+                Interlocked.Add(ref maxProgress, files.Length);
+
+                Parallel.ForEach(files, nbsPath =>
+                {
+                    NBSFile? nbsFile = GetNBSFile(nbsPath);
+                    if (nbsFile != null)
+                        pathNBSes.TryAdd(PathUtility.GetPathWithExtension(PathUtility.GetRelativePath(folderPath, nbsPath)), nbsFile);
+
+                    progress?.Report((float)Interlocked.Add(ref progressValue, 1) / Interlocked.Read(ref maxProgress));
+                });
+            });
+
+            progress?.Report(1);
+
+            //오디오 파일들을 오디오 데이터로 변환하는 후처리
+            Dictionary<string, Dictionary<string, NBSData>> resultAllNBSes = new();
+            foreach (var nbsDatas in tempAllNBSes)
+            {
+                string nameSpace = nbsDatas.Key;
+                string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+
+                foreach (var nbsData in nbsDatas.Value)
+                {
                     List<NBSMetaData> nbsMetaDatas = new List<NBSMetaData>();
-                    for (int j = 0; j < nbsData.Value.nbses.Length; j++)
+                    for (int i = 0; i < nbsData.Value.nbses.Length; i++)
                     {
-                        NBSMetaData? nbsMetaData = nbsData.Value.nbses[j];
-                        string nbsPath = Path.Combine(folderPath, nbsMetaData.path);
-
-                        if (!ResourceManager.FileExtensionExists(nbsPath, out nbsPath, ExtensionFilter.nbsFileFilter))
-                            return;
-
-                        NBSFile? nbsFile = GetNBSFile(nbsPath);
-                        if (nbsFile != null)
-                        {
+                        NBSMetaData? nbsMetaData = nbsData.Value.nbses[i];
+                        if (!pathNBSes.TryGetValue(nbsMetaData.path, out NBSFile nbsFile))
+                            continue;
+                        
 #if ENABLE_RUNI_ENGINE_RHYTHMS
-                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.bpmMultiplier, nbsMetaData.rhythmOffsetTick, nbsFile);
+                        nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.bpmMultiplier, nbsMetaData.rhythmOffsetTick, nbsFile);
 #else
-                            nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsFile);
+                        nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsFile);
 #endif
-                        }
 
                         if (nbsMetaData != null)
                             nbsMetaDatas.Add(nbsMetaData);
                     }
 
-                    tempAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
-                    tempAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
-                }
-
-                ReportProgress();
-
-                void ReportProgress() => progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
-            }
+                    resultAllNBSes.TryAdd(nameSpace, new Dictionary<string, NBSData>());
+                    resultAllNBSes[nameSpace].TryAdd(nbsData.Key, new NBSData(nbsData.Value.subtitle, nbsData.Value.isBGM, nbsMetaDatas.ToArray()));
+                };
+            };
 
             await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
 
-            allNBSes = tempAllNBSes;
+            allNBSes = resultAllNBSes;
             isLoaded = true;
         }
 
