@@ -40,6 +40,9 @@ Well, whatever, ~~When I say kernel, it is kernel. There is so much talk. so wha
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib)
 - [VorbisPlugin](https://github.com/gindemit/unity-project-vorbis)
   - Added ToAudioClipAsync method to [VorbisPlugin.cs](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/src/VorbisPlugin.cs) file to load audio asynchronously and added UniTask package dependency to [assembly](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/VorbisPluginImpl.asmdef).
+- [NVorbis](https://github.com/NVorbis/NVorbis)
+- [NAudio](https://github.com/naudio/NAudio)
+- [NAudio.Vorbis](https://github.com/naudio/Vorbis)
 
 ### etc
 

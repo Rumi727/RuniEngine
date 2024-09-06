@@ -13,6 +13,12 @@ using OggVorbis;
 using System;
 
 using Object = UnityEngine.Object;
+using NVorbis;
+using NAudio.Wave;
+using NVorbis.Contracts;
+using NAudio.Vorbis;
+using static UnityEngine.Analytics.IAnalytic;
+using System.Diagnostics;
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -151,6 +157,156 @@ namespace RuniEngine.Resource.Sounds
 
 
 
+        public static RawAudioClip? GetRawAudio(string path)
+        {
+            if (!File.Exists(path))
+                return null;
+
+            int channels;
+            int frequency;
+            long samples;
+
+            float[] buffer;
+            float[] datas;
+
+            WaveStream byteReader;
+            if (path.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase))
+                byteReader = new VorbisWaveReader(path);
+            else
+                byteReader = new AudioFileReader(path);
+
+            ISampleProvider reader = byteReader.ToSampleProvider();
+
+            try
+            {
+                channels = byteReader.WaveFormat.Channels;
+                frequency = byteReader.WaveFormat.SampleRate;
+                samples = byteReader.Length / 4;
+
+                buffer = new float[channels * frequency];
+                datas = new float[samples];
+                
+                int position = 0;
+                int readSampleLength;
+
+                int datasLength = datas.Length;
+                int bufferLength = buffer.Length;
+
+                while ((readSampleLength = reader.Read(buffer, 0, bufferLength)) > 0)
+                {
+                    for (int i = 0; i < readSampleLength; i++)
+                    {
+                        if (position + i >= datasLength)
+                            break;
+
+                        datas[position + i] = buffer[i];
+                    }
+
+                    position += readSampleLength;
+                }
+
+                return new RawAudioClip(datas, frequency, channels);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(path);
+                Debug.LogException(e);
+            }
+            finally
+            {
+                byteReader.Dispose();
+            }
+
+            /*if (path.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase))
+            {
+                using VorbisReader reader = new VorbisReader(path);
+
+                try
+                {
+                    int channels = reader.Channels;
+                    int frequency = reader.SampleRate;
+                    long samples = reader.TotalSamples;
+
+                    float[] buffer = new float[frequency * channels];
+                    float[] datas = new float[samples * channels];
+
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    Debug.Log("start : " + Path.GetFileName(path));
+
+                    int readSampleLength;
+                    while ((readSampleLength = reader.ReadSamples(buffer, 0, buffer.Length)) > 0)
+                    {
+                        long curPosition = (reader.SamplePosition * channels) - readSampleLength;
+                        for (int i = 0; i < readSampleLength; i++)
+                            datas[curPosition + i] = buffer[i];
+                    }
+
+                    Debug.Log("end : " + Path.GetFileName(path));
+                    Debug.Log(stopwatch.Elapsed);
+                    stopwatch.Stop();
+
+                    return new RawAudioClip(datas, frequency, channels);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(path);
+                    Debug.LogException(e);
+                }
+            }
+            else
+            {
+                int channels;
+                int frequency;
+                long samples;
+
+                float[] buffer;
+                float[] datas;
+
+                WaveStream byteReader = new AudioFileReader(path);
+                ISampleProvider reader = byteReader.ToSampleProvider();
+
+                try
+                {
+                    channels = byteReader.WaveFormat.Channels;
+                    frequency = byteReader.WaveFormat.SampleRate;
+                    samples = byteReader.Length;
+
+                    buffer = new float[channels * frequency];
+                    List<float> dataLists = new List<float>((int)samples.Clamp(0, int.MaxValue));
+
+                    int position = 0;
+                    int readSampleLength;
+
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    while ((readSampleLength = reader.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        dataLists.AddRange(buffer);
+                        position += readSampleLength;
+                    }
+
+                    samples = position;
+                    datas = dataLists.ToArray();
+
+                    stopwatch.Stop();
+
+                    return new RawAudioClip(datas, frequency, channels);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(path);
+                    Debug.LogException(e);
+                }
+                finally
+                {
+                    byteReader.Dispose();
+                }
+            }*/
+
+            return null;
+        }
+
+
+
         public static async UniTask<AudioClip?> GetAudio(string path, AudioType type, bool stream = false, HideFlags hideFlags = HideFlags.DontSave)
         {
 #if !((UNITY_STANDALONE_LINUX && !UNITY_EDITOR) || UNITY_EDITOR_LINUX)
@@ -281,15 +437,26 @@ namespace RuniEngine.Resource.Sounds
                                     _ => AudioType.UNKNOWN,
                                 };
 
-                                AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType));
-                                if (audioClip != null)
+                                RawAudioClip? rawAudioClip = null;
+                                /*if (audioType == AudioType.OGGVORBIS)
+                                    rawAudioClip = await UniTask.RunOnThreadPool(() => GetRawAudio(audioPath));
+                                else*/
+                                {
+                                    AudioClip? audioClip = await await ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType));
+                                    if (audioClip != null)
+                                    {
+                                        rawAudioClip = new RawAudioClip(audioClip);
+                                        Object.DestroyImmediate(audioClip);
+                                    }
+                                }
+
+                                if (rawAudioClip != null)
                                 {
 #if ENABLE_RUNI_ENGINE_RHYTHMS
-                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioMetaData.bpms, audioMetaData.rhythmOffsetIndex, audioClip);
+                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioMetaData.bpms, audioMetaData.rhythmOffsetIndex, rawAudioClip);
 #else
-                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, audioClip);
+                                    audioMetaData = new AudioMetaData(audioMetaData.path, audioMetaData.pitch, audioMetaData.tempo, audioMetaData.loopStartIndex, audioMetaData.loopOffsetIndex, rawAudioClip);
 #endif
-                                    Object.DestroyImmediate(audioClip);
                                 }
 
                                 if (audioMetaData != null)
@@ -310,7 +477,7 @@ namespace RuniEngine.Resource.Sounds
 
                 void ReportProgress() => progress?.Report((float)(i + 1) / resourcePack.nameSpaces.Count);
             }
-
+            Debug.Log("Audio Loading End");
             await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
 
             allAudios = tempAllAudios;

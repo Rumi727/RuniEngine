@@ -68,7 +68,7 @@ namespace RuniEngine.Sounds
         [HideInInspector, NonSerialized] long _timeSamples;
 
         public override double length => audioMetaData != null ? audioMetaData.length / metaDataTempo : 0;
-        public int samples => audioMetaData != null ? audioMetaData.samples : 0;
+        public long samples => audioMetaData != null ? audioMetaData.samples : 0;
 
 
 
@@ -145,7 +145,6 @@ namespace RuniEngine.Sounds
                 return;
             }
 #endif
-
             //매 프레임 시간 보정
             if (isPlaying && !isPaused)
             {
@@ -269,7 +268,7 @@ namespace RuniEngine.Sounds
 
             if (tempo < 0)
             {
-                int value = samples;
+                long value = samples;
 
                 Interlocked.Exchange(ref _timeSamples, value);
                 Interlocked.Exchange(ref internalTimeSamples, value);
@@ -328,7 +327,7 @@ namespace RuniEngine.Sounds
                     int loopOffsetIndex = audioMetaData.loopOffsetIndex;
 
                     int audioChannels = this.channels;
-                    int samplesLength = samples;
+                    long samplesLength = samples;
 
                     if (pitch > 0)
                     {

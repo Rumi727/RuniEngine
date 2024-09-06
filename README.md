@@ -40,6 +40,9 @@ UI는 [osu!lazer](https://github.com/ppy/osu)에서 영감을 받았습니다
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib)
 - [VorbisPlugin](https://github.com/gindemit/unity-project-vorbis)
   - 오디오를 비동기적으로 로드하기 위해 [VorbisPlugin.cs](Packages/com.teamdodoco.runiengine.sounds/Packages/VorbisPlugin/Impl/src/VorbisPlugin.cs) 파일에 ToAudioClipAsync 메소드를 추가했으며 [어셈블리](Packages/com.teamdodoco.runiengine.sounds/Packages/VorbisPlugin/Impl/VorbisPluginImpl.asmdef)에 UniTask 패키지 의존성을 추가했습니다
+- [NVorbis](https://github.com/NVorbis/NVorbis)
+- [NAudio](https://github.com/naudio/NAudio)
+- [NAudio.Vorbis](https://github.com/naudio/Vorbis)
 
 ### 기타
 
