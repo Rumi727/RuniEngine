@@ -84,7 +84,7 @@ namespace RuniEngine.Booting
             //Splash Screen Play
             SplashScreen.isPlaying = true;
 
-            await UniTask.WaitUntil(() => SplashScreen.resourceLoadable);
+            await UniTask.WaitUntil(() => SplashScreen.resourceLoadable || !Kernel.isPlaying);
             if (!Kernel.isPlaying)
                 return;
 
