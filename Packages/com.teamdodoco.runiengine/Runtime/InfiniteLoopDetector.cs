@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace RuniEngine
 {
@@ -10,19 +11,20 @@ namespace RuniEngine
     {
         static string prevPoint = "";
         static int detectionCount = 0;
-        const int detectionThreshold = 10000;
+        const int detectionThreshold = 1000000;
 
         [Conditional("UNITY_EDITOR")]
         public static void Run([CallerMemberName] string mn = "", [CallerFilePath] string fp = "", [CallerLineNumber] int ln = 0)
         {
             string currentPoint = $"{fp}:{ln}, {mn}()";
+            int count;
 
             if (prevPoint == currentPoint)
-                detectionCount++;
+                count = Interlocked.Add(ref detectionCount, 1);
             else
-                detectionCount = 0;
+                count = Interlocked.Exchange(ref detectionCount, 0);
 
-            if (detectionCount > detectionThreshold)
+            if (count > detectionThreshold)
                 throw new Exception($"Infinite Loop Detected: \n{currentPoint}\n\n");
 
             prevPoint = currentPoint;
@@ -30,7 +32,7 @@ namespace RuniEngine
 
 #if UNITY_EDITOR
         [UnityEditor.InitializeOnLoadMethod]
-        static void Init() => UnityEditor.EditorApplication.update += () => detectionCount = 0;
+        static void Init() => UnityEditor.EditorApplication.update += () => Interlocked.Exchange(ref detectionCount, 0);
 #endif
     }
 }
