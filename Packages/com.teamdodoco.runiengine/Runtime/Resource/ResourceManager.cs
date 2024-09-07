@@ -33,7 +33,8 @@ namespace RuniEngine.Resource
 
 
 
-        public static List<Object?> allLoadedResources { get; } = new();
+        static List<IDisposable> allManagedResources { get; } = new();
+        static List<Object?> allLoadedResources { get; } = new();
         public static SynchronizedCollection<Object?> garbages { get; } = new SynchronizedCollection<Object?>();
 
 
@@ -96,7 +97,7 @@ namespace RuniEngine.Resource
             }
             finally
             {
-                GarbageRemoval();
+                ThreadDispatcher.Execute(GarbageRemoval).Forget();
             }
         }
 
@@ -180,6 +181,12 @@ namespace RuniEngine.Resource
 
         public static void GarbageRemoval()
         {
+            if (!ThreadTask.isMainThread)
+            {
+                ThreadDispatcher.Execute(GarbageRemoval).Forget();
+                return;
+            }
+
             NotMainThreadException.Exception();
 
             for (int i = 0; i < garbages.Count; i++)
@@ -205,6 +212,11 @@ namespace RuniEngine.Resource
 
 
 
+        public static void RegisterManagedResource(Object? resource) => allLoadedResources.Add(resource);
+        public static void RegisterManagedResource(IDisposable resource) => allManagedResources.Add(resource);
+
+
+
         /// <summary>
         /// 모든 리소스를 삭제합니다
         /// </summary>
@@ -219,7 +231,15 @@ namespace RuniEngine.Resource
                 if (resource != null)
                 {
                     builder.AppendLine(resource.ToString());
-                    Object.DestroyImmediate(resource, true);
+
+                    try
+                    {
+                        Object.DestroyImmediate(resource, true);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
                 }
             }
 
@@ -229,6 +249,22 @@ namespace RuniEngine.Resource
             StringBuilderCache.Release(builder);
 
             allLoadedResources.Clear();
+
+            for (int i = 0; i < allManagedResources.Count; i++)
+            {
+                try
+                {
+                    allManagedResources[i].Dispose();
+                }
+                catch (NullReferenceException) { }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
+
+            if (allManagedResources.Count > 0)
+                Debug.Log($"Unloaded all {allManagedResources.Count} managed objects.");
         }
 
 

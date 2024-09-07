@@ -76,8 +76,8 @@ namespace RuniEngine
                     _coloredMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
                     _coloredMaterial.SetInt("_ZWrite", 0);
 
-                    ResourceManager.allLoadedResources.Add(_coloredMaterial);
-                    ResourceManager.allLoadedResources.Add(_coloredMaterial.shader);
+                    ResourceManager.RegisterManagedResource(_coloredMaterial);
+                    ResourceManager.RegisterManagedResource(_coloredMaterial.shader);
                 }
 
                 return _coloredMaterial;

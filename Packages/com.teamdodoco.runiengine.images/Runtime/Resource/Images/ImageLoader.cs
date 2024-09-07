@@ -116,7 +116,7 @@ namespace RuniEngine.Resource.Images
             if (File.Exists(path))
             {
                 Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap, false);
-                ResourceManager.allLoadedResources.Add(texture);
+                ResourceManager.RegisterManagedResource(texture);
 
                 texture.filterMode = filterMode;
                 texture.name = Path.GetFileNameWithoutExtension(path);
@@ -226,7 +226,7 @@ namespace RuniEngine.Resource.Images
 #endif
 
                 Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap);
-                ResourceManager.allLoadedResources.Add(texture);
+                ResourceManager.RegisterManagedResource(texture);
 
                 texture.filterMode = filterMode;
                 texture.name = Path.GetFileNameWithoutExtension(path);
@@ -244,7 +244,7 @@ namespace RuniEngine.Resource.Images
                     return null;
                 }
                 
-                ResourceManager.allLoadedResources.Add(texture);
+                ResourceManager.RegisterManagedResource(texture);
 
                 texture.hideFlags = hideFlags;
 
@@ -307,7 +307,7 @@ namespace RuniEngine.Resource.Images
                 return null;
             }
 
-            ResourceManager.allLoadedResources.Add(texture);
+            ResourceManager.RegisterManagedResource(texture);
 
             Dictionary<string, Sprite?[]> sprites = GetSprites(texture, hideFlags, spriteMetaDatas);
             if (sprites.ContainsKey(tag))
@@ -334,7 +334,7 @@ namespace RuniEngine.Resource.Images
                 sprite.name = texture.name;
                 sprite.hideFlags = hideFlags;
 
-                ResourceManager.allLoadedResources.Add(sprite);
+                ResourceManager.RegisterManagedResource(sprite);
 
                 return sprite;
             }
@@ -347,7 +347,7 @@ namespace RuniEngine.Resource.Images
                 sprite.name = texture.name;
                 sprite.hideFlags = hideFlags;
 
-                ResourceManager.allLoadedResources.Add(sprite);
+                ResourceManager.RegisterManagedResource(sprite);
 
                 return sprite;
             }
@@ -420,7 +420,7 @@ namespace RuniEngine.Resource.Images
 
                     sprite.hideFlags = hideFlags;
 
-                    ResourceManager.allLoadedResources.Add(sprite);
+                    ResourceManager.RegisterManagedResource(sprite);
                     sprites[item.Key][i] = sprite;
                 }
             }
@@ -764,7 +764,7 @@ namespace RuniEngine.Resource.Images
                                 background.Compress(textureMetaData.compressionType == TextureCompressionQuality.highQuality);
 
                             background.hideFlags = HideFlags.DontSave;
-                            ResourceManager.allLoadedResources.Add(background);
+                            ResourceManager.RegisterManagedResource(background);
                         });
 
                         ThreadDispatcher.Execute(() =>
