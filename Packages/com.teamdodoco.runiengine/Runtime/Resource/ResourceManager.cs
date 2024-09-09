@@ -256,6 +256,7 @@ namespace RuniEngine.Resource
                 {
                     allManagedResources[i].Dispose();
                 }
+                catch (ObjectDisposedException) { }
                 catch (NullReferenceException) { }
                 catch (Exception e)
                 {
@@ -265,6 +266,10 @@ namespace RuniEngine.Resource
 
             if (allManagedResources.Count > 0)
                 Debug.Log($"Unloaded all {allManagedResources.Count} managed objects.");
+
+            allManagedResources.Clear();
+
+            GC.Collect();
         }
 
 
