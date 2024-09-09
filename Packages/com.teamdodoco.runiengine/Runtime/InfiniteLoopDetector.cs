@@ -14,7 +14,7 @@ namespace RuniEngine
         const int detectionThreshold = 1000000;
 
         [Conditional("UNITY_EDITOR")]
-        public static void Run([CallerMemberName] string mn = "", [CallerFilePath] string fp = "", [CallerLineNumber] int ln = 0)
+        public static void Run([CallerFilePath] string fp = "", [CallerLineNumber] int ln = 0, [CallerMemberName] string mn = "")
         {
             string currentPoint = $"{fp}:{ln}, {mn}()";
             int count;
@@ -25,7 +25,7 @@ namespace RuniEngine
                 count = Interlocked.Exchange(ref detectionCount, 0);
 
             if (count > detectionThreshold)
-                throw new Exception($"Infinite Loop Detected: \n{currentPoint}\n\n");
+                throw new Exception($"Infinite Loop Detected: {currentPoint}");
 
             prevPoint = currentPoint;
         }
