@@ -62,44 +62,19 @@ namespace RuniEngine.Sounds
 
         public bool isPaused
         {
-            get
-            {
-                ThreadTask.Lock(ref isPausedLock);
-                bool result = _isPaused;
-                ThreadTask.Unlock(ref isPausedLock);
-
-                return result;
-            }
-            set
-            {
-                ThreadTask.Lock(ref isPausedLock);
-                _isPaused = value;
-                ThreadTask.Unlock(ref isPausedLock);
-            }
+            get => Interlocked.Add(ref _isPaused, 0) != 0;
+            set => Interlocked.Exchange(ref _isPaused, value ? 1 : 0);
         }
-        [SerializeField] bool _isPaused = false;
-        [HideInInspector, NonSerialized] int isPausedLock;
+        [SerializeField] int _isPaused = 0;
 
 
 
         public bool loop
         {
-            get
-            {
-                ThreadTask.Lock(ref loopLock);
-                bool result = _loop;
-                ThreadTask.Unlock(ref loopLock);
-
-                return result;
-            }
-            set
-            {
-                ThreadTask.Lock(ref loopLock);
-                _loop = value;
-                ThreadTask.Unlock(ref loopLock);
-            }
+            get => Interlocked.Add(ref _loop, 0) != 0;
+            set => Interlocked.Exchange(ref _loop, value ? 1 : 0);
         }
-        [SerializeField] bool _loop = false;
+        [SerializeField] int _loop = 0;
         [HideInInspector, NonSerialized] int loopLock;
 
         public void LoopLock() => ThreadTask.Lock(ref loopLock);
@@ -113,52 +88,20 @@ namespace RuniEngine.Sounds
 
         public virtual double pitch
         {
-            get
-            {
-                ThreadTask.Lock(ref pitchLock);
-                double result = _pitch;
-                ThreadTask.Unlock(ref pitchLock);
-
-                return result;
-            }
-            set
-            {
-                ThreadTask.Lock(ref pitchLock);
-                _pitch = value;
-                ThreadTask.Unlock(ref pitchLock);
-            }
+            get => Interlocked.CompareExchange(ref _pitch, 0, 0);
+            set => Interlocked.Exchange(ref _pitch, value);
         }
         [HideInInspector, SerializeField, Range(0, 3)] double _pitch = 1;
-        [HideInInspector, NonSerialized] int pitchLock;
-
-        public void PitchLock() => ThreadTask.Lock(ref pitchLock);
-        public void PitchUnlock() => ThreadTask.Unlock(ref pitchLock);
 
         public virtual double metaDataPitch => soundMetaData != null ? soundMetaData.pitch : 1;
         public virtual double realPitch => pitch * metaDataPitch;
 
         public double tempo
         {
-            get
-            {
-                ThreadTask.Lock(ref tempoLock);
-                double result = _tempo;
-                ThreadTask.Unlock(ref tempoLock);
-
-                return result;
-            }
-            set
-            {
-                ThreadTask.Lock(ref tempoLock);
-                _tempo = value;
-                ThreadTask.Unlock(ref tempoLock);
-            }
+            get => Interlocked.CompareExchange(ref _tempo, 0, 0);
+            set => Interlocked.Exchange(ref _tempo, value);
         }
         [HideInInspector, SerializeField, Range(-3, 3)] double _tempo = 1;
-        [HideInInspector, NonSerialized] int tempoLock;
-
-        public void TempoLock() => ThreadTask.Lock(ref tempoLock);
-        public void TempoUnlock() => ThreadTask.Unlock(ref tempoLock);
 
         public virtual double metaDataTempo => soundMetaData != null ? soundMetaData.tempo : 1;
         public virtual double realTempo => tempo * metaDataTempo;
@@ -225,54 +168,23 @@ namespace RuniEngine.Sounds
         public double tempoPitchRatio => _tempoPitchRatio;
         [HideInInspector, SerializeField] double _tempoPitchRatio = 1;
 
+
+
         public float volume
         {
-            get
-            {
-                ThreadTask.Lock(ref volumeLock);
-                float result = _volume;
-                ThreadTask.Unlock(ref volumeLock);
-
-                return result;
-            }
-            set
-            {
-                ThreadTask.Lock(ref volumeLock);
-                _volume = value;
-                ThreadTask.Unlock(ref volumeLock);
-            }
+            get => Interlocked.CompareExchange(ref _volume, 0, 0);
+            set => Interlocked.Exchange(ref _volume, value);
         }
         [HideInInspector, SerializeField, Range(0, 2)] float _volume = 1;
-        [HideInInspector, NonSerialized] int volumeLock;
-
-        public void VolumeLock() => ThreadTask.Lock(ref volumeLock);
-        public void VolumeUnlock() => ThreadTask.Unlock(ref volumeLock);
 
 
 
         public float panStereo
         {
-            get
-            {
-                ThreadTask.Lock(ref panStereoLock);
-                float result = _panStereo;
-                ThreadTask.Unlock(ref panStereoLock);
-
-                return result;
-            }
-            set
-            {
-                ThreadTask.Lock(ref panStereoLock);
-                _panStereo = value;
-                ThreadTask.Unlock(ref panStereoLock);
-            }
+            get => Interlocked.CompareExchange(ref _panStereo, 0, 0);
+            set => Interlocked.Exchange(ref _panStereo, value);
         }
         [HideInInspector, SerializeField, Range(-1, 1)] float _panStereo = 0;
-        [HideInInspector, NonSerialized] int panStereoLock;
-
-        public void PanStereoLock() => ThreadTask.Lock(ref panStereoLock);
-        public void PanStereoUnlock() => ThreadTask.Unlock(ref panStereoLock);
-
 
 
 

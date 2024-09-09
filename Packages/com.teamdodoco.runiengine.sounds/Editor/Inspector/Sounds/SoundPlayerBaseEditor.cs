@@ -63,36 +63,40 @@ namespace RuniEngine.Editor.Inspector.Sounds
             GUILayout.BeginHorizontal();
             BeginFieldWidth(40);
 
-            try
             {
-                TargetsInvoke(x => x.LoopLock());
-
-                string label = TryGetText("gui.loop");
+                GUIContent label = new GUIContent(TryGetText("gui.loop"));
 
                 BeginLabelWidth(label);
-                UseProperty(serializedObject, "_loop", label, GUILayout.Width(EditorGUIUtility.labelWidth + 17));
+
+                {
+                    SerializedProperty tps = serializedObject.FindProperty("_loop");
+                    Rect rect = EditorGUILayout.GetControlRect(GUILayout.Width(EditorGUIUtility.labelWidth + 17));
+
+                    EditorGUI.BeginProperty(rect, label, tps);
+                    TargetsSetValue(x => x.loop, x => EditorGUI.Toggle(rect, label, x.loop), (x, y) => x.loop = y, targets);
+                    EditorGUI.EndProperty();
+                }
+
                 EndLabelWidth();
-            }
-            finally
-            {
-                TargetsInvoke(x => x.LoopUnlock());
             }
 
             Space();
 
-            try
             {
-                TargetsInvoke(x => x.VolumeLock());
-
-                string label = TryGetText("gui.volume");
+                GUIContent label = new GUIContent(TryGetText("gui.volume"));
 
                 BeginLabelWidth(label);
-                UseProperty(serializedObject, "_volume", label);
+
+                {
+                    SerializedProperty tps = serializedObject.FindProperty("_volume");
+                    Rect rect = EditorGUILayout.GetControlRect();
+
+                    EditorGUI.BeginProperty(rect, label, tps);
+                    TargetsSetValue(x => x.volume, x => EditorGUI.Slider(rect, label, x.volume, 0, 2), (x, y) => x.volume = y, targets);
+                    EditorGUI.EndProperty();
+                }
+
                 EndLabelWidth();
-            }
-            finally
-            {
-                TargetsInvoke(x => x.VolumeUnlock());
             }
 
             Space();
@@ -100,37 +104,25 @@ namespace RuniEngine.Editor.Inspector.Sounds
             {
                 EditorGUI.BeginDisabledGroup(!pitchFixedMixed && target.pitchFixed && TargetsIsEquals(x => x.tempoPitchRatio) && target.tempoPitchRatio == 0);
 
-                bool pitchChange = false;
-                try
+                GUIContent label = new GUIContent(TryGetText("gui.pitch"));
+
+                BeginLabelWidth(label);
+
                 {
-                    TargetsInvoke(x => x.PitchLock());
+                    SerializedProperty tps = serializedObject.FindProperty("_pitch");
+                    Rect rect = EditorGUILayout.GetControlRect();
 
-                    string label = TryGetText("gui.pitch");
-
-                    EditorGUI.BeginChangeCheck();
-
-                    BeginLabelWidth(label);
-                    UseProperty(serializedObject, "_pitch", label);
-                    EndLabelWidth();
-
-                    pitchChange = EditorGUI.EndChangeCheck();
-                }
-                finally
-                {
-                    TargetsInvoke(x => x.PitchUnlock());
-                }
-
-                if (pitchChange)
-                {
-                    TargetsInvoke(x =>
+                    EditorGUI.BeginProperty(rect, label, tps);
+                    TargetsSetValue(x => x.pitch, x => EditorGUI.Slider(rect, label, (float)x.pitch, 0, 3), (x, y) =>
                     {
-                        //프로퍼티 업데이트
-                        x.pitch = x.pitch;
-
+                        x.pitch = y;
                         if (x.pitchFixed && x.pitchTempoRatio != 0)
-                            x.tempo = x.pitch * x.tempoPitchRatio;
-                    });
+                            x.tempo = y * x.tempoPitchRatio;
+                    }, targets);
+                    EditorGUI.EndProperty();
                 }
+
+                EndLabelWidth();
 
                 EditorGUI.EndDisabledGroup();
             }
@@ -140,37 +132,25 @@ namespace RuniEngine.Editor.Inspector.Sounds
             {
                 EditorGUI.BeginDisabledGroup(!pitchFixedMixed && target.pitchFixed && TargetsIsEquals(x => x.pitchTempoRatio) && target.pitchTempoRatio == 0);
 
-                bool tempoChange = false;
-                try
+                GUIContent label = new GUIContent(TryGetText("gui.tempo"));
+
+                BeginLabelWidth(label);
+
                 {
-                    TargetsInvoke(x => x.TempoLock());
+                    SerializedProperty tps = serializedObject.FindProperty("_tempo");
+                    Rect rect = EditorGUILayout.GetControlRect();
 
-                    string label = TryGetText("gui.tempo");
-
-                    EditorGUI.BeginChangeCheck();
-
-                    BeginLabelWidth(label);
-                    UseProperty(serializedObject, "_tempo", label);
-                    EndLabelWidth();
-
-                    tempoChange = EditorGUI.EndChangeCheck();
-                }
-                finally
-                {
-                    TargetsInvoke(x => x.TempoUnlock());
-                }
-
-                if (tempoChange)
-                {
-                    TargetsInvoke(x =>
+                    EditorGUI.BeginProperty(rect, label, tps);
+                    TargetsSetValue(x => x.tempo, x => EditorGUI.Slider(rect, label, (float)x.tempo, -3, 3), (x, y) =>
                     {
-                        //프로퍼티 업데이트
-                        x.tempo = x.tempo;
-
+                        x.tempo = y;
                         if (x.pitchFixed && x.tempoPitchRatio != 0)
-                            x.pitch = (x.tempo * x.pitchTempoRatio).Abs();
-                    });
+                            x.pitch = (y * x.pitchTempoRatio).Abs();
+                    }, targets);
+                    EditorGUI.EndProperty();
                 }
+
+                EndLabelWidth();
 
                 EditorGUI.EndDisabledGroup();
             }
@@ -178,22 +158,20 @@ namespace RuniEngine.Editor.Inspector.Sounds
             Space();
 
             {
-                string label = "L";
-
-                EditorGUI.BeginChangeCheck();
+                GUIContent label = new GUIContent("L");
 
                 BeginLabelWidth(label);
-                UseProperty(serializedObject, "_pitchFixed", label, GUILayout.ExpandWidth(false));
-                EndLabelWidth();
 
-                if (EditorGUI.EndChangeCheck())
                 {
-                    TargetsInvoke(x =>
-                    {
-                        //프로퍼티 업데이트
-                        x.pitchFixed = x.pitchFixed;
-                    });
+                    SerializedProperty tps = serializedObject.FindProperty("_pitchFixed");
+                    Rect rect = EditorGUILayout.GetControlRect(GUILayout.ExpandWidth(false));
+
+                    EditorGUI.BeginProperty(rect, label, tps);
+                    TargetsSetValue(x => x.pitchFixed, x => EditorGUI.Toggle(rect, label, x.pitchFixed), (x, y) => x.pitchFixed = y, targets);
+                    EditorGUI.EndProperty();
                 }
+
+                EndLabelWidth();
             }
 
             Space(-28);
@@ -292,20 +270,20 @@ namespace RuniEngine.Editor.Inspector.Sounds
             }
             else
             {
-                try
-                {
-                    TargetsInvoke(x => x.PanStereoLock());
+                GUIContent label = new GUIContent(TryGetText("inspector.sound_player_base.pan_stereo"));
 
-                    string label = TryGetText("inspector.sound_player_base.pan_stereo");
+                BeginLabelWidth(label);
 
-                    BeginLabelWidth(label);
-                    UseProperty(serializedObject, "_panStereo", label);
-                    EndLabelWidth();
-                }
-                finally
                 {
-                    TargetsInvoke(x => x.PanStereoUnlock());
+                    SerializedProperty tps = serializedObject.FindProperty("_panStereo");
+                    Rect rect = EditorGUILayout.GetControlRect();
+
+                    EditorGUI.BeginProperty(rect, label, tps);
+                    TargetsSetValue(x => x.panStereo, x => EditorGUI.Slider(rect, label, x.panStereo, -1, 1), (x, y) => x.panStereo = y, targets);
+                    EditorGUI.EndProperty();
                 }
+
+                EndLabelWidth();
             }
 
             EndFieldWidth();
