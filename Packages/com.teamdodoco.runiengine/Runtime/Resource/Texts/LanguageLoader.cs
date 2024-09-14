@@ -149,15 +149,8 @@ namespace RuniEngine.Resource.Texts
                     if (lang == null)
                         continue;
 
-                    foreach (var item in lang)
-                    {
-                        tempLoadedLanguages.TryAdd(nameSpace, new Dictionary<string, Dictionary<string, string>>());
-                        tempLoadedLanguages[nameSpace].TryAdd(fileName, new Dictionary<string, string>());
-                        tempLoadedLanguages[nameSpace][fileName].TryAdd(item.Key, item.Value);
-
-                        if (!tempLanguageTypes.Contains(fileName))
-                            tempLanguageTypes.Add(fileName);
-                    }
+                    tempLoadedLanguages.TryAdd(nameSpace, new Dictionary<string, Dictionary<string, string>>());
+                    tempLoadedLanguages[nameSpace].TryAdd(fileName, lang);
                 }
 
                 ReportProgress();
