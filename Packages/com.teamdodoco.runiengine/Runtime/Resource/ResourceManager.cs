@@ -207,7 +207,9 @@ namespace RuniEngine.Resource
             }
 
             garbages.Clear();
+
             GC.Collect();
+            Resources.UnloadUnusedAssets();
         }
 
 
@@ -269,7 +271,8 @@ namespace RuniEngine.Resource
 
             allManagedResources.Clear();
 
-            GC.Collect();
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+            Resources.UnloadUnusedAssets();
         }
 
 
