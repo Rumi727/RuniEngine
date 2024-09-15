@@ -140,12 +140,17 @@ namespace RuniEngine.Sounds
         void Update()
         {
 #if ENABLE_RUNI_ENGINE_POOLING
-            if (isDisposable && !loop && (timeSamples < 0 || timeSamples > samples || !isPlaying))
             {
-                Remove();
-                return;
+                //모든 버퍼 재생이 끝나기까지 최대한 대기
+                long internalTimeSamples = Interlocked.Read(ref this.internalTimeSamples);
+                if (isDisposable && !loop && (internalTimeSamples < -AudioLoader.bufferLength || internalTimeSamples > samples + AudioLoader.bufferLength || !isPlaying))
+                {
+                    Remove();
+                    return;
+                }
             }
 #endif
+            
             //매 프레임 시간 보정
             if (isPlaying && !isPaused)
             {
