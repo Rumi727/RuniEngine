@@ -458,20 +458,21 @@ namespace RuniEngine.Sounds
 
                 if (!spatial)
                 {
-                    float leftStereo = (float)-panStereo.Clamp(-1, 0);
-                    float rightStereo = (float)panStereo.Clamp(0, 1);
-
-                    data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
-                    data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)panStereo.Abs());
-                }
+                float stereo;
+                if (spatial)
+                    stereo = (float)panStereo.Lerp(spatialStereo, spatialStereo.Abs());
                 else
                 {
                     float leftStereo = (float)-spatialStereo.Clamp(-1, 0);
-                    float rightStereo = (float)spatialStereo.Clamp(0, 1);
+                    stereo = (float)panStereo;
 
                     data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
                     data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
-                }
+                float leftStereo = (-stereo).Clamp01();
+                float rightStereo = stereo.Clamp01();
+
+                data[0] = (left + 0f.LerpUnclamped(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, stereo.Abs());
+                data[1] = (right + 0f.LerpUnclamped(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, stereo.Abs());
             }
 
             float GetSample(int i)
