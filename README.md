@@ -46,6 +46,8 @@ UI는 [osu!lazer](https://github.com/ppy/osu)에서 영감을 받았습니다
 
 ### 기타
 
+2022 이하 버전에서 마이너한 오디오 관련 문제가 있는 것 같습니다.
+
 Runi Engine Installer, OOBE 음악 출처 : Windows XP OOBE\
 문제시 제거
 
