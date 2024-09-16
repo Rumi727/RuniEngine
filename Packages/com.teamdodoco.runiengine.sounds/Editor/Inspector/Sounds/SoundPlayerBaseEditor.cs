@@ -234,46 +234,43 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             Space();
 
-            if (target.spatial)
             {
+                string label = TryGetText("gui.min_distance");
+
+                EditorGUI.BeginChangeCheck();
+
+                BeginLabelWidth(label);
+                UseProperty(serializedObject, "_minDistance", label);
+                EndLabelWidth();
+
+                if (EditorGUI.EndChangeCheck())
                 {
-                    string label = TryGetText("gui.min_distance");
-
-                    EditorGUI.BeginChangeCheck();
-                    
-                    BeginLabelWidth(label);
-                    UseProperty(serializedObject, "_minDistance", label);
-                    EndLabelWidth();
-
-                    if (EditorGUI.EndChangeCheck())
+                    TargetsInvoke(x =>
                     {
-                        TargetsInvoke(x =>
-                        {
-                            //프로퍼티 업데이트
-                            x.minDistance = x.minDistance;
-                        });
-                    }
+                        //프로퍼티 업데이트
+                        x.minDistance = x.minDistance;
+                    });
                 }
+            }
 
-                Space();
+            Space();
 
+            {
+                string label = TryGetText("gui.max_distance");
+
+                EditorGUI.BeginChangeCheck();
+
+                BeginLabelWidth(label);
+                UseProperty(serializedObject, "_maxDistance", label);
+                EndLabelWidth();
+
+                if (EditorGUI.EndChangeCheck())
                 {
-                    string label = TryGetText("gui.max_distance");
-
-                    EditorGUI.BeginChangeCheck();
-
-                    BeginLabelWidth(label);
-                    UseProperty(serializedObject, "_maxDistance", label);
-                    EndLabelWidth();
-
-                    if (EditorGUI.EndChangeCheck())
+                    TargetsInvoke(x =>
                     {
-                        TargetsInvoke(x =>
-                        {
-                            //프로퍼티 업데이트
-                            x.maxDistance = x.maxDistance;
-                        });
-                    }
+                        //프로퍼티 업데이트
+                        x.maxDistance = x.maxDistance;
+                    });
                 }
             }
 
