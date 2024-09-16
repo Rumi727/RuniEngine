@@ -834,7 +834,11 @@ namespace RuniEngine.Resource.Images
                             return;
 
                         Rect rect = rects.Value;
+#if UNITY_6000_1_ORNEWER
                         rect = new Rect(rect.x * background.width, rect.y * background.height, rect.width * background.width, rect.height * background.height);
+#else
+                        await ThreadDispatcher.Execute(() => rect = new Rect(rect.x * background.width, rect.y * background.height, rect.width * background.width, rect.height * background.height));
+#endif
 
                         Dictionary<string, SpriteMetaData[]> spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(SearchTexturePath(type.Key, rects.Key, nameSpace.Key) + ".json") ?? new Dictionary<string, SpriteMetaData[]>();
                         if (!spriteMetaDatas.ContainsKey(spriteDefaultTag))
