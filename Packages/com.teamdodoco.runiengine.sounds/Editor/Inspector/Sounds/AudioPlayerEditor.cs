@@ -60,7 +60,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 double length = target.samples;
                 double remainingTime = length - time;
 
-                DrawTimeSliderText(target, mixed, time.ToString(), remainingTime.ToString(), length.ToString(), "", "", "", false);
+                DrawTimeSliderText(target, mixed, "i:", time.ToString(), remainingTime.ToString(), length.ToString(), "", "", "", false);
             });
         }
 

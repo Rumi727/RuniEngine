@@ -215,19 +215,27 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             Space();
 
-            if (target.spatial || spatialMixed)
             {
-                if (spatialMixed)
+                GUIContent label = new GUIContent(TryGetText("inspector.sound_player_base.pan_stereo"));
+
+                BeginLabelWidth(label);
+
                 {
-                    string label = TryGetText("inspector.sound_player_base.pan_stereo");
+                    SerializedProperty tps = serializedObject.FindProperty("_panStereo");
+                    Rect rect = EditorGUILayout.GetControlRect();
 
-                    BeginLabelWidth(label);
-                    UseProperty(serializedObject, "_panStereo", label);
-                    EndLabelWidth();
-
-                    Space();
+                    EditorGUI.BeginProperty(rect, label, tps);
+                    TargetsSetValue(x => x.panStereo, x => EditorGUI.Slider(rect, label, x.panStereo, -1, 1), (x, y) => x.panStereo = y, targets);
+                    EditorGUI.EndProperty();
                 }
 
+                EndLabelWidth();
+            }
+
+            Space();
+
+            if (target.spatial)
+            {
                 {
                     string label = TryGetText("gui.min_distance");
 
@@ -267,23 +275,6 @@ namespace RuniEngine.Editor.Inspector.Sounds
                         });
                     }
                 }
-            }
-            else
-            {
-                GUIContent label = new GUIContent(TryGetText("inspector.sound_player_base.pan_stereo"));
-
-                BeginLabelWidth(label);
-
-                {
-                    SerializedProperty tps = serializedObject.FindProperty("_panStereo");
-                    Rect rect = EditorGUILayout.GetControlRect();
-
-                    EditorGUI.BeginProperty(rect, label, tps);
-                    TargetsSetValue(x => x.panStereo, x => EditorGUI.Slider(rect, label, x.panStereo, -1, 1), (x, y) => x.panStereo = y, targets);
-                    EditorGUI.EndProperty();
-                }
-
-                EndLabelWidth();
             }
 
             EndFieldWidth();
@@ -337,7 +328,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 {
                     //EditorGUI.BeginDisabledGroup(!Kernel.isPlaying);
 
-                    DrawTimeSliderText(target, mixed, time.ToTime(true, true), (length - time).ToTime(true, true), length.ToTime(true, true), realTime.ToTime(true, true), (realLength - realTime).ToTime(true, true), realLength.ToTime(true, true), true);
+                    DrawTimeSliderText(target, mixed, "s:", time.ToTimeString(), (length - time).ToTimeString(), length.ToTimeString(), realTime.ToTimeString(), (realLength - realTime).ToTimeString(), realLength.ToTimeString(), true);
                     action?.Invoke();
 
                     //EditorGUI.EndDisabledGroup();
@@ -347,10 +338,26 @@ namespace RuniEngine.Editor.Inspector.Sounds
             }
         }
 
-        protected void DrawTimeSliderText(SoundPlayerBase target, bool mixed, string time, string remainingTime, string length, string realTime, string realRemainingTime, string realLength, bool realValueShow)
+        protected void DrawTimeSliderText(SoundPlayerBase target, bool mixed, string label, string time, string remainingTime, string length, string realTime, string realRemainingTime, string realLength, bool realValueShow)
         {
             GUILayout.BeginHorizontal();
             Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(15));
+
+            {
+                Rect labelRect = rect;
+
+                labelRect.x -= 19;
+                labelRect.width = 19;
+
+                BeginFontSize(11, richLabelStyle);
+                BeginAlignment(TextAnchor.MiddleRight, richLabelStyle);
+
+                GUI.Label(labelRect, label, richLabelStyle);
+
+                EndAlignment(richLabelStyle);
+                EndFontSize(richLabelStyle);
+
+            }
 
             rect.x -= 2;
             rect.width += 4;

@@ -40,8 +40,8 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 int indexLength = target.nbsFile?.nbsNotes.Length ?? 0;
                 int remainingIndex = indexLength - index;
 
-                DrawTimeSliderText(target, mixed, tick.ToString("0.00"), remainingTick.ToString("0.00"), tickLength.ToString("0.00"), (tick / target.tempo.Abs()).ToString("0.00"), (remainingTick / target.tempo.Abs()).ToString("0.00"), (tickLength / target.tempo.Abs()).ToString("0.00"), true);
-                DrawTimeSliderText(target, mixed, index.ToString(), remainingIndex.ToString(), indexLength.ToString(), "", "", "", false);
+                DrawTimeSliderText(target, mixed, "t:", tick.ToString("0.00"), remainingTick.ToString("0.00"), tickLength.ToString("0.00"), (tick / target.tempo.Abs()).ToString("0.00"), (remainingTick / target.tempo.Abs()).ToString("0.00"), (tickLength / target.tempo.Abs()).ToString("0.00"), true);
+                DrawTimeSliderText(target, mixed, "i:", index.ToString(), remainingIndex.ToString(), indexLength.ToString(), "", "", "", false);
             });
         }
 

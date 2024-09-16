@@ -81,11 +81,11 @@ namespace RuniEngine
             else if (secondAbs >= 60)
                 alwayShowTimeUnit = AlwayShowTimeUnit.minute;
 
-            if (alwayShowTimeUnit == AlwayShowTimeUnit.day)
+            if (HasFlag(0b100))
                 Calculate(secondPerDay, 0);
-            else if (alwayShowTimeUnit == AlwayShowTimeUnit.hour)
+            if (HasFlag(0b010))
                 Calculate(secondPerHour, HasFlag(0b100) ? 24 : 0);
-            else if (alwayShowTimeUnit == AlwayShowTimeUnit.minute)
+            if (HasFlag(0b001))
                 Calculate(secondPerMinute, HasFlag(0b010) ? 60 : 0);
 
             {

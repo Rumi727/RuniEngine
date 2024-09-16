@@ -32,7 +32,7 @@ namespace RuniEngine.Sounds
                 if (nbsFile == null)
                     return 0;
                 
-                return internalTick * 0.05d / (nbsFile.tickTempo * 0.0005);
+                return _internalTick * 0.05d / (nbsFile.tickTempo * 0.0005);
             }
             set
             {
@@ -49,7 +49,7 @@ namespace RuniEngine.Sounds
 
         public double tick
         {
-            get => internalTick / (nbsFile?.tickTempo * 0.0005) ?? 0;
+            get => _internalTick / (nbsFile?.tickTempo * 0.0005) ?? 0;
             set
             {
                 if (nbsFile == null)
@@ -88,7 +88,7 @@ namespace RuniEngine.Sounds
 
                 value = value.Clamp(0, nbsFile.nbsNotes.Length - 1);
 
-                if (index != value)
+                if (_index != value)
                 {
                     _index = value;
                     _internalTick = nbsFile.nbsNotes[value].delayTick;
@@ -133,7 +133,7 @@ namespace RuniEngine.Sounds
                 GetAudioDataToMonoAndInvoke();
             }
 
-            if (isDisposable && !loop && (internalTick < 0 || internalTick > internalTickLength || !isPlaying))
+            if (isDisposable && !loop && (_internalTick < 0 || _internalTick > internalTickLength || !isPlaying))
                 Remove();
         }
 
@@ -158,7 +158,7 @@ namespace RuniEngine.Sounds
             this.nbsData = nbsData;
             this.nbsMetaData = nbsMetaData;
 
-            _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - internalTick).Abs()).index;
+            _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - _internalTick).Abs()).index;
             return true;
         }
 
@@ -172,7 +172,7 @@ namespace RuniEngine.Sounds
                 return;
 
             if (tempo < 0)
-                internalTick = internalTickLength;
+                _internalTick = internalTickLength;
 
             base.Play();
         }
@@ -231,13 +231,13 @@ namespace RuniEngine.Sounds
 
         void SetIndex()
         {
-            if (nbsFile == null || index < 0 || index >= nbsFile.nbsNotes.Length)
+            if (nbsFile == null || _index < 0 || _index >= nbsFile.nbsNotes.Length)
                 return;
 
-            NBSNote nbsNote = nbsFile.nbsNotes[index];
+            NBSNote nbsNote = nbsFile.nbsNotes[_index];
             if (realTempo >= 0)
             {
-                if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick < internalTick)
+                if (_index >= 0 && _index < nbsFile.nbsNotes.Length && nbsNote.delayTick < internalTick)
                 {
                     InfiniteLoopDetector.Run();
 
@@ -249,7 +249,7 @@ namespace RuniEngine.Sounds
             }
             else
             {
-                if (index >= 0 && index < nbsFile.nbsNotes.Length && nbsNote.delayTick >= internalTick)
+                if (_index >= 0 && _index < nbsFile.nbsNotes.Length && nbsNote.delayTick >= internalTick)
                 {
                     InfiniteLoopDetector.Run();
 
@@ -269,7 +269,7 @@ namespace RuniEngine.Sounds
             if (nbsFile == null)
                 return;
 
-            NBSNote nbsNote = nbsFile.nbsNotes[index];
+            NBSNote nbsNote = nbsFile.nbsNotes[_index];
             for (int i = 0; i < nbsNote.nbsNoteMetaDatas.Length; i++)
             {
                 NBSNoteMetaData nbsNoteMetaData = nbsNote.nbsNoteMetaDatas[i];
