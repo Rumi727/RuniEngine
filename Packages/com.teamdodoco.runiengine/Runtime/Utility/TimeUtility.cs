@@ -1,18 +1,26 @@
 #nullable enable
 using System.Globalization;
 using System;
+using Newtonsoft.Json.Linq;
+using UnityEngine.UIElements;
 
 namespace RuniEngine
 {
     public static class TimeUtility
     {
-        public const double yearToDay = ((365 * 3) + 366) / 4d;
-        public const double monthToDay = yearToDay / 12d;
-        public const int weekPerDay = 7;
+        public const double dayPerYear = ((365 * 3) + 366) / 4d;
+        public const double dayPerMonth = dayPerYear / 12d;
+        public const int dayPerWeek = 7;
 
-        public const long timeSpanTicksPerYear = (long)(TimeSpan.TicksPerDay * yearToDay);
-        public const long timeSpanTicksPerMonth = (long)(TimeSpan.TicksPerDay * monthToDay);
-        public const long timeSpanTicksPerWeek = TimeSpan.TicksPerDay * weekPerDay;
+        public const double secondPerYear = dayPerYear * secondPerDay;
+        public const double secondPerMonth = dayPerMonth * secondPerDay;
+        public const int secondPerDay = 24 * secondPerHour;
+        public const int secondPerHour = 60 * secondPerMinute;
+        public const int secondPerMinute = 60;
+
+        public const long timeSpanTicksPerYear = (long)(TimeSpan.TicksPerDay * dayPerYear);
+        public const long timeSpanTicksPerMonth = (long)(TimeSpan.TicksPerDay * dayPerMonth);
+        public const long timeSpanTicksPerWeek = TimeSpan.TicksPerDay * dayPerWeek;
 
         public static int GetYears(this TimeSpan timeSpan) => (int)(timeSpan.Ticks / timeSpanTicksPerYear);
         public static double GetTotalYears(this TimeSpan timeSpan) => timeSpan.Ticks / timeSpanTicksPerYear;
@@ -34,40 +42,19 @@ namespace RuniEngine
         /// <param name="hourAlwayShow">시간, 분 단위 항상 표시</param>
         /// <param name="dayAlwayShow">하루, 시간, 분 단위 항상 표시</param>
         /// <returns></returns>
-        public static string ToTime(this int second, bool minuteAlwayShow = false, bool hourAlwayShow = false, bool dayAlwayShow = false) => (second < 0 ? "-" : "") + ToString(TimeSpan.FromSeconds(second), false, minuteAlwayShow, hourAlwayShow, dayAlwayShow);
+        public static string ToTimeString(this int second, AlwayShowTimeUnit alwayShowTimeUnit = AlwayShowTimeUnit.minute, int decimalPlaces = 2) => ToTimeString(second, alwayShowTimeUnit, decimalPlaces);
 
         /// <summary>
         /// (second = 70.1f) = "1:10.1"
         /// </summary>
         /// <param name="second">초</param>
-        /// <param name="decimalShow">소수 표시</param>
-        /// <param name="minuteAlwayShow">분 단위 항상 표시</param>
-        /// <param name="hourAlwayShow">시간, 분 단위 항상 표시</param>
-        /// <param name="dayAlwayShow">하루, 시간, 분 단위 항상 표시</param>
         /// <returns></returns>
-        public static string ToTime(this float second, bool decimalShow = true, bool minuteAlwayShow = false, bool hourAlwayShow = false, bool dayAlwayShow = false)
+        public static string ToTimeString(this float second, AlwayShowTimeUnit alwayShowTimeUnit = AlwayShowTimeUnit.minute, int decimalPlaces = 2)
         {
-            if (!double.IsNormal(second) && second != 0)
+            if (!float.IsNormal(second))
                 return "--:--";
 
-            return (second < 0 ? "-" : "") + ToString(TimeSpan.FromSeconds(second), decimalShow, minuteAlwayShow, hourAlwayShow, dayAlwayShow);
-        }
-
-        /// <summary>
-        /// (second = 70.1f) = "1:10.1"
-        /// </summary>
-        /// <param name="second">초</param>
-        /// <param name="decimalShow">소수 표시</param>
-        /// <param name="minuteAlwayShow">분 단위 항상 표시</param>
-        /// <param name="hourAlwayShow">시간, 분 단위 항상 표시</param>
-        /// <param name="dayAlwayShow">하루, 시간, 분 단위 항상 표시</param>
-        /// <returns></returns>
-        public static string ToTime(this double second, bool decimalShow = true, bool minuteAlwayShow = false, bool hourAlwayShow = false, bool dayAlwayShow = false)
-        {
-            if (!double.IsNormal(second) && second != 0)
-                return "--:--";
-
-            return (second < 0 ? "-" : "") + ToString(TimeSpan.FromSeconds(second), decimalShow, minuteAlwayShow, hourAlwayShow, dayAlwayShow);
+            return ToTimeString(second, alwayShowTimeUnit, decimalPlaces);
         }
         #endregion
 
@@ -75,53 +62,72 @@ namespace RuniEngine
         /// (second = 70.1) = "1:10.1"
         /// </summary>
         /// <param name="second">초</param>
-        /// <param name="decimalShow">소수 표시</param>
-        /// <param name="minuteAlwayShow">분 단위 항상 표시</param>
-        /// <param name="hourAlwayShow">시간, 분 단위 항상 표시</param>
-        /// <param name="dayAlwayShow">하루, 시간, 분 단위 항상 표시</param>
         /// <returns></returns>
         
-        public static string ToString(this TimeSpan timeSpan, bool decimalShow = true, bool minuteAlwayShow = false, bool hourAlwayShow = false, bool dayAlwayShow = false)
+        public static string ToTimeString(this double second, AlwayShowTimeUnit alwayShowTimeUnit = AlwayShowTimeUnit.minute, string decimalFormat = "00")
         {
-            try
-            {
-                double second = timeSpan.TotalSeconds;
-                double secondAbs = second.Abs();
-                if (decimalShow)
-                {
-                    if (second <= TimeSpan.MinValue.TotalSeconds || secondAbs <= double.NegativeInfinity)
-                        return TimeSpan.MinValue.ToString(@"d\:hh\:mm\:ss\.ff");
-                    else if (second >= TimeSpan.MaxValue.TotalSeconds || secondAbs >= double.PositiveInfinity)
-                        return TimeSpan.MaxValue.ToString(@"d\:hh\:mm\:ss\.ff");
-                    else if (secondAbs >= 86400 || dayAlwayShow)
-                        return timeSpan.ToString(@"d\:hh\:mm\:ss\.ff");
-                    else if (secondAbs >= 3600 || hourAlwayShow)
-                        return timeSpan.ToString(@"h\:mm\:ss\.ff");
-                    else if (secondAbs >= 60 || minuteAlwayShow)
-                        return timeSpan.ToString(@"m\:ss\.ff");
-                    else
-                        return timeSpan.ToString(@"s\.ff");
-                }
-                else
-                {
-                    if (second <= TimeSpan.MinValue.TotalSeconds)
-                        return TimeSpan.MinValue.ToString(@"d\:hh\:mm\:ss");
-                    else if (second >= TimeSpan.MaxValue.TotalSeconds)
-                        return TimeSpan.MaxValue.ToString(@"d\:h\:mm\:ss");
-                    else if (secondAbs >= 86400 || dayAlwayShow)
-                        return timeSpan.ToString(@"d\:hh\:mm\:ss");
-                    else if (secondAbs >= 3600 || hourAlwayShow)
-                        return timeSpan.ToString(@"h\:mm\:ss");
-                    else if (secondAbs >= 60 || minuteAlwayShow)
-                        return timeSpan.ToString(@"m\:ss");
-                    else
-                        return timeSpan.ToString(@"s");
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
+            if (!double.IsFinite(second))
                 return "--:--";
+
+            double secondAbs = second.Abs();
+
+            bool first = true;
+            string result = second < 0 ? "-" : string.Empty;
+
+            if (secondAbs >= 86400)
+                alwayShowTimeUnit = AlwayShowTimeUnit.day;
+            else if (secondAbs >= 3600)
+                alwayShowTimeUnit = AlwayShowTimeUnit.hour;
+            else if (secondAbs >= 60)
+                alwayShowTimeUnit = AlwayShowTimeUnit.minute;
+
+            if (alwayShowTimeUnit == AlwayShowTimeUnit.day)
+                Calculate(secondPerDay, 0);
+            else if (alwayShowTimeUnit == AlwayShowTimeUnit.hour)
+                Calculate(secondPerHour, HasFlag(0b100) ? 24 : 0);
+            else if (alwayShowTimeUnit == AlwayShowTimeUnit.minute)
+                Calculate(secondPerMinute, HasFlag(0b010) ? 60 : 0);
+
+            {
+                double value = secondAbs;
+                if (HasFlag(0b001))
+                    value %= 60;
+
+                string format;
+                if (!first && value < 10)
+                    format = "00";
+                else
+                    format = "0";
+
+                if (!string.IsNullOrEmpty(decimalFormat))
+                    format += "." + decimalFormat;
+
+                result += value.ToString(format);
+            }
+
+            return result;
+
+            void Calculate(int secondPerUnit, int repeat)
+            {
+                int value = (int)(secondAbs / secondPerUnit);
+                if (repeat > 0)
+                    value %= repeat;
+
+                if (!first && value < 10)
+                    result += 0.ToString();
+
+                result += value;
+
+                if (secondPerUnit > 1)
+                    result += ':';
+
+                first = false;
+            }
+
+            bool HasFlag(int flag)
+            {
+                int enumInt = Convert.ToInt32(alwayShowTimeUnit);
+                return enumInt == (enumInt | flag);
             }
         }
 
