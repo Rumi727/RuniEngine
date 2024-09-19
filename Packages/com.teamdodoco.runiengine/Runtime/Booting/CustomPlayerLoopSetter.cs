@@ -8,6 +8,10 @@ namespace RuniEngine.Booting
 {
     /// <summary>
     /// 이 클래스에 있는 모든 이벤트는 플레이 모드가 해제될 때 자동으로 이벤트가 해제됩니다
+    /// <br/><br/>
+    /// 엔진이 초기화 되기 전에 등록해야합니다!
+    /// <br/>
+    /// Awaken 어트리뷰트를 사용하는걸 추천합니다
     /// </summary>
     public static class CustomPlayerLoopSetter
     {
