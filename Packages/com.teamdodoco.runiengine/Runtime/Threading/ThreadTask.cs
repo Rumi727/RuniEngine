@@ -112,8 +112,13 @@ namespace RuniEngine.Threading
             //Debug.ForceLog(LanguageLoader.TryGetText("thread_manager.lock").Replace("{class}", Debug.NameOfCallingClass()));
             while (Interlocked.CompareExchange(ref location, 1, 0) != 0)
             {
+                if (InfiniteLoopDetector.RunWithoutException())
+                {
+                    Debug.LogError("[SpinLock] Deadlock Detected!!!", Debug.NameOfCallingClass());
+                    return;
+                }
+                
                 Thread.Yield();
-                InfiniteLoopDetector.Run();
             }
         }
 
