@@ -7,7 +7,6 @@ using RuniEngine.Resource;
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Threading;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
@@ -35,7 +34,7 @@ namespace RuniEngine.Sounds
 
 
 
-        public IReadOnlyList<float>? datas => audioMetaData?.datas;
+        public RawAudioClip? datas => audioMetaData?.rawAudioClip;
 
 
 
@@ -61,6 +60,8 @@ namespace RuniEngine.Sounds
                     Interlocked.Exchange(ref internalTimeSamples, value);
 
                     Interlocked.Exchange(ref tempoAdjustmentIndex, 0);
+
+                    //datas?.SetStreamPosition(value * channels);
 
                     TimeChangedEventInvoke();
                 }
@@ -240,7 +241,7 @@ namespace RuniEngine.Sounds
                 }
 
                 AudioMetaData? audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
-                if (audioMetaData == null || audioMetaData.datas == null)
+                if (audioMetaData == null || audioMetaData.rawAudioClip == null)
                 {
                     this.audioData = null;
                     this.audioMetaData = null;
@@ -289,6 +290,8 @@ namespace RuniEngine.Sounds
                 audioSource.Play();
             }
 
+            //datas?.Playing();
+
             base.Play();
         }
 
@@ -303,6 +306,8 @@ namespace RuniEngine.Sounds
 
             Interlocked.Exchange(ref _timeSamples, 0);
             Interlocked.Exchange(ref internalTimeSamples, 0);
+
+            //datas?.Stopping();
         }
 
 
@@ -313,6 +318,11 @@ namespace RuniEngine.Sounds
         [NonSerialized] long internalTimeSamples = 0;
         protected override void OnAudioFilterRead(float[] data, int channels)
         {
+            /*
+             * 확실한건 스테레오 또는 그 이상 오디오 채널 재생이 단단히 잘못되어있다는 것입니다...
+             * 수정하라면 수정할 수 있겠지만, 일단 급한건 아니라 점점 미루고 있습니다
+             */
+            
             try
             {
                 ThreadTask.Lock(ref onAudioFilterReadLock);
@@ -339,17 +349,17 @@ namespace RuniEngine.Sounds
                     {
                         for (int i = 0; i < data.Length; i += channels)
                         {
-                            int index;
+                            long index;
                             if (tempo > 0)
-                                index = (int)((internalTimeSamples * audioChannels) + i);
+                                index = (internalTimeSamples * audioChannels) + i;
                             else
-                                index = (int)((internalTimeSamples * audioChannels) - i);
+                                index = (internalTimeSamples * audioChannels) - i;
 
                             GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo, spatialStereo);
                             for (int j = 0; j < channels; j++)
                             {
                                 data[i + j] += tempData[j] * volume;
-                                //data[i + j] += datas[(index + j).Clamp(0, datas.Count - 1)] * volume;
+                                //data[i + j] += datas[(index + j).Clamp(0, samplesLength * audioChannels - 1)] * volume;
                             }
                         }
                     }
@@ -402,7 +412,7 @@ namespace RuniEngine.Sounds
                                 ThreadDispatcher.Execute(LoopedEventInvoke);
                         }
                     }
-
+                    
                     Interlocked.Exchange(ref _timeSamples, timeSamples);
                     Interlocked.Exchange(ref this.internalTimeSamples, internalTimeSamples);
                 }
@@ -418,7 +428,7 @@ namespace RuniEngine.Sounds
         /// <summary>
         /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
         /// </summary>
-        public static void GetAudioSample(ref float[] data, IReadOnlyList<float> samples, int index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo, double spatialStereo)
+        public static void GetAudioSample(ref float[] data, RawAudioClip samples, long index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo, double spatialStereo)
         {
             //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
             if (audioChannels > 2)
@@ -461,18 +471,12 @@ namespace RuniEngine.Sounds
                 float left = data[0];
                 float right = data[1];
 
-                if (!spatial)
-                {
                 float stereo;
                 if (spatial)
                     stereo = (float)panStereo.Lerp(spatialStereo, spatialStereo.Abs());
                 else
-                {
-                    float leftStereo = (float)-spatialStereo.Clamp(-1, 0);
                     stereo = (float)panStereo;
 
-                    data[0] = (left + 0f.Lerp(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
-                    data[1] = (right + 0f.Lerp(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, (float)spatialStereo.Abs());
                 float leftStereo = (-stereo).Clamp01();
                 float rightStereo = stereo.Clamp01();
 
@@ -480,23 +484,24 @@ namespace RuniEngine.Sounds
                 data[1] = (right + 0f.LerpUnclamped(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, stereo.Abs());
             }
 
-            float GetSample(int i)
+            float GetSample(long i)
             {
-                int sampleIndex = index + i;
+                long sampleCount = samples.samples * samples.channels;
+                long sampleIndex = index + i;
                 if (loop)
-                    sampleIndex = sampleIndex.Repeat(samples.Count - 1);
+                    sampleIndex = sampleIndex.Repeat(sampleCount - 1);
 
-                if (sampleIndex >= 0 && sampleIndex < samples.Count)
+                if (sampleIndex >= 0 && sampleIndex < sampleCount)
                 {
                     float sample = samples[sampleIndex];
 
                     //루프
-                    if (loop)
+                    if (loop && !samples.loader.isStream)
                     {
-                        int rawLoopOffsetSampleIndex = sampleIndex - (samples.Count - 1 - loopOffsetIndex);
-                        int loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(samples.Count - 1 - loopStartIndex);
+                        long rawLoopOffsetSampleIndex = sampleIndex - (sampleCount - 1 - loopOffsetIndex);
+                        long loopOffsetSampleIndex = loopStartIndex + rawLoopOffsetSampleIndex.Repeat(sampleCount - 1 - loopStartIndex);
 
-                        if (rawLoopOffsetSampleIndex >= 0 && loopOffsetSampleIndex >= 0 && loopOffsetSampleIndex < samples.Count)
+                        if (rawLoopOffsetSampleIndex >= 0 && loopOffsetSampleIndex >= 0 && loopOffsetSampleIndex < sampleCount)
                             sample += samples[loopOffsetSampleIndex];
                     }
 

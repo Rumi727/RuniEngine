@@ -24,6 +24,9 @@ namespace RuniEngine.Resource.Sounds
     {
         public const string soundsNameSpace = "runi-sounds";
 
+        public static int bufferLength { get => Interlocked.Add(ref _bufferLength, 0); }
+        static int _bufferLength;
+
         public static int systemFrequency { get => Interlocked.Add(ref _systemFrequency, 0); }
         static int _systemFrequency = 48000;
 
@@ -40,8 +43,11 @@ namespace RuniEngine.Resource.Sounds
                 return _audioListener;
             }
         }
-
         static AudioListener? _audioListener;
+
+
+
+        public static ConcurrentBag<RawAudioClipLoaderBase> loaders { get; } = new();
 
 
 
@@ -82,6 +88,8 @@ namespace RuniEngine.Resource.Sounds
         {
             Interlocked.Exchange(ref _systemFrequency, AudioSettings.outputSampleRate);
 
+            AudioSettings.GetDSPBufferSize(out int bufferLength, out _);
+
             int driverChannels = 1;
             switch (AudioSettings.driverCapabilities)
             {
@@ -107,31 +115,35 @@ namespace RuniEngine.Resource.Sounds
                     driverChannels = 2;
                     break;
             }
-            
+
+            int systemChannels = 1;
             switch (AudioSettings.speakerMode)
             {
                 case AudioSpeakerMode.Mono:
-                    Interlocked.Exchange(ref _systemChannels, 1.Min(driverChannels));
+                    systemChannels = 1;
                     break;
                 case AudioSpeakerMode.Stereo:
-                    Interlocked.Exchange(ref _systemChannels, 2.Min(driverChannels));
+                    systemChannels = 2;
                     break;
                 case AudioSpeakerMode.Quad:
-                    Interlocked.Exchange(ref _systemChannels, 4.Min(driverChannels));
+                    systemChannels = 4;
                     break;
                 case AudioSpeakerMode.Surround:
-                    Interlocked.Exchange(ref _systemChannels, 5.Min(driverChannels));
+                    systemChannels = 5;
                     break;
                 case AudioSpeakerMode.Mode5point1:
-                    Interlocked.Exchange(ref _systemChannels, 6.Min(driverChannels));
+                    systemChannels = 6;
                     break;
                 case AudioSpeakerMode.Mode7point1:
-                    Interlocked.Exchange(ref _systemChannels, 8.Min(driverChannels));
+                    systemChannels = 8;
                     break;
                 case AudioSpeakerMode.Prologic:
-                    Interlocked.Exchange(ref _systemChannels, 2.Min(driverChannels));
+                    systemChannels = 2;
                     break;
             }
+
+            Interlocked.Exchange(ref _systemChannels, systemChannels.Min(driverChannels));
+            Interlocked.Exchange(ref _bufferLength, bufferLength * _systemChannels);
         }
 
         public static AudioData? SearchAudioData(string path, string nameSpace = "")
@@ -155,64 +167,24 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static RawAudioClip? GetRawAudio(string path)
+        public static RawAudioClip? GetRawAudio(string path, RawAudioLoadType loadType)
         {
             if (!File.Exists(path))
                 return null;
 
-            int channels;
-            int frequency;
-            long samples;
-
-            float[] buffer;
-            float[] datas;
-
-            WaveStream byteReader;
+            WaveStream stream;
             if (path.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase))
-                byteReader = new VorbisWaveReader(path);
+                stream = new VorbisWaveReader(path);
             else
-                byteReader = new AudioFileReader(path);
-
-            ISampleProvider reader = byteReader.ToSampleProvider();
+                stream = new AudioFileReader(path);
 
             try
             {
-                channels = byteReader.WaveFormat.Channels;
-                frequency = byteReader.WaveFormat.SampleRate;
-                samples = byteReader.Length / 4;
-
-                buffer = new float[frequency * channels];
-                datas = new float[samples];
-                
-                int position = 0;
-                int readSampleLength;
-
-                int datasLength = datas.Length;
-                int bufferLength = buffer.Length;
-
-                while ((readSampleLength = reader.Read(buffer, 0, bufferLength)) > 0)
-                {
-                    for (int i = 0; i < readSampleLength; i++)
-                    {
-                        if (position + i >= datasLength)
-                            break;
-
-                        datas[position + i] = buffer[i];
-                    }
-
-                    position += readSampleLength;
-                }
-
-                return new RawAudioClip(datas, frequency, channels);
+                return new RawAudioClip(stream, loadType);
             }
             catch (Exception e)
             {
-                Debug.Log(path);
                 Debug.LogException(e);
-            }
-            finally
-            {
-                byteReader.Dispose();
             }
 
             /*if (path.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase))
@@ -331,7 +303,7 @@ namespace RuniEngine.Resource.Sounds
                 audioClip.name = Path.GetFileNameWithoutExtension(path);
                 audioClip.hideFlags = hideFlags;
 
-                ResourceManager.allLoadedResources.Add(audioClip);
+                ResourceManager.RegisterManagedResource(audioClip);
                 return audioClip;
             }
 #endif
@@ -417,20 +389,36 @@ namespace RuniEngine.Resource.Sounds
                         ".s3m" => AudioType.S3M,
                         _ => AudioType.UNKNOWN,
                     };
+
+                    AudioFileMetaData? metaData = JsonManager.JsonRead<AudioFileMetaData>(audioPath + ".json");
+                    RawAudioLoadType loadType = RawAudioLoadType.instant;
+                    if (metaData != null)
+                        loadType = metaData.Value.loadType;
                     
                     RawAudioClip? rawAudioClip = null;
                     if (audioType == AudioType.OGGVORBIS || audioType == AudioType.MPEG || audioType == AudioType.AIFF)
-                        rawAudioClip = GetRawAudio(audioPath);
+                        rawAudioClip = GetRawAudio(audioPath, loadType);
                     /*else
-                    {
-                        ThreadDispatcher.Execute(() => GetAudio(audioPath, audioType));
 
-                        AudioClip? audioClip = awaiter2.GetResult();
+                    var awaiter = ThreadDispatcher.Execute(Load).GetAwaiter();
+                    while (!awaiter.IsCompleted)
+                        Thread.Yield();
+
+                    var awaiter2 = awaiter.GetResult().GetAwaiter();
+                    while (!awaiter2.IsCompleted)
+                        Thread.Yield();
+
+                    async UniTask<RawAudioClip?> Load()
+                    {
+                        AudioClip? audioClip = await GetAudio(audioPat
+                    h, audioType);
                         if (audioClip != null)
                         {
                             rawAudioClip = new RawAudioClip(audioClip);
                             Object.DestroyImmediate(audioClip);
                         }
+
+                        return rawAudioClip;
                     }*/
 
                     if (rawAudioClip != null)

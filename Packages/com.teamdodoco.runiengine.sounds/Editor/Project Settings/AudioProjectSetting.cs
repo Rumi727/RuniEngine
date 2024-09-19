@@ -264,6 +264,8 @@ namespace RuniEngine.Editor.ProjectSettings
                 BeatBPMPairList bpms = new BeatBPMPairList(metaData.bpms.defaultValue, metaData.bpms);
 #endif
 
+                string realAudioPath = "";
+
                 {
                     EditorGUILayout.BeginHorizontal();
                     string label = TryGetText("gui.path");
@@ -285,6 +287,7 @@ namespace RuniEngine.Editor.ProjectSettings
                         string assetPathAndName = Path.Combine(assetPath, audioPath).Replace("\\", "/");
 
                         ResourceManager.FileExtensionExists(assetAllPathAndName, out string outPath, ExtensionFilter.musicFileFilter);
+                        realAudioPath = outPath;
 
                         EditorGUI.BeginChangeCheck();
 
@@ -325,12 +328,55 @@ namespace RuniEngine.Editor.ProjectSettings
                         EndLabelWidth();
                     }
 
+                    Space(5);
+
                     {
                         string label = TryGetText("gui.tempo");
                         BeginLabelWidth(label);
 
                         tempo = EditorGUILayout.DoubleField(label, tempo);
                         EndLabelWidth();
+                    }
+
+                    Space(5);
+
+                    //타입
+                    {
+                        string jsonPath = realAudioPath + ".json";
+                        
+                        AudioFileMetaData? fileMetaData = JsonManager.JsonRead<AudioFileMetaData>(jsonPath);
+                        RawAudioLoadType loadType = RawAudioLoadType.instant;
+                        if (fileMetaData != null)
+                            loadType = fileMetaData.Value.loadType;
+
+                        EditorGUI.BeginChangeCheck();
+
+                        {
+                            string label = TryGetText("gui.load");
+                            BeginLabelWidth(label);
+
+                            loadType = (RawAudioLoadType)EditorGUILayout.EnumPopup(label, loadType, GUILayout.Width(140));
+                            EndLabelWidth();
+                        }
+
+                        if (EditorGUI.EndChangeCheck() && File.Exists(realAudioPath))
+                        {
+                            if (loadType == RawAudioLoadType.instant)
+                            {
+                                if (File.Exists(jsonPath))
+                                {
+                                    File.Delete(jsonPath);
+                                    File.Delete(jsonPath + ".meta");
+
+                                    AssetDatabase.Refresh();
+                                }
+                            }
+                            else
+                            {
+                                File.WriteAllText(jsonPath, JsonManager.ToJson(new AudioFileMetaData(loadType)));
+                                AssetDatabase.Refresh();
+                            }
+                        }
                     }
 
                     EditorGUILayout.EndHorizontal();
@@ -343,6 +389,8 @@ namespace RuniEngine.Editor.ProjectSettings
                         loopStartIndex = EditorGUILayout.IntField(label, loopStartIndex).Clamp(0);
                         EndLabelWidth();
                     }
+
+                    Space(5);
 
                     {
                         string label = TryGetText("project_setting.audio.loop_offset_index");

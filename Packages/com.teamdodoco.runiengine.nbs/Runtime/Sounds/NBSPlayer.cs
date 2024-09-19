@@ -239,7 +239,7 @@ namespace RuniEngine.Sounds
             {
                 if (_index >= 0 && _index < nbsFile.nbsNotes.Length && nbsNote.delayTick < internalTick)
                 {
-                    InfiniteLoopDetector.Run();
+                    //InfiniteLoopDetector.Run();
 
                     if (pitch != 0)
                         AudioPlay();
@@ -251,7 +251,7 @@ namespace RuniEngine.Sounds
             {
                 if (_index >= 0 && _index < nbsFile.nbsNotes.Length && nbsNote.delayTick >= internalTick)
                 {
-                    InfiniteLoopDetector.Run();
+                    //InfiniteLoopDetector.Run();
 
                     if (pitch != 0)
                         AudioPlay();

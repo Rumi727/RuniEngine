@@ -36,9 +36,7 @@ namespace RuniEngine.Resource.Sounds
         [JsonIgnore] public override double rhythmOffset => (double)rhythmOffsetIndex / frequency / tempo;
 #endif
 
-        [JsonIgnore] RawAudioClip? rawAudioClip { get; }
-
-        [JsonIgnore] public IReadOnlyList<float>? datas => rawAudioClip?.datas;
+        [JsonIgnore] public RawAudioClip? rawAudioClip { get; }
 
         [JsonIgnore] public int frequency => rawAudioClip?.frequency ?? 0;
         [JsonIgnore] public int channels => rawAudioClip?.channels ?? 0;
