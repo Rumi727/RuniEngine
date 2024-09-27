@@ -38,7 +38,7 @@ public class Test : MonoBehaviour
 
     RhythmWatch? rhythm;
     public TMP_Text? text;
-    public SoundPlayerBase? soundPlayer;
+    public MonoBehaviour? soundPlayer;
     public double lastBeat = 0;
     public Asdf rectCorner;
     public SerializableDictionary<string, SerializableDictionary<string, int>> a = new();
@@ -85,12 +85,12 @@ public class Test : MonoBehaviour
         if (text != null && rhythm != null && soundPlayer != null)
         {
             double outBeat = 0;
-            BeatBPMPairList.BPM bpm = rhythm.bpms?.GetValue(rhythm.currentBeat, out outBeat) ?? new(60);
+            BPM bpm = rhythm.bpms?.GetValue(rhythm.currentBeat, out outBeat) ?? new(60);
 
             int beat = (rhythm.currentBeat - outBeat).Repeat(bpm.timeSignatures).FloorToInt();
             
-            rhythm.rhythmable = soundPlayer;
-            text.text = $"Beat : {rhythm.currentBeat:0.00}\nTime : {rhythm.currentTime.ToTime()}";
+            rhythm.rhythmable = soundPlayer as IRhythmable;
+            text.text = $"Beat : {rhythm.currentBeat:0.00}\nTime : {rhythm.currentTime.ToTimeString()}";
 
             if (lastBeat != beat)
             {
