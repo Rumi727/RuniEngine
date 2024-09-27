@@ -352,17 +352,21 @@ namespace RuniEngine.Sounds
                 else
                     continue;
 
-                float pitch = 2f.Pow((nbsNoteMetaData.key + customInstrumentKey - 45) * 0.0833333333f) * 1.059463f.Pow(nbsNoteMetaData.pitch * 0.01f);
+                double pitch = 2d.Pow((nbsNoteMetaData.key + customInstrumentKey - 45) * 0.0833333333) * 2d.Pow(nbsNoteMetaData.pitch * 0.01 * 0.0833333333);
                 float volume = nbsNoteMetaData.velocity * 0.01f * (nbsLayer.layerVolume * 0.01f);
 
                 float layerStereo = (nbsLayer.layerStereo - 100) * 0.01f;
                 float panStereo = ((nbsNoteMetaData.panning - 100) * 0.01f).Lerp(layerStereo, layerStereo.Abs());
 
+                volume *= this.volume;
+                pitch *= realPitch;
+                panStereo = panStereo.Lerp(this.panStereo, this.panStereo.Abs());
+                
                 AudioPlayer? audioPlayer;
                 if (spatial)
-                    audioPlayer = AudioPlayer.PlayAudio(instrumentName, nameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo.Lerp(this.panStereo, this.panStereo.Abs()), transform, Vector3.zero, minDistance, maxDistance);
+                    audioPlayer = AudioPlayer.PlayAudio(instrumentName, nameSpace, volume, false, pitch, pitch, panStereo, transform, Vector3.zero, minDistance, maxDistance);
                 else
-                    audioPlayer = AudioPlayer.PlayAudio(instrumentName, nameSpace, volume * this.volume, false, pitch * realPitch, pitch * realPitch, panStereo.Lerp(this.panStereo, this.panStereo.Abs()), transform);
+                    audioPlayer = AudioPlayer.PlayAudio(instrumentName, nameSpace, volume, false, pitch, pitch, panStereo, transform);
 
                 allPlayingAudios.Add(audioPlayer);
             }
