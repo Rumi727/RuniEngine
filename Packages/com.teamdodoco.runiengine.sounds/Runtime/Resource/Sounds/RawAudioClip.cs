@@ -32,6 +32,7 @@ namespace RuniEngine.Resource.Sounds
             {
                 RawAudioLoadType.instant => new RawAudioClipInstLoader(stream),
                 RawAudioLoadType.background => new RawAudioClipBackgroundLoader(stream),
+                RawAudioLoadType.stream => new RawAudioClipStreamLoader(stream),
                 _ => new RawAudioClipInstLoader(stream),
             };
 #pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
