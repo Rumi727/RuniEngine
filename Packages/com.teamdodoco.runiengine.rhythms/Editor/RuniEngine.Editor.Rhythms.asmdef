@@ -2,7 +2,9 @@
     "name": "RuniEngine.Editor.Rhythms",
     "rootNamespace": "RuniEngine.Editor",
     "references": [
-        "GUID:eaf38b4531b03a64ab00c7d27abbfe25"
+        "GUID:eaf38b4531b03a64ab00c7d27abbfe25",
+        "GUID:313de9f3c5d536642ac75e792daf4b65",
+        "GUID:d19976c8233edf14ba31681d949961c5"
     ],
     "includePlatforms": [
         "Editor"

@@ -175,6 +175,10 @@
 
     "inspector.progress.allowNoResponseAni": "応答なしアニメーションの使用",
 
+    "inspector.rhythmable.rhythmOffset": "リズムオフセット",
+    "inspector.rhythmable.bpm": "BPM",
+    "inspector.rhythmable.bpm.timeSignatures": "拍子",
+
     "undo.modified_~": "変更された{object}",
 
     "transform.position": "座標",

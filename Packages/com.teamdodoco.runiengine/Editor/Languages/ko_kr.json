@@ -175,6 +175,10 @@
 
     "inspector.progress.allowNoResponseAni": "응답 없음 애니메이션 사용",
 
+    "inspector.rhythmable.rhythmOffset": "리듬 오프셋",
+    "inspector.rhythmable.bpm": "BPM",
+    "inspector.rhythmable.bpm.timeSignatures": "박자표",
+
     "undo.modified_~": "수정된 {object}",
 
     "transform.position": "좌표",
