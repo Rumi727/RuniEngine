@@ -17,6 +17,7 @@ namespace RuniEngine.Resource.Sounds
             this.samples = samples;
 
             length = (float)samples / frequency;
+            arrayLength = samples * channels;
         }
 
         public abstract bool isLoading { get; }
@@ -48,6 +49,9 @@ namespace RuniEngine.Resource.Sounds
         /// Thread-safe
         /// </summary>
         public float length { get; }
+
+        /// <summary>배열의 길이<br/>Thread-safe</summary>
+        public long arrayLength { get; }
 
         public abstract float GetSample(long index);
         [Obsolete("Legacy Code", true)] public virtual void SetStreamPosition(long index) { }

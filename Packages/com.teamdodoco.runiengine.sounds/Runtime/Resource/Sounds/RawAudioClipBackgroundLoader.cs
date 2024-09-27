@@ -17,7 +17,7 @@ namespace RuniEngine.Resource.Sounds
             loadedDatas = Array.Empty<float>();
             buffer = new float[frequency * channels];
 
-            long datasLength = samples * channels;
+            long datasLength = arrayLength;
             int bufferLength = buffer.Length;
 
             if (datasLength < bufferLength)
@@ -53,7 +53,7 @@ namespace RuniEngine.Resource.Sounds
             if (reader == null)
                 return -1;
 
-            long datasLength = samples * channels;
+            long datasLength = arrayLength;
             int bufferLength = buffer.Length;
             int readLength = (int)(bufferLength - (position + bufferLength - datasLength).Clamp(0));
 
@@ -83,7 +83,7 @@ namespace RuniEngine.Resource.Sounds
         {
             if (stream != null)
             {
-                long datasLength = samples * channels;
+                long datasLength = arrayLength;
                 int bufferLength = buffer.Length;
 
                 stream.Position = position * 4;

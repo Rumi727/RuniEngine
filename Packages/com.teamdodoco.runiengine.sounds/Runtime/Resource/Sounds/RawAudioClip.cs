@@ -100,6 +100,9 @@ namespace RuniEngine.Resource.Sounds
         /// <summary>초 단위 길이</summary>
         public float length => loader.length;
 
+        /// <summary>배열의 길이</summary>
+        public long arrayLength => loader.arrayLength;
+
 
 
         /// <summary>Thread-safe</summary>

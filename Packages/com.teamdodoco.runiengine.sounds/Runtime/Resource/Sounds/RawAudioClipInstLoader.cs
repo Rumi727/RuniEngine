@@ -9,7 +9,7 @@ namespace RuniEngine.Resource.Sounds
         {
             ISampleProvider reader = stream.ToSampleProvider();
 
-            datas = new float[samples * channels];
+            datas = new float[arrayLength];
             float[] buffer = new float[frequency * channels]; //1초 버퍼
 
             long position = 0;
