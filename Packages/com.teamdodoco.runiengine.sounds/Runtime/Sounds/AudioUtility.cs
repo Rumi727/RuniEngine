@@ -49,27 +49,6 @@ namespace RuniEngine.Sounds
                 Array.Fill(loopedSamples, 0);
         }
 
-        public static void SetPanStereo(ref float[] loopedSamples, float panStereo, bool spatial, float spatialStereo)
-        {
-            if (loopedSamples.Length < 2)
-                return;
-
-            float left = loopedSamples[0];
-            float right = loopedSamples[1];
-
-            float stereo;
-            if (spatial)
-                stereo = (float)panStereo.Lerp(spatialStereo, spatialStereo.Abs());
-            else
-                stereo = (float)panStereo;
-
-            float leftStereo = (-stereo).Clamp01();
-            float rightStereo = stereo.Clamp01();
-
-            loopedSamples[0] = (left + 0f.LerpUnclamped(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, stereo.Abs());
-            loopedSamples[1] = (right + 0f.LerpUnclamped(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, stereo.Abs());
-        }
-
         /// <summary>
         /// 모노 &lt;-&gt; 스테레오 또는 서로 같은 채널인 경우만 지원합니다
         /// </summary>
@@ -107,8 +86,8 @@ namespace RuniEngine.Sounds
             }
             else if (systemChannels > audioChannels)
             {
-                mixedSamples[0] = loopedSamples[0] * 0.6666666666f;
-                mixedSamples[1] = loopedSamples[0] * 0.6666666666f;
+                mixedSamples[0] = loopedSamples[0] * 0.6666666667f;
+                mixedSamples[1] = loopedSamples[0] * 0.6666666667f;
 
                 /*for (int i = 0; i < systemChannels; i += audioChannels)
                 {
@@ -116,6 +95,28 @@ namespace RuniEngine.Sounds
                         mixedSamples[i + j] += loopedSamples[j] * volume;
                 }*/
             }
+        }
+
+        /// <summary>샘플 배열에 스테레오 값을 적용합니다</summary>
+        public static void SetPanStereo(ref float[] mixedSamples, float panStereo, bool spatial, float spatialStereo)
+        {
+            if (mixedSamples.Length < 2)
+                return;
+
+            float left = mixedSamples[0];
+            float right = mixedSamples[1];
+
+            float stereo;
+            if (spatial)
+                stereo = (float)panStereo.Lerp(spatialStereo, spatialStereo.Abs());
+            else
+                stereo = (float)panStereo;
+
+            float leftStereo = (-stereo).Clamp01();
+            float rightStereo = stereo.Clamp01();
+
+            mixedSamples[0] = (left + 0f.LerpUnclamped(right, leftStereo)) * (1 - rightStereo) * 1f.Lerp(0.5f, stereo.Abs());
+            mixedSamples[1] = (right + 0f.LerpUnclamped(left, rightStereo)) * (1 - leftStereo) * 1f.Lerp(0.5f, stereo.Abs());
         }
     }
 }
