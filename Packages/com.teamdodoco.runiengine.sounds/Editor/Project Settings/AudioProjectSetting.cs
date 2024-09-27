@@ -420,24 +420,24 @@ namespace RuniEngine.Editor.ProjectSettings
                     tempIsChanged |= EditorGUI.EndChangeCheck();
                     EditorGUILayout.EndHorizontal();
 
-                    DrawRawList(bpms, "", z =>
+                    DrawRawList(bpms, "", x =>
                     {
                         EditorGUI.BeginChangeCheck();
 
-                        var pair = (BeatValuePair<BeatBPMPairList.BPM>)z;
+                        var pair = (BeatValuePair<BPM>)x;
                         double beat = EditorGUILayout.DelayedDoubleField(TryGetText("gui.beat"), pair.beat);
                         double value = EditorGUILayout.DoubleField(TryGetText("gui.value"), pair.value.bpm);
                         double timeSignatures = EditorGUILayout.DoubleField(TryGetText("gui.time_signatures"), pair.value.timeSignatures);
 
                         tempIsChanged |= EditorGUI.EndChangeCheck();
                         
-                        return new BeatValuePair<BeatBPMPairList.BPM>(beat, new(value, timeSignatures));
+                        return new BeatValuePair<BPM>(beat, new(value, timeSignatures));
                     }, i => true, i =>
                     {
                         if (bpms.Count > 0)
-                            bpms.Insert(i, new BeatValuePair<BeatBPMPairList.BPM>(bpms[i.Clamp(0, bpms.Count - 1)].beat, new(60)));
+                            bpms.Insert(i, new BeatValuePair<BPM>(bpms[i.Clamp(0, bpms.Count - 1)].beat, new(60)));
                         else    
-                            bpms.Insert(i, new BeatValuePair<BeatBPMPairList.BPM>(0, new(60)));
+                            bpms.Insert(i, new BeatValuePair<BPM>(0, new(60)));
                     }, out bool isListChanged);
 
                     tempIsChanged |= isListChanged;

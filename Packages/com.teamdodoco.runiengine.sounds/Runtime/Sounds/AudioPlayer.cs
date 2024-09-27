@@ -151,7 +151,7 @@ namespace RuniEngine.Sounds
                 }
             }
 #endif
-            
+
             //매 프레임 시간 보정
             if (isPlaying && !isPaused)
             {

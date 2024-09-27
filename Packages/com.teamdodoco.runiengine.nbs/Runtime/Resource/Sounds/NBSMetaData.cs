@@ -23,7 +23,7 @@ namespace RuniEngine.Resource.Sounds
 
 #if ENABLE_RUNI_ENGINE_RHYTHMS
             if (nbsFile != null)
-                bpms = new BeatBPMPairList(new BeatBPMPairList.BPM(nbsFile.tickTempo * 0.15f * bpmMultiplier, 4));
+                bpms = new BeatBPMPairList(new BPM(nbsFile.tickTempo * 0.15f * bpmMultiplier, 4));
 #endif
         }
 

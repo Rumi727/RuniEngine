@@ -3,20 +3,8 @@ using System.Collections.Generic;
 
 namespace RuniEngine.Rhythms
 {
-    public class BeatBPMPairList : BeatValuePairList<BeatBPMPairList.BPM>
+    public class BeatBPMPairList : BeatValuePairList<BPM>
     {
-        public struct BPM
-        {
-            public double bpm;
-            public double timeSignatures;
-
-            public BPM(double bpm, double timeSignatures = 4)
-            {
-                this.bpm = bpm;
-                this.timeSignatures = timeSignatures;
-            }
-        }
-
         public struct ItemInfo
         {
             public BPM bpm;

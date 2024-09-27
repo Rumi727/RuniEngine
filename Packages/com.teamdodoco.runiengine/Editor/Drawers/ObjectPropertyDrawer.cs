@@ -20,6 +20,8 @@ namespace RuniEngine.Editor.Drawers
         {
             if (property.IsChildrenIncluded() && !property.IsInArray())
             {
+                label = new GUIContent(label); //라벨 복제 안해주면 값 바뀜
+
                 AnimBool animBool;
                 if (animBools.ContainsKey(property.propertyPath))
                     animBool = animBools[property.propertyPath];
@@ -36,20 +38,22 @@ namespace RuniEngine.Editor.Drawers
                 {
                     bool isExpanded = property.isExpanded;
                     property.isExpanded = true;
+
+                    SerializedProperty childProperty = property.Copy();
                     
-                    orgHeight = EditorGUI.GetPropertyHeight(property, label);
-                    childCount = property.Copy().CountInProperty() - 1;
+                    orgHeight = EditorGUI.GetPropertyHeight(childProperty, label); //여기에서 값 바뀜
+                    childCount = childProperty.CountInProperty() - 1;
                     
                     property.isExpanded = isExpanded;
                 }
 
                 position.y += 2;
-
+                
                 {
                     position.height = headHeight;
 
                     EditorGUI.BeginProperty(position, label, property);
-
+                    
                     property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label, true);
                     animBool.target = property.isExpanded;
 
