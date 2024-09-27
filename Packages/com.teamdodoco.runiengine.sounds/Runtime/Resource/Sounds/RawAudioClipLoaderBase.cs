@@ -24,30 +24,14 @@ namespace RuniEngine.Resource.Sounds
         public abstract bool isLoaded { get; }
         public abstract bool isStream { get; }
 
-        /// <summary>
-        /// 샘플 레이트
-        /// <para></para>
-        /// Thread-safe
-        /// </summary>
+        /// <summary>샘플 레이트<br/>Thread-safe</summary>
         public int frequency { get; }
-        /// <summary>
-        /// 채널 수
-        /// <para></para>
-        /// Thread-safe
-        /// </summary>
+        /// <summary>채널 수<br/>Thread-safe</summary>
         public int channels { get; }
 
-        /// <summary>
-        /// 샘플 단위 길이
-        /// <para></para>
-        /// Thread-safe
-        /// </summary>
+        /// <summary>샘플 단위 길이<br/>Thread-safe</summary>
         public long samples { get; }
-        /// <summary>
-        /// 초 단위 길이
-        /// <para></para>
-        /// Thread-safe
-        /// </summary>
+        /// <summary>초 단위 길이<br/>Thread-safe</summary>
         public float length { get; }
 
         /// <summary>배열의 길이<br/>Thread-safe</summary>
