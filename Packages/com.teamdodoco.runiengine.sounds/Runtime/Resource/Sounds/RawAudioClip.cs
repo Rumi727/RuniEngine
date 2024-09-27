@@ -10,12 +10,10 @@ namespace RuniEngine.Resource.Sounds
 {
     /// <summary>
     /// 원시 오디오 클립입니다
-    /// <br/>
-    /// <see cref="IReadOnlyList{T}"/> 인터페이스를 구현하기에, 배열처럼 사용할 수 있습니다 (샘플을 반환합니다)
     /// <br/><br/>
     /// 이 클래스에 넘겨준 <see cref="WaveStream"/> 인스턴스는 넘겨준 시점부터 이 클래스가 관리하기에 분명한 목적이 있지 않는 이상 <see cref="WaveStream"/> 인스턴스는 건들지 마세요
     /// </summary>
-    public sealed class RawAudioClip : IDisposable, IReadOnlyList<float>
+    public sealed class RawAudioClip : IDisposable//, IReadOnlyList<float>
     {
         /// <summary>
         /// 제 생각이 맞다면 WaveStream 인스턴스를 다른 코드가 영향을 주지 않는다고 가정하면 Thread-safe 입니다
@@ -135,7 +133,7 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        int IReadOnlyCollection<float>.Count => (int)(samples * channels);
+        /*int IReadOnlyCollection<float>.Count => (int)(samples * channels);
 
         public IEnumerator<float> GetEnumerator() => new Enumerator(this);
 
@@ -166,6 +164,6 @@ namespace RuniEngine.Resource.Sounds
             void IEnumerator.Reset() => position = -1;
 
             void IDisposable.Dispose() { }
-        }
+        }*/
     }
 }
