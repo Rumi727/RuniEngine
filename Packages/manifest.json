@@ -3,7 +3,6 @@
     "com.looooong.asyncimageloader_forked_by_teamdodoco": "https://github.com/Rumi727/UnityAsyncImageLoader.git",
     "com.singularitygroup.hotreload": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.12",
     "com.unity.ide.visualstudio": "2.0.22",
-    "com.unity.memoryprofiler": "1.1.1",
     "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.9",
     "studio.gilp.internal-icon-browser": "https://github.com/GilpStudio/unity-internal-icon-browser.git"
   },
