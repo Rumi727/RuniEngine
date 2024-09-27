@@ -118,8 +118,8 @@ namespace RuniEngine.Sounds
             }
         }
 
-        public double spatialStereo => Interlocked.CompareExchange(ref _spatialStereo, 0, 0);
-        [HideInInspector, NonSerialized] double _spatialStereo;
+        public float spatialStereo => Interlocked.CompareExchange(ref _spatialStereo, 0, 0);
+        [HideInInspector, NonSerialized] float _spatialStereo;
 
 
 
@@ -313,7 +313,8 @@ namespace RuniEngine.Sounds
 
 
         [NonSerialized] int onAudioFilterReadLock = 0;
-        [NonSerialized] float[] tempData = new float[0];
+        [NonSerialized] float[] loopedSamples = new float[0];
+        [NonSerialized] float[] mixedSamples = new float[0];
         [NonSerialized] double tempoAdjustmentIndex = 0;
         [NonSerialized] long internalTimeSamples = 0;
         protected override void OnAudioFilterRead(float[] data, int channels)
@@ -326,9 +327,6 @@ namespace RuniEngine.Sounds
             try
             {
                 ThreadTask.Lock(ref onAudioFilterReadLock);
-
-                if (tempData.Length != channels)
-                    tempData = new float[channels];
 
                 if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
                 {
@@ -344,6 +342,13 @@ namespace RuniEngine.Sounds
 
                     int audioChannels = this.channels;
                     long samplesLength = samples;
+                    long datasLength = datas.arrayLength;
+
+                    if (loopedSamples.Length != audioChannels)
+                        loopedSamples = new float[audioChannels];
+
+                    if (mixedSamples.Length != channels)
+                        mixedSamples = new float[channels];
 
                     if (pitch > 0)
                     {
@@ -355,12 +360,25 @@ namespace RuniEngine.Sounds
                             else
                                 index = (internalTimeSamples * audioChannels) - i;
 
-                            GetAudioSample(ref tempData, datas, index, channels, audioChannels, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels, spatial, panStereo, spatialStereo);
-                            for (int j = 0; j < channels; j++)
+                            if (loop)
+                                AudioUtility.GetLoopedSamples(ref loopedSamples, index, datas, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels);
+                            else
                             {
-                                data[i + j] += tempData[j] * volume;
-                                //data[i + j] += datas[(index + j).Clamp(0, samplesLength * audioChannels - 1)] * volume;
+                                //메소드 호출도 상당한 비용이 들어감
+                                if (index >= 0 && index < datasLength)
+                                {
+                                    for (int j = 0; j < loopedSamples.Length; j++)
+                                        loopedSamples[j] = datas[index + j];
+                                }
+                                else
+                                    Array.Fill(loopedSamples, 0);
                             }
+
+                            AudioUtility.MixChannel(ref mixedSamples, loopedSamples);
+                            AudioUtility.SetPanStereo(ref mixedSamples, panStereo, spatial, spatialStereo);
+
+                            for (int j = 0; j < channels; j++)
+                                data[i + j] += mixedSamples[j] * volume;
                         }
                     }
 
@@ -428,7 +446,7 @@ namespace RuniEngine.Sounds
         /// <summary>
         /// 채널 개수에 영향 받지 않는 원시 인덱스를 인자로 전달해야합니다
         /// </summary>
-        public static void GetAudioSample(ref float[] data, RawAudioClip samples, long index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo, double spatialStereo)
+        /*public static void GetAudioSample(ref float[] data, RawAudioClip samples, long index, int channels, int audioChannels, bool loop, int loopStartIndex, int loopOffsetIndex, bool spatial, double panStereo, double spatialStereo)
         {
             //현재 재생중인 오디오 채널이 2 보다 크다면 변환 없이 재생
             if (audioChannels > 2)
@@ -460,7 +478,7 @@ namespace RuniEngine.Sounds
                  * 애초에 지금 템포도 구현을 잘못해놔서 이상해지지만 구현을 제대로 하기에는 너무 어렵다
                  * 나중에 오디오 재생 다시 설계해봐야할 듯?
                  * 그 나중에가 언제가 될진 모르겠지만...
-                 */
+                 * /
 
                 for (int i = 0; i < channels; i++)
                     data[i] = GetSample(0) / channels;
@@ -512,7 +530,7 @@ namespace RuniEngine.Sounds
             }
 
             return;
-        }
+        }*/
 
 #if ENABLE_RUNI_ENGINE_POOLING
         public static AudioPlayer? PlayAudio(string key, string nameSpace = "", float volume = 1, bool loop = false, double pitch = 1, double tempo = 1, float panStereo = 0, Transform? parent = null) => InternalPlayAudio(key, nameSpace, volume, loop, pitch, tempo, panStereo, parent, false, Vector3.zero, 0, 16);
