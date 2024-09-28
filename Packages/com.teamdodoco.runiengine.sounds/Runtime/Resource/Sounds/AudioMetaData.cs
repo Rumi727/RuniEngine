@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 #if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
-using System.Collections.Generic;
 #endif
 
 namespace RuniEngine.Resource.Sounds
