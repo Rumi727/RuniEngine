@@ -32,8 +32,6 @@ namespace RuniEngine.Editor
 
                 foldout = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, foldout, label);
                 EditorGUI.EndFoldoutHeaderGroup();
-
-                EditorGUI.EndProperty();
             }
 
             {
@@ -51,7 +49,10 @@ namespace RuniEngine.Editor
                         if (addAction != null)
                             addAction(index);
                         else
-                            list.Add(index);
+                        {
+                            list.GetType().IsAssignableToGenericType(typeof(IList<>), out Type? resultType);
+                            list.Add((resultType?.GetGenericArguments()[0].GetDefaultValueNotNull()) ?? new object());
+                        }
                     }
                 }
                 else
@@ -97,6 +98,7 @@ namespace RuniEngine.Editor
                 headerPosition.width -= 48;
 
                 EditorGUI.BeginProperty(headerPosition, label, property);
+                EditorGUI.showMixedValue = false;
 
                 if (!isInArray)
                 {
