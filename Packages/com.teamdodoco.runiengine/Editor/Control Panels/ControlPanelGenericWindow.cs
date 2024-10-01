@@ -9,8 +9,11 @@ using RuniEngine.Accounts;
 
 namespace RuniEngine.Editor.ControlPanels
 {
+    [InitializeOnLoad]
     public class ControlPanelGenericWindow : IControlPanelWindow
     {
+        static ControlPanelGenericWindow() => _ = SystemInfo.deviceModel; //이거 없으면 유니티 킬때 딱 한번 에러남 deviceModel 프로퍼티를 GUI 단계에서 처음 호출할 때 생기는 유니티 버그인듯
+
         public string label => "control_panel.generic";
         public int sort => 0;
 
