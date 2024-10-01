@@ -425,12 +425,14 @@ namespace RuniEngine.Editor
             return value;
         }
 
-        class InternalStringArrayInfo
-        {
-            public string path = "";
-            public List<InternalStringArrayInfo> stringArray = new List<InternalStringArrayInfo>();
+        /// <summary><see cref="IList"/> 인터페이스의 리스트 타입을 가져옵니다</summary>
+        public static Type GetListType(IList list) => GetListType(list.GetType());
 
-            public InternalStringArrayInfo(string path) => this.path = path;
+        /// <summary><see cref="IList"/> 인터페이스의 리스트 타입을 가져옵니다</summary>
+        public static Type GetListType(Type type)
+        {
+            type.IsAssignableToGenericType(typeof(IList<>), out Type? resultType);
+            return resultType?.GetGenericArguments()[0] ?? typeof(object);
         }
     }
 }
