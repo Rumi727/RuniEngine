@@ -36,7 +36,9 @@ namespace RuniEngine
         /// </summary>
         public static IReadOnlyList<Type> types { get; }
 
+        /// <summary>type != typeof(T) &amp;&amp; typeof(T).IsAssignableFrom(type)</summary>
         public static bool IsSubtypeOf<T>(this Type type) => type != typeof(T) && typeof(T).IsAssignableFrom(type);
+        /// <summary>type != surclass &amp;&amp; surclass.IsAssignableFrom(type)</summary>
         public static bool IsSubtypeOf(this Type type, Type surclass) => type != surclass && surclass.IsAssignableFrom(type);
 
         public static bool AttributeContains<T>(this MemberInfo element) where T : Attribute => element.AttributeContains(typeof(T));
