@@ -23,7 +23,13 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
             get
             {
                 f_dataOut ??= type.GetField("dataOut", BindingFlags.NonPublic | BindingFlags.Instance);
-                return (EditorGUI.VUMeter.SmoothingData[]?)f_dataOut.GetValue(instance);
+
+                Array array = (Array)f_dataOut.GetValue(instance);
+                if (_dataOut == null || _dataOut.Length != array.Length)
+                    _dataOut = new EditorGUI.VUMeter.SmoothingData[array.Length];
+
+                Array.Copy(array, _dataOut, array.Length);
+                return _dataOut;
             }
             set
             {
@@ -31,6 +37,7 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
                 f_dataOut.SetValue(instance, value);
             }
         }
+        static EditorGUI.VUMeter.SmoothingData[]? _dataOut;
         static FieldInfo? f_dataOut;
 
 
