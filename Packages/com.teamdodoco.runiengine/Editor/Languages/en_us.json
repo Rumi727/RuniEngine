@@ -125,6 +125,7 @@
     "gui.folder_delete": "Folder Delete",
     "gui.root": "Root",
     "gui.load": "Load",
+    "gui.element": "Element",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -375,5 +376,9 @@
 
 
     "internal.auto_setter.property.info": "Changed the {name} property value to allow Runi Engine to work properly",
-    "internal.auto_setter.property.value_info": "Changed the {name} property value to {value} to allow Runi Engine to work correctly"
+    "internal.auto_setter.property.value_info": "Changed the {name} property value to {value} to allow Runi Engine to work correctly",
+
+
+
+    "serialized_type.edit_multiple_objects": "This type does not support multi-object editing."
 }

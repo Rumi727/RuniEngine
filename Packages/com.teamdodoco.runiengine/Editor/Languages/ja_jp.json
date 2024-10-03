@@ -125,6 +125,7 @@
     "gui.folder_delete": "フォルダの削除",
     "gui.root": "ルート",
     "gui.load": "ロード",
+    "gui.element": "要素",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -375,5 +376,9 @@
 
 
     "internal.auto_setter.property.info": "Runi Engineが正しく機能するように{name}属性の値を変更しました。",
-    "internal.auto_setter.property.value_info": "Runi Engineが正しく機能するように、{name}属性の値を{value}に変更しました。"
+    "internal.auto_setter.property.value_info": "Runi Engineが正しく機能するように、{name}属性の値を{value}に変更しました。",
+
+
+
+    "serialized_type.edit_multiple_objects": "このタイプはマルチオブジェクト編集をサポートしていません。"
 }

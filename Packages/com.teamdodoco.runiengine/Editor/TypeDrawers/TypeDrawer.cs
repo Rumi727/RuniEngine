@@ -36,10 +36,23 @@ namespace RuniEngine.Editor.TypeDrawers
 
         public SerializedTypeProperty property { get; }
 
+        public virtual bool canEditMultipleObjects => true;
+
         public virtual float GetPropertyHeight() => EditorGUIUtility.singleLineHeight;
 
         public void OnGUI(Rect position, string? label) => OnGUI(position, label != null ? new GUIContent(label) : null);
-        public virtual void OnGUI(Rect position, GUIContent? label) => EditorGUI.LabelField(position, new GUIContent(label), new GUIContent("No GUI Implemented"));
+        public void OnGUI(Rect position, GUIContent? label)
+        {
+            if (!canEditMultipleObjects && property.serializedType.targetObjects.Length > 1)
+            {
+                EditorGUI.LabelField(position, new GUIContent($"{label} ({property.propertyType})"), new GUIContent(EditorTool.TryGetText("serialized_type.edit_multiple_objects")));
+                return;
+            }
+
+            InternalOnGUI(position, label);
+        }
+
+        protected virtual void InternalOnGUI(Rect position, GUIContent? label) => EditorGUI.LabelField(position, new GUIContent(label), new GUIContent("No GUI Implemented"));
 
         static IEnumerable<Type> GetHierarchy(Type type)
         {

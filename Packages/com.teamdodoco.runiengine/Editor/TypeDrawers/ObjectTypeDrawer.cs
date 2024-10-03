@@ -16,9 +16,10 @@ namespace RuniEngine.Editor.TypeDrawers
         internal ObjectTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
         SerializedType? childSerializedType;
-        AnimBool animBool = new AnimBool();
+        readonly AnimBool animBool = new AnimBool();
+        readonly AnimFloat animFloat = new AnimFloat(0);
 
-        bool SetChildProperty()
+        void SetChildProperty()
         {
             object?[] value = property.GetNotNullValues().ToArray();
             if (value.Length > 0)
@@ -28,11 +29,9 @@ namespace RuniEngine.Editor.TypeDrawers
             }
             else
                 childSerializedType = null;
-
-            return value == null;
         }
 
-        public override void OnGUI(Rect position, GUIContent? label)
+        protected override void InternalOnGUI(Rect position, GUIContent? label)
         {
             if (property.propertyType.IsChildrenIncluded())
             {
@@ -42,11 +41,19 @@ namespace RuniEngine.Editor.TypeDrawers
                     headPosition.height = headHeight;
 
                     if (property.DrawNullableButton(headPosition, label, out _))
+                    {
+                        animBool.value = false;
+                        animFloat.target = 0;
+
+                        if (animFloat.isAnimating)
+                            RepaintCurrentWindow();
+
                         return;
+                    }
 
                     if (!property.canRead)
                     {
-                        base.OnGUI(position, label);
+                        base.InternalOnGUI(position, label);
                         return;
                     }
 
@@ -68,6 +75,7 @@ namespace RuniEngine.Editor.TypeDrawers
                     if (animBool.isAnimating)
                     {
                         float childHeight = childSerializedType?.GetPropertyHeight() ?? 0;
+                        animFloat.value = childHeight;
 
                         GUI.BeginClip(new Rect(0, 0, position.x + position.width, position.y + 0f.Lerp(childHeight, animBool.faded)));
                         childSerializedType?.DrawGUI(position);
@@ -83,7 +91,7 @@ namespace RuniEngine.Editor.TypeDrawers
                     childSerializedType?.DrawGUI(position);
             }
             else
-                base.OnGUI(position, label);
+                base.InternalOnGUI(position, label);
         }
 
         public override float GetPropertyHeight()
@@ -91,24 +99,25 @@ namespace RuniEngine.Editor.TypeDrawers
             if (property.propertyType.IsChildrenIncluded())
             {
                 float orgHeight = GetYSize(EditorStyles.foldout);
-                if (!property.canRead || SetChildProperty())
+                if (!property.canRead)
                     return orgHeight;
 
-                float childHeight = childSerializedType?.GetPropertyHeight() ?? 0;
-                /*if (property.isExpanded)
-                    return orgHeight + childHeight;
-                else
-                    return orgHeight;*/
+                SetChildProperty();
+
+                if (childSerializedType == null)
+                    return orgHeight + animFloat.value;
                 
-                if (!property.isInArray)
+                if (!property.isInArray && animBool.isAnimating)
                 {
+                    float childHeight = childSerializedType.GetPropertyHeight();
+
                     animBool.target = property.isExpanded;
                     return orgHeight + 0f.Lerp(childHeight, animBool.faded);
                 }
                 else
                 {
                     if (property.isExpanded)
-                        return orgHeight + childHeight;
+                        return orgHeight + childSerializedType.GetPropertyHeight();
                     else
                         return orgHeight;
                 }

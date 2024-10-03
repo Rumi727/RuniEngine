@@ -71,7 +71,11 @@ namespace RuniEngine.Editor.SerializedTypes
                 {
                     object? obj = value[i];
                     if (obj != null && !targetType.IsAssignableFrom(obj.GetType()))
+                    {
+                        Debug.Log(targetType);
+                        Debug.Log(obj);
                         throw new InvalidCastException();
+                    }
                 }
 
                 _targetObjects = value;

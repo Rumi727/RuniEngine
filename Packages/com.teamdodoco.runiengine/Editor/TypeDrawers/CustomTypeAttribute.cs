@@ -3,7 +3,7 @@ using System;
 
 namespace RuniEngine.Editor.TypeDrawers
 {
-    [AttributeUsage(System.AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class CustomTypeDrawerAttribute : Attribute
     {
         public CustomTypeDrawerAttribute(Type targetType) => this.targetType = targetType;

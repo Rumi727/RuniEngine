@@ -23,7 +23,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
             isUnityObject = typeof(UnityEngine.Object).IsAssignableFrom(propertyType);
 
-            isArray = typeof(IList).IsAssignableFrom(propertyType);
+            isArray = typeof(IList).IsAssignableFrom(propertyType) || typeof(IDictionary).IsAssignableFrom(propertyType);
             isInArray = parent != null && (parent.isArray || parent.isInArray);
 
             if (parent == null)
@@ -51,7 +51,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
             isUnityObject = typeof(UnityEngine.Object).IsAssignableFrom(propertyType);
 
-            isArray = typeof(IList).IsAssignableFrom(propertyType);
+            isArray = typeof(IList).IsAssignableFrom(propertyType) || typeof(IDictionary).IsAssignableFrom(propertyType);
             isInArray = parent != null && (parent.isArray || parent.isInArray);
 
             if (parent == null)
@@ -61,7 +61,7 @@ namespace RuniEngine.Editor.SerializedTypes
                 propertyPath = parent.propertyPath + "." + name;
                 depth = parent.depth + 1;
             }
-
+            
             typeDrawer = GetTypeDrawer(propertyType) ?? new ObjectTypeDrawer(this);
         }
 
@@ -108,6 +108,9 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public bool isArray { get; } = false;
         public bool isInArray { get; } = false;
+
+        /// <summary>false일 경우, 프로퍼티 타입이 Nullable 타입이여도 null 버튼을 표시하지 않게함</summary>
+        public virtual bool isNullable => true;
 
         public bool isExpanded { get; set; } = false;
 
@@ -228,6 +231,7 @@ namespace RuniEngine.Editor.SerializedTypes
             for (int i = 0; i < serializedType.targetObjects.Length; i++)
                 InternalSetValue(serializedType.targetObjects[i], value);
         }
+        public void SetValue(int index, object? value) => InternalSetValue(serializedType.targetObjects[index], value);
 
         protected virtual void InternalSetValue(object? targetObject, object? value)
         {

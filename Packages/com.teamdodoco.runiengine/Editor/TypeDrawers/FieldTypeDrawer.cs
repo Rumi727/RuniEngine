@@ -11,7 +11,7 @@ namespace RuniEngine.Editor.TypeDrawers
 
         public abstract override float GetPropertyHeight();
 
-        public override void OnGUI(Rect position, GUIContent? label)
+        protected override void InternalOnGUI(Rect position, GUIContent? label)
         {
             object? value;
             if (property.canRead)

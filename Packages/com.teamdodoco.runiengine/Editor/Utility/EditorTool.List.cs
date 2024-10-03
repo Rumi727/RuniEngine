@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,25 +14,33 @@ namespace RuniEngine.Editor
         public delegate bool DrawRawListDefaultValueFunc(int index);
         public delegate void DrawRawListAddRemoveFunc(int index);
 
+        public delegate void ListHeaderAddAction(IList list, int listIndex, int index);
+        public delegate void ListHeaderRemoveAction(IList list, int listIndex, int index);
+
         public static void DeleteSafetyLayout(ref bool value) => value = EditorGUILayout.Toggle(TryGetText("gui.delete_safety"), value);
         public static void DeleteSafety(Rect position, ref bool value) => value = EditorGUI.Toggle(position, TryGetText("gui.delete_safety"), value);
 
-        public static bool ListHeaderLayout(IList list, string label, bool foldout) => ListHeaderLayout(list, new GUIContent(label), foldout, null, null);
-        public static bool ListHeaderLayout(IList list, GUIContent label, bool foldout) => ListHeaderLayout(list, label, foldout, null, null);
-        public static bool ListHeaderLayout(IList list, string label, bool foldout, Action<int>? addAction, Action<int>? removeAction) => ListHeaderLayout(list, new GUIContent(label), foldout, addAction, removeAction);
-        public static bool ListHeaderLayout(IList list, GUIContent label, bool foldout, Action<int>? addAction, Action<int>? removeAction) => ListHeader(EditorGUILayout.GetControlRect(false, GetYSize(EditorStyles.foldoutHeader)), list, label, foldout, addAction, removeAction);
+        public static bool ListHeaderLayout(IEnumerable<IList>? lists, string label, bool foldout, bool isInArray = false) => ListHeaderLayout(lists, new GUIContent(label), foldout, null, null, isInArray);
+        public static bool ListHeaderLayout(IEnumerable<IList>? lists, GUIContent label, bool foldout, bool isInArray = false) => ListHeaderLayout(lists, label, foldout, null, null, isInArray);
+        public static bool ListHeaderLayout(IEnumerable<IList>? lists, string label, bool foldout, ListHeaderAddAction? addAction, ListHeaderRemoveAction? removeAction, bool isInArray = false) => ListHeaderLayout(lists, new GUIContent(label), foldout, addAction, removeAction, isInArray);
+        public static bool ListHeaderLayout(IEnumerable<IList>? lists, GUIContent label, bool foldout, ListHeaderAddAction? addAction, ListHeaderRemoveAction? removeAction, bool isInArray = false) => ListHeader(EditorGUILayout.GetControlRect(false, GetYSize(EditorStyles.foldoutHeader)), lists, label, foldout, addAction, removeAction, isInArray);
 
-        public static bool ListHeader(Rect position, IList list, string label, bool foldout) => ListHeader(position, list, new GUIContent(label), foldout, null, null);
-        public static bool ListHeader(Rect position, IList list, GUIContent label, bool foldout) => ListHeader(position, list, label, foldout, null, null);
-        public static bool ListHeader(Rect position, IList list, string label, bool foldout, Action<int>? addAction, Action<int>? removeAction) => ListHeader(position, list, new GUIContent(label), foldout, addAction, removeAction);
-        public static bool ListHeader(Rect position, IList list, GUIContent label, bool foldout, Action<int>? addAction, Action<int>? removeAction)
+        public static bool ListHeader(Rect position, IEnumerable<IList>? lists, string label, bool foldout, bool isInArray = false) => ListHeader(position, lists, new GUIContent(label), foldout, null, null, isInArray);
+        public static bool ListHeader(Rect position, IEnumerable<IList>? lists, GUIContent label, bool foldout, bool isInArray = false) => ListHeader(position, lists, label, foldout, null, null, isInArray);
+        public static bool ListHeader(Rect position, IEnumerable<IList>? lists, string label, bool foldout, ListHeaderAddAction? addAction, ListHeaderRemoveAction? removeAction, bool isInArray = false) => ListHeader(position, lists, new GUIContent(label), foldout, addAction, removeAction, isInArray);
+        public static bool ListHeader(Rect position, IEnumerable<IList>? lists, GUIContent label, bool foldout, ListHeaderAddAction? addAction, ListHeaderRemoveAction? removeAction, bool isInArray = false)
         {
             {
                 Rect headerPosition = position;
                 headerPosition.width -= 48;
 
-                foldout = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, foldout, label);
-                EditorGUI.EndFoldoutHeaderGroup();
+                if (!isInArray)
+                {
+                    foldout = EditorGUI.BeginFoldoutHeaderGroup(headerPosition, foldout, label);
+                    EditorGUI.EndFoldoutHeaderGroup();
+                }
+                else
+                    foldout = EditorGUI.Foldout(headerPosition, foldout, label, true);
             }
 
             {
@@ -39,33 +48,40 @@ namespace RuniEngine.Editor
                 countPosition.x += countPosition.width - 48;
                 countPosition.width = 48;
 
-                int count = EditorGUI.DelayedIntField(countPosition, list.Count);
-                int addCount = count - list.Count;
-                if (addCount > 0)
+                if (lists == null)
+                    return foldout;
+
+                int count = EditorGUI.DelayedIntField(countPosition, lists.FirstOrDefault()?.Count ?? 0);
+
+                int listIndex = 0;
+                foreach (var list in lists)
                 {
-                    for (int i = 0; i < addCount; i++)
+                    int addCount = count - list.Count;
+                    if (addCount > 0)
                     {
-                        int index = list.Count;
-                        if (addAction != null)
-                            addAction(index);
-                        else
+                        for (int j = 0; j < addCount; j++)
                         {
-                            list.GetType().IsAssignableToGenericType(typeof(IList<>), out Type? resultType);
-                            list.Add((resultType?.GetGenericArguments()[0].GetDefaultValueNotNull()) ?? new object());
+                            int index = list.Count;
+                            if (addAction != null)
+                                addAction(list, listIndex, index);
+                            else
+                                list.Add(GetListType(list).GetDefaultValue());
                         }
                     }
-                }
-                else
-                {
-                    addCount = -addCount;
-                    for (int i = 0; i < addCount; i++)
+                    else
                     {
-                        int index = list.Count - 1;
-                        if (removeAction != null)
-                            removeAction(index);
-                        else
-                            list.RemoveAt(index);
+                        addCount = -addCount;
+                        for (int j = 0; j < addCount; j++)
+                        {
+                            int index = list.Count - 1;
+                            if (removeAction != null)
+                                removeAction(list, listIndex, index);
+                            else
+                                list.RemoveAt(index);
+                        }
                     }
+
+                    listIndex++;
                 }
             }
 
@@ -433,6 +449,18 @@ namespace RuniEngine.Editor
         {
             type.IsAssignableToGenericType(typeof(IList<>), out Type? resultType);
             return resultType?.GetGenericArguments()[0] ?? typeof(object);
+        }
+
+        /// <summary><see cref="IList"/> 인터페이스의 리스트 타입을 가져옵니다</summary>
+        public static (Type key, Type value) GetDictionaryType(IDictionary list) => GetDictionaryType(list.GetType());
+
+        /// <summary><see cref="IDictionary"/> 인터페이스의 리스트 타입을 가져옵니다</summary>
+        public static (Type key, Type value) GetDictionaryType(Type type)
+        {
+            type.IsAssignableToGenericType(typeof(IDictionary<,>), out Type? resultType);
+
+            Type[]? types = resultType?.GetGenericArguments();
+            return (types?[0] ?? typeof(object), types?[1] ?? typeof(object));
         }
     }
 }

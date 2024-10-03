@@ -16,7 +16,7 @@ namespace RuniEngine
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
 
-            object temp = list[oldIndex];
+            object? temp = list[oldIndex];
             list.RemoveAt(oldIndex);
             list.Insert(newIndex, temp);
         }
@@ -2140,6 +2140,14 @@ namespace RuniEngine
         {
             int max = source.SelectMany(i => Regex.Matches(selector(i), @"\d+").Cast<Match>().Select(m => (int?)m.Value.Length)).Max() ?? 0;
             return source.OrderBy(i => Regex.Replace(selector(i), @"\d+", m => m.Value.PadLeft(max, '0')));
+        }
+
+        public static void RenameKey(this IDictionary dic, object fromKey, object? toKey)
+        {
+            object value = dic[fromKey];
+
+            dic.Remove(fromKey);
+            dic[toKey] = value;
         }
 
         public static void RenameKey<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey fromKey, TKey toKey)

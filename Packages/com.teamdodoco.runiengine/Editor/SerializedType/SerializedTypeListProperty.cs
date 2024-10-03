@@ -31,15 +31,60 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public override string propertyPath { get; }
 
-        public int targetIndex { get; }
+        public int targetIndex { get; set; }
 
-        protected override object? InternalGetValue(object? targetObject) => ((IList?)base.InternalGetValue(targetObject))?[targetIndex];
+        protected override object? InternalGetValue(object? targetObject)
+        {
+            object? value = base.InternalGetValue(targetObject);
+            if (value == null)
+                return null;
+
+            if (value is IList list)
+                return list[targetIndex];
+            else if (value is IDictionary dictionary)
+            {
+                object? key = null;
+
+                int index = 0;
+                foreach (var item in dictionary.Keys)
+                {
+                    if (targetIndex == index)
+                        key = item;
+
+                    index++;
+                }
+
+                if (key != null)
+                    return dictionary[key];
+            }
+
+            return null;
+        }
 
         protected override void InternalSetValue(object? targetObject, object? value)
         {
-            IList? list = (IList?)base.InternalGetValue(targetObject);
-            if (list != null)
+            object? value2 = base.InternalGetValue(targetObject);
+            if (value2 == null)
+                return;
+
+            if (value2 is IList list)
                 list[targetIndex] = value;
+            else if (value2 is IDictionary dictionary)
+            {
+                object? key = null;
+
+                int index = 0;
+                foreach (var item in dictionary.Keys)
+                {
+                    if (targetIndex == index)
+                        key = item;
+
+                    index++;
+                }
+
+                if (key != null)
+                    dictionary[key] = value;
+            }
         }
     }
 }
