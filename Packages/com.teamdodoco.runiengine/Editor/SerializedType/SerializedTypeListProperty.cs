@@ -13,7 +13,7 @@ namespace RuniEngine.Editor.SerializedTypes
             this.targetIndex = targetIndex;
 
             if (parent == null)
-                propertyPath = name;
+                propertyPath = "[" + targetIndex + "]";
             else
                 propertyPath = parent.propertyPath + "[" + targetIndex + "]";
         }
@@ -23,7 +23,7 @@ namespace RuniEngine.Editor.SerializedTypes
             this.targetIndex = targetIndex;
 
             if (parent == null)
-                propertyPath = name;
+                propertyPath = "[" + targetIndex + "]";
             else
                 propertyPath = parent.propertyPath + "[" + targetIndex + "]";
         }

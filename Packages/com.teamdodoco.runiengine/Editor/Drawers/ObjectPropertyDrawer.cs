@@ -78,8 +78,10 @@ namespace RuniEngine.Editor.Drawers
                     {
                         if (property.depth != depth)
                         {
-                            property.Next(false);
-                            continue;
+                            if (property.Next(false))
+                                continue;
+                            else
+                                break;
                         }
 
                         position.height = EditorGUI.GetPropertyHeight(property);
@@ -121,12 +123,11 @@ namespace RuniEngine.Editor.Drawers
                 bool isExpanded = property.isExpanded;
 
                 property.isExpanded = true;
-                float orgHeight = EditorGUI.GetPropertyHeight(property, label, true);
-                
+                float childHeight = EditorGUI.GetPropertyHeight(property, label, true);
                 property.isExpanded = isExpanded;
 
-                float childHeight = orgHeight - GetYSize(label, EditorStyles.foldout) - 3;
-                return orgHeight - childHeight.Lerp(0f, animBool.faded);
+                float headHeight = GetYSize(label, EditorStyles.foldout) + 3;
+                return headHeight.Lerp(childHeight, animBool.faded);
             }
             else
                 return EditorGUI.GetPropertyHeight(property, label, property.IsChildrenIncluded());

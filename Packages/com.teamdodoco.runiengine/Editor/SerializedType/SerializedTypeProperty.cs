@@ -88,7 +88,7 @@ namespace RuniEngine.Editor.SerializedTypes
         public SerializedTypeProperty? parent { get; }
 
         public Type declaringType => propertyInfo?.DeclaringType ?? fieldInfo?.DeclaringType ?? typeof(object);
-        public virtual Type propertyType { get; }
+        public Type propertyType { get; }
 
         public virtual Type realPropertyType => propertyInfo?.PropertyType ?? fieldInfo?.FieldType ?? typeof(object);
 

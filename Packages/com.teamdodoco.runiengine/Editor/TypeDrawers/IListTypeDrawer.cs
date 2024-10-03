@@ -1,5 +1,4 @@
 #nullable enable
-using Newtonsoft.Json.Linq;
 using RuniEngine.Editor.SerializedTypes;
 using System.Collections;
 using System.Collections.Generic;
@@ -129,7 +128,7 @@ namespace RuniEngine.Editor.TypeDrawers
                     else if (property.fieldInfo != null)
                         listProperty = new SerializedTypeListProperty(i, property.serializedType, property.fieldInfo, property);
 
-                    if (listProperty != null && i < listProperties.Count)
+                    if (listProperty != null && i < this.listProperties.Count)
                         listProperty.isExpanded = this.listProperties[i]?.isExpanded ?? false;
 
                     listProperties.Add(listProperty);
