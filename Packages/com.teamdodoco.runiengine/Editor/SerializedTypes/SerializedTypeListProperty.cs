@@ -23,6 +23,11 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public override string propertyPath { get; }
 
+        public override bool canRead => true;
+        public override bool canWrite => true;
+
+        public override bool isArray => true;
+
         public int targetIndex { get; set; }
 
         protected internal override object? InternalGetValue(object? targetObject)

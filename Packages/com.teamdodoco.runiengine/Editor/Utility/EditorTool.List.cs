@@ -51,37 +51,47 @@ namespace RuniEngine.Editor
                 if (lists == null)
                     return foldout;
 
-                int count = EditorGUI.DelayedIntField(countPosition, lists.FirstOrDefault()?.Count ?? 0);
+                EditorGUI.BeginChangeCheck();
 
-                int listIndex = 0;
-                foreach (var list in lists)
+                int firstCount = lists.FirstOrDefault()?.Count ?? 0;
+                EditorGUI.showMixedValue = lists.Any(x => firstCount != x.Count);
+
+                int count = EditorGUI.DelayedIntField(countPosition, firstCount);
+
+                EditorGUI.showMixedValue = false;
+
+                if (EditorGUI.EndChangeCheck())
                 {
-                    int addCount = count - list.Count;
-                    if (addCount > 0)
+                    int listIndex = 0;
+                    foreach (var list in lists)
                     {
-                        for (int j = 0; j < addCount; j++)
+                        int addCount = count - list.Count;
+                        if (addCount > 0)
                         {
-                            int index = list.Count;
-                            if (addAction != null)
-                                addAction(list, listIndex, index);
-                            else
-                                list.Add(GetListType(list).GetDefaultValue());
+                            for (int j = 0; j < addCount; j++)
+                            {
+                                int index = list.Count;
+                                if (addAction != null)
+                                    addAction(list, listIndex, index);
+                                else
+                                    list.Add(GetListType(list).GetDefaultValue());
+                            }
                         }
-                    }
-                    else
-                    {
-                        addCount = -addCount;
-                        for (int j = 0; j < addCount; j++)
+                        else
                         {
-                            int index = list.Count - 1;
-                            if (removeAction != null)
-                                removeAction(list, listIndex, index);
-                            else
-                                list.RemoveAt(index);
+                            addCount = -addCount;
+                            for (int j = 0; j < addCount; j++)
+                            {
+                                int index = list.Count - 1;
+                                if (removeAction != null)
+                                    removeAction(list, listIndex, index);
+                                else
+                                    list.RemoveAt(index);
+                            }
                         }
-                    }
 
-                    listIndex++;
+                        listIndex++;
+                    }
                 }
             }
 

@@ -3,6 +3,7 @@ using RuniEngine.Editor.TypeDrawers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace RuniEngine.Editor.SerializedTypes
@@ -97,8 +98,8 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public string name => propertyInfo?.Name ?? fieldInfo?.Name ?? string.Empty;
 
-        public bool canRead => ((parent?.canRead ?? true) || isArray) && ((propertyInfo != null && propertyInfo.CanRead && propertyInfo.GetGetMethod(false) != null) || fieldInfo != null);
-        public bool canWrite => ((parent?.canWrite ?? true) || isArray) && ((propertyInfo != null && propertyInfo.CanWrite && propertyInfo.GetSetMethod(false) != null) || (fieldInfo != null && !fieldInfo.IsInitOnly && !fieldInfo.IsLiteral));
+        public virtual bool canRead => ((parent?.canRead ?? true) || isArray) && ((propertyInfo != null && propertyInfo.CanRead && propertyInfo.GetGetMethod(false) != null) || fieldInfo != null);
+        public virtual bool canWrite => ((parent?.canWrite ?? true) || isArray) && ((propertyInfo != null && propertyInfo.CanWrite && propertyInfo.GetSetMethod(false) != null) || (fieldInfo != null && !fieldInfo.IsInitOnly && !fieldInfo.IsLiteral));
 
         public bool isStatic => propertyInfo?.GetAccessors(true)[0].IsStatic ?? fieldInfo?.IsStatic ?? false;
 
@@ -106,7 +107,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public bool isUnityObject { get; }
 
-        public bool isArray { get; } = false;
+        public virtual bool isArray { get; } = false;
         public bool isInArray { get; } = false;
 
         /// <summary>false일 경우, 프로퍼티 타입이 Nullable 타입이여도 null 버튼을 표시하지 않게함</summary>
@@ -224,7 +225,23 @@ namespace RuniEngine.Editor.SerializedTypes
             propertyInfo?.SetValue(targetObject, value);
             fieldInfo?.SetValue(targetObject, value);
 
-            parent?.SetValue(targetObject);
+            /*
+             * 구조체는 밑의 코드가 없으면 값이 변경되지 않음
+             * 또한, 같은 값만 바꿔줘야함 (전체를 바꾸게 되면 리스트 값이 손상됨)
+             */
+
+            int index = 0;
+            IEnumerable? parentValues = parent?.GetValues();
+            if (parentValues == null)
+                return;
+
+            foreach (var item in parentValues)
+            {
+                if (targetObject == item)
+                    parent?.SetValue(index, targetObject);
+
+                index++;
+            }
         }
     }
 }
