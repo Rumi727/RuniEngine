@@ -49,10 +49,11 @@ namespace RuniEngine.Editor.TypeDrawers
                 SerializedTypeDictionaryKeyProperty? listProperty = null;
                 DictionaryEntry entry = (DictionaryEntry)list[i];
 
+                Type keyType = GetDictionaryType(GetDictionary()?.GetType() ?? typeof(object)).key;
                 if (property.propertyInfo != null)
-                    listProperty = new SerializedTypeDictionaryKeyProperty(entry.Key, property.serializedType, property.propertyInfo, property);
+                    listProperty = new SerializedTypeDictionaryKeyProperty(keyType, entry.Key, property.serializedType, property.propertyInfo, property);
                 else if (property.fieldInfo != null)
-                    listProperty = new SerializedTypeDictionaryKeyProperty(entry.Key, property.serializedType, property.fieldInfo, property);
+                    listProperty = new SerializedTypeDictionaryKeyProperty(keyType, entry.Key, property.serializedType, property.fieldInfo, property);
 
                 if (listProperty != null && i < listKeyProperties.Count)
                     listProperty.isExpanded = listKeyProperties[i]?.isExpanded ?? false;
@@ -84,17 +85,17 @@ namespace RuniEngine.Editor.TypeDrawers
             if (lastValueCount != list.Count)
             {
                 List<SerializedTypeDictionaryValueProperty?> listProperties = new List<SerializedTypeDictionaryValueProperty?>();
-
                 
                 for (int i = 0; i < list.Count; i++)
                 {
                     SerializedTypeDictionaryValueProperty? listProperty = null;
                     DictionaryEntry entry = (DictionaryEntry)list[i];
-                    
+
+                    Type valueType = GetDictionaryType(GetDictionary()?.GetType() ?? typeof(object)).value;
                     if (property.propertyInfo != null)
-                        listProperty = new SerializedTypeDictionaryValueProperty(entry.Key, property.serializedType, property.propertyInfo, property);
+                        listProperty = new SerializedTypeDictionaryValueProperty(valueType, entry.Key, property.serializedType, property.propertyInfo, property);
                     else if (property.fieldInfo != null)
-                        listProperty = new SerializedTypeDictionaryValueProperty(entry.Key, property.serializedType, property.fieldInfo, property);
+                        listProperty = new SerializedTypeDictionaryValueProperty(valueType, entry.Key, property.serializedType, property.fieldInfo, property);
 
                     if (listProperty != null && i < listValueProperties.Count)
                         listProperty.isExpanded = listValueProperties[i]?.isExpanded ?? false;
@@ -117,6 +118,8 @@ namespace RuniEngine.Editor.TypeDrawers
 
             return lists.OfType<IDictionary>();
         }
+
+        public IDictionary? GetDictionary() => GetDictionarys().FirstOrDefault();
 
         public override IEnumerable<IList>? GetLists() => GetDictionarys()?.Select(x => x.ToGeneric().ToList());
 

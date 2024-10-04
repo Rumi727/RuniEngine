@@ -9,18 +9,19 @@ namespace RuniEngine.Editor.SerializedTypes
 {
     public class SerializedTypeProperty
     {
-        protected internal SerializedTypeProperty(SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null) : this(serializedType, propertyInfo, null, parent) { }
+        internal SerializedTypeProperty(SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null) : this(propertyInfo.PropertyType, serializedType, propertyInfo, null, parent) { }
 
-        protected internal SerializedTypeProperty(SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null) : this(serializedType, null, fieldInfo, parent) { }
+        internal SerializedTypeProperty(SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null) : this(fieldInfo.FieldType, serializedType, null, fieldInfo, parent) { }
 
-        SerializedTypeProperty(SerializedType serializedType, PropertyInfo? propertyInfo, FieldInfo? fieldInfo, SerializedTypeProperty? parent)
+        protected SerializedTypeProperty(Type propertyType, SerializedType serializedType, PropertyInfo? propertyInfo, FieldInfo? fieldInfo, SerializedTypeProperty? parent)
         {
             this.serializedType = serializedType;
             this.propertyInfo = propertyInfo;
             this.fieldInfo = fieldInfo;
             this.parent = parent;
 
-            Type propertyType = realPropertyType;
+            realPropertyType = propertyType;
+
             if (this.IsNullableValueType())
                 propertyType = propertyType.GenericTypeArguments[0];
 
@@ -65,7 +66,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
                 if (attribute.targetType.IsAssignableFrom(propertyType))
                 {
-                    result = Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance, null, new object[] { this }, null) as TypeDrawer;
+                    result = Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance, null, new object[] { this }, null) as TypeDrawer;
                     break;
                 }
             }
@@ -89,7 +90,7 @@ namespace RuniEngine.Editor.SerializedTypes
         public Type declaringType => propertyInfo?.DeclaringType ?? fieldInfo?.DeclaringType ?? typeof(object);
         public Type propertyType { get; }
 
-        public virtual Type realPropertyType => propertyInfo?.PropertyType ?? fieldInfo?.FieldType ?? typeof(object);
+        public Type realPropertyType { get; }
 
         public virtual string propertyPath { get; } = string.Empty;
         public int depth { get; } = 0;
@@ -164,13 +165,21 @@ namespace RuniEngine.Editor.SerializedTypes
         {
             get
             {
-                if (serializedType.targetObjects.Length > 0)
+                if (serializedType.targetObjects.Length <= 1)
                     return false;
 
                 object? firstValue = GetValue(0);
                 for (int i = 1; i < serializedType.targetObjects.Length; i++)
                 {
-                    if (firstValue != GetValue(i))
+                    object? value = GetValue(i);
+                    if (firstValue == null && value == null)
+                        continue;
+                    else if (firstValue == null)
+                        return true;
+                    else if (value == null)
+                        return true;
+
+                    if (!firstValue.Equals(value))
                         return true;
                 }
 
@@ -201,7 +210,7 @@ namespace RuniEngine.Editor.SerializedTypes
         public object? GetValue() => InternalGetValue(serializedType.targetObject);
         public object? GetValue(int index) => InternalGetValue(serializedType.targetObjects[index]);
 
-        protected virtual object? InternalGetValue(object? targetObject) => propertyInfo?.GetValue(targetObject) ?? fieldInfo?.GetValue(targetObject);
+        protected internal virtual object? InternalGetValue(object? targetObject) => propertyInfo?.GetValue(targetObject) ?? fieldInfo?.GetValue(targetObject);
 
         public void SetValue(object? value)
         {

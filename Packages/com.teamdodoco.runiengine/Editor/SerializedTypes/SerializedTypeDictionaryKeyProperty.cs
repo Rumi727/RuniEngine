@@ -7,7 +7,11 @@ namespace RuniEngine.Editor.SerializedTypes
 {
     public sealed class SerializedTypeDictionaryKeyProperty : SerializedTypeProperty
     {
-        internal SerializedTypeDictionaryKeyProperty(object targetKeyObject, SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null) : base(serializedType, propertyInfo, parent)
+        internal SerializedTypeDictionaryKeyProperty(Type listType, object targetKeyObject, SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null) : this(listType, targetKeyObject, serializedType, propertyInfo, null, parent) { }
+
+        internal SerializedTypeDictionaryKeyProperty(Type listType, object targetKeyObject, SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null) : this(listType, targetKeyObject, serializedType, null, fieldInfo, parent) { }
+
+        SerializedTypeDictionaryKeyProperty(Type propertyType, object targetKeyObject, SerializedType serializedType, PropertyInfo? propertyInfo, FieldInfo? fieldInfo, SerializedTypeProperty? parent = null) : base(propertyType, serializedType, propertyInfo, fieldInfo, parent)
         {
             this.targetKeyObject = targetKeyObject;
 
@@ -16,18 +20,6 @@ namespace RuniEngine.Editor.SerializedTypes
             else
                 propertyPath = parent.propertyPath + "[" + targetKeyObject + "]";
         }
-
-        internal SerializedTypeDictionaryKeyProperty(object targetKeyObject, SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null) : base(serializedType, fieldInfo, parent)
-        {
-            this.targetKeyObject = targetKeyObject;
-
-            if (parent == null)
-                propertyPath = "[" + targetKeyObject + "]";
-            else
-                propertyPath = parent.propertyPath + "[" + targetKeyObject + "]";
-        }
-
-        public override Type realPropertyType => EditorTool.GetDictionaryType(base.realPropertyType).key;
 
         public override string propertyPath { get; }
 
@@ -35,11 +27,11 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public object targetKeyObject { get; private set; }
 
-        protected override object? InternalGetValue(object? targetObject) => targetKeyObject;
+        protected internal override object? InternalGetValue(object? targetObject) => targetKeyObject;
 
         protected override void InternalSetValue(object? targetObject, object? value)
         {
-            object? obj = base.InternalGetValue(targetObject);
+            object? obj = parent?.InternalGetValue(targetObject);
             if (obj == null)
                 return;
 

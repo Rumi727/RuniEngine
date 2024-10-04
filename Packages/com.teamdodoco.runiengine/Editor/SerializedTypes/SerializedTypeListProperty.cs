@@ -7,7 +7,11 @@ namespace RuniEngine.Editor.SerializedTypes
 {
     public sealed class SerializedTypeListProperty : SerializedTypeProperty
     {
-        internal SerializedTypeListProperty(int targetIndex, SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null) : base(serializedType, propertyInfo, parent)
+        internal SerializedTypeListProperty(Type listType, int targetIndex, SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null) : this(listType, targetIndex, serializedType, propertyInfo, null, parent) { }
+
+        internal SerializedTypeListProperty(Type listType, int targetIndex, SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null) : this(listType, targetIndex, serializedType, null, fieldInfo, parent) { }
+
+        SerializedTypeListProperty(Type listType, int targetIndex, SerializedType serializedType, PropertyInfo? propertyInfo, FieldInfo? fieldInfo, SerializedTypeProperty? parent = null) : base(listType, serializedType, propertyInfo, fieldInfo, parent)
         {
             this.targetIndex = targetIndex;
 
@@ -16,26 +20,14 @@ namespace RuniEngine.Editor.SerializedTypes
             else
                 propertyPath = parent.propertyPath + "[" + targetIndex + "]";
         }
-
-        internal SerializedTypeListProperty(int targetIndex, SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null) : base(serializedType, fieldInfo, parent)
-        {
-            this.targetIndex = targetIndex;
-
-            if (parent == null)
-                propertyPath = "[" + targetIndex + "]";
-            else
-                propertyPath = parent.propertyPath + "[" + targetIndex + "]";
-        }
-
-        public override Type realPropertyType => EditorTool.GetListType(base.realPropertyType);
 
         public override string propertyPath { get; }
 
         public int targetIndex { get; set; }
 
-        protected override object? InternalGetValue(object? targetObject)
+        protected internal override object? InternalGetValue(object? targetObject)
         {
-            object? value = base.InternalGetValue(targetObject);
+            object? value = parent?.InternalGetValue(targetObject);
             if (value == null)
                 return null;
 
@@ -63,7 +55,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
         protected override void InternalSetValue(object? targetObject, object? value)
         {
-            object? value2 = base.InternalGetValue(targetObject);
+            object? value2 = parent?.InternalGetValue(targetObject);
             if (value2 == null)
                 return;
 
