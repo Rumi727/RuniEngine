@@ -9,8 +9,8 @@ namespace RuniEngine.Resource.Sounds
             this.isBGM = isBGM;
         }
 
-        public string subtitle { get; } = "";
-        public bool isBGM { get; } = false;
+        public string subtitle { get; set; } = "";
+        public bool isBGM { get; set; } = false;
 
         public abstract SoundMetaDataBase[] sounds { get; }
     }

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 #if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+using UnityEngine;
 #endif
 
 namespace RuniEngine.Resource.Sounds
@@ -25,14 +26,22 @@ namespace RuniEngine.Resource.Sounds
             this.rawAudioClip = rawAudioClip;
         }
 
-        public int loopStartIndex { get; } = 0;
-        public int loopOffsetIndex { get; } = 0;
+        [SerializeField] public int loopStartIndex { get; set; } = 0;
+        [SerializeField] public int loopOffsetIndex { get; set; } = 0;
 
 #if ENABLE_RUNI_ENGINE_RHYTHMS
-        public override BeatBPMPairList bpms { get; } = new BeatBPMPairList();
-        public int rhythmOffsetIndex { get; } = 0;
+        [SerializeField] public override BeatBPMPairList bpms { get; } = new BeatBPMPairList();
+        [SerializeField] public int rhythmOffsetIndex { get; set; } = 0;
 
-        [JsonIgnore] public override double rhythmOffset => (double)rhythmOffsetIndex / frequency / tempo;
+        [JsonIgnore]
+        public override double rhythmOffset
+        {
+            get
+            {
+                return (double)rhythmOffsetIndex / frequency / tempo;
+            }
+            set => rhythmOffsetIndex = (int)(value * frequency * tempo);
+        }
 #endif
 
         [JsonIgnore] public RawAudioClip? rawAudioClip { get; }

@@ -1,6 +1,7 @@
 #nullable enable
 #if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+using UnityEngine;
 #endif
 
 namespace RuniEngine.Resource.Sounds
@@ -15,14 +16,14 @@ namespace RuniEngine.Resource.Sounds
             this.tempo = tempo;
         }
 
-        public virtual string path { get; } = "";
+        [SerializeField] public virtual string path { get; set; } = "";
 
-        public virtual double pitch { get; } = 1;
-        public virtual double tempo { get; } = 1;
+        [SerializeField] public virtual double pitch { get; set; } = 1;
+        [SerializeField] public virtual double tempo { get; set; } = 1;
 
 #if ENABLE_RUNI_ENGINE_RHYTHMS
-        public abstract BeatBPMPairList bpms { get; }
-        public abstract double rhythmOffset { get; }
+        [SerializeField] public abstract BeatBPMPairList bpms { get; }
+        [SerializeField] public abstract double rhythmOffset { get; set; }
 #endif
     }
 }
