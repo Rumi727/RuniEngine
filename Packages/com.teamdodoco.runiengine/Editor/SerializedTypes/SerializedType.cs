@@ -1,4 +1,5 @@
 #nullable enable
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,10 @@ namespace RuniEngine.Editor.SerializedTypes
             for (int i = 0; i < propertyInfos.Length; i++)
             {
                 PropertyInfo memberInfo = propertyInfos[i];
-                if (!memberInfo.AttributeContains<SerializeField>())
+                if (memberInfo.AttributeContains<JsonIgnoreAttribute>() || memberInfo.AttributeContains<NonSerializedAttribute>())
+                    continue;
+
+                if (!memberInfo.GetAccessors(true)[0].IsPublic && !memberInfo.AttributeContains<SerializeField>())
                     continue;
 
                 SerializedTypeProperty property = new SerializedTypeProperty(this, memberInfo, parentProperty);
@@ -46,6 +50,9 @@ namespace RuniEngine.Editor.SerializedTypes
             for (int i = 0; i < fieldInfos.Length; i++)
             {
                 FieldInfo memberInfo = fieldInfos[i];
+                if (memberInfo.AttributeContains<JsonIgnoreAttribute>() || memberInfo.AttributeContains<NonSerializedAttribute>())
+                    continue;
+
                 if (!memberInfo.IsPublic && !memberInfo.AttributeContains<SerializeField>())
                     continue;
 
