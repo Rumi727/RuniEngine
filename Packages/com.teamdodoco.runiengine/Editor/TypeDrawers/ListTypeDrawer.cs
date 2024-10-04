@@ -1,5 +1,6 @@
 #nullable enable
 using RuniEngine.Editor.SerializedTypes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,9 +65,30 @@ namespace RuniEngine.Editor.TypeDrawers
             return lists.OfType<IList>();
         }
 
-        public override void HeaderAddAction(IList list, int listIndex, int index) => list.Insert(index, GetListType(list).GetDefaultValue());
+        public override void HeaderAddAction(IList list, int listIndex, int index)
+        {
+            object? defaultValue = GetListType(list).GetDefaultValue();
+            if (list is Array array)
+            {
+                int? targetObjectIndex = property?.GetValues().IndexOf(list);
+                if (targetObjectIndex != null && targetObjectIndex >= 0)
+                    property?.SetValue(targetObjectIndex.Value, array.Insert(index, defaultValue));
+            }
+            else
+                list.Insert(index, defaultValue);
+        }
 
-        public override void HeaderRemoveAction(IList list, int listIndex, int index) => list.RemoveAt(index);
+        public override void HeaderRemoveAction(IList list, int listIndex, int index)
+        {
+            if (list is Array array)
+            {
+                int? targetObjectIndex = property?.GetValues().IndexOf(list);
+                if (targetObjectIndex != null && targetObjectIndex >= 0)
+                    property?.SetValue(targetObjectIndex.Value, array.RemoveAt(index));
+            }
+            else
+                list.RemoveAt(index);
+        }
 
         public override void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
@@ -89,7 +111,20 @@ namespace RuniEngine.Editor.TypeDrawers
             foreach (var item in lists)
             {
                 if (item.Count <= list.list.Count)
-                    index = index.Min(item.Add(GetListType(item).GetDefaultValue()));
+                {
+                    object? defaultValue = GetListType(item).GetDefaultValue();
+
+                    if (item is Array array)
+                    {
+                        int? targetObjectIndex = property?.GetValues().IndexOf(item);
+                        if (targetObjectIndex != null && targetObjectIndex >= 0)
+                            property?.SetValue(targetObjectIndex.Value, array.Add(defaultValue));
+                    }
+                    else
+                        item.Add(defaultValue);
+
+                    index = index.Min(item.Count);
+                }
             }
 
             list.index = index;
@@ -114,7 +149,16 @@ namespace RuniEngine.Editor.TypeDrawers
                     continue;
 
                 foreach (var item in lists)
-                    item.RemoveAt(index);
+                {
+                    if (item is Array array)
+                    {
+                        int? targetObjectIndex = property?.GetValues().IndexOf(item);
+                        if (targetObjectIndex != null && targetObjectIndex >= 0)
+                            property?.SetValue(targetObjectIndex.Value, array.RemoveAt(index));
+                    }
+                    else
+                        item.RemoveAt(index);
+                }
 
                 minIndex = minIndex.Min(index);
                 removeCount++;
