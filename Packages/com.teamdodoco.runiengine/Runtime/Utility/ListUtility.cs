@@ -15,7 +15,7 @@ namespace RuniEngine
         {
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
-
+            
             object? temp = list[oldIndex];
             list.RemoveAt(oldIndex);
             list.Insert(newIndex, temp);
@@ -2156,6 +2156,74 @@ namespace RuniEngine
 
             dic.Remove(fromKey);
             dic[toKey] = value;
+        }
+
+        public static Array Add(this Array array, object? item)
+        {
+            array = array.Resize(array.Length + 1);
+            array.SetValue(item, array.Length - 1);
+
+            return array;
+        }
+
+        public static T[] Add<T>(this T[] array, T item)
+        {
+            Array.Resize(ref array, array.Length + 1);
+            array[array.Length - 1] = item;
+
+            return array;
+        }
+
+        public static Array Insert(this Array array, int index, object? item)
+        {
+            array = array.Resize(array.Length + 1);
+            Array.Copy(array, index, array, index + 1, array.Length - index - 1);
+
+            array.SetValue(item, index);
+
+            return array;
+        }
+
+        public static T[] Insert<T>(this T[] array, int index, T item)
+        {
+            Array.Resize(ref array, array.Length + 1);
+            Array.Copy(array, index, array, index + 1, array.Length - index);
+
+            array[index] = item;
+
+            return array;
+        }
+
+        public static Array Remove(this Array array, object? item) => array.RemoveAt(Array.IndexOf(array, item));
+        public static T[] Remove<T>(this T[] array, T? item) => array.RemoveAt(Array.IndexOf(array, item));
+
+        public static Array RemoveAt(this Array array, int index)
+        {
+            Array.Copy(array, index + 1, array, index, array.Length - index - 1);
+            array = array.Resize(array.Length - 1);
+            
+            return array;
+        }
+
+        public static T[] RemoveAt<T>(this T[] array, int index)
+        {
+            Array.Copy(array, index + 1, array, index, array.Length - index - 1);
+            Array.Resize(ref array, array.Length - 1);
+
+            return array;
+        }
+
+        public static Array Resize(this Array array, int newSize)
+        {
+            if (array.Length != newSize)
+            {
+                Array newArray = Array.CreateInstance(array.GetType().GetElementType(), newSize);
+                Array.Copy(array, 0, newArray, 0, (array.Length > newSize) ? newSize : array.Length);
+
+                return newArray;
+            }
+
+            return array;
         }
     }
 }
