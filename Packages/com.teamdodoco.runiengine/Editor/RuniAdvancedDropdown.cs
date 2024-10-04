@@ -132,7 +132,7 @@ namespace RuniEngine.Editor
             Type enumType = enumValue.GetType();
             int enumInt = Convert.ToInt32(enumValue);
 
-            DrawLayoutButton(new GUIContent(Enum.GetNames(enumType)[enumInt]), focusType, style);
+            DrawLayoutButton(new GUIContent(Enum.GetNames(enumType)[enumInt]), focusType, style, options);
 
             Enum result = enumValue;
             if (selectedItem != null)
