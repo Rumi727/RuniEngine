@@ -18,7 +18,7 @@ namespace RuniEngine.Editor.TypeDrawers
             {
                 value = property.GetValue();
                 EditorGUI.showMixedValue = property.isMixed;
-
+                
                 if (value == null && property.IsNotNullField() && !property.isUnityObject)
                 {
                     value = property.propertyType.GetDefaultValueNotNull();
@@ -28,7 +28,7 @@ namespace RuniEngine.Editor.TypeDrawers
             else
             {
                 value = property.propertyType.GetDefaultValue();
-                EditorGUI.showMixedValue = false;
+                EditorGUI.showMixedValue = true;
             }
             
             if (property.IsNullableType())
