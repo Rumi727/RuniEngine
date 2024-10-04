@@ -52,6 +52,10 @@ namespace RuniEngine.Editor.TypeDrawers
         public void OnGUI(Rect position, string? label) => OnGUI(position, label != null ? new GUIContent(label) : null);
         public void OnGUI(Rect position, GUIContent? label)
         {
+            FieldNameAttribute? fieldName = property.GetCustomAttribute<FieldNameAttribute>();
+            if (fieldName != null)
+                label = new GUIContent(EditorTool.TryGetText(fieldName.name));
+
             if (!canEditMultipleObjects && property.serializedType.targetObjects.Length > 1)
             {
                 EditorGUI.LabelField(position, new GUIContent($"{label} ({property.propertyType})"), new GUIContent(EditorTool.TryGetText("serialized_type.edit_multiple_objects")));
