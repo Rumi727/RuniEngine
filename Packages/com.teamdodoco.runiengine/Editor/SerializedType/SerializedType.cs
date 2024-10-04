@@ -86,6 +86,10 @@ namespace RuniEngine.Editor.SerializedTypes
 
 
 
+        public SerializedTypeProperty? GetProperty(string propertyName) => properties.FirstOrDefault (x => x.name == propertyName);
+
+
+
         public float GetPropertyHeight() => (properties.Where(x => (isStatic && x.isStatic) || (!isStatic && !x.isStatic)).Sum(x => x.typeDrawer.GetPropertyHeight() + 2) - 2).Clamp(0);
 
         public void DrawGUILayout()
