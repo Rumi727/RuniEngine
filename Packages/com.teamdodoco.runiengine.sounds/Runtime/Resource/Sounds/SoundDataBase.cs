@@ -1,4 +1,6 @@
 #nullable enable
+using Newtonsoft.Json;
+
 namespace RuniEngine.Resource.Sounds
 {
     public abstract class SoundData
@@ -12,6 +14,6 @@ namespace RuniEngine.Resource.Sounds
         [NotNullField] public string subtitle { get; set; } = "";
         public bool isBGM { get; set; } = false;
 
-        [NotNullField] public abstract SoundMetaDataBase[] sounds { get; }
+        [JsonIgnore, NotNullField] public abstract SoundMetaDataBase[] sounds { get; }
     }
 }

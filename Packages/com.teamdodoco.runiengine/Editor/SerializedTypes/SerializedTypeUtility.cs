@@ -46,13 +46,7 @@ namespace RuniEngine.Editor.SerializedTypes
         /// <summary>Null 값이면 true 반환</summary>
         public static bool DrawNullableButton(this SerializedTypeProperty property, Rect position, GUIContent? label, out bool isDrawed)
         {
-            if (!property.isNullable || !property.IsNullableType() || property.IsNotNullField() || property.isUnityObject)
-            {
-                isDrawed = false;
-                return false;
-            }
-
-            isDrawed = true;
+            isDrawed = property.isNullable && property.IsNullableType() && !property.IsNotNullField() && !property.isUnityObject;
 
             Rect nullPosition = position;
             if (property.canRead)
@@ -71,7 +65,7 @@ namespace RuniEngine.Editor.SerializedTypes
                     if (GUI.Button(nullPosition, "+"))
                         property.SetValue(property.CreateNullableInstance());
                 }
-                else if (GUI.Button(nullPosition, "-"))
+                else if (isDrawed && GUI.Button(nullPosition, "-"))
                 {
                     property.SetValue(null);
                     isNull = true;
@@ -81,7 +75,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
                 return isNull;
             }
-            else if (property.canWrite)
+            else if (property.canWrite && isDrawed)
             {
                 nullPosition.x += nullPosition.width - 40;
                 nullPosition.width = 19;
