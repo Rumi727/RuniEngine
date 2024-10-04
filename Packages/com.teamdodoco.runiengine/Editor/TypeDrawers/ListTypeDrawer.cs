@@ -13,7 +13,7 @@ namespace RuniEngine.Editor.TypeDrawers
     [CustomTypeDrawer(typeof(IList))]
     public sealed class ListTypeDrawer : ListTypeDrawerBase
     {
-        internal ListTypeDrawer(SerializedTypeProperty property) : base(property) { }
+        ListTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
         List<SerializedTypeListProperty?> listProperties = new List<SerializedTypeListProperty?>();
 

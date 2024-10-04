@@ -3,29 +3,34 @@ using RuniEngine.Editor.SerializedTypes;
 using UnityEditor.AnimatedValues;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
+using System.Collections.Generic;
 
 using EditorGUI = UnityEditor.EditorGUI;
 using static RuniEngine.Editor.EditorTool;
-using System.Linq;
 
 namespace RuniEngine.Editor.TypeDrawers
 {
     [CustomTypeDrawer(typeof(object))]
-    public sealed class ObjectTypeDrawer : TypeDrawer
+    public class ObjectTypeDrawer : TypeDrawer
     {
-        internal ObjectTypeDrawer(SerializedTypeProperty property) : base(property) { }
+        protected internal ObjectTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
-        SerializedType? childSerializedType;
+        protected SerializedType? childSerializedType { get; private set; }
+
         readonly AnimBool animBool = new AnimBool();
         readonly AnimFloat animFloat = new AnimFloat(0);
 
-        void SetChildProperty()
+        protected void SetChild()
         {
-            object?[] value = property.GetNotNullValues().ToArray();
-            if (value.Length > 0)
+            IEnumerable<object> enumerable = property.GetNotNullValues();
+            if (enumerable.Any())
             {
+                object?[] value = enumerable.ToArray();
+
                 childSerializedType ??= new SerializedType(property.propertyType, property, false, value);
                 childSerializedType.targetObjects = value;
+                childSerializedType.metaData = property.serializedType.metaData;
             }
             else
                 childSerializedType = null;
@@ -66,7 +71,7 @@ namespace RuniEngine.Editor.TypeDrawers
                 position.x += 30;
                 position.width -= 30;
 
-                SetChildProperty();
+                SetChild();
 
                 if (!property.isInArray)
                 {
@@ -102,7 +107,7 @@ namespace RuniEngine.Editor.TypeDrawers
                 if (!property.canRead)
                     return orgHeight;
 
-                SetChildProperty();
+                SetChild();
 
                 if (childSerializedType == null)
                     return orgHeight + animFloat.value;

@@ -14,7 +14,7 @@ namespace RuniEngine.Editor.TypeDrawers
 {
     public abstract class ListTypeDrawerBase : TypeDrawer
     {
-        internal ListTypeDrawerBase(SerializedTypeProperty property) : base(property) { }
+        protected ListTypeDrawerBase(SerializedTypeProperty property) : base(property) { }
 
         readonly AnimFloat animFloat = new AnimFloat(0);
 

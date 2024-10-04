@@ -12,10 +12,29 @@ namespace RuniEngine.Editor.TypeDrawers
 
         public override object? DrawField(Rect position, GUIContent? label, object? value)
         {
-            if (ulong.TryParse(EditorGUI.TextField(position, label, ((ulong)(value ?? 0)).ToString()), out var result))
-                return result;
+            EditorGUI.BeginChangeCheck();
+
+            ulong number;
+            if (rangeAttribute != null)
+                number = (ulong)EditorGUI.IntSlider(position, label, (int)(value ?? 0), rangeAttribute.min.FloorToInt(), rangeAttribute.max.FloorToInt());
+            else if (ulong.TryParse(EditorGUI.TextField(position, label, ((ulong)(value ?? 0)).ToString()), out var result))
+                number = result;
             else
+            {
+                EditorGUI.EndChangeCheck();
                 return value;
+            }
+
+            if (minAttribute != null)
+                number = number.Max((ulong)minAttribute.min.Floor());
+
+            /*if (maxAttribute != null)
+                number = number.Min((ulong)maxAttribute.max.Floor());*/
+
+            if (EditorGUI.EndChangeCheck())
+                return number;
+
+            return value;
         }
     }
 }

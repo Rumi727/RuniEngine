@@ -16,7 +16,7 @@ namespace RuniEngine.Editor.TypeDrawers
     [CustomTypeDrawer(typeof(IDictionary))]
     public sealed class DictionaryTypeDrawer : ListTypeDrawerBase
     {
-        internal DictionaryTypeDrawer(SerializedTypeProperty property) : base(property) { }
+        DictionaryTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
         public override bool canEditMultipleObjects => false;
 
