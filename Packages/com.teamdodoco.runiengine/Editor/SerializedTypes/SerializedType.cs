@@ -16,9 +16,9 @@ namespace RuniEngine.Editor.SerializedTypes
     public sealed class SerializedType
     {
         public SerializedType(Type targetType, bool isStatic) : this(targetType, isStatic, Array.Empty<object>()) { }
+        public SerializedType(Type targetType, bool isStatic, object targetObject) : this(targetType, isStatic, new object[] { targetObject }) { }
         public SerializedType(Type targetType, bool isStatic, object?[] targetObjects) : this(targetType, null, isStatic, targetObjects) { }
 
-        internal SerializedType(Type targetType, SerializedTypeProperty? parentProperty, bool isStatic) : this(targetType, parentProperty, isStatic, Array.Empty<object>()) { }
         internal SerializedType(Type targetType, SerializedTypeProperty? parentProperty, bool isStatic, object?[] targetObjects)
         {
             if (!targetType.IsChildrenIncluded())
@@ -86,7 +86,12 @@ namespace RuniEngine.Editor.SerializedTypes
 
 
 
-        public SerializedTypeProperty? GetProperty(string propertyName) => properties.FirstOrDefault (x => x.name == propertyName);
+        /// <summary>호출 스크립트가 Drawer에 전달하고 싶은 데이터를 담는 프로퍼티입니다</summary>
+        public Dictionary<string, object?> metaData { get; set; } = new Dictionary<string, object?>();
+
+
+
+        public SerializedTypeProperty? GetProperty(string propertyName) => properties.FirstOrDefault(x => x.name == propertyName);
 
 
 

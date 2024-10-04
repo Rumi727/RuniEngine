@@ -77,6 +77,11 @@ namespace RuniEngine.Editor.SerializedTypes
         public FieldInfo? fieldInfo { get; }
 
         public SerializedType serializedType { get; }
+
+        /// <summary>호출 스크립트가 Drawer에 전달하고 싶은 데이터를 담는 프로퍼티입니다</summary>
+        public Dictionary<string, object?> metaData => serializedType.metaData;
+
+
         public TypeDrawer typeDrawer { get; }
 
         public SerializedTypeProperty? parent { get; }

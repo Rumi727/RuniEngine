@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RuniEngine.NBS;
 #if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+using UnityEngine;
 #endif
 
 namespace RuniEngine.Resource.Sounds
@@ -31,10 +32,15 @@ namespace RuniEngine.Resource.Sounds
 
 #if ENABLE_RUNI_ENGINE_RHYTHMS
         [JsonIgnore] public override BeatBPMPairList bpms { get; } = new BeatBPMPairList();
-        public double bpmMultiplier { get; } = 1;
-        public double rhythmOffsetTick { get; } = 0;
+        [SerializeField] public double bpmMultiplier { get; set; } = 1;
+        [SerializeField] public double rhythmOffsetTick { get; set; } = 0;
 
-        [JsonIgnore] public override double rhythmOffset => rhythmOffsetTick / 20d;
+        [JsonIgnore]
+        public override double rhythmOffset
+        {
+            get => rhythmOffsetTick / 20d;
+            set => rhythmOffsetTick = value * 20;
+        }
 #endif
 
         [JsonIgnore] public NBSFile? nbsFile { get; }
