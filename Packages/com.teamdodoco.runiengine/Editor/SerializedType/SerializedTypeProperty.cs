@@ -139,9 +139,9 @@ namespace RuniEngine.Editor.SerializedTypes
         public IEnumerable<T> GetCustomAttributes<T>(bool inherit = true) where T : Attribute
         {
             if (propertyInfo != null)
-                return propertyInfo.GetCustomAttributes<T>();
+                return propertyInfo.GetCustomAttributes<T>(inherit);
             else if (fieldInfo != null)
-                return fieldInfo.GetCustomAttributes<T>();
+                return fieldInfo.GetCustomAttributes<T>(inherit);
 
             return (IEnumerable<T>)Array.Empty<Attribute>();
         }
@@ -177,28 +177,6 @@ namespace RuniEngine.Editor.SerializedTypes
 
                 return false;
             }
-        }
-
-
-
-        public bool IsListValueMixed(int index)
-        {
-            if (!isArray)
-                throw new InvalidCastException();
-
-            if (serializedType.targetObjects.Length > 0)
-                return false;
-
-            IList? list = (IList?)GetValue();
-
-            object? firstValue = list?[0];
-            for (int i = 1; i < serializedType.targetObjects.Length; i++)
-            {
-                if (firstValue != list?[i])
-                    return true;
-            }
-
-            return false;
         }
 
 
