@@ -126,8 +126,8 @@ namespace RuniEngine.Editor.SerializedTypes
             return false;
         }
 
-        public T GetCustomAttribute<T>(bool inherit = true) where T : Attribute => (T)GetCustomAttribute(typeof(T), inherit);
-        public Attribute GetCustomAttribute(Type attribute, bool inherit = true)
+        public T? GetCustomAttribute<T>(bool inherit = true) where T : Attribute => (T?)GetCustomAttribute(typeof(T), inherit);
+        public Attribute? GetCustomAttribute(Type attribute, bool inherit = true)
         {
             if (propertyInfo != null)
                 return propertyInfo.GetCustomAttribute(attribute, inherit);
