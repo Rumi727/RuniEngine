@@ -16,7 +16,7 @@ namespace RuniEngine.Resource.Sounds
             this.datas = datas;
         }
 
-        float[] datas;
+        readonly float[] datas;
 
         /// <summary>Thread-safe</summary>
         public override bool isLoading => false;

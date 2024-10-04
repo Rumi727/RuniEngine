@@ -124,8 +124,10 @@ namespace RuniEngine.Editor.Inspector.Sounds
             if (!Kernel.isPlaying || clip == null)
                 return;
 
-            GameObject gameObject = new GameObject(nameof(RhythmableAudioSourceEditor) + ".Hitsound");
-            gameObject.hideFlags = HideFlags.HideAndDontSave;
+            GameObject gameObject = new GameObject(nameof(RhythmableAudioSourceEditor) + ".Hitsound")
+            {
+                hideFlags = HideFlags.HideAndDontSave
+            };
 
             AudioSource audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.clip = clip;

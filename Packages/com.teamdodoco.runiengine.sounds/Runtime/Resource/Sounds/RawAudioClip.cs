@@ -25,7 +25,6 @@ namespace RuniEngine.Resource.Sounds
         /// <param name="stream"></param>
         public RawAudioClip(WaveStream stream, RawAudioLoadType loadType)
         {
-#pragma warning disable CS0618 // 형식 또는 멤버는 사용되지 않습니다.
             loader = loadType switch
             {
                 RawAudioLoadType.instant => new RawAudioClipInstLoader(stream),
@@ -33,7 +32,6 @@ namespace RuniEngine.Resource.Sounds
                 RawAudioLoadType.stream => new RawAudioClipStreamLoader(stream),
                 _ => new RawAudioClipInstLoader(stream),
             };
-#pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
 
             ResourceManager.RegisterManagedResource(this);
         }

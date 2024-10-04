@@ -171,8 +171,7 @@ namespace RuniEngine.Resource.Sounds
             {
                 ThreadTask.Lock(ref playingObjectLock);
 
-                if (this.playingObject == null)
-                    this.playingObject = playingObject;
+                this.playingObject ??= playingObject;
 
                 return this.playingObject == playingObject;
             }

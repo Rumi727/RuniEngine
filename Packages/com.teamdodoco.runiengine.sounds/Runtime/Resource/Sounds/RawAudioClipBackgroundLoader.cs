@@ -84,11 +84,10 @@ namespace RuniEngine.Resource.Sounds
             if (stream != null)
             {
                 long datasLength = arrayLength;
-                int bufferLength = buffer.Length;
 
                 stream.Position = position * 4;
 
-                int readLength = 0;
+                int readLength;
                 for (long i = 0; i < datasLength; i += readLength)
                 {
                     readLength = Read(position);
