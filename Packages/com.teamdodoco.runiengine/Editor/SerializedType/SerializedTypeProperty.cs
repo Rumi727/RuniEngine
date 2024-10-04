@@ -9,37 +9,14 @@ namespace RuniEngine.Editor.SerializedTypes
 {
     public class SerializedTypeProperty
     {
-        protected internal SerializedTypeProperty(SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null)
+        protected internal SerializedTypeProperty(SerializedType serializedType, PropertyInfo propertyInfo, SerializedTypeProperty? parent = null) : this(serializedType, propertyInfo, null, parent) { }
+
+        protected internal SerializedTypeProperty(SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null) : this(serializedType, null, fieldInfo, parent) { }
+
+        SerializedTypeProperty(SerializedType serializedType, PropertyInfo? propertyInfo, FieldInfo? fieldInfo, SerializedTypeProperty? parent)
         {
             this.serializedType = serializedType;
             this.propertyInfo = propertyInfo;
-            this.parent = parent;
-
-            Type propertyType = realPropertyType;
-            if (this.IsNullableValueType())
-                propertyType = propertyType.GenericTypeArguments[0];
-
-            this.propertyType = propertyType;
-
-            isUnityObject = typeof(UnityEngine.Object).IsAssignableFrom(propertyType);
-
-            isArray = typeof(IList).IsAssignableFrom(propertyType) || typeof(IDictionary).IsAssignableFrom(propertyType);
-            isInArray = parent != null && (parent.isArray || parent.isInArray);
-
-            if (parent == null)
-                propertyPath = name;
-            else
-            {
-                propertyPath = parent.propertyPath + "." + name;
-                depth = parent.depth + 1;
-            }
-
-            typeDrawer = GetTypeDrawer(propertyType) ?? new ObjectTypeDrawer(this);
-        }
-
-        protected internal SerializedTypeProperty(SerializedType serializedType, FieldInfo fieldInfo, SerializedTypeProperty? parent = null)
-        {
-            this.serializedType = serializedType;
             this.fieldInfo = fieldInfo;
             this.parent = parent;
 
@@ -61,7 +38,7 @@ namespace RuniEngine.Editor.SerializedTypes
                 propertyPath = parent.propertyPath + "." + name;
                 depth = parent.depth + 1;
             }
-            
+
             typeDrawer = GetTypeDrawer(propertyType) ?? new ObjectTypeDrawer(this);
         }
 
