@@ -222,26 +222,18 @@ namespace RuniEngine.Editor.SerializedTypes
 
         protected virtual void InternalSetValue(object? targetObject, object? value)
         {
-            propertyInfo?.SetValue(targetObject, value);
-            fieldInfo?.SetValue(targetObject, value);
-
             /*
              * 구조체는 밑의 코드가 없으면 값이 변경되지 않음
              * 또한, 같은 값만 바꿔줘야함 (전체를 바꾸게 되면 리스트 값이 손상됨)
              */
 
-            int index = 0;
-            IEnumerable? parentValues = parent?.GetValues();
-            if (parentValues == null)
-                return;
+            int? index = parent?.GetValues().IndexOf(targetObject);
 
-            foreach (var item in parentValues)
-            {
-                if (targetObject == item)
-                    parent?.SetValue(index, targetObject);
+            propertyInfo?.SetValue(targetObject, value);
+            fieldInfo?.SetValue(targetObject, value);
 
-                index++;
-            }
+            if (index != null && index >= 0)
+                parent?.SetValue(index.Value, targetObject);
         }
     }
 }
