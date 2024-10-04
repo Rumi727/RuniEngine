@@ -29,8 +29,8 @@ namespace RuniEngine.Rhythms
 
         double IBeatValuePair.beat { readonly get => beat; set => beat = value; }
 
-        T? IBeatValuePair<T>.value { readonly get => value; set => this.value = value; }
-        object? IBeatValuePair.value { readonly get => value; set => this.value = (T?)value; }
+        T? IBeatValuePair<T>.value { readonly get => value; set => this.@value = value; }
+        object? IBeatValuePair.value { readonly get => value; set => this.@value = (T?)value; }
 
         bool IBeatValuePair.confused { readonly get => confused; set => confused = value; }
 
