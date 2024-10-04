@@ -34,7 +34,7 @@ namespace RuniEngine.Editor.ProjectSettings
         EditorGUISplitView? splitView;
         [SerializeField] string selectedKey = "";
         string lastJsonPath = "";
-        RuniAdvancedDropdown nameSpaceDropdown = new RuniAdvancedDropdown();
+        readonly RuniAdvancedDropdown nameSpaceDropdown = new RuniAdvancedDropdown();
         public override void OnGUI(string searchContext)
         {
             //라벨 길이 설정 안하면 유니티 버그 때매 이상해짐
