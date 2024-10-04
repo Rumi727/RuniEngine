@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 
 namespace RuniEngine
 {
@@ -49,6 +50,18 @@ namespace RuniEngine
             }
 
             return IsAssignableToGenericType(baseType, genericType, out resultType);
+        }
+
+        public static IEnumerable<Type> GetHierarchy(this Type type)
+        {
+            if (type == typeof(object))
+                yield break;
+
+            while (type != null)
+            {
+                yield return type;
+                type = type.BaseType;
+            }
         }
     }
 }

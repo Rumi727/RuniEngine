@@ -29,8 +29,9 @@ namespace RuniEngine.Editor.TypeDrawers
                 else
                     typeDrawers.Add(type);
             }
-            
-            _typeDrawers = typeDrawers.OrderByDescending(x => GetHierarchy(x.GetCustomAttribute<CustomTypeDrawerAttribute>().targetType).Count()).ToArray();
+
+            _typeDrawers = typeDrawers.OrderByDescending(x => x.GetCustomAttribute<CustomTypeDrawerAttribute>().targetType.GetHierarchy().Count()).ToArray();
+            _attributeDrawers = attributeDrawers.ToArray();
         }
 
         protected TypeDrawer(SerializedTypeProperty property) => this.property = property;
