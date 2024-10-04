@@ -74,8 +74,8 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public string name => propertyInfo?.Name ?? fieldInfo?.Name ?? string.Empty;
 
-        public bool canRead => ((parent?.canRead ?? true) || parent.isArray) && ((propertyInfo != null && propertyInfo.CanRead && propertyInfo.GetGetMethod(false) != null) || fieldInfo != null);
-        public bool canWrite => ((parent?.canWrite ?? true) || parent.isArray) && ((propertyInfo != null && propertyInfo.CanWrite && propertyInfo.GetSetMethod(false) != null) || (fieldInfo != null && !fieldInfo.IsInitOnly && !fieldInfo.IsLiteral));
+        public bool canRead => ((parent?.canRead ?? true) || isArray) && ((propertyInfo != null && propertyInfo.CanRead && propertyInfo.GetGetMethod(false) != null) || fieldInfo != null);
+        public bool canWrite => ((parent?.canWrite ?? true) || isArray) && ((propertyInfo != null && propertyInfo.CanWrite && propertyInfo.GetSetMethod(false) != null) || (fieldInfo != null && !fieldInfo.IsInitOnly && !fieldInfo.IsLiteral));
 
         public bool isStatic => propertyInfo?.GetAccessors(true)[0].IsStatic ?? fieldInfo?.IsStatic ?? false;
 
