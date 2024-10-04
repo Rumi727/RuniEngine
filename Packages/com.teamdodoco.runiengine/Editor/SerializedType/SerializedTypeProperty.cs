@@ -44,16 +44,33 @@ namespace RuniEngine.Editor.SerializedTypes
 
         TypeDrawer? GetTypeDrawer(Type propertyType)
         {
-            for (int i = 0; i < TypeDrawer.typeDrawers.Count; i++)
+            TypeDrawer? result = null;
+
+            for (int i = 0; i < TypeDrawer.attributeDrawers.Count && result == null; i++)
+            {
+                Type type = TypeDrawer.typeDrawers[i];
+                CustomTypeDrawerAttribute attribute = type.GetCustomAttribute<CustomTypeDrawerAttribute>();
+
+                if (AttributeContains(attribute.targetType))
+                {
+                    result = Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance, null, new object[] { this }, null) as TypeDrawer;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < TypeDrawer.typeDrawers.Count && result == null; i++)
             {
                 Type type = TypeDrawer.typeDrawers[i];
                 CustomTypeDrawerAttribute attribute = type.GetCustomAttribute<CustomTypeDrawerAttribute>();
 
                 if (attribute.targetType.IsAssignableFrom(propertyType))
-                    return (TypeDrawer)Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance, null, new object[] { this }, null);
+                {
+                    result = Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance, null, new object[] { this }, null) as TypeDrawer;
+                    break;
+                }
             }
 
-            return null;
+            return result;
         }
 
         public PropertyInfo? propertyInfo { get; }

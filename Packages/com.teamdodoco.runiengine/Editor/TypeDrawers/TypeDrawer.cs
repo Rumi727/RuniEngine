@@ -15,6 +15,7 @@ namespace RuniEngine.Editor.TypeDrawers
         static TypeDrawer()
         {
             List<Type> typeDrawers = new List<Type>(ReflectionManager.types.Count);
+            List<Type> attributeDrawers = new List<Type>(ReflectionManager.types.Count);
 
             for (int i = 0; i < ReflectionManager.types.Count; i++)
             {
@@ -22,7 +23,11 @@ namespace RuniEngine.Editor.TypeDrawers
                 if (!type.IsSubtypeOf<TypeDrawer>() || !type.AttributeContains<CustomTypeDrawerAttribute>())
                     continue;
 
-                typeDrawers.Add(type);
+                CustomTypeDrawerAttribute attribute = type.GetCustomAttribute<CustomTypeDrawerAttribute>();
+                if (typeof(Attribute).IsAssignableFrom(attribute.targetType))
+                    attributeDrawers.Add(type);
+                else
+                    typeDrawers.Add(type);
             }
             
             _typeDrawers = typeDrawers.OrderByDescending(x => GetHierarchy(x.GetCustomAttribute<CustomTypeDrawerAttribute>().targetType).Count()).ToArray();
@@ -33,6 +38,9 @@ namespace RuniEngine.Editor.TypeDrawers
         /// <summary>Sorted Type hierarchy</summary>
         public static IReadOnlyList<Type> typeDrawers => _typeDrawers;
         private static readonly Type[] _typeDrawers;
+
+        public static IReadOnlyList<Type> attributeDrawers => _attributeDrawers;
+        private static readonly Type[] _attributeDrawers;
 
         public SerializedTypeProperty property { get; }
 
@@ -53,17 +61,5 @@ namespace RuniEngine.Editor.TypeDrawers
         }
 
         protected virtual void InternalOnGUI(Rect position, GUIContent? label) => EditorGUI.LabelField(position, new GUIContent(label), new GUIContent("No GUI Implemented"));
-
-        static IEnumerable<Type> GetHierarchy(Type type)
-        {
-            if (type == typeof(object))
-                yield break;
-
-            while (type != null)
-            {
-                yield return type;
-                type = type.BaseType;
-            }
-        }
     }
 }
