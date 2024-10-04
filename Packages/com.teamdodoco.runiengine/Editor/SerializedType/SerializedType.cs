@@ -16,10 +16,10 @@ namespace RuniEngine.Editor.SerializedTypes
     public sealed class SerializedType
     {
         public SerializedType(Type targetType, bool isStatic) : this(targetType, isStatic, Array.Empty<object>()) { }
-        public SerializedType(Type targetType, bool isStatic, params object?[] targetObjects) : this(targetType, null, isStatic, targetObjects) { }
+        public SerializedType(Type targetType, bool isStatic, object?[] targetObjects) : this(targetType, null, isStatic, targetObjects) { }
 
         internal SerializedType(Type targetType, SerializedTypeProperty? parentProperty, bool isStatic) : this(targetType, parentProperty, isStatic, Array.Empty<object>()) { }
-        internal SerializedType(Type targetType, SerializedTypeProperty? parentProperty, bool isStatic, params object?[] targetObjects)
+        internal SerializedType(Type targetType, SerializedTypeProperty? parentProperty, bool isStatic, object?[] targetObjects)
         {
             if (!targetType.IsChildrenIncluded())
                 throw new ArgumentException(nameof(targetType));
