@@ -12,7 +12,7 @@ namespace RuniEngine.Editor.TypeDrawers
     {
         protected UnityObjectTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
-        public override float GetPropertyHeight() => GetYSize(EditorStyles.objectField);
+        protected override float InternalGetPropertyHeight() => GetYSize(EditorStyles.objectField);
         public override object? DrawField(Rect position, GUIContent? label, object? value)
         {
             if (value == null && property.IsNotNullField())

@@ -47,7 +47,20 @@ namespace RuniEngine.Editor.TypeDrawers
 
         public virtual bool canEditMultipleObjects => true;
 
-        public virtual float GetPropertyHeight() => EditorGUIUtility.singleLineHeight;
+        public float GetPropertyHeight()
+        {
+            try
+            {
+                return InternalGetPropertyHeight();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                return EditorGUIUtility.singleLineHeight;
+            }
+        }
+
+        protected virtual float InternalGetPropertyHeight() => EditorGUIUtility.singleLineHeight;
 
         public void OnGUI(Rect position, string? label) => OnGUI(position, label != null ? new GUIContent(label) : null);
         public void OnGUI(Rect position, GUIContent? label)
@@ -62,9 +75,40 @@ namespace RuniEngine.Editor.TypeDrawers
                 return;
             }
 
-            InternalOnGUI(position, label);
+            try
+            {
+                InternalOnGUI(position, label);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         protected virtual void InternalOnGUI(Rect position, GUIContent? label) => EditorGUI.LabelField(position, new GUIContent($"{label?.text} ({property.propertyType.Name})"), new GUIContent("No GUI Implemented"));
+
+        public virtual object? CreateInstance()
+        {
+            if (property.propertyType == typeof(string))
+                return string.Empty;
+
+            try
+            {
+                object value;
+                if (property.IsNullableValueType())
+                    value = Activator.CreateInstance(property.realPropertyType, Activator.CreateInstance(property.propertyType));
+                else
+                    value = Activator.CreateInstance(property.propertyType);
+
+                return value;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                throw;
+            }
+
+            return null;
+        }
     }
 }

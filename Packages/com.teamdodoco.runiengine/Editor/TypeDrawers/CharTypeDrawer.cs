@@ -10,7 +10,7 @@ namespace RuniEngine.Editor.TypeDrawers
     {
         CharTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
-        public override float GetPropertyHeight() => EditorTool.GetYSize(EditorStyles.textField);
+        protected override float InternalGetPropertyHeight() => EditorTool.GetYSize(EditorStyles.textField);
         public override object? DrawField(Rect position, GUIContent? label, object? value) => EditorGUI.TextField(position, label, ((char)(value ?? 0)).ToString())[0];
     }
 }

@@ -29,20 +29,6 @@ namespace RuniEngine.Editor.SerializedTypes
 
         public static bool IsNotNullField(this SerializedTypeProperty property) => property.AttributeContains<NotNullFieldAttribute>();
 
-        public static object CreateNullableInstance(this SerializedTypeProperty property)
-        {
-            if (property.propertyType == typeof(string))
-                return string.Empty;
-
-            object value;
-            if (property.IsNullableValueType())
-                value = Activator.CreateInstance(property.realPropertyType, Activator.CreateInstance(property.propertyType));
-            else
-                value = Activator.CreateInstance(property.propertyType);
-
-            return value;
-        }
-
         /// <summary>Null 값이면 true 반환</summary>
         public static bool DrawNullableButton(this SerializedTypeProperty property, Rect position, GUIContent? label, out bool isDrawed)
         {
@@ -68,8 +54,8 @@ namespace RuniEngine.Editor.SerializedTypes
 
                 if (isNull)
                 {
-                    if (GUI.Button(nullPosition, "+"))
-                        property.SetValue(property.CreateNullableInstance());
+                    if (property.canWrite && (!isDrawed || GUI.Button(nullPosition, "+")))
+                        property.SetValue(property.typeDrawer.CreateInstance());
                 }
                 else if (isDrawed && GUI.Button(nullPosition, "-"))
                 {
@@ -87,7 +73,7 @@ namespace RuniEngine.Editor.SerializedTypes
                 nullPosition.width = 19;
 
                 if (GUI.Button(nullPosition, "+"))
-                    property.SetValue(property.CreateNullableInstance());
+                    property.SetValue(property.typeDrawer.CreateInstance());
 
                 nullPosition.x += 21;
 

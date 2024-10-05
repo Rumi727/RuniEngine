@@ -99,7 +99,7 @@ namespace RuniEngine.Editor.TypeDrawers
                 base.InternalOnGUI(position, label);
         }
 
-        public override float GetPropertyHeight()
+        protected override float InternalGetPropertyHeight()
         {
             if (property.propertyType.IsChildrenIncluded())
             {
@@ -128,7 +128,7 @@ namespace RuniEngine.Editor.TypeDrawers
                 }
             }
             else
-                return base.GetPropertyHeight();
+                return base.InternalGetPropertyHeight();
         }
     }
 }

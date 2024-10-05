@@ -12,6 +12,6 @@ namespace RuniEngine.Editor.TypeDrawers
         protected MinAttribute? minAttribute => property.GetCustomAttribute<MinAttribute>();
         protected RangeAttribute? rangeAttribute => property.GetCustomAttribute<RangeAttribute>();
 
-        public override float GetPropertyHeight() => EditorTool.GetYSize(EditorStyles.numberField);
+        protected override float InternalGetPropertyHeight() => EditorTool.GetYSize(EditorStyles.numberField);
     }
 }

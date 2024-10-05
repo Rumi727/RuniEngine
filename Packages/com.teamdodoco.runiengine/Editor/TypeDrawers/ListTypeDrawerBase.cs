@@ -126,14 +126,14 @@ namespace RuniEngine.Editor.TypeDrawers
                 reorderableList.DoList(position);
         }
 
-        public override float GetPropertyHeight()
+        protected override float InternalGetPropertyHeight()
         {
             if (!property.canRead)
-                return base.GetPropertyHeight();
+                return base.InternalGetPropertyHeight();
 
             IList? list = GetList();
             if (list == null)
-                return base.GetPropertyHeight() + animFloat.value;
+                return base.InternalGetPropertyHeight() + animFloat.value;
 
             float headerHeight = GetYSize(EditorStyles.foldoutHeader);
             float height;

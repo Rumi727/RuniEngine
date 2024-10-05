@@ -9,7 +9,7 @@ namespace RuniEngine.Editor.TypeDrawers
     {
         protected FieldTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
-        public abstract override float GetPropertyHeight();
+        protected abstract override float InternalGetPropertyHeight();
 
         protected override void InternalOnGUI(Rect position, GUIContent? label)
         {
@@ -19,15 +19,15 @@ namespace RuniEngine.Editor.TypeDrawers
                 value = property.GetValue();
                 EditorGUI.showMixedValue = property.isMixed;
                 
-                if (value == null && property.IsNotNullField() && !property.isUnityObject)
+                if (value == null && property.IsNotNullField() && !property.isUnityObject && property.canWrite)
                 {
-                    value = property.propertyType.GetDefaultValueNotNull();
+                    value = property.typeDrawer.CreateInstance();
                     property.SetValue(value);
                 }
             }
             else
             {
-                value = property.propertyType.GetDefaultValue();
+                value = property.typeDrawer.CreateInstance();
                 EditorGUI.showMixedValue = true;
             }
             

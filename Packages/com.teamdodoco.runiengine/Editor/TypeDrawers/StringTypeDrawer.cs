@@ -15,7 +15,7 @@ namespace RuniEngine.Editor.TypeDrawers
     {
         StringTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
-        public override float GetPropertyHeight()
+        protected override float InternalGetPropertyHeight()
         {
             if (property.canRead && property.GetValue() == null)
                 return GetYSize(EditorStyles.label);

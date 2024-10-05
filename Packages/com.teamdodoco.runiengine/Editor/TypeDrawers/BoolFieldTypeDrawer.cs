@@ -10,7 +10,7 @@ namespace RuniEngine.Editor.TypeDrawers
     {
         BoolFieldTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
-        public override float GetPropertyHeight() => EditorTool.GetYSize(EditorStyles.toggle);
+        protected override float InternalGetPropertyHeight() => EditorTool.GetYSize(EditorStyles.toggle);
 
         public override object? DrawField(Rect position, GUIContent? label, object? value) => EditorGUI.Toggle(position, label, (bool)(value ?? false));
     }
