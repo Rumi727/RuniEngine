@@ -231,6 +231,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
 
 
+        /// <summary>선택한 오브젝트 중에서 null 값이 아닌 아닌 프로퍼티 중 첫번째 프로퍼티를 가져옵니다</summary>
         public object? GetValue() => GetNotNullValues().FirstOrDefault();
         public object? GetValue(int index) => InternalGetValue(serializedType.targetObjects[index]);
 
