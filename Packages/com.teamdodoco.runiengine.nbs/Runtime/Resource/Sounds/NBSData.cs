@@ -14,6 +14,6 @@ namespace RuniEngine.Resource.Sounds
         }
 
         [JsonIgnore] public override SoundMetaDataBase[] sounds { get; }
-        public NBSMetaData[] nbses { get; }
+        [NotNullField] public NBSMetaData[] nbses { get; set; }
     }
 }
