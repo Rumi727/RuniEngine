@@ -196,7 +196,7 @@ namespace RuniEngine
                 UserAccountManager.LogoutWithoutUnload();
 
             if (BootLoader.isDataLoaded)
-                BootLoader.globalData.SaveAll(Kernel.globalDataPath);
+                BootLoader.globalData.SaveAll(globalDataPath);
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.update += Update;
