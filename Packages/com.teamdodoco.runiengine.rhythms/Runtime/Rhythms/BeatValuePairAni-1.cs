@@ -7,7 +7,7 @@ namespace RuniEngine.Rhythms
 {
     public struct BeatValuePairAni<T> : IBeatValuePairAni<T>
     {
-        public BeatValuePairAni(double beat, T value, double length, EasingFunction.Ease easingFunction = EasingFunction.Ease.Linear, bool confused = false)
+        public BeatValuePairAni(double beat, T value, double length, EasingFunction.Ease easingFunction = EasingFunction.Ease.Linear)
         {
             this.beat = beat;
             this.value = value;
@@ -16,11 +16,9 @@ namespace RuniEngine.Rhythms
 
             this.easingFunction = easingFunction;
             curve = null;
-
-            this.confused = confused;
         }
 
-        public BeatValuePairAni(double beat, T value, double length, AnimationCurve curve, bool confused = false)
+        public BeatValuePairAni(double beat, T value, double length, AnimationCurve curve)
         {
             this.beat = beat;
             this.value = value;
@@ -29,8 +27,6 @@ namespace RuniEngine.Rhythms
 
             easingFunction = EasingFunction.Ease.Curve;
             this.curve = curve;
-
-            this.confused = confused;
         }
 
 
@@ -39,15 +35,13 @@ namespace RuniEngine.Rhythms
 
 
 
-        public double beat;
-        public T? value;
+        [FieldName("gui.beat")] public double beat;
+        [FieldName("gui.value")] public T? value;
 
-        public double length;
+        [FieldName("gui.length")] public double length;
 
-        public EasingFunction.Ease easingFunction;
-        public AnimationCurve? curve;
-
-        public bool confused;
+        [FieldName("gui.ease")] public EasingFunction.Ease easingFunction;
+        [FieldName("gui.curve")] public AnimationCurve? curve;
 
 
 
@@ -61,7 +55,7 @@ namespace RuniEngine.Rhythms
         EasingFunction.Ease IBeatValuePairAni.easingFunction { readonly get => easingFunction; set => easingFunction = value; }
         AnimationCurve? IBeatValuePairAni.curve { readonly get => curve; set => curve = value; }
 
-        bool IBeatValuePair.confused { readonly get => confused; set => confused = value; }
+        //bool IBeatValuePair.confused { readonly get => confused; set => confused = value; }
 
 
 

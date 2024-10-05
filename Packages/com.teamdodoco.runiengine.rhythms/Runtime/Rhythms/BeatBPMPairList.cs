@@ -66,7 +66,7 @@ namespace RuniEngine.Rhythms
             if (item.beat > double.MinValue)
                 base.Add(item);
             else
-                base.Add(new BeatValuePair<BPM>(0, item.value, item.confused));
+                base.Add(new BeatValuePair<BPM>(0, item.value));
 
             BPMCalculate();
         }

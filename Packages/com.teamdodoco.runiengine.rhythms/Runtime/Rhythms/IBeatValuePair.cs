@@ -15,6 +15,6 @@ namespace RuniEngine.Rhythms
         double beat { get; set; }
         object? value { get; set; }
 
-        bool confused { get; set; }
+        //bool confused { get; set; }
     }
 }

@@ -6,12 +6,10 @@ namespace RuniEngine.Rhythms
 {
     public struct BeatValuePair<T> : IBeatValuePair<T>
     {
-        public BeatValuePair(double beat, T value, bool confused = false)
+        public BeatValuePair(double beat, T value)
         {
             this.beat = beat;
             this.value = value;
-
-            this.confused = confused;
         }
 
 
@@ -20,10 +18,8 @@ namespace RuniEngine.Rhythms
 
 
 
-        public double beat;
-        public T? value;
-
-        public bool confused;
+        [FieldName("gui.beat")] public double beat;
+        [FieldName("gui.value")] public T? value;
 
 
 
@@ -32,7 +28,7 @@ namespace RuniEngine.Rhythms
         T? IBeatValuePair<T>.value { readonly get => value; set => this.@value = value; }
         object? IBeatValuePair.value { readonly get => value; set => this.@value = (T?)value; }
 
-        bool IBeatValuePair.confused { readonly get => confused; set => confused = value; }
+        //bool IBeatValuePair.confused { readonly get => confused; set => confused = value; }
 
 
 

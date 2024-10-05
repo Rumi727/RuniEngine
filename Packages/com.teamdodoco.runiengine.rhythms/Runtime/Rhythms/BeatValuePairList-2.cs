@@ -175,9 +175,9 @@ namespace RuniEngine.Rhythms
 
 
         void IBeatValuePairList.Add(double beat) => Add(beat);
-        public void Add(double beat = double.MinValue, bool confused = false) => Add(new TPair() { beat = beat, value = defaultValue, confused = confused });
-        public void Add(TValue? value, bool confused = false) => Add(new TPair() { beat = double.MinValue, value = value, confused = confused });
-        public void Add(double beat, TValue? value, bool confused = false) => Add(new TPair() { beat = beat, value = value, confused = confused });
+        public void Add(double beat = double.MinValue) => Add(new TPair() { beat = beat, value = defaultValue });
+        public void Add(TValue? value) => Add(new TPair() { beat = double.MinValue, value = value });
+        public void Add(double beat, TValue? value) => Add(new TPair() { beat = beat, value = value });
 
         int IList.Add(object value)
         {

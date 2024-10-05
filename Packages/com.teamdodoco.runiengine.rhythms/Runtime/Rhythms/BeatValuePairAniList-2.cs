@@ -53,8 +53,8 @@ namespace RuniEngine.Rhythms
 
 
 
-        public void Add(double beat = double.MinValue, double length = 0, bool confused = false) => Add(new TPair() { beat = beat, length = length, value = defaultValue, confused = confused });
-        public void Add(double beat, double length, TValue? value, EasingFunction.Ease easingFunction = EasingFunction.Ease.Linear, bool confused = false) => Add(new TPair() { beat = beat, length = length, value = value, easingFunction = easingFunction, confused = confused });
-        public void Add(double beat, double length, TValue? value, AnimationCurve curve, bool confused = false) => Add(new TPair() { beat = beat, length = length, value = value, easingFunction = EasingFunction.Ease.Curve, curve = curve, confused = confused });
+        public void Add(double beat = double.MinValue, double length = 0) => Add(new TPair() { beat = beat, length = length, value = defaultValue });
+        public void Add(double beat, double length, TValue? value, EasingFunction.Ease easingFunction = EasingFunction.Ease.Linear) => Add(new TPair() { beat = beat, length = length, value = value, easingFunction = easingFunction });
+        public void Add(double beat, double length, TValue? value, AnimationCurve curve) => Add(new TPair() { beat = beat, length = length, value = value, easingFunction = EasingFunction.Ease.Curve, curve = curve });
     }
 }
