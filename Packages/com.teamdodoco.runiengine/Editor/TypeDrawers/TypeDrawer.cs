@@ -51,6 +51,9 @@ namespace RuniEngine.Editor.TypeDrawers
         {
             try
             {
+                if (property.canRead && property.canWrite && property.IsNotNullField() && property.GetValue() == null)
+                    property.SetNonNullValue();
+
                 return InternalGetPropertyHeight();
             }
             catch (Exception e)
@@ -77,6 +80,9 @@ namespace RuniEngine.Editor.TypeDrawers
 
             try
             {
+                if (property.canRead && property.canWrite && property.IsNotNullField() && property.GetValue() == null)
+                    property.SetNonNullValue();
+
                 InternalOnGUI(position, label);
             }
             catch (Exception e)
@@ -105,7 +111,6 @@ namespace RuniEngine.Editor.TypeDrawers
             catch (Exception e)
             {
                 Debug.LogException(e);
-                throw;
             }
 
             return null;

@@ -41,21 +41,21 @@ namespace RuniEngine.Editor.SerializedTypes
             isDrawed = property.isNullable && property.IsNullableType() && !property.IsNotNullField();
 
             Rect nullPosition = position;
-            if (property.canRead)
+            if (property.canRead && !property.isNullMixed)
             {
                 nullPosition.x += nullPosition.width - 40;
                 nullPosition.width = 40;
 
                 bool isNull = property.GetValue() == null;
-                if (isNull)
-                    EditorGUI.LabelField(position, new GUIContent($"{label} ({property.propertyType.Name})"), new GUIContent("null"));
-
                 EditorGUI.BeginDisabledGroup(!property.canWrite);
 
                 if (isNull)
                 {
-                    if (property.canWrite && (!isDrawed || GUI.Button(nullPosition, "+")))
-                        property.SetValue(property.typeDrawer.CreateInstance());
+                    if (GUI.Button(nullPosition, "+"))
+                    {
+                        property.SetNonNullValue();
+                        isNull = false;
+                    }
                 }
                 else if (isDrawed && GUI.Button(nullPosition, "-"))
                 {
@@ -65,15 +65,18 @@ namespace RuniEngine.Editor.SerializedTypes
 
                 EditorGUI.EndDisabledGroup();
 
+                if (isNull)
+                    EditorGUI.LabelField(position, new GUIContent($"{label} ({property.propertyType.Name})"), new GUIContent("null"));
+
                 return isNull;
             }
-            else if (property.canWrite && isDrawed)
+            else if (isDrawed)
             {
                 nullPosition.x += nullPosition.width - 40;
                 nullPosition.width = 19;
 
                 if (GUI.Button(nullPosition, "+"))
-                    property.SetValue(property.typeDrawer.CreateInstance());
+                    property.SetNonNullValue();
 
                 nullPosition.x += 21;
 

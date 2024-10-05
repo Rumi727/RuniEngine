@@ -188,6 +188,29 @@ namespace RuniEngine.Editor.SerializedTypes
             }
         }
 
+        public bool isNullMixed
+        {
+            get
+            {
+                if (serializedType.targetObjects.Length <= 1)
+                    return false;
+
+                object? firstValue = GetValue(0);
+                for (int i = 1; i < serializedType.targetObjects.Length; i++)
+                {
+                    object? value = GetValue(i);
+                    if (firstValue == null && value == null)
+                        continue;
+                    else if (firstValue == null)
+                        return true;
+                    else if (value == null)
+                        return true;
+                }
+
+                return false;
+            }
+        }
+
 
 
         public IEnumerable<object?> GetValues()
@@ -208,10 +231,21 @@ namespace RuniEngine.Editor.SerializedTypes
 
 
 
-        public object? GetValue() => InternalGetValue(serializedType.targetObject);
+        public object? GetValue() => GetNotNullValues().FirstOrDefault();
         public object? GetValue(int index) => InternalGetValue(serializedType.targetObjects[index]);
 
         protected internal virtual object? InternalGetValue(object? targetObject) => propertyInfo?.GetValue(targetObject) ?? fieldInfo?.GetValue(targetObject);
+
+        /// <summary>선택된 인스턴스 중에서 Null 값인 인스턴스만 Null이 아닌 값으로 설정합니다<br/><see cref="canRead"/>가 false일 경우 무조건 인스턴스를 새로 만듭니다</summary>
+        public void SetNonNullValue()
+        {
+            for (int i = 0; i < serializedType.targetObjects.Length; i++)
+            {
+                object? targetObject = serializedType.targetObjects[i];
+                if (!canRead || InternalGetValue(targetObject) == null)
+                    InternalSetValue(targetObject, typeDrawer.CreateInstance());
+            }
+        }
 
         public void SetValue(object? value)
         {
