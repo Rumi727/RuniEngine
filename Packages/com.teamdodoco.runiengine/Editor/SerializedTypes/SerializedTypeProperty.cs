@@ -113,55 +113,6 @@ namespace RuniEngine.Editor.SerializedTypes
         /// <summary>false일 경우, 프로퍼티 타입이 Nullable 타입이여도 null 버튼을 표시하지 않게함</summary>
         public virtual bool isNullable => true;
 
-        public bool isExpanded { get; set; } = false;
-
-        public bool AttributeContains<T>() => AttributeContains(typeof(T));
-        public bool AttributeContains(Type attribute)
-        {
-            if (propertyInfo != null)
-                return propertyInfo.AttributeContains(attribute);
-            else if (fieldInfo != null)
-                return fieldInfo.AttributeContains(attribute);
-
-            return false;
-        }
-
-        public T? GetCustomAttribute<T>(bool inherit = true) where T : Attribute => (T?)GetCustomAttribute(typeof(T), inherit);
-        public Attribute? GetCustomAttribute(Type attribute, bool inherit = true)
-        {
-            if (propertyInfo != null)
-                return propertyInfo.GetCustomAttribute(attribute, inherit);
-            else if (fieldInfo != null)
-                return fieldInfo.GetCustomAttribute(attribute, inherit);
-
-            throw new NullReferenceException();
-        }
-
-        public IEnumerable<T> GetCustomAttributes<T>(bool inherit = true) where T : Attribute
-        {
-            if (propertyInfo != null)
-                return propertyInfo.GetCustomAttributes<T>(inherit);
-            else if (fieldInfo != null)
-                return fieldInfo.GetCustomAttributes<T>(inherit);
-
-            return (IEnumerable<T>)Array.Empty<Attribute>();
-        }
-
-        public Attribute[] GetCustomAttributes() => GetCustomAttributes(true);
-
-        public Attribute[] GetCustomAttributes(Type type) => GetCustomAttributes(type, true);
-        public Attribute[] GetCustomAttributes(bool inherit) => GetCustomAttributes(typeof(Attribute), inherit);
-
-        public Attribute[] GetCustomAttributes(Type type, bool inherit)
-        {
-            if (propertyInfo != null)
-                return Attribute.GetCustomAttributes(propertyInfo, type, inherit);
-            else if (fieldInfo != null)
-                return Attribute.GetCustomAttributes(fieldInfo, type, inherit);
-
-            return Array.Empty<Attribute>();
-        }
-
         public bool isMixed
         {
             get
@@ -209,6 +160,55 @@ namespace RuniEngine.Editor.SerializedTypes
 
                 return false;
             }
+        }
+
+        public bool isExpanded { get; set; } = false;
+
+        public bool AttributeContains<T>() => AttributeContains(typeof(T));
+        public bool AttributeContains(Type attribute)
+        {
+            if (propertyInfo != null)
+                return propertyInfo.AttributeContains(attribute);
+            else if (fieldInfo != null)
+                return fieldInfo.AttributeContains(attribute);
+
+            return false;
+        }
+
+        public T? GetCustomAttribute<T>(bool inherit = true) where T : Attribute => (T?)GetCustomAttribute(typeof(T), inherit);
+        public Attribute? GetCustomAttribute(Type attribute, bool inherit = true)
+        {
+            if (propertyInfo != null)
+                return propertyInfo.GetCustomAttribute(attribute, inherit);
+            else if (fieldInfo != null)
+                return fieldInfo.GetCustomAttribute(attribute, inherit);
+
+            throw new NullReferenceException();
+        }
+
+        public IEnumerable<T> GetCustomAttributes<T>(bool inherit = true) where T : Attribute
+        {
+            if (propertyInfo != null)
+                return propertyInfo.GetCustomAttributes<T>(inherit);
+            else if (fieldInfo != null)
+                return fieldInfo.GetCustomAttributes<T>(inherit);
+
+            return (IEnumerable<T>)Array.Empty<Attribute>();
+        }
+
+        public Attribute[] GetCustomAttributes() => GetCustomAttributes(true);
+
+        public Attribute[] GetCustomAttributes(Type type) => GetCustomAttributes(type, true);
+        public Attribute[] GetCustomAttributes(bool inherit) => GetCustomAttributes(typeof(Attribute), inherit);
+
+        public Attribute[] GetCustomAttributes(Type type, bool inherit)
+        {
+            if (propertyInfo != null)
+                return Attribute.GetCustomAttributes(propertyInfo, type, inherit);
+            else if (fieldInfo != null)
+                return Attribute.GetCustomAttributes(fieldInfo, type, inherit);
+
+            return Array.Empty<Attribute>();
         }
 
 
