@@ -7,8 +7,14 @@ For now, please use [SC KRM 1.0](https://github.com/SimsimhanChobo/SC-KRM-1.0/)
 
 ## Introduction
 
+[Nullable reference types]: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-reference-types
+[Visual Studio]: https://visualstudio.microsoft.com/ko/
+
 Unity-only universal kernel system that **everyone** will use\
 UI inspired by [osu!lazer](https://github.com/ppy/osu)
+
+This project uses [nullable reference types]\
+Therefore, I strongly recommend installing the [package](https://github.com/Rumi727/Unity-Nullable-Enabler) that enables [nullable reference types] in [Visual Studio]
 
 ### Why a universal "kernel" system?
 
@@ -28,7 +34,7 @@ Well, whatever, ~~When I say kernel, it is kernel. There is so much talk. so wha
 ## Packages and DLLs used, open source sources
 
 - [UniTask](https://github.com/Cysharp/UniTask)
-- [Asynchronous Image Loader (Forked by TEAM Dodoco)](https://github.com/Rumi727/UnityAsyncImageLoader)
+- [Asynchronous Image Loader (Forked by Rumi)](https://github.com/Rumi727/UnityAsyncImageLoader)
   - Install using the ``https://github.com/Rumi727/UnityAsyncImageLoader.git`` link
   - [Original](https://github.com/Looooong/UnityAsyncImageLoader)
 - [UI Soft Mask](https://github.com/mob-sakai/SoftMaskForUGUI)
@@ -38,7 +44,7 @@ Well, whatever, ~~When I say kernel, it is kernel. There is so much talk. so wha
 - [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons)
 - [BigDecimal](https://github.com/AdamWhiteHat/BigDecimal)
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib)
-- [VorbisPlugin](https://github.com/gindemit/unity-project-vorbis)
+- [VorbisPlugin](https://github.com/gindemit/unity-wrapper-vorbis)
   - Added ToAudioClipAsync method to [VorbisPlugin.cs](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/src/VorbisPlugin.cs) file to load audio asynchronously and added UniTask package dependency to [assembly](Packages/com.teamdodoco.runiengine/Packages/VorbisPlugin/Impl/VorbisPluginImpl.asmdef).
 - [NVorbis](https://github.com/NVorbis/NVorbis)
 - [NAudio](https://github.com/naudio/NAudio)
