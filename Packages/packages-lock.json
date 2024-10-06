@@ -31,7 +31,7 @@
       "dependencies": {
         "com.unity.ide.visualstudio": "2.0.22"
       },
-      "hash": "42c0f81b3444f2dcd73bf371d00d9167ce92bb27"
+      "hash": "969a209aa9487d982a5e2e012167dbdb62edfa18"
     },
     "com.singularitygroup.hotreload": {
       "version": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.12",
