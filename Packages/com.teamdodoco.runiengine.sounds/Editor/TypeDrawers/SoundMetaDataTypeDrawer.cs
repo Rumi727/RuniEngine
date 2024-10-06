@@ -30,7 +30,7 @@ namespace RuniEngine.Editor
                 if (isDrawed)
                     position.width -= 42;
             }
-            
+
             SetChild();
 
             Line1GUI(position);
