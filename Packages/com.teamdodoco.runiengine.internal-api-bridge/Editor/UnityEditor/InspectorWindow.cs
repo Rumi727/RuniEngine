@@ -14,7 +14,7 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
         public global::UnityEditor.EditorWindow? instance { get; }
 
 
-        
+
         static MethodInfo? m_RepaintAllInspectors;
         public static void RepaintAllInspectors()
         {

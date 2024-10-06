@@ -1,5 +1,5 @@
-using System.Reflection;
 using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace RuniEngine.Editor.APIBridge.UnityEditor
@@ -19,7 +19,7 @@ namespace RuniEngine.Editor.APIBridge.UnityEditor
             mp_HasAudioCallback[0] = monoBehaviour;
             return (bool)m_HasAudioCallback.Invoke(null, mp_HasAudioCallback);
         }
-        
+
         static MethodInfo? m_GetCustomFilterChannelCount;
         static readonly object[] mp_GetCustomFilterChannelCount = new object[1];
         public static int GetCustomFilterChannelCount(MonoBehaviour monoBehaviour)
