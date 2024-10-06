@@ -26,7 +26,7 @@ namespace RuniEngine.Rhythms
             _instances.Add(this);
         }
 
-        
+
 
         public bool isGlobal
         {

@@ -97,7 +97,7 @@ namespace RuniEngine.Rhythms
         }
 
         public override void RemoveAt(int index)
-        {   
+        {
             base.RemoveAt(index);
             BPMCalculate();
         }
