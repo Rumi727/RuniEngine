@@ -112,7 +112,7 @@ namespace RuniEngine.Editor
                 rect.height -= 2;
 
                 BeginMinLabelWidth(0, rect.width + 11, 0);
-                
+
                 SerializedProperty element = property.GetArrayElementAtIndex(index);
                 EditorGUI.PropertyField(rect, element, element.IsChildrenIncluded());
 

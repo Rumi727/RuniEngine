@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace RuniEngine.Editor.Inspector
 {
-    public abstract class CustomInspectorBase<TTarget> : EditorTool where TTarget : Object 
+    public abstract class CustomInspectorBase<TTarget> : EditorTool where TTarget : Object
     {
         protected new TTarget? target { get; private set; }
         protected new TTarget?[]? targets { get; private set; }

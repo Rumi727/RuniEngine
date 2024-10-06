@@ -1,8 +1,7 @@
-using UnityEditor;
-using UnityEngine.UIElements;
 using RuniEngine.Datas;
 using RuniEngine.Splashs;
-
+using UnityEditor;
+using UnityEngine.UIElements;
 using static RuniEngine.Editor.EditorTool;
 
 namespace RuniEngine.Editor.ProjectSettings

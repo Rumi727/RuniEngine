@@ -60,7 +60,7 @@ namespace RuniEngine.Editor
                 {
                     loadedLanguages.TryAdd(language, new());
                     loadedLanguages[language].TryAdd(key, value);
-                    
+
                     return value;
                 }
             }

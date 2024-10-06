@@ -1,12 +1,11 @@
 using RuniEngine.Editor.SerializedTypes;
-using UnityEditor.AnimatedValues;
-using UnityEditor;
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
-
-using EditorGUI = UnityEditor.EditorGUI;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.AnimatedValues;
+using UnityEngine;
 using static RuniEngine.Editor.EditorTool;
+using EditorGUI = UnityEditor.EditorGUI;
 
 namespace RuniEngine.Editor.TypeDrawers
 {
@@ -110,7 +109,7 @@ namespace RuniEngine.Editor.TypeDrawers
 
                 if (childSerializedType == null)
                     return orgHeight + animFloat.value;
-                
+
                 if (!property.isInArray && animBool.isAnimating)
                 {
                     float childHeight = childSerializedType.GetPropertyHeight();

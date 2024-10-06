@@ -80,11 +80,11 @@ namespace RuniEngine.Editor.TypeDrawers
                 if (listProperty.GetValue() != ((DictionaryEntry)list[i]).Value)
                     lastValueCount = -1;
             }
-            
+
             if (lastValueCount != list.Count)
             {
                 List<SerializedTypeDictionaryValueProperty?> listProperties = new List<SerializedTypeDictionaryValueProperty?>();
-                
+
                 for (int i = 0; i < list.Count; i++)
                 {
                     SerializedTypeDictionaryValueProperty? listProperty = null;
@@ -323,7 +323,7 @@ namespace RuniEngine.Editor.TypeDrawers
                 genericList.Move(oldIndex, newIndex);
 
                 item.Clear();
-                for (int i = 0;i < genericList.Count; i++)
+                for (int i = 0; i < genericList.Count; i++)
                 {
                     DictionaryEntry entry = genericList[i];
                     item.Add(entry.Key, entry.Value);

@@ -114,7 +114,7 @@ namespace RuniEngine.Editor.SerializedTypes
             for (int i = 0; i < properties.Length; i++)
             {
                 SerializedTypeProperty property = properties[i];
-                
+
                 if ((isStatic && property.isStatic) || (!isStatic && !property.isStatic))
                 {
                     position.height = property.GetPropertyHeight();

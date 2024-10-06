@@ -17,7 +17,7 @@ namespace RuniEngine.Editor
 
         public Direction splitDirection { get; }
         public float splitNormalizedPosition { get; set; }
-        
+
         public Vector2 formerScrollPosition { get; set; }
         public Vector2 latterScrollPosition { get; set; }
         public Rect availableRect { get; private set; }
@@ -116,7 +116,7 @@ namespace RuniEngine.Editor
 
                 repaintAction?.Invoke();
             }
-            
+
             if (Event.current.type == EventType.MouseUp)
                 resize = false;
         }

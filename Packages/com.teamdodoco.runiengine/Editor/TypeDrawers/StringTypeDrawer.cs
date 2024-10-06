@@ -19,7 +19,7 @@ namespace RuniEngine.Editor.TypeDrawers
             if (property.canRead && property.GetValue() == null)
                 return GetYSize(EditorStyles.label);
 
-            IEnumerable <TextAreaAttribute> attributes = property.GetCustomAttributes<TextAreaAttribute>();
+            IEnumerable<TextAreaAttribute> attributes = property.GetCustomAttributes<TextAreaAttribute>();
             if (attributes.Any())
             {
                 TextAreaAttribute attribute = attributes.First();
@@ -27,10 +27,10 @@ namespace RuniEngine.Editor.TypeDrawers
 
                 if (property.canRead)
                     line = (((string?)property.GetValue())?.Count(x => x == '\n') ?? 0) + 2;
-                
+
                 char[] content = new char[line.Clamp(attribute.minLines, attribute.maxLines)];
                 Array.Fill(content, '\n');
-                
+
                 return GetYSize(new string(content), EditorStyles.textArea);
             }
             else
@@ -50,10 +50,10 @@ namespace RuniEngine.Editor.TypeDrawers
 
                     GUI.Label(labelRect, label);
                 }
-                
+
                 position.y += labelHeight + 2;
                 position.height -= labelHeight;
-                
+
                 return EditorGUI.TextArea(position, (string?)value);
             }
             else

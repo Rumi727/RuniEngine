@@ -120,7 +120,7 @@ namespace RuniEngine.Editor.Drawers
         public static void GetListProperty(SerializedProperty property, out SerializedObject serializedObject, out SerializedProperty? key, out SerializedProperty? value)
         {
             serializedObject = property.serializedObject;
-            
+
             key = property.FindPropertyRelative(nameof(ISerializableDictionary.serializableKeys));
             value = property.FindPropertyRelative(nameof(ISerializableDictionary.serializableValues));
         }

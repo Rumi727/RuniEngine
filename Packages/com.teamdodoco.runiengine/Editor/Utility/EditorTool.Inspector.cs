@@ -38,7 +38,7 @@ namespace RuniEngine.Editor
                 GUILayout.Label(TryGetText("inspector.property_none").Replace("{name}", propertyName));
                 return null;
             }
-            
+
             if (tps != null)
             {
                 EditorGUI.BeginChangeCheck();

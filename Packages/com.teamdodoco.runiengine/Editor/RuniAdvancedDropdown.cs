@@ -305,7 +305,7 @@ namespace RuniEngine.Editor
                     }
 
                     string[] splitPaths = path.Split('/');
-                    
+
                     string splitAllPath = string.Empty;
                     for (int j = 0; j < splitPaths.Length; j++)
                     {

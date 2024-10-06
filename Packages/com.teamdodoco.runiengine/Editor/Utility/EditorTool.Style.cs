@@ -37,7 +37,7 @@ namespace RuniEngine.Editor
                         textColor = new Color(0, 0.2352941176f * 2, 0.5333333333f * 2)
                     }
                 };
-                
+
                 return _labelButtonStyle;
             }
         }

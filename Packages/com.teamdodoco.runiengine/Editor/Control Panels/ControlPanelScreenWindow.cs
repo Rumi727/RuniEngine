@@ -36,7 +36,7 @@ namespace RuniEngine.Editor.ControlPanels
             Rect offset = new Rect(screenMover.position.x + screenCroper.offset.left, screenMover.position.y + screenCroper.offset.bottom, screenCroper.offset.right, screenCroper.offset.top);
 
             Rect inner = Rect.zero;
-            
+
             inner.x = offset.x;
             inner.y = offset.y;
             inner.width = (ScreenManager.width + offset.width - screenCroper.offset.left);

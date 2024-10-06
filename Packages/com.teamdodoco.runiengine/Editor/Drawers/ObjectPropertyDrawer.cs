@@ -33,26 +33,26 @@ namespace RuniEngine.Editor.Drawers
                 float orgHeight;
                 float headHeight = GetYSize(label, EditorStyles.foldout);
                 int childCount;
-                
+
                 {
                     bool isExpanded = property.isExpanded;
                     property.isExpanded = true;
 
                     SerializedProperty childProperty = property.Copy();
-                    
+
                     orgHeight = EditorGUI.GetPropertyHeight(childProperty, label); //여기에서 값 바뀜
                     childCount = childProperty.CountInProperty() - 1;
-                    
+
                     property.isExpanded = isExpanded;
                 }
 
                 position.y += 2;
-                
+
                 {
                     position.height = headHeight;
 
                     EditorGUI.BeginProperty(position, label, property);
-                    
+
                     property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label, true);
                     animBool.target = property.isExpanded;
 

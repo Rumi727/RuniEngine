@@ -17,7 +17,7 @@ namespace RuniEngine.Editor.TypeDrawers
             {
                 value = property.GetValue();
                 EditorGUI.showMixedValue = property.isMixed;
-                
+
                 if (value == null && property.IsNotNullField() && !property.isUnityObject && property.canWrite)
                 {
                     value = property.typeDrawer.CreateInstance();
@@ -29,7 +29,7 @@ namespace RuniEngine.Editor.TypeDrawers
                 value = property.typeDrawer.CreateInstance();
                 EditorGUI.showMixedValue = true;
             }
-            
+
             if (property.IsNullableType())
             {
                 if (property.DrawNullableButton(position, label, out bool isDrawed))
