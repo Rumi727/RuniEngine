@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.looooong.asyncimageloader_forked_by_teamdodoco": "https://github.com/Rumi727/UnityAsyncImageLoader.git",
+    "com.looooong.asyncimageloader_forked_by_rumi": "https://github.com/Rumi727/UnityAsyncImageLoader.git",
     "com.rumi.visual-studio.nullable": "https://github.com/Rumi727/Unity-Nullable-Enabler.git?path=Packages/com.rumi.visual-studio.nullable",
     "com.singularitygroup.hotreload": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.12",
     "com.unity.ide.visualstudio": "2.0.22",

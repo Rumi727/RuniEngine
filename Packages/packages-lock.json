@@ -14,7 +14,7 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
-    "com.looooong.asyncimageloader_forked_by_teamdodoco": {
+    "com.looooong.asyncimageloader_forked_by_rumi": {
       "version": "https://github.com/Rumi727/UnityAsyncImageLoader.git",
       "depth": 0,
       "source": "git",
@@ -22,7 +22,7 @@
         "com.unity.burst": "1.5.4",
         "com.unity.mathematics": "1.2.1"
       },
-      "hash": "b788f6b15e0627304f7c53e69e89a87bd73b22a1"
+      "hash": "ed208e11ff54a433bfa8cb2a52f99cd67ab280b7"
     },
     "com.rumi.visual-studio.nullable": {
       "version": "https://github.com/Rumi727/Unity-Nullable-Enabler.git?path=Packages/com.rumi.visual-studio.nullable",
@@ -68,7 +68,7 @@
         "com.cysharp.unitask": "2.3.3",
         "com.teamdodoco.runiengine": "0.0.0",
         "com.teamdodoco.runiengine.internal-api-bridge": "0.0.0",
-        "com.looooong.asyncimageloader_forked_by_teamdodoco": "727.1.4"
+        "com.looooong.asyncimageloader_forked_by_rumi": "727.1.4"
       }
     },
     "com.teamdodoco.runiengine.inputs": {
