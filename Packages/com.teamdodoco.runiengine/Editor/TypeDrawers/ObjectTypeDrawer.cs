@@ -1,4 +1,5 @@
 using RuniEngine.Editor.SerializedTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -34,6 +35,21 @@ namespace RuniEngine.Editor.TypeDrawers
                 childSerializedType = null;
         }
 
+        protected void SetChild(Type childType)
+        {
+            IEnumerable<object> enumerable = property.GetNotNullValues();
+            if (enumerable.Any())
+            {
+                object?[] value = enumerable.ToArray();
+
+                childSerializedType ??= new SerializedType(childType, property, false, value);
+                childSerializedType.targetObjects = value;
+                childSerializedType.metaData = property.serializedType.metaData;
+            }
+            else
+                childSerializedType = null;
+        }
+
         protected override void InternalOnGUI(Rect position, GUIContent? label)
         {
             if (property.propertyType.IsChildrenIncluded())
@@ -56,7 +72,7 @@ namespace RuniEngine.Editor.TypeDrawers
 
                     if (!property.canRead)
                     {
-                        base.InternalOnGUI(position, label);
+                        DrawDefaultGUI(position, label);
                         return;
                     }
 
@@ -94,7 +110,7 @@ namespace RuniEngine.Editor.TypeDrawers
                     childSerializedType?.DrawGUI(position);
             }
             else
-                base.InternalOnGUI(position, label);
+                DrawDefaultGUI(position, label);
         }
 
         protected override float InternalGetPropertyHeight()

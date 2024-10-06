@@ -11,7 +11,7 @@ using static RuniEngine.Editor.EditorTool;
 
 namespace RuniEngine.Editor
 {
-    public abstract class SoundMetaDataTypeDrawer : ObjectTypeDrawer
+    public abstract class SoundMetaDataTypeDrawer : StructTypeDrawer
     {
         protected SoundMetaDataTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
@@ -21,18 +21,8 @@ namespace RuniEngine.Editor
         protected abstract string folderName { get; }
         protected abstract ExtensionFilter extFilter { get; }
 
-        protected override void InternalOnGUI(Rect position, GUIContent? label)
+        protected override void InternalDrawStructGUI(Rect position, GUIContent? label)
         {
-            {
-                if (!property.canRead || property.DrawNullableButton(position, label, out bool isDrawed))
-                    return;
-
-                if (isDrawed)
-                    position.width -= 42;
-            }
-
-            SetChild();
-
             Line1GUI(position);
 
             position.y += GetYSize(EditorStyles.textField) + 3;
@@ -154,12 +144,6 @@ namespace RuniEngine.Editor
         /// <summary>이 메소드는 내부 호출 시에 <see cref="EditorGUILayout.BeginHorizontal(GUILayoutOption[])"/> 메소드가 호출되지 않습니다</summary>
         protected virtual void LineOtherGUI(Rect position) { }
 
-        protected override float InternalGetPropertyHeight()
-        {
-            if (property.canRead && property.GetValue() == null)
-                return EditorGUIUtility.singleLineHeight;
-
-            return GetYSize(EditorStyles.textField) + 3 + GetYSize(EditorStyles.numberField);
-        }
+        protected override float InternalGetStructHeight() => GetYSize(EditorStyles.textField) + 3 + GetYSize(EditorStyles.numberField);
     }
 }

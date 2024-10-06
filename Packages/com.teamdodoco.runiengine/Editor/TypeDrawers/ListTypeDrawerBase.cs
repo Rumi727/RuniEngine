@@ -83,14 +83,14 @@ namespace RuniEngine.Editor.TypeDrawers
 
             if (!property.canRead)
             {
-                base.InternalOnGUI(headPosition, label);
+                DrawDefaultGUI(headPosition, label);
                 return;
             }
 
             IList? list = GetList();
             if (list == null || GetListType(list) == typeof(object))
             {
-                base.InternalOnGUI(headPosition, label);
+                DrawDefaultGUI(headPosition, label);
                 return;
             }
 

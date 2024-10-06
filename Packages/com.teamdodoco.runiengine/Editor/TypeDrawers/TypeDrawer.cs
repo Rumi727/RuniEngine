@@ -90,7 +90,9 @@ namespace RuniEngine.Editor.TypeDrawers
             }
         }
 
-        protected virtual void InternalOnGUI(Rect position, GUIContent? label) => EditorGUI.LabelField(position, new GUIContent($"{label?.text} ({property.propertyType.Name})"), new GUIContent("No GUI Implemented"));
+        protected abstract void InternalOnGUI(Rect position, GUIContent? label);
+
+        protected virtual void DrawDefaultGUI(Rect position, GUIContent? label) => EditorGUI.LabelField(position, new GUIContent($"{label?.text} ({property.propertyType.Name})"), new GUIContent("No GUI Implemented"));
 
         public virtual object? CreateInstance()
         {
