@@ -158,7 +158,7 @@ namespace RuniEngine.Resource.Sounds
         {
             if (index < 0 || index >= samples * channels)
                 throw new ArgumentOutOfRangeException(nameof(index));
-            
+
             try
             {
                 ThreadTask.Lock(ref getSampleLock);
@@ -167,10 +167,10 @@ namespace RuniEngine.Resource.Sounds
                 {
                     Interlocked.Exchange(ref _isLoading, 1);
                     loadedDatas = new float[samples * channels];
-                    
+
                     UniTask.RunOnThreadPool(() => BackgroundLoadThread(index));
                 }
-                
+
                 return loadedDatas[index];
             }
             finally

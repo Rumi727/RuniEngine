@@ -9,7 +9,7 @@ namespace RuniEngine.Resource.Sounds
         {
             this.stream = stream;
             reader = stream.ToSampleProvider();
-            
+
             buffer = new float[frequency / 10 * channels];
             reader.Read(buffer, 0, buffer.Length);
         }

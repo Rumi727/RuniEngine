@@ -269,7 +269,7 @@ namespace RuniEngine.Sounds
             Stop();
             if (!Refresh())
                 return;
-            
+
             VarUpdate();
 
             if (tempo < 0)
@@ -322,7 +322,7 @@ namespace RuniEngine.Sounds
              * 확실한건 스테레오 또는 그 이상 오디오 채널 재생이 단단히 잘못되어있다는 것입니다...
              * 수정하라면 수정할 수 있겠지만, 일단 급한건 아니라 점점 미루고 있습니다
              */
-            
+
             try
             {
                 ThreadTask.Lock(ref onAudioFilterReadLock);
@@ -429,7 +429,7 @@ namespace RuniEngine.Sounds
                                 ThreadDispatcher.Execute(LoopedEventInvoke);
                         }
                     }
-                    
+
                     Interlocked.Exchange(ref _timeSamples, timeSamples);
                     Interlocked.Exchange(ref this.internalTimeSamples, internalTimeSamples);
                 }
