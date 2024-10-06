@@ -1,4 +1,3 @@
-#nullable enable
 /*
  * Created by C.J. Kimberlin
  * 

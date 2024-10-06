@@ -1,4 +1,3 @@
-#nullable enable
 namespace RuniEngine.Resource.Sounds
 {
     public enum RawAudioLoadType

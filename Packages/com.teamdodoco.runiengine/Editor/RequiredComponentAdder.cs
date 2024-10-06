@@ -1,4 +1,3 @@
-#nullable enable
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;

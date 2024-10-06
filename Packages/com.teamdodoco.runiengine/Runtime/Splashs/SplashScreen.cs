@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Datas;
 
 namespace RuniEngine.Splashs

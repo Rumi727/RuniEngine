@@ -1,4 +1,3 @@
-#nullable enable
 using UnityEditor;
 using UnityEngine.UIElements;
 using RuniEngine.Datas;

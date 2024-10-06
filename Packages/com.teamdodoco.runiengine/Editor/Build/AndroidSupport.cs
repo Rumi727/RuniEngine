@@ -1,4 +1,3 @@
-#nullable enable
 
 //얘는 빌드 코드기 때문에 에디터에서도 작동해야함
 #if UNITY_ANDROID || ENABLE_ANDROID_SUPPORT

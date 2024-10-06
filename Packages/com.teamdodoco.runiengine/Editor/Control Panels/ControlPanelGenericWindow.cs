@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Threading;
 using UnityEditor;
 using UnityEngine.Profiling;

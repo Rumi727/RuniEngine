@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Rendering;
 using RuniEngine.Resource.Images;
 using UnityEditor;

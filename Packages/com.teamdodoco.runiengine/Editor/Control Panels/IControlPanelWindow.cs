@@ -1,4 +1,3 @@
-#nullable enable
 namespace RuniEngine.Editor.ControlPanels
 {
     public interface IControlPanelWindow

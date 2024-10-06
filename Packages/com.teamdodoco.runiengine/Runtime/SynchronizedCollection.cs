@@ -1,4 +1,3 @@
-#nullable enable
 //Source: https://referencesource.microsoft.com/#System.ServiceModel/System/ServiceModel/SynchronizedCollection.cs
 using System.Threading;
 

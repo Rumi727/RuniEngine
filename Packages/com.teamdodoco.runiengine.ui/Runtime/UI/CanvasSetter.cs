@@ -1,4 +1,3 @@
-#nullable enable
 using UnityEngine;
 using RuniEngine.Screens;
 

@@ -1,4 +1,3 @@
-#nullable enable
 using Newtonsoft.Json;
 using RuniEngine.NBS;
 #if ENABLE_RUNI_ENGINE_RHYTHMS

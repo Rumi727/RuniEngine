@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.UI.Fitter;
 using UnityEditor;
 

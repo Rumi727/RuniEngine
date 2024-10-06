@@ -1,4 +1,3 @@
-#nullable enable
 namespace RuniEngine.Rhythms
 {
     public class BeatValuePairAniListDouble : BeatValuePairAniList<double>

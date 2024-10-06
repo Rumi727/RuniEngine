@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Editor.Inspector;
 using UnityEditor;
 using UnityEditor.AnimatedValues;

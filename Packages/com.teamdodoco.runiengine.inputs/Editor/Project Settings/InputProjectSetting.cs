@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Datas;
 using RuniEngine.Inputs;
 using System;

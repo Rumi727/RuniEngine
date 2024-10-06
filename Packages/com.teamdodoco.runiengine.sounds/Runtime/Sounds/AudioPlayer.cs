@@ -1,4 +1,3 @@
-#nullable enable
 #if ENABLE_RUNI_ENGINE_POOLING
 using RuniEngine.Booting;
 using RuniEngine.Pooling;

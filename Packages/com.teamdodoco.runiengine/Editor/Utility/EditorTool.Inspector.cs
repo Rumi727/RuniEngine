@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Editor.APIBridge.UnityEditorInternal;
 using RuniEngine.Resource;
 using System;

@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Booting;
 using RuniEngine.Splashs.UI;
 using UnityEngine;

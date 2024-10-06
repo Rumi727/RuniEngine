@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Editor.TypeDrawers;
 using System;
 using System.Collections;

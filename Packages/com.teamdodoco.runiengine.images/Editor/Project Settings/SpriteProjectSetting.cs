@@ -1,4 +1,3 @@
-#nullable enable
 /*
  * 이 스크립트는 SC KRM에서 따왔기 때문에 개적화입니다
 */

@@ -1,4 +1,3 @@
-#nullable enable
 namespace RuniEngine.Install
 {
     public interface IInstallerScreen

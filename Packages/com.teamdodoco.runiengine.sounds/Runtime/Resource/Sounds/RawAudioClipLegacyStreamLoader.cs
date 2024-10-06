@@ -1,4 +1,3 @@
-#nullable enable
 using Cysharp.Threading.Tasks;
 using NAudio.Wave;
 using RuniEngine.Threading;

@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Resource.Texts;
 using System.Collections.Generic;
 using System.IO;

@@ -1,4 +1,3 @@
-#nullable enable
 using RuniEngine.Editor.SerializedTypes;
 using System;
 using System.Collections;
