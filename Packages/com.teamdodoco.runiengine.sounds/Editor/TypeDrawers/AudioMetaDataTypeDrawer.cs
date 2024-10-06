@@ -39,7 +39,7 @@ namespace RuniEngine.Editor
                 loadType = fileMetaData.Value.loadType;
 
             EditorGUI.BeginChangeCheck();
-            
+
             {
                 EditorGUI.showMixedValue = childSerializedType?.GetProperty(nameof(SoundMetaDataBase.path))?.isMixed ?? false;
 
@@ -159,6 +159,11 @@ namespace RuniEngine.Editor
 #endif
         }
 
-        public override object? CreateInstance() => new AudioMetaData("", 1, 1, 0, 0, null, 0, null);
+        public override object? CreateInstance() =>
+#if ENABLE_RUNI_ENGINE_RHYTHMS
+            new AudioMetaData("", 1, 1, 0, 0, null, 0, null);
+#else
+            new AudioMetaData("", 1, 1, 0, 0, null);
+#endif
     }
 }
