@@ -24,6 +24,15 @@
       },
       "hash": "b788f6b15e0627304f7c53e69e89a87bd73b22a1"
     },
+    "com.rumi.visual-studio.nullable": {
+      "version": "https://github.com/Rumi727/Unity-Nullable-Enabler.git?path=Packages/com.rumi.visual-studio.nullable",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ide.visualstudio": "2.0.22"
+      },
+      "hash": "42c0f81b3444f2dcd73bf371d00d9167ce92bb27"
+    },
     "com.singularitygroup.hotreload": {
       "version": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.12",
       "depth": 0,
