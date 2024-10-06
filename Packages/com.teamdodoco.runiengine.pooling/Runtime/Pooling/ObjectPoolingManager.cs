@@ -156,7 +156,7 @@ namespace RuniEngine.Pooling
                     return poolingObject;
                 }
             }
-            
+
             {
                 GameObject? gameObject = ObjectLoader.SearchGameObject(key, nameSpace);
                 if (gameObject == null)
