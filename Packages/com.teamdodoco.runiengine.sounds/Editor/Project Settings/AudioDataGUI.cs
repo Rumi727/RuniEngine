@@ -3,7 +3,7 @@ using System;
 
 namespace RuniEngine.Editor.ProjectSettings
 {
-    public class AudioDataGUI : SoundDataGUI
+    public sealed class AudioDataGUI : SoundDataGUI
     {
         public override Type targetType => typeof(AudioData);
         public override string folderName => AudioLoader.name;
