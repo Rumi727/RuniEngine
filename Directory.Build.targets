@@ -1,8 +1,0 @@
-<Project>
-    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'RuniEngine'">
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'RuniEngine.Editor'">
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-</Project>
