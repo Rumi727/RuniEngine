@@ -86,14 +86,18 @@ namespace RuniEngine.Editor
 
                 position.width = 100;
 
-                DefaultAsset audioClip;
-                if (audioPath != "")
+                DefaultAsset? audioClip = null;
+                try
                 {
-                    audioClip = AssetDatabase.LoadAssetAtPath<DefaultAsset>(assetPathAndName + Path.GetExtension(outPath));
-                    audioClip = (DefaultAsset)EditorGUI.ObjectField(position, audioClip, typeof(DefaultAsset), false);
+                    if (audioPath != "")
+                    {
+                        audioClip = AssetDatabase.LoadAssetAtPath<DefaultAsset>(assetPathAndName + Path.GetExtension(outPath));
+                        audioClip = (DefaultAsset)EditorGUI.ObjectField(position, audioClip, typeof(DefaultAsset), false);
+                    }
+                    else
+                        audioClip = (DefaultAsset)EditorGUI.ObjectField(position, null, typeof(DefaultAsset), false);
                 }
-                else
-                    audioClip = (DefaultAsset)EditorGUI.ObjectField(position, null, typeof(DefaultAsset), false);
+                catch (ExitGUIException) { }
 
                 if (EditorGUI.EndChangeCheck())
                 {
