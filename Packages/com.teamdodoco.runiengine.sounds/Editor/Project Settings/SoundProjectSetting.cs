@@ -170,7 +170,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
             DrawLine();
 
-            splitView ??= new EditorGUISplitView(EditorGUISplitView.Direction.Vertical, 0.2f, Repaint);
+            splitView ??= new EditorGUISplitView(EditorGUISplitView.Direction.Vertical, 0.5f, Repaint);
             splitView.BeginSplitView();
 
             if (soundDatas.Count > 0)
