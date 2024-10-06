@@ -44,7 +44,7 @@ namespace RuniEngine.Datas
             {
                 PropertyInfo[] propertyInfos = type.GetProperties(bindingFlags);
                 List<StorableClassMemberInfo<PropertyInfo>> propertyInfoList = new List<StorableClassMemberInfo<PropertyInfo>>();
-                
+
                 for (int i = 0; i < propertyInfos.Length; i++)
                 {
                     PropertyInfo propertyInfo = propertyInfos[i];

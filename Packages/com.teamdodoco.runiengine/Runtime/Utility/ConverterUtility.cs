@@ -10,7 +10,7 @@ namespace RuniEngine
         {
             if (rawObjects == null)
                 return null;
-            
+
             T[] array = new T[rawObjects.Count];
             for (int i = 0; i < array.Length; i++)
             {

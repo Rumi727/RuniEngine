@@ -49,7 +49,7 @@ namespace RuniEngine.Screens
 
                     min.x = min.x.Max(item.min.x);
                     min.y = min.y.Max(item.min.y);
-                    
+
                     max.x = max.x.Min(item.max.x);
                     max.y = max.y.Min(item.max.y);
                 }

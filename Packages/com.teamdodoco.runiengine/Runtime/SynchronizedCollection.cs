@@ -15,7 +15,7 @@ namespace System.Collections.Generic
         {
             if (list == null)
                 throw new ArgumentNullException("list");
-            
+
             internalList = new List<T?>(list);
         }
 
@@ -29,11 +29,11 @@ namespace System.Collections.Generic
 
         public int Count
         {
-            get 
+            get
             {
                 while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
                     Thread.Yield();
-                
+
                 int count = internalList.Count;
 
                 Interlocked.Decrement(ref internalSync);

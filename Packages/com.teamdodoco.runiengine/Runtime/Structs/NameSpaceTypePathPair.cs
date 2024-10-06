@@ -53,7 +53,7 @@ namespace RuniEngine
         {
             if (obj is not NameSpaceTypePathPair pair)
                 return false;
-            
+
             return nameSpace == pair.nameSpace && type == pair.type && path == pair.path;
         }
 

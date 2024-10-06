@@ -22,7 +22,7 @@ namespace RuniEngine.Datas
         {
             List<StorableClass> storableObjectInfos = new List<StorableClass>();
             IReadOnlyList<Type> types = ReflectionManager.types;
-            
+
             for (int i = 0; i < types.Count; i++)
             {
                 Type type = types[i];

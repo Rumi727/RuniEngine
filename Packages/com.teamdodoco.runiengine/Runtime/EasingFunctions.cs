@@ -241,7 +241,7 @@ namespace RuniEngine
             if (value < 1)
                 return end * 0.5 * 2d.Pow(10 * (value - 1)) + start;
             value--;
-            return end * 0.5 * (-(2d.Pow(- 10 * value)) + 2) + start;
+            return end * 0.5 * (-(2d.Pow(-10 * value)) + 2) + start;
         }
 
         public static double EaseInCirc(double start, double end, double value)

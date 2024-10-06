@@ -30,9 +30,9 @@ namespace RuniEngine
 #if UNITY_EDITOR
         [UnityEditor.InitializeOnLoadMethod]
         static void Init() => UnityEditor.EditorApplication.update += () => Interlocked.Exchange(ref detectionCount, 0);
-/*#else
-        [Awaken]
-        static void Awaken() => CustomPlayerLoopSetter.initEvent += () => Interlocked.Exchange(ref detectionCount, 0);*/
+        /*#else
+                [Awaken]
+                static void Awaken() => CustomPlayerLoopSetter.initEvent += () => Interlocked.Exchange(ref detectionCount, 0);*/
 #endif
     }
 }

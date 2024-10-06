@@ -79,7 +79,7 @@ namespace RuniEngine.Booting
             await UniTask.Delay(100, true);
             if (!Kernel.isPlaying)
                 return;
-            
+
             //Splash Screen Play
             SplashScreen.isPlaying = true;
 

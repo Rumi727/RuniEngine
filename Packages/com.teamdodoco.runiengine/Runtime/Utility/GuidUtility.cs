@@ -1,6 +1,6 @@
 using ExtendedNumerics;
-using System.Numerics;
 using System;
+using System.Numerics;
 
 namespace RuniEngine
 {

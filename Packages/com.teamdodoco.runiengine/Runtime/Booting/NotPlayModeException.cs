@@ -15,7 +15,7 @@ namespace RuniEngine.Booting
 
         public NotPlayModeException() : base(LanguageLoader.GetText("exception.not_play_mode"))
         {
-            
+
         }
     }
 }

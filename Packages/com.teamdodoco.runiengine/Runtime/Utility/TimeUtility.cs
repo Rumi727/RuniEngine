@@ -1,5 +1,5 @@
-using System.Globalization;
 using System;
+using System.Globalization;
 
 namespace RuniEngine
 {
@@ -60,7 +60,7 @@ namespace RuniEngine
         /// </summary>
         /// <param name="second">초</param>
         /// <returns></returns>
-        
+
         public static string ToTimeString(this double second, AlwayShowTimeUnit alwayShowTimeUnit = AlwayShowTimeUnit.minute, string decimalFormat = "00")
         {
             if (!double.IsFinite(second))

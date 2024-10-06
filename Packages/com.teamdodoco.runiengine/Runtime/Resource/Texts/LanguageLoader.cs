@@ -94,7 +94,7 @@ namespace RuniEngine.Resource.Texts
                 loader.loadedLanguages[nameSpace][language].TryAdd(key, value);
 
                 return result4;
-            }    
+            }
 
             return result4;
         }

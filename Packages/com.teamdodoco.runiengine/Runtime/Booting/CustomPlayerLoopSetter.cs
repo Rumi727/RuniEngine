@@ -33,7 +33,7 @@ namespace RuniEngine.Booting
                 PlayerLoopSystem loopSystems = PlayerLoop.GetDefaultPlayerLoop();
                 PlayerLoopHelper.Initialize(ref loopSystems);
                 PlayerLoop.SetPlayerLoop(loopSystems);
-                
+
                 initEvent = null;
                 earlyUpdateEvent = null;
                 fixedUpdateEvent = null;

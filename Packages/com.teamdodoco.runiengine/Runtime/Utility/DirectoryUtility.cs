@@ -32,7 +32,7 @@ namespace RuniEngine
         }
 
         public static string[] GetFiles(string path, ExtensionFilter extensionFilter) => GetFiles(path, extensionFilter, SearchOption.TopDirectoryOnly);
-        
+
         public static string[] GetFiles(string path, ExtensionFilter extensionFilter, SearchOption searchOption)
         {
             if (extensionFilter.extensions.Length == 1)

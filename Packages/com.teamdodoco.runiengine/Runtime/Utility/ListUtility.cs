@@ -1,9 +1,9 @@
 using ExtendedNumerics;
-using System.Collections.Generic;
-using System.Numerics;
 using System;
-using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace RuniEngine
@@ -14,7 +14,7 @@ namespace RuniEngine
         {
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
-            
+
             object? temp = list[oldIndex];
             list.RemoveAt(oldIndex);
             list.Insert(newIndex, temp);
@@ -2200,7 +2200,7 @@ namespace RuniEngine
         {
             Array.Copy(array, index + 1, array, index, array.Length - index - 1);
             array = array.Resize(array.Length - 1);
-            
+
             return array;
         }
 

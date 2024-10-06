@@ -116,7 +116,7 @@ namespace RuniEngine.Threading
                     Debug.LogError("[SpinLock] Deadlock Detected!!!", Debug.NameOfCallingClass());
                     return;
                 }
-                
+
                 Thread.Yield();
             }
         }

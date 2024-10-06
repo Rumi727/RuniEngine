@@ -59,7 +59,7 @@ namespace RuniEngine.Resource.Objects
         public static GameObject? SearchGameObject(string name, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
-            
+
             GameObject? result = null;
             ResourceManager.ResourceElementLoop<ObjectLoader>(x =>
             {
@@ -97,12 +97,12 @@ namespace RuniEngine.Resource.Objects
             Dictionary<string, Dictionary<string, Object?>> tempUnityObjects = new();
             Dictionary<string, Dictionary<string, GameObject?>> tempGameObjects = new();
             List<AssetBundle> loadedAssetBundles = new List<AssetBundle>();
-            
+
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
                 string path = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-                
+
                 if (!File.Exists(path))
                 {
                     Report(1);

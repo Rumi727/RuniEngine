@@ -89,7 +89,7 @@ namespace RuniEngine
             this.patch = patch;
         }
 
-        
+
 
         public static bool operator <=(Version lhs, Version rhs)
         {
@@ -166,7 +166,7 @@ namespace RuniEngine
                 hash *= 582934 + major.GetHashCode();
                 hash *= 3829571 + minor.GetHashCode();
                 hash *= 41815 + patch.GetHashCode();
-                
+
                 return hash;
             }
         }
