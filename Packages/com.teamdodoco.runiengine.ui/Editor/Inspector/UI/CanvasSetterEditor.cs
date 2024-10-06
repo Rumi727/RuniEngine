@@ -29,7 +29,7 @@ namespace RuniEngine.Editor
             bool worldSpace = (target.canvas != null ? target.canvas.renderMode : RenderMode.ScreenSpaceOverlay) == RenderMode.WorldSpace;
 
             EditorGUI.BeginChangeCheck();
-            
+
             {
                 UseProperty("_disableScreenArea", TryGetText("inspector.canvas_setter.disableScreenArea"));
 
@@ -47,7 +47,7 @@ namespace RuniEngine.Editor
 
                     {
                         SerializedProperty? tps = UseProperty("_areaOffset", TryGetText("inspector.canvas_setter.areaOffset"));
-                        
+
                         FadeGroup(ref overlaySpaceAnim, overlaySpace || spaceMixed, () =>
                         {
                             Space();
