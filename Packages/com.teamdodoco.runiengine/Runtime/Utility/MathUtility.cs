@@ -938,6 +938,7 @@ namespace RuniEngine
         public static BigDecimal Exp(this BigInteger value) => BigDecimal.Exp(value);
         #endregion
 
+        /// <summary>그냥 신기해서 넣었다... 겁나 느리다 그냥 1f / Sqrt(number) 써라</summary>
         public static float FastInverseSqrt(this float number)
         {
             const float threehalfs = 1.5F;
@@ -953,7 +954,7 @@ namespace RuniEngine
             y = BitConverter.ToSingle(BitConverter.GetBytes(i), 0);
 
             // 1st iteration
-            y *= (threehalfs - (x2 * y * y));
+            y *= threehalfs - (x2 * y * y);
 
             // 2nd iteration, this can be removed
             // y = y * (threehalfs - (x2 * y * y));
