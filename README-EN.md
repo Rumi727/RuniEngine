@@ -76,29 +76,29 @@ If an error occurs in a specific version, please let me know.
       - ``com.cysharp.unitask``
       - ``com.unity.uiextensions``
 3. Install from the git URL in the package manager (*marked packages are required packages and must be installed in order)
-    - \* Runi Engine Internal API Bridge : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.internal-api-bridge`
+    - \* Runi Engine Internal API Bridge : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.internal-api-bridge`
       - This is a package that allows easy access to some of Unity’s internal APIs.
-    - \* Runi Engine :  `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine`
+    - \* Runi Engine :  `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine`
       - Just for Runi Enigne, for Runi Engine
-    - Runi Engine Object Pooling : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.pooling`
+    - Runi Engine Object Pooling : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.pooling`
       - This is an API that makes it easy to load prefabs through object pooling and allows you to load all Unity objects, including game objects, from resource packs.
-    - Runi Engine Sounds : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.sounds`
+    - Runi Engine Sounds : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.sounds`
       - There is an API that allows you to easily load local audio files, and allows you to import audio from resource packs.
       - Dedicated players exist
       - You need to install the `Runi Engine Object Pooling` package first!
-    - Runi Engine NBS : You need to install the `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.nbs`
+    - Runi Engine NBS : You need to install the `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.nbs`
       - There is an API that allows you to easily load music created in the Minecraft Note Block Studio program, and allows you to load NBS files from resource packs.
       - Dedicated players exist
       - `Runi Engine Sounds` package first!
-    - Runi Engine Images : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.images`
+    - Runi Engine Images : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.images`
       - There is an API that makes it easy to load local image files and allows you to load images from resource packs.
       - A dedicated renderer exists
       - Before installation, please also install the following git URL package!
         - Asynchronous Image Loader (Forked by TEAM Dodoco) : `https://github.com/Rumi727/UnityAsyncImageLoader.git`
-    - Runi Engine Inputs : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.inputs`
+    - Runi Engine Inputs : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.inputs`
       - Development has not been properly completed yet
       - Makes input processing easier
-    - Runi Engine UI : `https://github.com/Rumi727/RuniEngine?path=Packages/com.teamdodoco.runiengine.ui`
+    - Runi Engine UI : `https://github.com/Rumi727/RuniEngine.git?path=Packages/com.teamdodoco.runiengine.ui`
       - Development has not been properly completed yet
       - There are convenient APIs and components related to UGUI.
       - Responsible for all UI of Runi Engine
