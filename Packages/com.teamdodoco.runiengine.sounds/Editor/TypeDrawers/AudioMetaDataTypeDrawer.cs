@@ -150,14 +150,13 @@ namespace RuniEngine.Editor
         {
             if (property.canRead && property.GetValue() == null)
                 return EditorGUIUtility.singleLineHeight;
-            
-            return base.InternalGetPropertyHeight() + 2 + (GetYSize(EditorStyles.numberField) *
+
+            return base.InternalGetPropertyHeight() + 2 +
 #if ENABLE_RUNI_ENGINE_RHYTHMS
-                    2 + 3 + (childSerializedType?.GetProperty(nameof(AudioMetaData.bpms))?.GetPropertyHeight() ?? 0) + 3
+                    (GetYSize(EditorStyles.numberField) * 2 + 3 + (childSerializedType?.GetProperty(nameof(AudioMetaData.bpms))?.GetPropertyHeight() ?? 0) + 3);
 #else
-                    2 + 3
+                    GetYSize(EditorStyles.numberField);
 #endif
-                );
         }
 
         public override object? CreateInstance() => new AudioMetaData("", 1, 1, 0, 0, null, 0, null);
