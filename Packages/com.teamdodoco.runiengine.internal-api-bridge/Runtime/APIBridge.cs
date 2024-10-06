@@ -19,7 +19,7 @@ namespace RuniEngine.APIBridge
     class APIBridge
     {
         public static Type type { get; } = typeof(APIBridge);
-        
+
         public static APIBridge CreateInstance() => new APIBridge(Activator.CreateInstance(type));
         public static APIBridge GetInstance(object instance) => new APIBridge(instance);
 
