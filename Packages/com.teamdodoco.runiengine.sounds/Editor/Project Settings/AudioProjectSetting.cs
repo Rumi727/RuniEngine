@@ -6,9 +6,6 @@ using System.Linq;
 using UnityEditor;
 using static RuniEngine.Editor.EditorTool;
 
-#if ENABLE_RUNI_ENGINE_RHYTHMS
-#endif
-
 namespace RuniEngine.Editor.ProjectSettings
 {
     public sealed class AudioProjectSetting : SoundProjectSetting
