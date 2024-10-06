@@ -21,7 +21,6 @@ namespace RuniEngine.Editor
         protected abstract string folderName { get; }
         protected abstract ExtensionFilter extFilter { get; }
 
-        Rect lastPosition;
         protected override void InternalOnGUI(Rect position, GUIContent? label)
         {
             {
@@ -31,28 +30,23 @@ namespace RuniEngine.Editor
                 if (isDrawed)
                     position.width -= 42;
             }
-
+            
             SetChild();
 
-            if (Event.current.type == EventType.Repaint)
-                lastPosition = position;
+            Line1GUI(position);
 
-            GUILayout.BeginArea(lastPosition);
+            position.y += GetYSize(EditorStyles.textField) + 3;
+            position.height -= GetYSize(EditorStyles.textField) + 3;
 
-            EditorGUILayout.BeginHorizontal();
-            Line1GUI();
-            EditorGUILayout.EndHorizontal();
+            Line2GUI(position);
 
-            EditorGUILayout.BeginHorizontal();
-            Line2GUI();
-            EditorGUILayout.EndHorizontal();
+            position.y += GetYSize(EditorStyles.numberField) + 2;
+            position.height -= GetYSize(EditorStyles.numberField) + 2;
 
-            LineOtherGUI();
-
-            GUILayout.EndArea();
+            LineOtherGUI(position);
         }
 
-        protected virtual void Line1GUI()
+        protected virtual void Line1GUI(Rect position)
         {
             string nameSpace = (string)(property.metaData.GetValueOrDefault("nameSpace", null) ?? string.Empty);
 
@@ -63,8 +57,15 @@ namespace RuniEngine.Editor
             string label = TryGetText("gui.path");
 
             BeginLabelWidth(label);
-            pathProperty.DrawGUILayout(label);
+
+            position.width -= 103;
+            position.height = pathProperty.GetPropertyHeight();
+
+            pathProperty.DrawGUI(position, label);
+
             EndLabelWidth();
+
+            position.x += position.width + 3;
 
             string audioPath = (string?)pathProperty.GetValue() ?? string.Empty;
 
@@ -83,14 +84,16 @@ namespace RuniEngine.Editor
 
                 EditorGUI.BeginChangeCheck();
 
+                position.width = 100;
+
                 DefaultAsset audioClip;
                 if (audioPath != "")
                 {
                     audioClip = AssetDatabase.LoadAssetAtPath<DefaultAsset>(assetPathAndName + Path.GetExtension(outPath));
-                    audioClip = (DefaultAsset)EditorGUILayout.ObjectField(audioClip, typeof(DefaultAsset), false, GUILayout.Width(100));
+                    audioClip = (DefaultAsset)EditorGUI.ObjectField(position, audioClip, typeof(DefaultAsset), false);
                 }
                 else
-                    audioClip = (DefaultAsset)EditorGUILayout.ObjectField(null, typeof(DefaultAsset), false, GUILayout.Width(100));
+                    audioClip = (DefaultAsset)EditorGUI.ObjectField(position, null, typeof(DefaultAsset), false);
 
                 if (EditorGUI.EndChangeCheck())
                 {
@@ -109,39 +112,50 @@ namespace RuniEngine.Editor
             EditorGUI.showMixedValue = false;
         }
 
-        protected virtual void Line2GUI()
+        protected virtual void Line2GUI(Rect position)
         {
             if (childSerializedType == null)
                 return;
+
+            position.width *= 0.5f;
+            position.width -= 1.5f;
 
             {
                 string label = TryGetText("gui.pitch");
                 BeginLabelWidth(label);
 
-                childSerializedType?.GetProperty(nameof(SoundMetaDataBase.pitch))?.DrawGUILayout(label);
+                SerializedTypeProperty? property = childSerializedType.GetProperty(nameof(SoundMetaDataBase.pitch));
+
+                position.height = property?.GetPropertyHeight() ?? 0;
+                property?.DrawGUI(position, label);
+
                 EndLabelWidth();
             }
 
-            Space(5);
+            position.x += position.width + 3;
 
             {
                 string label = TryGetText("gui.tempo");
                 BeginLabelWidth(label);
 
-                childSerializedType?.GetProperty(nameof(SoundMetaDataBase.tempo))?.DrawGUILayout(label);
+                SerializedTypeProperty? property = childSerializedType.GetProperty(nameof(SoundMetaDataBase.tempo));
+
+                position.height = property?.GetPropertyHeight() ?? 0;
+                property?.DrawGUI(position, label);
+
                 EndLabelWidth();
             }
         }
 
         /// <summary>이 메소드는 내부 호출 시에 <see cref="EditorGUILayout.BeginHorizontal(GUILayoutOption[])"/> 메소드가 호출되지 않습니다</summary>
-        protected virtual void LineOtherGUI() { }
+        protected virtual void LineOtherGUI(Rect position) { }
 
         protected override float InternalGetPropertyHeight()
         {
             if (property.canRead && property.GetValue() == null)
                 return EditorGUIUtility.singleLineHeight;
 
-            return EditorGUIUtility.singleLineHeight * 2;
+            return GetYSize(EditorStyles.textField) + 3 + GetYSize(EditorStyles.numberField);
         }
     }
 }

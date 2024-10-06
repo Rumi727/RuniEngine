@@ -19,11 +19,16 @@ namespace RuniEngine.Editor
         protected override string folderName => AudioLoader.name;
         protected override ExtensionFilter extFilter => ExtensionFilter.musicFileFilter;
 
-        protected override void Line2GUI()
+        protected override void Line2GUI(Rect position)
         {
-            base.Line2GUI();
+            position.width -= 143;
 
-            Space(5);
+            base.Line2GUI(position);
+
+            position.x += position.width + 3;
+            position.width = 140;
+
+            position.height = GetYSize(EditorStyles.miniPullDown);
 
             //로드 타입
             string jsonPath = realAudioPath + ".json";
@@ -34,14 +39,14 @@ namespace RuniEngine.Editor
                 loadType = fileMetaData.Value.loadType;
 
             EditorGUI.BeginChangeCheck();
-
+            
             {
                 EditorGUI.showMixedValue = childSerializedType?.GetProperty(nameof(SoundMetaDataBase.path))?.isMixed ?? false;
 
                 string label = TryGetText("gui.load");
                 BeginLabelWidth(label);
 
-                loadType = (RawAudioLoadType)EditorGUILayout.EnumPopup(label, loadType, GUILayout.Width(140));
+                loadType = (RawAudioLoadType)EditorGUI.EnumPopup(position, label, loadType);
                 EndLabelWidth();
 
                 EditorGUI.showMixedValue = false;
@@ -67,45 +72,75 @@ namespace RuniEngine.Editor
             }
         }
 
-        protected override void LineOtherGUI()
+        protected override void LineOtherGUI(Rect position)
         {
-            EditorGUILayout.BeginHorizontal();
-
             if (childSerializedType == null)
                 return;
+
+            float orgX = position.x;
+            float orgWidth = position.width;
+
+            position.width *= 0.5f;
+            position.width -= 1.5f;
 
             {
                 string label = TryGetText("project_setting.audio.loop_start_index");
                 BeginLabelWidth(label);
 
-                childSerializedType.GetProperty(nameof(AudioMetaData.loopStartIndex))?.DrawGUILayout(label);
+                SerializedTypeProperty? property = childSerializedType.GetProperty(nameof(AudioMetaData.loopStartIndex));
+
+                position.height = property?.GetPropertyHeight() ?? 0;
+                property?.DrawGUI(position, label);
+
                 EndLabelWidth();
             }
+
+            position.x += position.width + 3;
 
             {
                 string label = TryGetText("project_setting.audio.loop_offset_index");
                 BeginLabelWidth(label);
 
-                childSerializedType.GetProperty(nameof(AudioMetaData.loopOffsetIndex))?.DrawGUILayout(label);
+                SerializedTypeProperty? property = childSerializedType.GetProperty(nameof(AudioMetaData.loopOffsetIndex));
+
+                position.height = property?.GetPropertyHeight() ?? 0;
+                property?.DrawGUI(position, label);
+
                 EndLabelWidth();
             }
 
-            EditorGUILayout.EndHorizontal();
+            position.x = orgX;
+            position.width = orgWidth;
+
+            position.y += position.height + 3;
 
 #if ENABLE_RUNI_ENGINE_RHYTHMS
-            {
-                string label = TryGetText("project_setting.audio.rhythm_offset_index");
-                BeginLabelWidth(label);
-
-                childSerializedType.GetProperty(nameof(AudioMetaData.rhythmOffsetIndex))?.DrawGUILayout(label);
-                EndLabelWidth();
-            }
-
             {
                 string label = TryGetText("inspector.rhythmable.bpm");
                 BeginLabelWidth(label);
 
-                childSerializedType.GetProperty(nameof(AudioMetaData.bpms))?.DrawGUILayout(label);
+                SerializedTypeProperty? property = childSerializedType.GetProperty(nameof(AudioMetaData.bpms));
+
+                position.height = property?.GetPropertyHeight() ?? 0;
+                property?.DrawGUI(position, label);
+
+                EndLabelWidth();
+            }
+
+            position.x = orgX;
+            position.width = orgWidth;
+
+            position.y += position.height + 3;
+
+            {
+                string label = TryGetText("project_setting.audio.rhythm_offset_index");
+                BeginLabelWidth(label);
+
+                SerializedTypeProperty? property = childSerializedType.GetProperty(nameof(AudioMetaData.rhythmOffsetIndex));
+
+                position.height = property?.GetPropertyHeight() ?? 0;
+                property?.DrawGUI(position, label);
+
                 EndLabelWidth();
             }
 #endif
@@ -115,12 +150,12 @@ namespace RuniEngine.Editor
         {
             if (property.canRead && property.GetValue() == null)
                 return EditorGUIUtility.singleLineHeight;
-
-            return base.InternalGetPropertyHeight() + (EditorGUIUtility.singleLineHeight *
+            
+            return base.InternalGetPropertyHeight() + 2 + (GetYSize(EditorStyles.numberField) *
 #if ENABLE_RUNI_ENGINE_RHYTHMS
-                    3 + (childSerializedType?.GetProperty(nameof(AudioMetaData.bpms))?.GetPropertyHeight() ?? 0)
+                    2 + 3 + (childSerializedType?.GetProperty(nameof(AudioMetaData.bpms))?.GetPropertyHeight() ?? 0) + 3
 #else
-                    2
+                    2 + 3
 #endif
                 );
         }
