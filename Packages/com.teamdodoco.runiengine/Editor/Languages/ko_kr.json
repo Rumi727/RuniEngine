@@ -126,6 +126,9 @@
     "gui.root": "루트",
     "gui.load": "로드",
     "gui.element": "요소",
+    "gui.sound": "소리",
+    "gui.ease": "보간",
+    "gui.curve": "커브",
 
     "android_build.warning": "안드로이드를 지원하도록 스트리밍 에셋을 압축한 다음 빌드하고 빌드가 완료되면 변경 사항을 되돌립니다.\n프로젝트 규모에 따라 속도가 느려질 수 있으니 주의하시기 바랍니다.\n\n이 작업은 도중에 실행 취소할 수 없습니다. (작업 도중 에디터가 정지됩니다.)\n\n이 작업은 불안정합니다!\n도중에 오류가 발생하면 변경 내용을 취소할 수 없습니다.\n작업을 취소할 수 있도록 git과 같은 시스템을 설정하는 것이 좋습니다.",
     "android_build.yes": "그래서 뭐! 빨리 빌드나 해!",
@@ -307,6 +310,12 @@
     "project_setting.splash.loading_scene": "로드 씬",
     "project_setting.splash.start_scene_enable": "시작 씬 선택 기능 활성화",
     "project_setting.splash.start_scene_index": "시작 씬 인덱스",
+
+    "project_setting.csproj.warning": "SDK 프로젝트 스타일은 Visual Studio Code 에디터를 위해 작성된 SdkStyleProjectGeneration 클래스를 강제로 활성화시키며, 이를 위해 Harmony 2.2.2를 사용하여 내부 코드를 후킹합니다.\n\n변경 사항을 적용하려면 환경 설정에서 프로젝트 파일을 다시 생성하세요.",
+    "project_setting.csproj.sdk": "SDK 스타일 활성화",
+    "project_setting.csproj.nullable": "Nullable 활성화",
+    "project_setting.csproj.nullable.info": "csc.rsp 파일에 -nullable enable가 적혀 있는 어셈블리 이름이랑 같은 이름의 프로젝트 파일의 Nullable를 활성화시킵니다.",
+    "project_setting.csproj.log": "로그 활성화",
 
     "control_panel.refresh_delay": "새로고침 딜레이",
     "control_panel.generic": "일반",

@@ -126,6 +126,9 @@
     "gui.root": "ルート",
     "gui.load": "ロード",
     "gui.element": "要素",
+    "gui.sound": "音",
+    "gui.ease": "補間",
+    "gui.curve": "曲線",
 
     "android_build.warning": "Androidをサポートするようにストリーミングアセットを圧縮してビルドし、ビルドが完了したら変更を元に戻します。\nプロジェクトの規模によっては遅くなる場合がありますのでご注意ください。\n\nこの操作は途中で元に戻すことはできません。 （作業中はエディタが停止します。）\n\nこれは不安定です！\n途中でエラーが発生した場合、変更を取り消すことはできません。\nジョブをキャンセルできるように、gitなどのシステムを設定することをお勧めします。",
     "android_build.yes": "だから何！ 早くビルドしてください！",
@@ -307,6 +310,12 @@
     "project_setting.splash.loading_scene": "ロードシーン",
     "project_setting.splash.start_scene_enable": "スタートシーン選択機能を有効にする",
     "project_setting.splash.start_scene_index": "開始シーンインデックス",
+
+    "project_setting.csproj.warning": "SDKプロジェクトスタイルは、Visual Studio Code Editor用に作成されたSdkStyleProjectGenerationクラスを強制的に有効にし、そのためにHarmony 2.2.2を使用して内部コードをフックします。\n\n変更を適用するには、環境設定でプロジェクトファイルを再生成します。",
+    "project_setting.csproj.sdk": "SDKスタイルの有効化",
+    "project_setting.csproj.nullable": "Nullableを有効にする",
+    "project_setting.csproj.nullable.info": "csc.rspファイルに-nullable enableが書かれているアセンブリ名と同じ名前のプロジェクトファイルのNullableを有効にします。",
+    "project_setting.csproj.log": "ログの有効化",
 
     "control_panel.refresh_delay": "リフレッシュディレイ",
     "control_panel.generic": "ジェネリック",

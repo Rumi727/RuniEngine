@@ -126,6 +126,9 @@
     "gui.root": "Root",
     "gui.load": "Load",
     "gui.element": "Element",
+    "gui.sound": "Sound",
+    "gui.ease": "Ease",
+    "gui.curve": "Curve",
 
     "android_build.warning": "Compress the streaming assets to support Android, then build, and revert changes when the build is finished.\nPlease note that this may be slow depending on the size of the project.\n\nThis operation cannot be undone midway (the editor freezes during operation)\n\nThis operation is unstable!\nChanges cannot be undone if an error is made along the way.\nIt is recommended to set up a git-like system to make the operation undoable.",
     "android_build.yes": "So what!, build it fast!",
@@ -307,6 +310,12 @@
     "project_setting.splash.loading_scene": "Loading Scene",
     "project_setting.splash.start_scene_enable": "Activate startup scene selection feature",
     "project_setting.splash.start_scene_index": "Start scene index",
+
+    "project_setting.csproj.warning": "The SDK project style forces the activation of the SdkStyleProjectGeneration class, which is written for the Visual Studio Code editor, and hooks into its internal code using Harmony 2.2.2.\n\nTo apply the changes, regenerate the project file in your preferences.",
+    "project_setting.csproj.sdk": "Enable SDK Style",
+    "project_setting.csproj.nullable": "Enable Nullable",
+    "project_setting.csproj.nullable.info": "Enables Nullable in the project file with the same name as the assembly name that has -nullable enable written in the csc.rsp file.",
+    "project_setting.csproj.log": "Enable Log",
 
     "control_panel.refresh_delay": "Refresh Delay",
     "control_panel.generic": "Generic",
