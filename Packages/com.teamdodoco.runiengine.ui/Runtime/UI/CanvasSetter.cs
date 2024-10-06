@@ -116,7 +116,7 @@ namespace RuniEngine.UI
         /// </summary>
         public bool alwaysVisible { get => _alwaysVisible; set => _alwaysVisible = value; }
         [Tooltip("inspector.canvas_setter.alwaysVisible.tooltip"), SerializeField] bool _alwaysVisible = false;
-       
+
 
 
 
@@ -205,7 +205,7 @@ namespace RuniEngine.UI
             {
                 areaObject.offsetMin = ScreenManager.screenArea.min * globalScreenAreaMultiple / canvas.scaleFactor;
                 areaObject.offsetMax = ScreenManager.screenArea.max * globalScreenAreaMultiple / canvas.scaleFactor;
-                
+
                 areaObject.position = new Vector3(areaObject.position.x, areaObject.position.y, 0);
                 areaObject.position += ScreenManager.screenPosition.Multiply(globalScreenPositionMultiple) / canvas.scaleFactor;
             }

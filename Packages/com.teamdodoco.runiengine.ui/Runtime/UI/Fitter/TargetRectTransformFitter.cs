@@ -56,7 +56,7 @@ namespace RuniEngine.UI.Fitter
 
             rectTransform.rotation = Quaternion.identity;
             rectTransform.localScale = Vector3.one;
-            
+
             rectTransform.anchorMin = new Vector2(0f, 0f);
             rectTransform.anchorMax = new Vector2(0f, 0f);
 

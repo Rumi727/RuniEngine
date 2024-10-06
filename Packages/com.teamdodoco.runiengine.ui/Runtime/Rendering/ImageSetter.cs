@@ -14,7 +14,7 @@ namespace RuniEngine.Rendering
         {
             if (image == null)
                 return;
-            
+
             if (ThreadTask.isMainThread)
                 image.sprite = GetSprite();
             else
