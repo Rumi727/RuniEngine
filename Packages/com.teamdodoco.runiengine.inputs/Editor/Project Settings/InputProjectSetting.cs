@@ -122,7 +122,7 @@ namespace RuniEngine.Editor.ProjectSettings
                         {
                             treeView.keyList = list.Keys.ToArray();
                             treeView.Reload();
-                            
+
                             TreeViewSelectionChanged(treeView.GetSelection());
                         }
 
@@ -220,7 +220,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 List<KeyCode> keyCodes = keyCodesList[index].ToList();
                 float x = rect.x;
                 float width = rect.width;
-                
+
                 rect.width = ((width - 40 - ((keyCodes.Count - 1) * 16)) / (keyCodes.Count)).Clamp(0, 100);
                 rect.y += 2;
 
@@ -235,14 +235,14 @@ namespace RuniEngine.Editor.ProjectSettings
 
                             while (i >= keyCodesDropdownsList[index].Count)
                                 keyCodesDropdownsList[index].Add(new RuniAdvancedDropdown() { minimumSize = new Vector2(150, 0), maximumSize = new Vector2(0, 350) });
-                            
+
                             KeyCode keyCode = keyCodes[i];
                             keyCodes[i] = keyCodesDropdownsList[index][i].Draw(rect, keyCode);
 
                             if (keyCode != keyCodes[i])
                                 isChanged |= true;
                         }
-                        
+
                         rect.x += rect.width + 2;
 
                         if (i < keyCodes.Count - 1)
@@ -304,7 +304,7 @@ namespace RuniEngine.Editor.ProjectSettings
             reorderableList.list = keyCodesList;
             reorderableList.DoLayoutList();
 
-            
+
 
             EditorGUILayout.EndVertical();
         }
