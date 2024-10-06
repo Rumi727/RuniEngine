@@ -25,7 +25,8 @@ namespace RuniEngine.NBS
                 Debug.ForceLogError(LanguageLoader.TryGetText("nbs_manager.warning.old_version").Replace("{version}", 0.ToString()));
                 return null;
             }
-            /*NBS Version*/ byte version = binaryReader.ReadByte();
+            /*NBS Version*/
+            byte version = binaryReader.ReadByte();
             if (version < 4)
             {
                 Debug.ForceLogError(LanguageLoader.TryGetText("nbs_manager.warning.old_version").Replace("{version}", version.ToString()));
@@ -35,8 +36,10 @@ namespace RuniEngine.NBS
                 Debug.ForceLogWarning(LanguageLoader.TryGetText("nbs_manager.warning.new_version").Replace("{version}", version.ToString()));
             /*Vanilla instrument count*/
             byte vanillaInstrumentCount = binaryReader.ReadByte();
-            /*Song Length*/ short songLength = binaryReader.ReadInt16();
-            /*Layer count*/ short layerCount = binaryReader.ReadInt16();
+            /*Song Length*/
+            short songLength = binaryReader.ReadInt16();
+            /*Layer count*/
+            short layerCount = binaryReader.ReadInt16();
             for (int i = 0; i < 4; i++)
             {
                 int length = 0;
@@ -45,15 +48,24 @@ namespace RuniEngine.NBS
 
                 binaryReader.ReadChars(length);
             }
-            /*Song tempo*/ short tickTempo = binaryReader.ReadInt16();
-            /*Auto-saving*/ binaryReader.ReadByte();
-            /*Auto-saving duration*/ binaryReader.ReadByte();
-            /*Time signature*/ byte timeSignature = binaryReader.ReadByte();
-            /*Minutes spent*/ binaryReader.ReadInt32();
-            /*Left-clicks*/ binaryReader.ReadInt32();
-            /*Right-clicks*/ binaryReader.ReadInt32();
-            /*Note blocks added*/ binaryReader.ReadInt32();
-            /*Note blocks removed*/ binaryReader.ReadInt32();
+            /*Song tempo*/
+            short tickTempo = binaryReader.ReadInt16();
+            /*Auto-saving*/
+            binaryReader.ReadByte();
+            /*Auto-saving duration*/
+            binaryReader.ReadByte();
+            /*Time signature*/
+            byte timeSignature = binaryReader.ReadByte();
+            /*Minutes spent*/
+            binaryReader.ReadInt32();
+            /*Left-clicks*/
+            binaryReader.ReadInt32();
+            /*Right-clicks*/
+            binaryReader.ReadInt32();
+            /*Note blocks added*/
+            binaryReader.ReadInt32();
+            /*Note blocks removed*/
+            binaryReader.ReadInt32();
             {
                 int length = 0;
                 for (int i = 0; i < 4; i++)
@@ -61,9 +73,12 @@ namespace RuniEngine.NBS
 
                 binaryReader.ReadChars(length);
             }
-            /*Loop on/off*/ binaryReader.ReadByte(); //if (binaryReader.ReadByte() == 1) nbsFile.loop = true; else nbsFile.loop = false;
-            /*Max loop count*/ binaryReader.ReadByte();
-            /*Loop start tick*/ short loopStartTick = binaryReader.ReadInt16();
+            /*Loop on/off*/
+            binaryReader.ReadByte(); //if (binaryReader.ReadByte() == 1) nbsFile.loop = true; else nbsFile.loop = false;
+            /*Max loop count*/
+            binaryReader.ReadByte();
+            /*Loop start tick*/
+            short loopStartTick = binaryReader.ReadInt16();
 
             /*Jumps to the next tick*/
             short tick;
@@ -120,7 +135,8 @@ namespace RuniEngine.NBS
                 nbsLayers[i] = nbsLayer;
             }
 
-            /*Custom instruments*/; NBSCustomInstrument[] customInstruments = new NBSCustomInstrument[binaryReader.ReadByte()];
+            /*Custom instruments*/;
+            NBSCustomInstrument[] customInstruments = new NBSCustomInstrument[binaryReader.ReadByte()];
             for (int i = 0; i < customInstruments.Length; i++)
             {
                 /*Instrument name*/
@@ -140,8 +156,10 @@ namespace RuniEngine.NBS
 
                     binaryReader.ReadChars(length);
                 }
-                /*Sound key*/ byte soundKey = binaryReader.ReadByte();
-                /*Press piano key*/ binaryReader.ReadByte();
+                /*Sound key*/
+                byte soundKey = binaryReader.ReadByte();
+                /*Press piano key*/
+                binaryReader.ReadByte();
 
                 customInstruments[i] = new NBSCustomInstrument(instrumentName, soundKey);
             }

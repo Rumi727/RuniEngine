@@ -30,7 +30,7 @@ namespace RuniEngine.Sounds
             {
                 if (nbsFile == null)
                     return 0;
-                
+
                 return _internalTick * 0.05d / (nbsFile.tickTempo * 0.0005);
             }
             set
@@ -70,7 +70,7 @@ namespace RuniEngine.Sounds
                 {
                     _internalTick = value;
                     _index = nbsFile.nbsNotes.Select((d, i) => new { d.delayTick, index = i }).MinBy(x => (x.delayTick - value).Abs()).index;
-                    
+
                     TimeChangedEventInvoke();
                 }
             }
@@ -91,7 +91,7 @@ namespace RuniEngine.Sounds
                 {
                     _index = value;
                     _internalTick = nbsFile.nbsNotes[value].delayTick;
-                    
+
                     TimeChangedEventInvoke();
                 }
             }
@@ -122,7 +122,7 @@ namespace RuniEngine.Sounds
 
                 return;
             }
-            
+
             if (isPlaying && !isPaused && realTempo != 0)
             {
                 _internalTick += Kernel.unscaledDeltaTimeDouble * (nbsFile.tickTempo * 0.01) * realTempo;
@@ -360,7 +360,7 @@ namespace RuniEngine.Sounds
                 volume *= this.volume;
                 pitch *= realPitch;
                 panStereo = panStereo.Lerp(this.panStereo, this.panStereo.Abs());
-                
+
                 AudioPlayer? audioPlayer;
                 if (spatial)
                     audioPlayer = AudioPlayer.PlayAudio(instrumentName, nameSpace, volume, false, pitch, pitch, panStereo, transform, Vector3.zero, minDistance, maxDistance);

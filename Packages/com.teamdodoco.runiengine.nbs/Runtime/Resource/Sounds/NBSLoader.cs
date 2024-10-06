@@ -1,13 +1,13 @@
 using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
-using System.IO;
 using RuniEngine.Jsons;
 using RuniEngine.NBS;
-using System.Linq;
 using System;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -31,7 +31,7 @@ namespace RuniEngine.Resource.Sounds
         string IResourceElement.name => name;
 
 
-        
+
         public static NBSData? SearchNBSData(string path, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
@@ -150,7 +150,7 @@ namespace RuniEngine.Resource.Sounds
                         NBSMetaData? nbsMetaData = nbsData.Value.nbses[i];
                         if (!pathNBSes.TryGetValue(nbsMetaData.path, out NBSFile nbsFile))
                             continue;
-                        
+
 #if ENABLE_RUNI_ENGINE_RHYTHMS
                         nbsMetaData = new NBSMetaData(nbsMetaData.path, nbsMetaData.pitch, nbsMetaData.tempo, nbsMetaData.bpmMultiplier, nbsMetaData.rhythmOffsetTick, nbsFile);
 #else
