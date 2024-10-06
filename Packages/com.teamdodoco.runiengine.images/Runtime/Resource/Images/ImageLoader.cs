@@ -1,13 +1,12 @@
 using Cysharp.Threading.Tasks;
-using RuniEngine.Threading;
-using System.IO;
-using UnityEngine.Networking;
-using UnityEngine;
 using RuniEngine.Jsons;
-using System.Collections.Generic;
-using System.Linq;
+using RuniEngine.Threading;
 using System;
-
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.Networking;
 using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource.Images
@@ -236,13 +235,13 @@ namespace RuniEngine.Resource.Images
                 loaderSettings.logException = true;
 
                 texture.hideFlags = HideFlags.DontSave;
-                
+
                 if (!await AsyncImageLoader.LoadImageAsync(texture, textureBytes, loaderSettings) || !Kernel.isPlaying)
                 {
                     Object.DestroyImmediate(texture);
                     return null;
                 }
-                
+
                 ResourceManager.RegisterManagedResource(texture);
 
                 texture.hideFlags = hideFlags;
@@ -292,13 +291,13 @@ namespace RuniEngine.Resource.Images
 
             string rootPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, ImageLoader.name);
             string path = Path.Combine(rootPath, type, name);
-            
+
             ResourceManager.FileExtensionExists(path, out path, ExtensionFilter.pictureFileFilter);
             TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData>(Path.Combine(rootPath, type) + ".json");
             Texture2D? texture = GetTexture(path, textureMetaData, textureFormat);
             if (texture == null)
                 return null;
-            
+
             Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(path + ".json");
             if (spriteMetaDatas == null)
             {
@@ -612,7 +611,7 @@ namespace RuniEngine.Resource.Images
         {
             if (resourcePack == null)
                 return;
-            
+
             await UniTask.SwitchToThreadPool();
 
             foreach (Texture2D? texture in packTextures.SelectMany(item => item.Value)

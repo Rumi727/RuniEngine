@@ -120,7 +120,7 @@ namespace RuniEngine.Rendering
             Sprite? sprite = GetSprite(type, spriteName, index, nameSpace, spriteTag);
             if (sprite == null)
                 return defaultSprite;
-            
+
             return sprite;
         }
 
