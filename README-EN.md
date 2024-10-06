@@ -8,7 +8,7 @@ For now, please use [SC KRM 1.0](https://github.com/SimsimhanChobo/SC-KRM-1.0/)
 ## Introduction
 
 [Nullable reference types]: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-reference-types
-[Visual Studio]: https://visualstudio.microsoft.com/ko/
+[Visual Studio]: https://visualstudio.microsoft.com
 
 Unity-only universal kernel system that **everyone** will use\
 UI inspired by [osu!lazer](https://github.com/ppy/osu)
