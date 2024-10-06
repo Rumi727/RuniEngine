@@ -95,7 +95,7 @@ namespace RuniEngine.Inputs
                 keyCodesList = UserData.controlList[key];
             else if (ProjectData.controlList.ContainsKey(key))
                 keyCodesList = ProjectData.controlList[key];
-            
+
             if (keyCodesList == null)
                 return false;
 
