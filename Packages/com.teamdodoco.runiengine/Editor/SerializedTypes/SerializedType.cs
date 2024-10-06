@@ -101,7 +101,7 @@ namespace RuniEngine.Editor.SerializedTypes
 
 
 
-        public float GetPropertyHeight() => (properties.Where(x => (isStatic && x.isStatic) || (!isStatic && !x.isStatic)).Sum(x => x.typeDrawer.GetPropertyHeight() + 2) - 2).Clamp(0);
+        public float GetPropertyHeight() => (properties.Where(x => (isStatic && x.isStatic) || (!isStatic && !x.isStatic)).Sum(x => x.typeDrawer.GetPropertyHeight() + 3) - 3).Clamp(0);
 
         public void DrawGUILayout()
         {
@@ -120,7 +120,7 @@ namespace RuniEngine.Editor.SerializedTypes
                     position.height = property.GetPropertyHeight();
 
                     property.DrawGUI(position, property.name);
-                    position.y += position.height + 2;
+                    position.y += position.height + 3;
                 }
             }
         }
