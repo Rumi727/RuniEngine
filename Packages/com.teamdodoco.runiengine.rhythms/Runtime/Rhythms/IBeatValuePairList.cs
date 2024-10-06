@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace RuniEngine.Rhythms
 {
     public interface IBeatValuePairList : ITypeList

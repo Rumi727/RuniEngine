@@ -3,6 +3,7 @@ using System;
 
 namespace RuniEngine.Rhythms
 {
+    [Serializable]
     public struct BeatValuePair<T> : IBeatValuePair<T>
     {
         public BeatValuePair(double beat, T value)

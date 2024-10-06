@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace RuniEngine.Rhythms
 {
+    [Serializable]
     public struct BeatValuePairAni<T> : IBeatValuePairAni<T>
     {
         public BeatValuePairAni(double beat, T value, double length, EasingFunction.Ease easingFunction = EasingFunction.Ease.Linear)

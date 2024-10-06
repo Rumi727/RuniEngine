@@ -2,35 +2,37 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace RuniEngine.Rhythms
 {
+    [Serializable]
     public class BeatValuePairList<TValue, TPair> : ITypeList, IList<TPair>, IBeatValuePairList where TPair : IBeatValuePair<TValue>, new()
     {
         public BeatValuePairList(TValue defaultValue) => this.defaultValue = defaultValue;
-        public BeatValuePairList(TValue defaultValue, IEnumerable<TPair> collection) : this(defaultValue) => internalList = new List<TPair>(collection);
+        public BeatValuePairList(TValue defaultValue, IEnumerable<TPair> collection) : this(defaultValue) => serializableList = new List<TPair>(collection);
 
         public Type listType => typeof(TPair);
-        readonly List<TPair> internalList = new List<TPair>();
+        [SerializeField] readonly List<TPair> serializableList = new List<TPair>();
 
-        public int Count => internalList.Count;
+        public int Count => serializableList.Count;
 
         public TValue? defaultValue { get; set; } = default;
 
 
 
 
-        bool IList.IsFixedSize => ((IList)internalList).IsFixedSize;
-        bool IList.IsReadOnly => ((IList)internalList).IsReadOnly;
-        bool ICollection<TPair>.IsReadOnly => ((ICollection<TPair>)internalList).IsReadOnly;
-        bool ICollection.IsSynchronized => ((ICollection)internalList).IsSynchronized;
-        object? ICollection.SyncRoot => ((ICollection)internalList).SyncRoot;
+        bool IList.IsFixedSize => ((IList)serializableList).IsFixedSize;
+        bool IList.IsReadOnly => ((IList)serializableList).IsReadOnly;
+        bool ICollection<TPair>.IsReadOnly => ((ICollection<TPair>)serializableList).IsReadOnly;
+        bool ICollection.IsSynchronized => ((ICollection)serializableList).IsSynchronized;
+        object? ICollection.SyncRoot => ((ICollection)serializableList).SyncRoot;
 
 
 
         object IList.this[int index]
         {
-            get => internalList[index];
+            get => serializableList[index];
             set
             {
                 if (value == null)
@@ -46,7 +48,7 @@ namespace RuniEngine.Rhythms
                 }
             }
         }
-        public virtual TPair this[int index] { get => internalList[index]; set => internalList[index] = value; }
+        public virtual TPair this[int index] { get => serializableList[index]; set => serializableList[index] = value; }
 
 
 
@@ -196,9 +198,9 @@ namespace RuniEngine.Rhythms
         public virtual void Add(TPair item)
         {
             if (Count > 0)
-                internalList.Insert(GetValueIndexBinarySearch(item.beat) + 1, item);
+                serializableList.Insert(GetValueIndexBinarySearch(item.beat) + 1, item);
             else
-                internalList.Add(item);
+                serializableList.Add(item);
         }
 
         void IList.Insert(int index, object value)
@@ -215,7 +217,7 @@ namespace RuniEngine.Rhythms
                 throw;
             }
         }
-        public virtual void Insert(int index, TPair item) => internalList.Insert(index, item);
+        public virtual void Insert(int index, TPair item) => serializableList.Insert(index, item);
 
 
 
@@ -224,25 +226,25 @@ namespace RuniEngine.Rhythms
             if (IsCompatibleObject(item))
                 Remove((TPair)item);
         }
-        public virtual bool Remove(TPair item) => internalList.Remove(item);
+        public virtual bool Remove(TPair item) => serializableList.Remove(item);
 
-        public virtual void RemoveAt(int index) => internalList.RemoveAt(index);
+        public virtual void RemoveAt(int index) => serializableList.RemoveAt(index);
 
 
 
-        public virtual void Clear() => internalList.Clear();
+        public virtual void Clear() => serializableList.Clear();
 
 
 
         public virtual void Sort()
         {
             TPair[] list = this.OrderBy(x => x.beat).ToArray();
-            internalList.Clear();
+            serializableList.Clear();
 
             for (int i = 0; i < list.Length; i++)
             {
                 TPair item = list[i];
-                internalList.Add(item);
+                serializableList.Add(item);
             }
         }
 
@@ -275,7 +277,7 @@ namespace RuniEngine.Rhythms
 
 
         bool IList.Contains(object item) => IsCompatibleObject(item) && Contains((TPair)item);
-        public bool Contains(TPair item) => internalList.Contains(item);
+        public bool Contains(TPair item) => serializableList.Contains(item);
 
 
 
@@ -286,15 +288,15 @@ namespace RuniEngine.Rhythms
 
             return -1;
         }
-        public int IndexOf(TPair item) => internalList.IndexOf(item);
+        public int IndexOf(TPair item) => serializableList.IndexOf(item);
 
 
 
         void ICollection.CopyTo(Array array, int index) => CopyTo((TPair[])array, index);
-        public virtual void CopyTo(TPair[] array, int arrayIndex) => internalList.CopyTo(array, arrayIndex);
+        public virtual void CopyTo(TPair[] array, int arrayIndex) => serializableList.CopyTo(array, arrayIndex);
 
-        IEnumerator IEnumerable.GetEnumerator() => internalList.GetEnumerator();
-        public IEnumerator<TPair> GetEnumerator() => internalList.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => serializableList.GetEnumerator();
+        public IEnumerator<TPair> GetEnumerator() => serializableList.GetEnumerator();
 
 
 
