@@ -37,7 +37,7 @@ namespace RuniEngine.Editor
 
             {
                 EditorGUI.showMixedValue = childSerializedType?.GetProperty(nameof(SoundMetaDataBase.path))?.isMixed ?? false;
-                
+
                 string label = TryGetText("gui.load");
                 BeginLabelWidth(label);
 

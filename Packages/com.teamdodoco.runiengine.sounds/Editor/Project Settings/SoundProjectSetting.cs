@@ -1,14 +1,13 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using System.Linq;
+using RuniEngine.Jsons;
 using RuniEngine.Resource;
 using RuniEngine.Resource.Sounds;
-using System.IO;
-using RuniEngine.Jsons;
-using UnityEditor.IMGUI.Controls;
 using System;
-
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.IMGUI.Controls;
+using UnityEngine;
 using static RuniEngine.Editor.EditorTool;
 
 namespace RuniEngine.Editor.ProjectSettings
@@ -51,7 +50,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
             nameSpace = DrawNameSpace(nameSpaceDropdown, TryGetText("gui.namespace"), nameSpace);
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
-            
+
             string path = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, folderPath);
             if (!Directory.Exists(path))
             {
@@ -87,7 +86,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 EndLabelWidth();
                 return;
             }
-            
+
             if (treeView == null || lastJsonPath != jsonPath)
             {
                 if (treeView != null)
@@ -97,7 +96,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 treeView = new AudioProjectSettingTreeView(treeViewState);
 
                 treeView.selectionChanged += TreeViewSelectionChanged;
-                
+
                 if (soundDatas.Count > 0)
                 {
                     treeView.keyList = soundDatas.Keys.ToArray();

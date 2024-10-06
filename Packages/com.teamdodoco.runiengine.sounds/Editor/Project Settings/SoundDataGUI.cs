@@ -56,7 +56,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
                 EndLabelWidth();
             }
-            
+
             serializedType.GetProperty(soundsPropertyName)?.DrawGUI(rect, TryGetText("gui.sound"));
         }
 

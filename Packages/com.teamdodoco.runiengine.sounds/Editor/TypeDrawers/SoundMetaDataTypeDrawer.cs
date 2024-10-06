@@ -117,7 +117,7 @@ namespace RuniEngine.Editor
             {
                 string label = TryGetText("gui.pitch");
                 BeginLabelWidth(label);
-                
+
                 childSerializedType?.GetProperty(nameof(SoundMetaDataBase.pitch))?.DrawGUILayout(label);
                 EndLabelWidth();
             }
@@ -140,7 +140,7 @@ namespace RuniEngine.Editor
         {
             if (property.canRead && property.GetValue() == null)
                 return EditorGUIUtility.singleLineHeight;
-            
+
             return EditorGUIUtility.singleLineHeight * 2;
         }
     }

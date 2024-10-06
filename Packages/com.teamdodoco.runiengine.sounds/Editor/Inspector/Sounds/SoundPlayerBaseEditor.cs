@@ -418,10 +418,10 @@ namespace RuniEngine.Editor.Inspector.Sounds
 
             if (target == null)
                 return;
-            
+
             {
                 GUILayout.BeginVertical(GUILayout.Width(size));
-                
+
                 //시간
                 {
                     GUILayout.BeginHorizontal();

@@ -25,7 +25,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
             AudioPlayer audioPlayer = (AudioPlayer)target;
             if (audioPlayer.audioSource == null || audioPlayer.audioSource.bypassEffects)
                 return;
-            
+
             if (AudioUtil.HasAudioCallback(target) && AudioUtil.GetCustomFilterChannelCount(target) > 0)
             {
                 DrawLine();
