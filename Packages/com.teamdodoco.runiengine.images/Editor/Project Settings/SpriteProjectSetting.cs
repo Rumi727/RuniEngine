@@ -2,20 +2,18 @@
  * 이 스크립트는 SC KRM에서 따왔기 때문에 개적화입니다
 */
 
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+using RuniEngine.Editor.APIBridge.UnityEditor.UI;
+using RuniEngine.Jsons;
 using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
+using System.Collections.Generic;
 using System.IO;
-using RuniEngine.Jsons;
-using RuniEngine.Editor.APIBridge.UnityEditor.UI;
 using System.Linq;
-
+using UnityEditor;
+using UnityEngine;
 using static RuniEngine.Editor.EditorTool;
-
-using SpriteMetaData = RuniEngine.Resource.Images.SpriteMetaData;
 using Object = UnityEngine.Object;
+using SpriteMetaData = RuniEngine.Resource.Images.SpriteMetaData;
 
 namespace RuniEngine.Editor.ProjectSettings
 {
@@ -222,7 +220,7 @@ namespace RuniEngine.Editor.ProjectSettings
                 Space();
 
                 SpriteDrawUtility.DrawSprite(sprite, EditorGUILayout.GetControlRect(false, previewSize), Color.white);
-                
+
                 GUILayout.EndHorizontal();
             }
             finally

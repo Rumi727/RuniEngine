@@ -7,6 +7,6 @@ namespace RuniEngine.Editor.Inspector.Rendering
     [CustomEditor(typeof(SpriteRendererSetter))]
     public class SpriteRendererSetterEditor : SpriteSetterBaseEditor<SpriteRendererSetter>
     {
-        
+
     }
 }
