@@ -64,7 +64,7 @@ namespace RuniEngine.Editor.SerializedTypes
                 Type type = TypeDrawer.typeDrawers[i];
                 CustomTypeDrawerAttribute attribute = type.GetCustomAttribute<CustomTypeDrawerAttribute>();
 
-                if (attribute.targetType.IsAssignableFrom(propertyType))
+                if ((attribute.targetType.IsGenericTypeDefinition && type.IsAssignableToGenericType(attribute.targetType)) || attribute.targetType.IsAssignableFrom(propertyType))
                 {
                     result = Activator.CreateInstance(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance, null, new object[] { this }, null) as TypeDrawer;
                     break;
