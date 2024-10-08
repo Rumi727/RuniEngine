@@ -36,7 +36,7 @@ namespace RuniEngine.Resource
         [JsonProperty(nameof(targetVersion))] VersionRange _targetVersion = new VersionRange(Kernel.runiEngineVersion, Kernel.runiEngineVersion);
 
         [JsonIgnore] public string path { get; private set; } = "";
-        [JsonIgnore] public string iconPatch { get; private set; } = "";
+        [JsonIgnore] public string iconPath { get; private set; } = "";
 
         [JsonIgnore] public IReadOnlyList<string> nameSpaces { get; private set; } = new List<string>();
         [JsonIgnore] public IReadOnlyDictionary<Type, IResourceElement> resourceElements { get; private set; } = new Dictionary<Type, IResourceElement>();
@@ -53,7 +53,7 @@ namespace RuniEngine.Resource
                 return null;
 
             resourcePack.path = path;
-            resourcePack.iconPatch = Path.Combine(path, "pack");
+            resourcePack.iconPath = Path.Combine(path, "pack");
 
             {
                 string[] nameSpacePaths = Directory.GetDirectories(Path.Combine(path, ResourceManager.rootName));
