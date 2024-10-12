@@ -21,7 +21,7 @@ namespace RuniEngine
         /// <summary>
         /// Application.version
         /// </summary>
-        public static string version
+        public static Version version
         {
             get
             {
@@ -31,7 +31,7 @@ namespace RuniEngine
                     return _version = Application.version;
             }
         }
-        static string _version = "";
+        static Version _version = "";
 
         /// <summary>
         /// Application.unityVersion
