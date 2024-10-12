@@ -2186,7 +2186,7 @@ namespace RuniEngine
         public static T[] Insert<T>(this T[] array, int index, T item)
         {
             Array.Resize(ref array, array.Length + 1);
-            Array.Copy(array, index, array, index + 1, array.Length - index);
+            Array.Copy(array, index, array, index + 1, array.Length - index - 1);
 
             array[index] = item;
 
