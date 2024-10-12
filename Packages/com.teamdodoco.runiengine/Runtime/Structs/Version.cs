@@ -5,15 +5,15 @@ using UnityEngine;
 namespace RuniEngine
 {
     [Serializable]
-    public struct Version : IEquatable<Version>, IComparable, IComparable<Version>
+    public struct Version : IEquatable<Version>, IEquatable<VersionRange>, IComparable, IComparable<Version>
     {
         [JsonIgnore] public static Version all => new Version();
         [JsonIgnore] public static Version zero => new Version(0, 0, 0);
         [JsonIgnore] public static Version one => new Version(1, 0, 0);
 
-        public ulong? major;
-        public ulong? minor;
-        public ulong? patch;
+        public int? major;
+        public int? minor;
+        public int? patch;
 
 
         public Version(string? value)
@@ -36,7 +36,7 @@ namespace RuniEngine
             }
             else if (versions.Length == 1)
             {
-                if (ulong.TryParse(versions[0], out ulong major))
+                if (int.TryParse(versions[0], out int major))
                     this.major = major;
                 else
                     this.major = null;
@@ -46,12 +46,12 @@ namespace RuniEngine
             }
             else if (versions.Length == 2)
             {
-                if (ulong.TryParse(versions[0], out ulong major))
+                if (int.TryParse(versions[0], out int major))
                     this.major = major;
                 else
                     this.major = null;
 
-                if (ulong.TryParse(versions[1], out ulong minor))
+                if (int.TryParse(versions[1], out int minor))
                     this.minor = minor;
                 else
                     this.minor = null;
@@ -61,28 +61,28 @@ namespace RuniEngine
             else
             {
                 {
-                    if (ulong.TryParse(versions[0], out ulong major))
+                    if (int.TryParse(versions[0], out int major))
                         this.major = major;
                     else
                         this.major = null;
                 }
 
                 {
-                    if (ulong.TryParse(versions[1], out ulong minor))
+                    if (int.TryParse(versions[1], out int minor))
                         this.minor = minor;
                     else
                         this.minor = null;
                 }
 
                 {
-                    if (ulong.TryParse(versions[2], out ulong patch))
+                    if (int.TryParse(versions[2], out int patch))
                         this.patch = patch;
                     else
                         this.patch = null;
                 }
             }
         }
-        public Version(ulong? major, ulong? minor, ulong? patch)
+        public Version(int? major, int? minor, int? patch)
         {
             this.major = major;
             this.minor = minor;
@@ -135,27 +135,43 @@ namespace RuniEngine
 
             return false;
         }
+
         public static bool operator ==(Version lhs, Version rhs) => lhs.major == rhs.minor && lhs.minor == rhs.minor && lhs.patch == rhs.patch;
         public static bool operator !=(Version lhs, Version rhs) => !(lhs == rhs);
 
+        public static bool operator ==(Version lhs, VersionRange rhs) => lhs == rhs.min && lhs == rhs.max;
+        public static bool operator !=(Version lhs, VersionRange rhs) => !(lhs == rhs);
+
+        public static Version operator +(Version lhs, Version rhs) => new Version(lhs.major + rhs.major, lhs.minor + rhs.minor, lhs.patch + rhs.patch);
+        public static Version operator -(Version lhs, Version rhs) => new Version(lhs.major - rhs.major, lhs.minor - rhs.minor, lhs.patch - rhs.patch);
+
+        public static Version operator +(Version lhs, int rhs) => new Version(lhs.major, lhs.minor, lhs.patch + rhs);
+        public static Version operator -(Version lhs, int rhs) => new Version(lhs.major, lhs.minor, lhs.patch - rhs);
 
 
-        public static explicit operator string(Version value) => value.ToString();
-        public static explicit operator Version(string value) => new Version(value);
 
-        public static explicit operator Vector3Int(Version value) => new Vector3Int((int)(value.major ?? 0), (int)(value.minor ?? 0), (int)(value.patch ?? 0));
-        public static explicit operator Version(Vector3Int value) => new Version((ulong)value.x, (ulong)value.y, (ulong)value.z);
+        public static implicit operator string(Version value) => value.ToString();
+        public static implicit operator Version(string value) => new Version(value);
+
+        public static implicit operator Vector3Int(Version value) => new Vector3Int(value.major ?? 0, value.minor ?? 0, value.patch ?? 0);
+        public static implicit operator Version(Vector3Int value) => new Version(value.x, value.y, value.z);
+
+        public static implicit operator Vector3(Version value) => new Vector3(value.major ?? 0, value.minor ?? 0, value.patch ?? 0);
+        public static explicit operator Version(Vector3 value) => new Version(value.x.FloorToInt(), value.y.FloorToInt(), value.z.FloorToInt());
 
 
 
-        public readonly bool Equals(Version other) => major == other.minor && minor == other.minor && patch == other.patch;
+        public readonly bool Equals(Version other) => this == other;
+        public readonly bool Equals(VersionRange other) => this == other;
 
         public override readonly bool Equals(object obj)
         {
-            if (obj is not Version)
-                return false;
+            if (obj is Version range)
+                return Equals(range);
+            else if (obj is VersionRange version)
+                return Equals(version);
 
-            return Equals((Version)obj);
+            return false;
         }
 
         public override readonly int GetHashCode()
