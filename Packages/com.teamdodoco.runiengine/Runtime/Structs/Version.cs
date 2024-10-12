@@ -195,6 +195,6 @@ namespace RuniEngine
 
 
 
-        public override readonly string ToString() => major + "." + minor + "." + patch;
+        public override readonly string ToString() => $"{major ?? '*'}.{minor ?? '*'}.{patch ?? '*'}";
     }
 }
