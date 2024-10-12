@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text;
 using UnityEngine.Networking;
 
@@ -7,20 +6,23 @@ namespace RuniEngine
     public static class PathUtility
     {
         public const char directorySeparatorChar = '/';
+        public const char alternativeNameChar = '_';
         public const string urlPathPrefix = "file:///";
 
-        public static string RemoveInvalidPathChars(string filename) => string.Concat(filename.Split(Path.GetInvalidPathChars()));
-        public static string ReplaceInvalidPathChars(string filename) => string.Join("_", filename.Split(Path.GetInvalidPathChars()));
+        public static readonly char[] directorySeparatorChars = new char[] { '/', '\\' };
 
-        public static string RemoveInvalidFileNameChars(string filename) => string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
-        public static string ReplaceInvalidFileNameChars(string filename) => string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+        public static string RemoveInvalidPathChars(string filename) => string.Concat(filename.Split(System.IO.Path.GetInvalidPathChars()));
+        public static string ReplaceInvalidPathChars(string filename, char newChar = alternativeNameChar) => string.Join(newChar, filename.Split(System.IO.Path.GetInvalidPathChars()));
+
+        public static string RemoveInvalidFileNameChars(string filename) => string.Concat(filename.Split(System.IO.Path.GetInvalidFileNameChars()));
+        public static string ReplaceInvalidFileNameChars(string filename, char newChar = alternativeNameChar) => string.Join(newChar, filename.Split(System.IO.Path.GetInvalidFileNameChars()));
 
         public static string GetExtension(string path)
         {
             int index = path.LastIndexOf('.');
             if (index < 0)
                 return string.Empty;
-
+            
             return path.Substring(index);
         }
 
@@ -33,25 +35,26 @@ namespace RuniEngine
             return path.Substring(index + 1);
         }
 
-        public static string GetPathWithExtension(string path)
-        {
-            string extension = GetExtension(path);
-            if (extension != string.Empty)
-                return path.Remove(path.Length - extension.Length);
-            else
-                return path;
-        }
-
-        public static string GetPathWithFileName(string path)
+        public static string GetFileNameWithoutExtension(string path)
         {
             string fileName = GetFileName(path);
-            if (fileName != string.Empty)
-                return path.Remove(path.Length - fileName.Length);
+            int extIndex = fileName.LastIndexOf('.');
+
+            if (extIndex < 0)
+                return fileName;
             else
-                return path;
+                return fileName.Remove(extIndex);
         }
 
-        static readonly char[] directorySeparatorChars = new char[] { '/', '\\' };
+        public static string GetPathWithoutExtension(string path)
+        {
+            int extIndex = path.LastIndexOf('.');
+            if (extIndex < 0)
+                return path;
+            else
+                return path.Remove(extIndex);
+        }
+
         public static string GetParentPath(string path)
         {
             int index = path.LastIndexOfAny(directorySeparatorChars);
@@ -66,25 +69,28 @@ namespace RuniEngine
         public static string UniformDirectorySeparatorCharacter(this string path) => path.UniformDirectorySeparatorCharacter('\\', directorySeparatorChar);
         public static string UniformDirectorySeparatorCharacter(this string path, char altSeparatorChar, char separatorChar) => path.Replace(altSeparatorChar, separatorChar);
 
-        public static string Combine(params string[] paths)
+        public static string Combine(params string?[] paths)
         {
             StringBuilder stringBuilder = StringBuilderCache.Acquire();
             for (int i = 0; i < paths.Length; i++)
             {
-                if (paths[i].Length <= 0)
+                string? path = paths[i];
+                if (path == null || path.Length <= 0)
                     continue;
+
+                path = path.UniformDirectorySeparatorCharacter();
 
                 if (stringBuilder.Length <= 0)
                 {
-                    stringBuilder.Append(paths[i]);
+                    stringBuilder.Append(path);
                     continue;
                 }
 
                 char last = stringBuilder[stringBuilder.Length - 1];
-                if (last != '/')
-                    stringBuilder.Append('/');
+                if (last != directorySeparatorChar)
+                    stringBuilder.Append(directorySeparatorChar);
 
-                stringBuilder.Append(paths[i]);
+                stringBuilder.Append(path);
             }
 
             return StringBuilderCache.Release(stringBuilder);
@@ -113,8 +119,8 @@ namespace RuniEngine
 
         public static bool StartsWith(string path, string startPath)
         {
-            string[] paths = path.Split(directorySeparatorChar);
-            string[] startPaths = startPath.Split(directorySeparatorChar);
+            string[] paths = path.Split(directorySeparatorChars);
+            string[] startPaths = startPath.Split(directorySeparatorChars);
 
             if (paths.Length < startPaths.Length)
                 return false;
