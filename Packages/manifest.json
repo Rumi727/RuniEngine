@@ -4,8 +4,10 @@
     "com.rumi.visual-studio.nullable": "https://github.com/Rumi727/Unity-Nullable-Enabler.git?path=Packages/com.rumi.visual-studio.nullable",
     "com.singularitygroup.hotreload": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.12",
     "com.unity.ide.visualstudio": "2.0.22",
+    "com.unity.multiplayer.center": "1.0.0",
     "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.9",
-    "studio.gilp.internal-icon-browser": "https://github.com/GilpStudio/unity-internal-icon-browser.git"
+    "studio.gilp.internal-icon-browser": "https://github.com/GilpStudio/unity-internal-icon-browser.git",
+    "com.unity.modules.accessibility": "1.0.0"
   },
   "scopedRegistries": [
     {
