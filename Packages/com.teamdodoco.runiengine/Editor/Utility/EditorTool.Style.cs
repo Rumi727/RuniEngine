@@ -232,23 +232,22 @@ namespace RuniEngine.Editor
         public static string RichMSpace(object value) => RichMSpace(value, "7.6");
         public static string RichMSpace(object value, string width) => $"<mspace={width}>{value}</mspace>";
 
-        static readonly StringBuilder richNumberMSpaceStringBuilder = new StringBuilder();
         public static string RichNumberMSpace(object value) => RichNumberMSpace(value, "7.6");
         public static string RichNumberMSpace(object value, string width)
         {
-            richNumberMSpaceStringBuilder.Clear();
+            System.Text.StringBuilder stringBuilder = StringBuilderCache.Acquire();
 
             string text = value.ToString();
             for (int i = 0; i < text.Length; i++)
             {
                 char c = text[i];
                 if (c >= '0' && c <= '9')
-                    richNumberMSpaceStringBuilder.Append($"<mspace={width}>{c}</mspace>");
+                    stringBuilder.Append($"<mspace={width}>{c}</mspace>");
                 else
-                    richNumberMSpaceStringBuilder.Append(c);
+                    stringBuilder.Append(c);
             }
 
-            return richNumberMSpaceStringBuilder.ToString();
+            return StringBuilderCache.Release(stringBuilder);
         }
 #else
         public static string RichMSpace(object value) => value.ToString();
