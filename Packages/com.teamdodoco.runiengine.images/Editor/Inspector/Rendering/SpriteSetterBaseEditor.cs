@@ -1,4 +1,6 @@
+#nullable enable
 using RuniEngine.Rendering;
+using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
 using UnityEditor;
 
@@ -14,8 +16,8 @@ namespace RuniEngine.Editor.Inspector.Rendering
             EditorGUI.BeginChangeCheck();
 
             UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace);
-            UsePropertyAndDrawStringArray(serializedObject, "_type", TryGetText("gui.type"), target.type, ImageLoader.GetTypes(target.nameSpace), true);
-            UsePropertyAndDrawStringArray(serializedObject, "_path", TryGetText("gui.name"), target.spriteName, ImageLoader.GetSpriteNames(target.type, target.nameSpace));
+            UsePropertyAndDrawStringArray(serializedObject, "_type", TryGetText("gui.type"), target.type, ImageLoader.GetTypes(ResourcePack.defaultPack, target.nameSpace), true);
+            UsePropertyAndDrawStringArray(serializedObject, "_path", TryGetText("gui.name"), target.spriteName, ImageLoader.GetSpriteNames(ResourcePack.defaultPack, target.type, target.nameSpace));
 
             UseProperty("_spriteTag", TryGetText("inspector.sprite_setter.spriteTag"));
 

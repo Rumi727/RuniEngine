@@ -1,3 +1,4 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using NAudio.Vorbis;
 using NAudio.Wave;
@@ -8,7 +9,6 @@ using RuniEngine.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -165,16 +165,23 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static RawAudioClip? GetRawAudio(string path, RawAudioLoadType loadType)
+        public static RawAudioClip? GetRawAudio(IOHandler ioHandler, string path, RawAudioLoadType loadType)
         {
-            if (!File.Exists(path))
+            if (!ioHandler.FileExists(path))
                 return null;
 
-            WaveStream stream;
-            if (path.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase))
-                stream = new VorbisWaveReader(path);
-            else
-                stream = new AudioFileReader(path);
+            string ext = PathUtility.GetExtension(path);
+            using WaveStream? stream = ext switch
+            {
+                ".ogg" => new VorbisWaveReader(ioHandler.OpenRead(path)),
+                ".wav" => new WaveFileReader(ioHandler.OpenRead(path)),
+                ".mp3" => new Mp3FileReader(ioHandler.OpenRead(path)),
+                ".aiff" => new AiffFileReader(ioHandler.OpenRead(path)),
+                _ => null
+            };
+
+            if (stream == null)
+                return null;
 
             try
             {
@@ -275,13 +282,13 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static async UniTask<AudioClip?> GetAudio(string path, AudioType type, bool stream = false, HideFlags hideFlags = HideFlags.DontSave)
+        public static async UniTask<AudioClip?> GetAudio(IOHandler ioHandler, string path, string extension, AudioType type, bool stream = false, HideFlags hideFlags = HideFlags.DontSave)
         {
 #if !((UNITY_STANDALONE_LINUX && !UNITY_EDITOR) || UNITY_EDITOR_LINUX)
-            if (File.Exists(path))
+            if (ioHandler.FileExists(path, extension))
             {
                 if (type == AudioType.OGGVORBIS && !stream)
-                    return await VorbisPlugin.ToAudioClipAsync(await File.ReadAllBytesAsync(path), Path.GetFileNameWithoutExtension(path));
+                    return await VorbisPlugin.ToAudioClipAsync(await ioHandler.ReadAllBytesAsync(path, extension), PathUtility.GetFileNameWithoutExtension(path));
 
                 NotMainThreadException.Exception();
 
@@ -298,7 +305,7 @@ namespace RuniEngine.Resource.Sounds
                 }
 
                 AudioClip audioClip = DownloadHandlerAudioClip.GetContent(www);
-                audioClip.name = Path.GetFileNameWithoutExtension(path);
+                audioClip.name = PathUtility.GetFileNameWithoutExtension(path);
                 audioClip.hideFlags = hideFlags;
 
                 ResourceManager.RegisterManagedResource(audioClip);
@@ -310,7 +317,7 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static string[] GetSoundDataKeys(string nameSpace = "")
+        public static string[] GetSoundDataKeys(IOHandler ioHandler, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
@@ -329,8 +336,8 @@ namespace RuniEngine.Resource.Sounds
                     return false;
             }))
             {
-                string path = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
-                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(path + ".json");
+                string path = PathUtility.Combine(ResourceManager.rootName, nameSpace, name);
+                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(path, ".json", ioHandler);
                 if (audioDatas != null)
                     result = audioDatas.Keys.ToArray();
             }
@@ -357,22 +364,23 @@ namespace RuniEngine.Resource.Sounds
             //진정한 병렬 로드
             Parallel.ForEach(resourcePack.nameSpaces, nameSpace =>
             {
-                string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-                if (!Directory.Exists(folderPath))
+                string folderPath = PathUtility.Combine(nameSpace, name);
+                using IOHandler root = resourcePack.ioHandler.CreateChild(folderPath);
+                if (!root.DirectoryExists())
                     return;
 
-                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(folderPath + ".json");
+                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>("", ".json", root);
                 if (audioDatas == null)
                     return;
 
                 tempAllAudios.TryAdd(nameSpace, audioDatas);
-
-                string[] files = DirectoryUtility.GetFiles(folderPath, ExtensionFilter.musicFileFilter, SearchOption.AllDirectories);
+                
+                string[] files = root.GetAllFiles(ExtensionFilter.musicFileFilter).ToArray();
                 Interlocked.Add(ref maxProgress, files.Length);
 
                 Parallel.ForEach(files, audioPath =>
                 {
-                    AudioType audioType = Path.GetExtension(audioPath).ToLower() switch
+                    AudioType audioType = PathUtility.GetExtension(audioPath).ToLower() switch
                     {
                         ".ogg" => AudioType.OGGVORBIS,
                         ".mp3" => AudioType.MPEG,
@@ -395,7 +403,7 @@ namespace RuniEngine.Resource.Sounds
 
                     RawAudioClip? rawAudioClip = null;
                     if (audioType == AudioType.OGGVORBIS || audioType == AudioType.MPEG || audioType == AudioType.AIFF)
-                        rawAudioClip = GetRawAudio(audioPath, loadType);
+                        rawAudioClip = GetRawAudio(root, audioPath, loadType);
                     /*else
 
                     var awaiter = ThreadDispatcher.Execute(Load).GetAwaiter();
@@ -420,7 +428,7 @@ namespace RuniEngine.Resource.Sounds
                     }*/
 
                     if (rawAudioClip != null)
-                        pathAudios.TryAdd(PathUtility.GetPathWithExtension(PathUtility.GetRelativePath(folderPath, audioPath)), rawAudioClip);
+                        pathAudios.TryAdd(PathUtility.GetPathWithoutExtension(audioPath), rawAudioClip);
 
                     progress?.Report((float)Interlocked.Add(ref progressValue, 1) / Interlocked.Read(ref maxProgress));
                 });
@@ -433,7 +441,7 @@ namespace RuniEngine.Resource.Sounds
             foreach (var audioDatas in tempAllAudios)
             {
                 string nameSpace = audioDatas.Key;
-                string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+                string folderPath = PathUtility.Combine(ResourceManager.rootName, nameSpace, name);
 
                 foreach (var audioData in audioDatas.Value)
                 {

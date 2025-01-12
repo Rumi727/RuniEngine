@@ -1,3 +1,4 @@
+#nullable enable
 namespace RuniEngine.NBS
 {
     public readonly struct NBSCustomInstrument

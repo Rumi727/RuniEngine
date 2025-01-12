@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -283,10 +284,10 @@ namespace RuniEngine
             return size;
         }
 
-        public static string[] QuotedSplit(this string text, string separator) => text.QuotedSplit2(separator).ToArray();
+        public static string[] QuotedSplit(this string text, string separator) => text.EnumerateQuotedSplit(separator).ToArray();
 
         //https://codereview.stackexchange.com/a/166801
-        static IEnumerable<string> QuotedSplit2(this string text, string separator)
+        static IEnumerable<string> EnumerateQuotedSplit(this string text, string separator)
         {
             const char quote = '\"';
 
@@ -358,6 +359,34 @@ namespace RuniEngine
             }
 
             return quotedTextsResult.ToArray();
+        }
+
+        public static string RemoveWhitespace(this string text) => string.Join(string.Empty, text.Split(string.Empty, StringSplitOptions.RemoveEmptyEntries));
+
+        public static IEnumerable<string> ReadLines(this string text)
+        {
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+
+            char lastChar = char.MinValue;
+            foreach (var item in text)
+            {
+                if (item == '\r' || item == '\n')
+                {
+                    if (lastChar == '\r' && item == '\n')
+                        continue;
+
+                    yield return stringBuilder.ToString();
+                    stringBuilder.Clear();
+
+                    lastChar = item;
+                }
+
+                stringBuilder.Append(item);
+            };
+
+            yield return stringBuilder.ToString();
+
+            StringBuilderCache.Release(stringBuilder);
         }
     }
 }

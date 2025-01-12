@@ -1,0 +1,137 @@
+{
+  "rectTransform": {
+    "offset": {
+      "left": 0.0,
+      "right": 0.0,
+      "top": 0.0,
+      "bottom": 0.0
+    },
+    "anchorMin": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "anchorMax": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    }
+  },
+  "texture": {
+    "pair": {
+      "nameSpace": "runi-test",
+      "type": "",
+      "name": "110266778_0",
+      "index": 0
+    },
+    "color": {
+      "r": 1.0,
+      "g": 1.0,
+      "b": 1.0,
+      "a": 1.0
+    }
+  },
+  "text": {
+    "fontSize": 16.0,
+    "alignment": 257,
+    "autoSizing": {
+      "enableAutoSizing": false,
+      "fontSizeMin": 0.0,
+      "fontSizeMax": 32767.0,
+      "characterWidthAdjustment": 0.0,
+      "lineSpacingAdjustment": 0.0
+    },
+    "color": {
+      "r": 1.0,
+      "g": 1.0,
+      "b": 1.0,
+      "a": 1.0
+    },
+    "spacing": {
+      "character": 0.0,
+      "word": 0.0,
+      "line": 0.0,
+      "paragraph": 0.0
+    },
+    "padding": {
+      "left": 0.0,
+      "right": 0.0,
+      "top": 0.0,
+      "bottom": 0.0
+    }
+  },
+  "layoutGroup": {
+    "padding": {
+      "left": 0.0,
+      "right": 0.0,
+      "top": 0.0,
+      "bottom": 0.0
+    },
+    "spacing": 0.0,
+    "childAlignment": 0,
+    "reverseArrangement": false
+  },
+  "selectable": {
+    "transition": 1,
+    "colors": {
+      "normalColor": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "highlightedColor": {
+        "r": 0.875,
+        "g": 0.875,
+        "b": 0.875,
+        "a": 1.0
+      },
+      "pressedColor": {
+        "r": 0.75,
+        "g": 0.75,
+        "b": 0.75,
+        "a": 1.0
+      },
+      "selectedColor": {
+        "r": 0.875,
+        "g": 0.875,
+        "b": 0.875,
+        "a": 1.0
+      },
+      "disabledColor": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.5
+      }
+    },
+    "spriteState": {
+      "highlightedSprite": {
+        "nameSpace": "",
+        "type": "",
+        "name": "",
+        "index": 0
+      },
+      "pressedSprite": {
+        "nameSpace": "",
+        "type": "",
+        "name": "",
+        "index": 0
+      },
+      "selectedSprite": {
+        "nameSpace": "",
+        "type": "",
+        "name": "",
+        "index": 0
+      },
+      "disabledSprite": {
+        "nameSpace": "",
+        "type": "",
+        "name": "",
+        "index": 0
+      }
+    }
+  }
+}

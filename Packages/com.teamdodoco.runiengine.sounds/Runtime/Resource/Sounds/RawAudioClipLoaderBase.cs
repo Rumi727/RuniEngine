@@ -1,3 +1,4 @@
+#nullable enable
 using NAudio.Wave;
 using System;
 

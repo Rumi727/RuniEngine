@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Datas;
 using RuniEngine.Splashs;
 using UnityEditor;

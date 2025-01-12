@@ -42,7 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -602,22 +603,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2441040771632030492}
   m_CullTransparentMesh: 1
---- !u!114 &2441040771632030491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2441040771632030492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97bc2ebab6563400c95b036136d26ea6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Inverse: 0
-  m_MaskInteraction: 85
-  m_UseStencil: 0
-  m_RaycastFilter: 0
 --- !u!1 &2441040771632030492
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,7 +614,6 @@ GameObject:
   - component: {fileID: 2441040771632030493}
   - component: {fileID: 2441040771632030489}
   - component: {fileID: 2441040771632030488}
-  - component: {fileID: 2441040771632030491}
   - component: {fileID: 2441040771632030494}
   m_Layer: 5
   m_Name: Gradation
@@ -883,29 +867,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 1
-  m_Softness: 1
+  m_MaskingMode: 0
+  m_AlphaHitTest: 0
+  m_SoftnessRange:
+    m_Min: 0
+    m_Max: 1
+  m_DownSamplingRate: 0
+  m_AntiAliasingThreshold: 0
   m_Alpha: 1
-  m_IgnoreParent: 0
+  m_Softness: -1
   m_PartOfParent: 0
-  m_IgnoreSelfGraphic: 0
-  m_IgnoreSelfStencil: 1
---- !u!114 &2441040771819668612
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2441040771819668635}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97bc2ebab6563400c95b036136d26ea6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Inverse: 0
-  m_MaskInteraction: 85
-  m_UseStencil: 0
-  m_RaycastFilter: 0
 --- !u!114 &2441040771819668614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -974,7 +945,6 @@ GameObject:
   - component: {fileID: 2441040771819668632}
   - component: {fileID: 2441040771819668615}
   - component: {fileID: 2441040771819668614}
-  - component: {fileID: 2441040771819668612}
   - component: {fileID: 2441040771819668636}
   m_Layer: 5
   m_Name: Gradation
@@ -1004,22 +974,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2441040772344270553}
   m_CullTransparentMesh: 1
---- !u!114 &2441040772344270532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2441040772344270553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97bc2ebab6563400c95b036136d26ea6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Inverse: 0
-  m_MaskInteraction: 85
-  m_UseStencil: 0
-  m_RaycastFilter: 0
 --- !u!114 &2441040772344270533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1080,7 +1034,6 @@ GameObject:
   - component: {fileID: 2441040772344270534}
   - component: {fileID: 2441040772344270530}
   - component: {fileID: 2441040772344270533}
-  - component: {fileID: 2441040772344270532}
   - component: {fileID: 2441040772344270554}
   m_Layer: 5
   m_Name: Gradation
@@ -1192,13 +1145,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 1
-  m_Softness: 1
+  m_MaskingMode: 0
+  m_AlphaHitTest: 0
+  m_SoftnessRange:
+    m_Min: 0
+    m_Max: 1
+  m_DownSamplingRate: 0
+  m_AntiAliasingThreshold: 0
   m_Alpha: 1
-  m_IgnoreParent: 0
+  m_Softness: -1
   m_PartOfParent: 0
-  m_IgnoreSelfGraphic: 0
-  m_IgnoreSelfStencil: 1
 --- !u!225 &2441040772517471925
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1416,22 +1372,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2441040772646987047}
   m_CullTransparentMesh: 1
---- !u!114 &2441040772646987042
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2441040772646987047}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97bc2ebab6563400c95b036136d26ea6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Inverse: 0
-  m_MaskInteraction: 85
-  m_UseStencil: 0
-  m_RaycastFilter: 0
 --- !u!114 &2441040772646987043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1492,7 +1432,6 @@ GameObject:
   - component: {fileID: 2441040772646987044}
   - component: {fileID: 2441040772646987040}
   - component: {fileID: 2441040772646987043}
-  - component: {fileID: 2441040772646987042}
   - component: {fileID: 2441040772646987048}
   m_Layer: 5
   m_Name: Gradation
@@ -1527,13 +1466,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 1
-  m_Softness: 1
+  m_MaskingMode: 0
+  m_AlphaHitTest: 0
+  m_SoftnessRange:
+    m_Min: 0
+    m_Max: 1
+  m_DownSamplingRate: 0
+  m_AntiAliasingThreshold: 0
   m_Alpha: 1
-  m_IgnoreParent: 0
+  m_Softness: -1
   m_PartOfParent: 0
-  m_IgnoreSelfGraphic: 0
-  m_IgnoreSelfStencil: 1
 --- !u!114 &2441040772735335860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1632,13 +1574,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
-  m_DownSamplingRate: 1
-  m_Softness: 1
+  m_MaskingMode: 0
+  m_AlphaHitTest: 0
+  m_SoftnessRange:
+    m_Min: 0
+    m_Max: 1
+  m_DownSamplingRate: 0
+  m_AntiAliasingThreshold: 0
   m_Alpha: 1
-  m_IgnoreParent: 0
+  m_Softness: -1
   m_PartOfParent: 0
-  m_IgnoreSelfGraphic: 0
-  m_IgnoreSelfStencil: 1
 --- !u!224 &2441040773541004966
 RectTransform:
   m_ObjectHideFlags: 0

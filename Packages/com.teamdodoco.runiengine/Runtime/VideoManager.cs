@@ -1,3 +1,4 @@
+#nullable enable
 namespace RuniEngine
 {
     public static class VideoManager

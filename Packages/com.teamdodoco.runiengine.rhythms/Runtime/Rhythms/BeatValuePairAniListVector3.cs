@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Jsons;
 
 namespace RuniEngine.Rhythms

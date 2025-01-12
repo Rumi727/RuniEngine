@@ -1,3 +1,4 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Accounts;
 using RuniEngine.Resource.Texts;
@@ -135,7 +136,7 @@ namespace RuniEngine.Resource
                 }
                 catch (Exception e)
                 {
-                    ExceptionLog(e, pack.path);
+                    ExceptionLog(e, pack);
                 }
             }
         }
@@ -155,19 +156,37 @@ namespace RuniEngine.Resource
             {
                 try
                 {
-                    bool result = action.Invoke((T)x.resourceElements[typeof(T)]);
-                    suc = suc || result;
+                    if (x.resourceElements.TryGetValue(typeof(T), out IResourceElement value))
+                    {
+                        bool result = action.Invoke((T)value);
+                        suc = suc || result;
 
-                    return result;
+                        return result;
+                    }
+
+                    return false;
                 }
                 catch (Exception e)
                 {
-                    ExceptionLog(e, x.path, typeof(T).Name);
+                    ExceptionLog(e, x, typeof(T).Name);
                     return false;
                 }
             });
 
             return suc;
+        }
+
+        public static void ExceptionLog(Exception e, ResourcePack pack) => ExceptionLog(e, pack, Debug.NameOfCallingClass());
+
+        public static void ExceptionLog(Exception e, ResourcePack pack, string? typeName)
+        {
+            string path;
+            if (pack.ioHandler is FileIOHandler handler)
+                path = handler.path;
+            else
+                path = pack.name;
+
+            ExceptionLog(e, path, typeName);
         }
 
         public static void ExceptionLog(Exception e, string path) => ExceptionLog(e, path, Debug.NameOfCallingClass());
@@ -305,6 +324,39 @@ namespace RuniEngine.Resource
             {
                 string extension = extensionFilter.extensions[i];
                 if (File.Exists(path + extension))
+                {
+                    outPath = path + extension;
+                    return true;
+                }
+            }
+
+            outPath = "";
+            return false;
+        }
+
+        /// <summary>
+        /// 파일들에 특정 확장자가 있으면 true를 반환합니다
+        /// Returns true if files have a specific extension
+        /// </summary>
+        /// <param name="path">
+        /// 파일의 경로
+        /// Path
+        /// </param>
+        /// <param name="outPath">
+        /// 검색한 확장자를 포함한 전체 경로
+        /// Full path including searched extension
+        /// </param>
+        /// <param name="extensions">
+        /// 확장자 리스트
+        /// extension list
+        /// </param>
+        /// <returns></returns>
+        public static bool FileExtensionExists(IOHandler ioHandler, string path, out string outPath, ExtensionFilter extensionFilter)
+        {
+            for (int i = 0; i < extensionFilter.extensions.Length; i++)
+            {
+                string extension = extensionFilter.extensions[i];
+                if (ioHandler.FileExists(path, extension))
                 {
                     outPath = path + extension;
                     return true;

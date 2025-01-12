@@ -1,8 +1,8 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Accounts;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -101,15 +101,15 @@ namespace RuniEngine.Resource.Objects
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
-                string path = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
+                using IOHandler root = resourcePack.ioHandler.CreateChild(PathUtility.Combine(nameSpace, name)); 
 
-                if (!File.Exists(path))
+                if (!root.FileExists())
                 {
                     Report(1);
                     continue;
                 }
 
-                AssetBundle? assetBundle = await AssetBundle.LoadFromFileAsync(path).ToUniTask(Progress.Create<float>(x => Report(x * 0.3333333333f)), PlayerLoopTiming.Initialization);
+                AssetBundle? assetBundle = await AssetBundle.LoadFromStreamAsync(root.OpenRead()).ToUniTask(Progress.Create<float>(x => Report(x * 0.3333333333f)), PlayerLoopTiming.Initialization);
                 if (assetBundle == null)
                     continue;
 

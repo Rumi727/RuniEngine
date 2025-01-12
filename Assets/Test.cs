@@ -44,6 +44,8 @@ public class Test : MonoBehaviour
     public SerializableDictionary<string, SerializableDictionary<string, int>> a = new();
     public List<string> lists = new();
     public Gradient? gradient;
+    public BeatValuePair<float> beat;
+    [TextArea(3, 10)] public string textArea = string.Empty;
     void Update()
     {
         float speed;

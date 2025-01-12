@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Booting;
 using RuniEngine.Resource;
 using RuniEngine.Resource.Images;
@@ -144,7 +145,7 @@ namespace RuniEngine.Rendering
                     }
                 }
 
-                sprites = ImageLoader.GetSprites(type, name, nameSpace, tag);
+                sprites = ImageLoader.GetSprites(ResourcePack.defaultPack, type, name, nameSpace, tag);
                 if (sprites != null)
                 {
                     cachedLocalSprites.TryAdd(nameSpace, new());

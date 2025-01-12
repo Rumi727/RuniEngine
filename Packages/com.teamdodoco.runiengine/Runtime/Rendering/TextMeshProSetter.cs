@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Rendering;
 using RuniEngine.Resource.Texts;
 using RuniEngine.Threading;

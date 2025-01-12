@@ -1,3 +1,4 @@
+#nullable enable
 namespace RuniEngine.NBS
 {
     public class NBSLayer

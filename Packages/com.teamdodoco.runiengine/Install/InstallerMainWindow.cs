@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Datas;
 using System;
 using System.Collections.Generic;

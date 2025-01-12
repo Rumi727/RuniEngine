@@ -1,9 +1,9 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Accounts;
 using RuniEngine.Jsons;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace RuniEngine.Resource.Texts
@@ -74,10 +74,10 @@ namespace RuniEngine.Resource.Texts
                 return false;
             }))
             {
-                if (!ResourceManager.FileExtensionExists(Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name, language), out string outPath, ExtensionFilter.jsonFileFilter))
+                if (!ResourceManager.FileExtensionExists(StreamingIOHandler.instance, PathUtility.Combine(ResourceManager.rootName, nameSpace, name, language), out string outPath, ExtensionFilter.jsonFileFilter))
                     return result4;
 
-                Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(outPath);
+                Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(outPath, "", StreamingIOHandler.instance);
                 if (lang == null || !lang.TryGetValue(key, out string value))
                     return result4;
 
@@ -131,20 +131,19 @@ namespace RuniEngine.Resource.Texts
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
-                string langPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-                if (!Directory.Exists(langPath))
+                using IOHandler root = resourcePack.ioHandler.CreateChild(PathUtility.Combine(nameSpace, name));
+
+                if (!root.DirectoryExists())
                 {
                     ReportProgress();
                     continue;
                 }
 
-                string[] filePaths = DirectoryUtility.GetFiles(langPath, ExtensionFilter.jsonFileFilter);
-                for (int j = 0; j < filePaths.Length; j++)
+                foreach (string filePath in root.GetFiles(ExtensionFilter.jsonFileFilter))
                 {
-                    string filePath = filePaths[j];
-                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string fileName = PathUtility.GetFileNameWithoutExtension(filePath);
 
-                    Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(filePath);
+                    Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(filePath, "", root);
                     if (lang == null)
                         continue;
 

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66b7906c639c44b499bd9f4cd466f45d, type: 3}
   m_Name: CsprojSettings
   m_EditorClassIdentifier: 
-  _enableSDKStyle: 1
+  _enableSDKStyle: 0
   _enableNullable: 1
   _enableLog: 1

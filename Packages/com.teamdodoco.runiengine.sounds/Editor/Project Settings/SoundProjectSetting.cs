@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Jsons;
 using RuniEngine.Resource;
 using RuniEngine.Resource.Sounds;

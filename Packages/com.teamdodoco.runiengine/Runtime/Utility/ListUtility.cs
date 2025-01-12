@@ -1,3 +1,4 @@
+#nullable enable
 using ExtendedNumerics;
 using System;
 using System.Collections;
@@ -2223,6 +2224,22 @@ namespace RuniEngine
             }
 
             return array;
+        }
+
+        public static Array Copy(this Array array)
+        {
+            Array result = Array.CreateInstance(array.GetType().GetElementType(), array.Length);
+            Array.Copy(array, result, array.Length);
+
+            return result;
+        }
+
+        public static T[] Copy<T>(this T[] array)
+        {
+            T[] result = new T[array.Length];
+            Array.Copy(array, result, array.Length);
+
+            return result;
         }
     }
 }

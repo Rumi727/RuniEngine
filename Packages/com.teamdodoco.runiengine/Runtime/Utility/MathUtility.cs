@@ -1,3 +1,4 @@
+#nullable enable
 using ExtendedNumerics;
 using System;
 using System.Numerics;

@@ -1,3 +1,5 @@
+#nullable enable
+using RuniEngine.Resource;
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Sounds;
 using System;
@@ -15,7 +17,7 @@ namespace RuniEngine.Editor.Inspector.Sounds
                 return;
 
             UsePropertyAndDrawNameSpace(serializedObject, "_nameSpace", TryGetText("gui.namespace"), target.nameSpace);
-            UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, NBSLoader.GetNBSDataKeys(target.nameSpace));
+            UsePropertyAndDrawStringArray(serializedObject, "_key", TryGetText("gui.key"), target.key, NBSLoader.GetNBSDataKeys(StreamingIOHandler.instance, target.nameSpace));
         }
 
         protected override void TimeSliderGUI(Action? action)

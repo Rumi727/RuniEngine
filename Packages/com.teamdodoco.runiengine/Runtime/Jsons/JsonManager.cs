@@ -1,4 +1,6 @@
+#nullable enable
 using Newtonsoft.Json;
+using RuniEngine.Resource;
 using System;
 using System.IO;
 
@@ -32,6 +34,29 @@ namespace RuniEngine.Jsons
         /// <summary>
         /// 텍스트 파일에서 Json을 읽고 반환합니다
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path">
+        /// 텍스트 파일 경로
+        /// </param>
+        /// <param name="pathExtensionUse">
+        /// 경로에 확장자 사용
+        /// </param>
+        /// <returns></returns>
+        public static T? JsonRead<T>(string path, string extension, IOHandler ioHandler)
+        {
+            if (!ioHandler.FileExists(path, extension))
+                return default;
+
+            string json = ioHandler.ReadAllText(path, extension);
+            if (!string.IsNullOrEmpty(json))
+                return ToObject<T>(json);
+
+            return default;
+        }
+
+        /// <summary>
+        /// 텍스트 파일에서 Json을 읽고 반환합니다
+        /// </summary>
         /// <param name="path">
         /// 텍스트 파일 경로
         /// </param>
@@ -45,6 +70,28 @@ namespace RuniEngine.Jsons
                 return default;
 
             string json = File.ReadAllText(path);
+            if (!string.IsNullOrEmpty(json))
+                return ToObject(type, json);
+
+            return default;
+        }
+
+        /// <summary>
+        /// 텍스트 파일에서 Json을 읽고 반환합니다
+        /// </summary>
+        /// <param name="path">
+        /// 텍스트 파일 경로
+        /// </param>
+        /// <param name="pathExtensionUse">
+        /// 경로에 확장자 사용
+        /// </param>
+        /// <returns></returns>
+        public static object? JsonRead(Type type, string path, string extension, IOHandler ioHandler)
+        {
+            if (!ioHandler.FileExists(path, extension))
+                return default;
+
+            string json = ioHandler.ReadAllText(path, extension);
             if (!string.IsNullOrEmpty(json))
                 return ToObject(type, json);
 

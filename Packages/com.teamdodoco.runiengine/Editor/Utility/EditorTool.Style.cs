@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -241,7 +242,7 @@ namespace RuniEngine.Editor
             for (int i = 0; i < text.Length; i++)
             {
                 char c = text[i];
-                if (c >= '0' && c <= '9')
+                if (char.IsNumber(c))
                     stringBuilder.Append($"<mspace={width}>{c}</mspace>");
                 else
                     stringBuilder.Append(c);

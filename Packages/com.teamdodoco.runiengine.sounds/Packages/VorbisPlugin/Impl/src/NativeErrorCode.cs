@@ -1,4 +1,5 @@
-﻿namespace OggVorbis
+#nullable enable
+namespace OggVorbis
 {
     public enum NativeErrorCode
     {

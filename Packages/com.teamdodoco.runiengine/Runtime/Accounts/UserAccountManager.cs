@@ -1,3 +1,4 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Booting;
 using RuniEngine.Datas;
@@ -122,7 +123,7 @@ namespace RuniEngine.Accounts
             List<UniTask> tasks = new List<UniTask>();
             ResourceManager.ResourcePackLoop(x =>
             {
-                if (!ResourceManager.UserData.resourcePacks.Contains(x.path))
+                if (!ResourceManager.UserData.resourcePacks.Contains(x.name))
                     return false;
 
                 ResourceManager.PackUnregister(x);

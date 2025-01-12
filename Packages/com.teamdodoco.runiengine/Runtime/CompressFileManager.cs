@@ -1,3 +1,4 @@
+#nullable enable
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;

@@ -1,24 +1,15 @@
+#nullable enable
 using RuniEngine.Resource.Texts;
 using System.Collections.Generic;
 using System.IO;
 
 namespace RuniEngine.NBS
 {
-    public static class NBSManager
+    static class NBSReader
     {
-        /// <summary>
-        /// NBS 파일을 불러옵니다
-        /// </summary>
-        /// <param name="path">
-        /// NBS 파일의 경로
-        /// </param>
-        /// <returns>
-        /// 불러온 NBS 파일 클래스
-        /// </returns>
-        public static NBSFile? ReadNBSFile(string path)
+        public static NBSFile? ReadNBSFile(Stream stream)
         {
-            using FileStream fileStream = File.OpenRead(path);
-            BinaryReader binaryReader = new BinaryReader(fileStream);
+            using BinaryReader binaryReader = new BinaryReader(stream);
             bool isOld = binaryReader.ReadInt16() != 0;
             if (isOld)
             {

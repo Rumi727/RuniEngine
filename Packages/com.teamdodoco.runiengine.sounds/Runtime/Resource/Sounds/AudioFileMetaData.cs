@@ -1,4 +1,4 @@
-
+#nullable enable
 namespace RuniEngine.Resource.Sounds
 {
     public struct AudioFileMetaData

@@ -1,10 +1,10 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Jsons;
 using RuniEngine.NBS;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,15 +53,18 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static NBSFile? GetNBSFile(string path)
+        public static NBSFile? GetNBSFile(IOHandler ioHandler, string path)
         {
-            if (File.Exists(path))
-                return NBSManager.ReadNBSFile(path);
+            if (ioHandler.FileExists(path))
+            {
+                using System.IO.Stream stream = ioHandler.OpenRead(path);
+                return NBSReader.ReadNBSFile(stream);
+            }
 
             return null;
         }
 
-        public static string[] GetNBSDataKeys(string nameSpace = "")
+        public static string[] GetNBSDataKeys(IOHandler ioHandler, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
@@ -80,8 +83,8 @@ namespace RuniEngine.Resource.Sounds
                     return false;
             }))
             {
-                string path = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
-                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(path + ".json");
+                string path = PathUtility.Combine(ResourceManager.rootName, nameSpace, name);
+                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(path, ".json", ioHandler);
                 if (nbsDatas != null)
                     return nbsDatas.Keys.ToArray();
                 else
@@ -110,24 +113,25 @@ namespace RuniEngine.Resource.Sounds
             //진정한 병렬 로드
             Parallel.ForEach(resourcePack.nameSpaces, nameSpace =>
             {
-                string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-                if (!Directory.Exists(folderPath))
+                string folderPath = PathUtility.Combine(nameSpace, name);
+                IOHandler root = resourcePack.ioHandler.CreateChild(folderPath);
+                if (!root.DirectoryExists())
                     return;
 
-                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(folderPath + ".json");
+                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>("", ".json", root);
                 if (nbsDatas == null)
                     return;
 
                 tempAllNBSes.TryAdd(nameSpace, nbsDatas);
 
-                string[] files = DirectoryUtility.GetFiles(folderPath, ExtensionFilter.nbsFileFilter, SearchOption.AllDirectories);
+                string[] files = root.GetAllFiles(ExtensionFilter.nbsFileFilter).ToArray();
                 Interlocked.Add(ref maxProgress, files.Length);
 
                 Parallel.ForEach(files, nbsPath =>
                 {
-                    NBSFile? nbsFile = GetNBSFile(nbsPath);
+                    NBSFile? nbsFile = GetNBSFile(root, nbsPath);
                     if (nbsFile != null)
-                        pathNBSes.TryAdd(PathUtility.GetPathWithExtension(PathUtility.GetRelativePath(folderPath, nbsPath)), nbsFile);
+                        pathNBSes.TryAdd(PathUtility.GetPathWithoutExtension(nbsPath), nbsFile);
 
                     progress?.Report((float)Interlocked.Add(ref progressValue, 1) / Interlocked.Read(ref maxProgress));
                 });
@@ -140,7 +144,6 @@ namespace RuniEngine.Resource.Sounds
             foreach (var nbsDatas in tempAllNBSes)
             {
                 string nameSpace = nbsDatas.Key;
-                string folderPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
 
                 foreach (var nbsData in nbsDatas.Value)
                 {

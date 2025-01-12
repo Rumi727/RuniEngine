@@ -1,3 +1,4 @@
+#nullable enable
 #if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
 #endif

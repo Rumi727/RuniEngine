@@ -1,3 +1,4 @@
+#nullable enable
 /*
  * 이 스크립트는 SC KRM에서 따왔기 때문에 개적화입니다
 */
@@ -26,9 +27,9 @@ namespace RuniEngine.Editor.ProjectSettings
         public static SettingsProvider CreateSettingsProvider() => instance ??= new SpriteProjectSetting("Runi Engine/Resource/Sprite Setting", SettingsScope.Project);
 
 
-        RuniAdvancedDropdown nameSpaceDropdown = new RuniAdvancedDropdown();
-        RuniAdvancedDropdown typeDropdown = new RuniAdvancedDropdown();
-        RuniAdvancedDropdown nameDropdown = new RuniAdvancedDropdown();
+        readonly RuniAdvancedDropdown nameSpaceDropdown = new RuniAdvancedDropdown();
+        readonly RuniAdvancedDropdown typeDropdown = new RuniAdvancedDropdown();
+        readonly RuniAdvancedDropdown nameDropdown = new RuniAdvancedDropdown();
 
         [SerializeField] string nameSpace = ResourceManager.defaultNameSpace;
         [SerializeField] string type = "";
@@ -52,14 +53,14 @@ namespace RuniEngine.Editor.ProjectSettings
                 types = null;
             }
 
-            string tempType = DrawStringArray(typeDropdown, TryGetText("gui.type"), type, types ??= ImageLoader.GetTypes(nameSpace), true);
+            string tempType = DrawStringArray(typeDropdown, TryGetText("gui.type"), type, types ??= ImageLoader.GetTypes(ResourcePack.defaultPack, nameSpace), true);
             if (tempType != type)
             {
                 type = tempType;
                 names = null;
             }
 
-            name = DrawStringArray(nameDropdown, TryGetText("gui.name"), name, names ??= ImageLoader.GetSpriteNames(type, nameSpace));
+            name = DrawStringArray(nameDropdown, TryGetText("gui.name"), name, names ??= ImageLoader.GetSpriteNames(ResourcePack.defaultPack, type, nameSpace));
             tag = EditorGUILayout.TextField(TryGetText("gui.tag"), tag);
 
             EditorGUILayout.Space();
@@ -115,7 +116,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
             if (!cachedLocalTextures.TryGetValue(filePath, out texture) || texture == null)
             {
-                texture = ImageLoader.GetTexture(filePath, textureMetaData.filterMode, textureMetaData.generateMipmap, Resource.Images.TextureCompressionQuality.none, TextureFormat.Alpha8);
+                texture = ImageLoader.GetTexture(StreamingIOHandler.instance, filePath, textureMetaData.filterMode, textureMetaData.generateMipmap, Resource.Images.TextureCompressionQuality.none, TextureFormat.Alpha8);
                 cachedLocalTextures[filePath] = texture;
             }
 

@@ -1,3 +1,4 @@
+#nullable enable
 #if ENABLE_RUNI_ENGINE_POOLING
 using RuniEngine.Booting;
 using RuniEngine.Pooling;
@@ -238,7 +239,7 @@ namespace RuniEngine.Sounds
 
                     return false;
                 }
-
+                
                 AudioMetaData? audioMetaData = audioData.audios[Random.Range(0, audioData.audios.Length)];
                 if (audioMetaData == null || audioMetaData.rawAudioClip == null)
                 {

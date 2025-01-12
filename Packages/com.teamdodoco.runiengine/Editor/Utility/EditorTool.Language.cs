@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Datas;
 using RuniEngine.Jsons;
 using RuniEngine.Resource;

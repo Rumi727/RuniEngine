@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Editor.SerializedTypes;
 using RuniEngine.Editor.TypeDrawers;
 using RuniEngine.Resource;
@@ -97,7 +98,7 @@ namespace RuniEngine.Editor
                         if (Path.GetExtension(changedAssetPathAneName) != extFilter.extensions[i])
                             continue;
 
-                        pathProperty.SetValue(PathUtility.GetPathWithExtension(changedAssetPathAneName).Replace("\\", "/"));
+                        pathProperty.SetValue(PathUtility.GetPathWithoutExtension(changedAssetPathAneName).Replace("\\", "/"));
                         break;
                     }
                 }

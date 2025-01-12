@@ -1,3 +1,4 @@
+#nullable enable
 namespace RuniEngine.Resource
 {
     public readonly struct ExtensionFilter

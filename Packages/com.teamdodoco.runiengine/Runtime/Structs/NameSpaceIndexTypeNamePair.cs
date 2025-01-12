@@ -1,3 +1,4 @@
+#nullable enable
 using RuniEngine.Resource;
 using System;
 using System.IO;

@@ -1,3 +1,4 @@
+#nullable enable
 /*#nullable enable
 using RuniEngine.Booting;
 using RuniEngine.Pooling;

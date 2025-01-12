@@ -1,12 +1,11 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using RuniEngine.Jsons;
 using RuniEngine.Threading;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Networking;
 using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource.Images
@@ -19,23 +18,25 @@ namespace RuniEngine.Resource.Images
 
 
         /// <summary>
-        /// Texture2D = allTextures[nameSpace][type];
+        /// <see cref="Texture2D"/>? = allTextures[nameSpace][type];
         /// </summary>
         Dictionary<string, Dictionary<string, Texture2D?>> packTextures = new();
         /// <summary>
-        /// Rect = allTextureRects[nameSpace][type][fileName];
+        /// <see cref="Rect"/> = allTextureRects[nameSpace][type][fileName];
         /// </summary>
         Dictionary<string, Dictionary<string, Dictionary<string, Rect>>> packTextureRects = new();
         /// <summary>
-        /// string = allTexturePaths[nameSpace][type][fileName];
+        /// <see cref="TextureMetaData"/> = packTextureMetaDatas[nameSpace][type];
         /// </summary>
-        Dictionary<string, Dictionary<string, Dictionary<string, string>>> packTexturePaths = new();
+        Dictionary<string, Dictionary<string, TextureMetaData>> textureMetaDatas = new();
         /// <summary>
-        /// string = allTexturePaths[nameSpace][type];
+        ///     <see cref="Dictionary{TKey, TValue}">
+        ///         Dictionary&lt;<see cref="string"/>, <see cref="SpriteMetaData"/><see cref="Array">[]</see>&gt;
+        ///     </see> = spriteMetaDatas[nameSpace][type][fileName];
         /// </summary>
-        Dictionary<string, Dictionary<string, string>> packTextureTypePaths = new();
+        Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, SpriteMetaData[]>>>> spriteMetaDatas = new();
         /// <summary>
-        /// Sprite = allTextureSprites[nameSpace][type][fileName][tag];
+        /// <see cref="Sprite"/>?<see cref="Array">[]</see> = allTextureSprites[nameSpace][type][fileName][tag];
         /// </summary>
         Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, Sprite?[]>>>> allTextureSprites = new();
 
@@ -65,12 +66,12 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Texture2D? GetTexture(IOHandler ioHandler, string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
             TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(path + ".json") ?? new TextureMetaData();
-            return GetTexture(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+            return GetTexture(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
         }
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTexture(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+        public static Texture2D? GetTexture(IOHandler ioHandler, string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTexture(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 가져옵니다
@@ -107,17 +108,17 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷 (png, jpg 파일에서만 작동)
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Texture2D? GetTexture(IOHandler ioHandler, string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            if (File.Exists(path))
+            if (ioHandler.FileExists(path))
             {
                 Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap, false);
                 ResourceManager.RegisterManagedResource(texture);
 
                 texture.filterMode = filterMode;
-                texture.name = Path.GetFileNameWithoutExtension(path);
+                texture.name = PathUtility.GetFileNameWithoutExtension(path);
                 texture.hideFlags = hideFlags;
                 texture.mipMapBias = -0.5f;
 
@@ -125,7 +126,7 @@ namespace RuniEngine.Resource.Images
                 loaderSettings.generateMipmap = generateMipmap;
                 loaderSettings.logException = true;
 
-                if (!AsyncImageLoader.LoadImage(texture, File.ReadAllBytes(path), loaderSettings))
+                if (!AsyncImageLoader.LoadImage(texture, ioHandler.ReadAllBytes(path), loaderSettings))
                     return null;
 
                 if (compressionType == TextureCompressionQuality.normal)
@@ -159,12 +160,12 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷 (png, jpg 파일에서만 작동)
         /// </param>
         /// <returns></returns>
-        public static UniTask<Texture2D?> GetTextureAsync(string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
             TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(path + ".json") ?? new TextureMetaData();
-            return GetTextureAsync(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+            return GetTextureAsync(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
         }
 
         /// <summary>
@@ -185,7 +186,7 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static UniTask<Texture2D?> GetTextureAsync(string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTextureAsync(path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+        public static UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTextureAsync(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 비동기로 가져옵니다
@@ -205,29 +206,19 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static async UniTask<Texture2D?> GetTextureAsync(string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static async UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            if (File.Exists(path))
+            if (ioHandler.FileExists(path))
             {
-#if (UNITY_STANDALONE_LINUX && !UNITY_EDITOR) || UNITY_EDITOR_LINUX
-                byte[] textureBytes = File.ReadAllBytes(path);
-#else
-                using UnityWebRequest www = UnityWebRequest.Get(path.UrlPathPrefix());
-                await www.SendWebRequest();
-
-                if (www.result != UnityWebRequest.Result.Success)
-                    Debug.LogError(www.error);
-
-                byte[] textureBytes = www.downloadHandler.data;
-#endif
+                byte[] textureBytes = await ioHandler.ReadAllBytesAsync(path);
 
                 Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap);
                 ResourceManager.RegisterManagedResource(texture);
 
                 texture.filterMode = filterMode;
-                texture.name = Path.GetFileNameWithoutExtension(path);
+                texture.name = PathUtility.GetFileNameWithoutExtension(path);
                 texture.mipMapBias = -0.5f;
 
                 AsyncImageLoader.LoaderSettings loaderSettings = AsyncImageLoader.LoaderSettings.Default;
@@ -284,21 +275,23 @@ namespace RuniEngine.Resource.Images
         /// Texture Format
         /// </param>
         /// <returns></returns>
-        public static Sprite?[]? GetSprites(string type, string name, string nameSpace = "", string tag = spriteDefaultTag, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Sprite?[]? GetSprites(ResourcePack resourcePack, string type, string name, string nameSpace = "", string tag = spriteDefaultTag, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            string rootPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, ImageLoader.name);
-            string path = Path.Combine(rootPath, type, name);
+            string rootPath = PathUtility.Combine(nameSpace, ImageLoader.name);
+            string path = PathUtility.Combine(rootPath, type, name);
+
+            IOHandler ioHandler = resourcePack.ioHandler;
 
             ResourceManager.FileExtensionExists(path, out path, ExtensionFilter.pictureFileFilter);
-            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData>(Path.Combine(rootPath, type) + ".json");
-            Texture2D? texture = GetTexture(path, textureMetaData, textureFormat);
+            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData>(PathUtility.Combine(rootPath, type) + ".json");
+            Texture2D? texture = GetTexture(ioHandler, path, textureMetaData, textureFormat);
             if (texture == null)
                 return null;
 
-            Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(path + ".json");
+            Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(path, ".json", ioHandler);
             if (spriteMetaDatas == null)
             {
                 Object.DestroyImmediate(texture);
@@ -315,6 +308,7 @@ namespace RuniEngine.Resource.Images
 
             return null;
         }
+
         /// <summary>
         /// 텍스쳐를 스프라이트로 변환합니다 (Unity API를 사용하기 때문에 메인 스레드에서 실행해야 합니다)
         /// Convert texture to sprite (Since the Unity API is used, we need to run it on the main thread)
@@ -365,11 +359,11 @@ namespace RuniEngine.Resource.Images
         /// </param>
         /// <returns></returns>
         /// <exception cref="NotMainThreadMethodException"></exception>
-        public static Dictionary<string, Sprite?[]>? GetSprites(string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Dictionary<string, Sprite?[]>? GetSprites(IOHandler ioHandler, string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            Texture2D? texture = GetTexture(path, textureFormat);
+            Texture2D? texture = GetTexture(ioHandler, path, textureFormat);
             if (texture == null)
                 return null;
 
@@ -428,88 +422,74 @@ namespace RuniEngine.Resource.Images
 
 
 
-        public static string[] GetTypes(string nameSpace = "")
+        public static string[] GetTypes(ResourcePack resourcePack, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            string[] result2 = Array.Empty<string>();
+            string[] result = Array.Empty<string>();
             if (!ResourceManager.ResourceElementLoop<ImageLoader>(x =>
             {
-                if (x.packTextures.TryGetValue(nameSpace, out var result))
+                if (x.packTextures.TryGetValue(nameSpace, out var value))
                 {
-                    result2 = result.Keys.ToArray();
+                    result = value.Keys.ToArray();
                     return true;
                 }
 
                 return false;
             }))
             {
-                string textureRootPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name);
-                if (!Directory.Exists(textureRootPath))
-                    return result2;
+                string textureRootPath = PathUtility.Combine(nameSpace, name);
+                if (!resourcePack.ioHandler.DirectoryExists(textureRootPath))
+                    return result;
 
-                string[] typePaths = Directory.GetDirectories(textureRootPath, "*", SearchOption.AllDirectories);
-                for (int i = 0; i < typePaths.Length; i++)
-                {
-                    string typePath = typePaths[i];
-                    typePaths[i] = typePath.Substring(textureRootPath.Length + 1, typePath.Length - textureRootPath.Length - 1).Replace("\\", "/");
-                }
-
-                //빈 타입 경로 만들기
-                string[] typePaths2 = new string[typePaths.Length + 1];
-                Array.Copy(typePaths, 0, typePaths2, 1, typePaths.Length);
-
-                result2 = typePaths2;
+                result = resourcePack.ioHandler.GetAllDirectories(textureRootPath).Select(x => x.Substring(textureRootPath.Length + 1, x.Length - textureRootPath.Length - 1)).ToArray();
+                result = result.Insert(0, string.Empty);
             }
 
-            return result2;
+            return result;
         }
 
-        public static string[] GetSpriteNames(string type, string nameSpace = "")
+        public static string[] GetSpriteNames(ResourcePack resourcePack, string type, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            string[] result3 = Array.Empty<string>();
+            string[] result = Array.Empty<string>();
             if (!ResourceManager.ResourceElementLoop<ImageLoader>(x =>
             {
                 if (!x.isLoaded)
                     return false;
 
-                if (x.packTextureRects.TryGetValue(nameSpace, out var result) && result.TryGetValue(type, out var result2))
+                if (x.packTextureRects.TryGetValue(nameSpace, out var value) && value.TryGetValue(type, out var value2))
                 {
-                    result3 = result2.Keys.ToArray();
+                    result = value2.Keys.ToArray();
                     return true;
                 }
 
                 return false;
             }))
             {
-                string typePath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, name, type);
-                if (!Directory.Exists(typePath))
-                    return result3;
+                string typePath = PathUtility.Combine(nameSpace, name, type);
+                if (!resourcePack.ioHandler.DirectoryExists(typePath))
+                    return result;
 
-                string[] paths = DirectoryUtility.GetFiles(typePath, ExtensionFilter.pictureFileFilter);
-                for (int i = 0; i < paths.Length; i++)
-                    paths[i] = Path.GetFileNameWithoutExtension(paths[i]).Replace("\\", "/");
-
-                result3 = paths;
+                result = resourcePack.ioHandler.GetFiles(typePath, ExtensionFilter.pictureFileFilter).Select(x => PathUtility.GetFileNameWithoutExtension(x)).ToArray();
             }
 
-            return result3;
+            return result;
         }
 
 
 
-        public static string SearchTexturePath(string type, string name, string nameSpace = "")
+        public static TextureMetaData? SearchTextureMetaData(string type, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            string result = "";
+            TextureMetaData? result = null;
             ResourceManager.ResourceElementLoop<ImageLoader>(x =>
             {
-                if (x.packTexturePaths.ContainsKey(nameSpace) && x.packTexturePaths[nameSpace].ContainsKey(type) && x.packTexturePaths[nameSpace][type].ContainsKey(name))
+                if (x.textureMetaDatas.ContainsKey(nameSpace) && x.textureMetaDatas[nameSpace].ContainsKey(type))
                 {
-                    result = x.packTexturePaths[nameSpace][type][name];
+                    result = x.textureMetaDatas[nameSpace][type];
                     return true;
                 }
 
@@ -519,16 +499,16 @@ namespace RuniEngine.Resource.Images
             return result;
         }
 
-        public static string SearchTextureTypePath(string type, string nameSpace = "")
+        public static Dictionary<string, SpriteMetaData[]>? SearchSpriteMetaData(string type, string name, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            string result = "";
+            Dictionary<string, SpriteMetaData[]>? result = null;
             ResourceManager.ResourceElementLoop<ImageLoader>(x =>
             {
-                if (x.packTextureTypePaths.ContainsKey(nameSpace) && x.packTextureTypePaths[nameSpace].ContainsKey(type))
+                if (x.spriteMetaDatas.ContainsKey(nameSpace) && x.spriteMetaDatas[nameSpace].ContainsKey(type) && x.spriteMetaDatas[nameSpace][type].ContainsKey(name))
                 {
-                    result = x.packTextureTypePaths[nameSpace][type];
+                    result = x.spriteMetaDatas[nameSpace][type][name];
                     return true;
                 }
 
@@ -627,8 +607,10 @@ namespace RuniEngine.Resource.Images
             /// <summary>
             /// Texture2D = tempTextures[nameSpace][type][name];
             /// </summary>
-            Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempPackTexturePaths = new();
-            Dictionary<string, Dictionary<string, string>> tempPackTextureTypePaths = new();
+            //Dictionary<string, Dictionary<string, Dictionary<string, string>>> tempPackTexturePaths = new();
+            //Dictionary<string, Dictionary<string, string>> tempPackTextureTypePaths = new();
+            Dictionary<string, Dictionary<string, TextureMetaData>> tempTextureMetaDatas = new();
+            Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, SpriteMetaData[]>>>> tempSpriteMetaDatas = new();
             Dictionary<string, Dictionary<string, Dictionary<string, Texture2D>>> tempTextures = new();
 
             //Find Textures
@@ -640,8 +622,10 @@ namespace RuniEngine.Resource.Images
                 for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
                 {
                     string nameSpace = resourcePack.nameSpaces[i];
-                    string rootPath = Path.Combine(resourcePack.path, ResourceManager.rootName, nameSpace, name);
-                    if (!Directory.Exists(rootPath))
+                    string rootPath = PathUtility.Combine(nameSpace, name);
+                    using IOHandler root = resourcePack.ioHandler.CreateChild(rootPath);
+
+                    if (!root.DirectoryExists())
                     {
                         progressValue++;
                         maxProgress++;
@@ -650,29 +634,22 @@ namespace RuniEngine.Resource.Images
                         continue;
                     }
 
-                    string[] typePaths = Directory.GetDirectories(rootPath, "*", SearchOption.AllDirectories);
+                    GetImage(root.CreateChild(string.Empty));
 
-                    for (int j = -1; j < typePaths.Length; j++)
+                    foreach (var typePath in root.GetAllDirectories())
+                        GetImage(root.CreateChild(typePath));
+
+                    void GetImage(IOHandler handler)
                     {
-                        string typePath;
-                        string typeName;
+                        TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>("", ".json", handler) ?? new TextureMetaData();
+                        string typeName = handler.childPath;
 
-                        if (j >= 0)
-                        {
-                            typePath = typePaths[j].UniformDirectorySeparatorCharacter();
-                            typeName = typePath.Substring(rootPath.Length + 1);
-                        }
-                        else
-                        {
-                            typePath = rootPath;
-                            typeName = "";
-                        }
+                        tempTextureMetaDatas.TryAdd(nameSpace, new());
+                        tempTextureMetaDatas[nameSpace].TryAdd(typeName, textureMetaData);
 
-                        string[] filePaths = DirectoryUtility.GetFiles(typePath, ExtensionFilter.pictureFileFilter);
-                        for (int k = 0; k < filePaths.Length; k++)
+                        foreach (string filePath in handler.GetFiles(ExtensionFilter.pictureFileFilter))
                         {
-                            string filePath = filePaths[k].UniformDirectorySeparatorCharacter();
-                            string fileName = Path.GetFileNameWithoutExtension(filePath);
+                            string fileName = PathUtility.GetFileNameWithoutExtension(filePath);
 
                             maxProgress++;
                             tasks.Add(Task());
@@ -682,21 +659,18 @@ namespace RuniEngine.Resource.Images
                             {
                                 try
                                 {
-                                    TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(typePath + ".json") ?? new TextureMetaData();
-                                    Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(filePath, textureMetaData));
+                                    Dictionary<string, SpriteMetaData[]> spriteMetaData = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>?>(filePath, ".json", handler) ?? new();
+                                    Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(handler, filePath, textureMetaData));
                                     if (texture == null)
                                         return;
-
-                                    tempPackTexturePaths.TryAdd(nameSpace, new());
-                                    tempPackTexturePaths[nameSpace].TryAdd(typeName, new());
-                                    tempPackTexturePaths[nameSpace][typeName].TryAdd(fileName, filePath);
-
-                                    tempPackTextureTypePaths.TryAdd(nameSpace, new());
-                                    tempPackTextureTypePaths[nameSpace].TryAdd(typeName, typePath);
 
                                     tempTextures.TryAdd(nameSpace, new());
                                     tempTextures[nameSpace].TryAdd(typeName, new());
                                     tempTextures[nameSpace][typeName].TryAdd(fileName, texture);
+
+                                    tempSpriteMetaDatas.TryAdd(nameSpace, new());
+                                    tempSpriteMetaDatas[nameSpace].TryAdd(typeName, new());
+                                    tempSpriteMetaDatas[nameSpace][typeName].TryAdd(fileName, spriteMetaData);
                                 }
                                 catch (Exception e)
                                 {
@@ -706,6 +680,8 @@ namespace RuniEngine.Resource.Images
                                 {
                                     progressValue++;
                                     progress?.Report((float)progressValue / maxProgress);
+
+                                    handler.Dispose();
                                 }
                             }
                         }
@@ -717,8 +693,8 @@ namespace RuniEngine.Resource.Images
 
             await UniTask.SwitchToMainThread(PlayerLoopTiming.Initialization);
 
-            packTexturePaths = tempPackTexturePaths;
-            packTextureTypePaths = tempPackTextureTypePaths;
+            textureMetaDatas = tempTextureMetaDatas;
+            spriteMetaDatas = tempSpriteMetaDatas;
 
             await UniTask.SwitchToThreadPool();
 
@@ -744,7 +720,7 @@ namespace RuniEngine.Resource.Images
                         Texture2D? background = null;
                         Rect[]? rects = null;
 
-                        TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(tempPackTextureTypePaths[nameSpaces.Key][types.Key] + ".json") ?? new TextureMetaData();
+                        TextureMetaData textureMetaData = tempTextureMetaDatas[nameSpaces.Key][types.Key];
                         await ThreadDispatcher.Execute(() =>
                         {
                             int maxTextureSize = SystemInfo.maxTextureSize;
@@ -838,7 +814,7 @@ namespace RuniEngine.Resource.Images
                         await ThreadDispatcher.Execute(() => rect = new Rect(rect.x * background.width, rect.y * background.height, rect.width * background.width, rect.height * background.height));
 #endif
 
-                        Dictionary<string, SpriteMetaData[]> spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(SearchTexturePath(type.Key, rects.Key, nameSpace.Key) + ".json") ?? new Dictionary<string, SpriteMetaData[]>();
+                        Dictionary<string, SpriteMetaData[]> spriteMetaDatas = tempSpriteMetaDatas[nameSpace.Key][type.Key][rects.Key];
                         if (!spriteMetaDatas.ContainsKey(spriteDefaultTag))
                             spriteMetaDatas.Add(spriteDefaultTag, new SpriteMetaData[] { new SpriteMetaData() });
 
@@ -901,8 +877,8 @@ namespace RuniEngine.Resource.Images
 
             packTextures = new();
             packTextureRects = new();
-            packTexturePaths = new();
-            packTextureTypePaths = new();
+            spriteMetaDatas = new();
+            textureMetaDatas = new();
             allTextureSprites = new();
         }
     }

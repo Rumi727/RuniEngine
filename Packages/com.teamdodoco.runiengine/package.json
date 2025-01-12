@@ -16,8 +16,8 @@
     "com.unity.ugui": "1.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.textmeshpro": "3.0.9",
-    "com.cysharp.unitask": "2.5.0",
-    "com.coffee.softmask-for-ugui": "1.0.2"
+    "com.cysharp.unitask": "2.5.10",
+    "com.coffee.softmask-for-ugui": "2.3.8"
   },
   "keywords": [
     "Runi",

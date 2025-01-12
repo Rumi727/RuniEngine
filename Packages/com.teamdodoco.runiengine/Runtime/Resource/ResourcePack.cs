@@ -1,10 +1,10 @@
+#nullable enable
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RuniEngine.Jsons;
 using RuniEngine.Threading;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace RuniEngine.Resource
@@ -12,16 +12,28 @@ namespace RuniEngine.Resource
     public sealed class ResourcePack
     {
         ResourcePack() { }
+        ResourcePack(string name, string description, Version version, VersionRange targetRuniEngineVersion)
+        {
+            _name = name;
+            _description = description;
+            _version = version;
+            _targetRuniEngineVersion = targetRuniEngineVersion;
+        }
 
-        public static ResourcePack? defaultPack
+        public static ResourcePack defaultPack
         {
             get
             {
-                _defaultPack ??= Create(Kernel.streamingAssetsPath);
+                _defaultPack ??= Create(StreamingIOHandler.instance);
+                if (_defaultPack == null)
+                    return new ResourcePack();
+
                 return _defaultPack;
             }
         }
         static ResourcePack? _defaultPack;
+
+        public static VersionRange compatibleRuniEngineVersion => new VersionRange(Version.zero, Kernel.runiEngineVersion);
 
         [JsonIgnore] public string name => _name;
         [JsonProperty(nameof(name))] readonly string _name = "";
@@ -32,42 +44,47 @@ namespace RuniEngine.Resource
         [JsonIgnore] public Version version => _version;
         [JsonProperty(nameof(version))] readonly Version _version = Version.zero;
 
-        [JsonIgnore] public VersionRange targetVersion => _targetVersion;
-        [JsonProperty(nameof(targetVersion))] VersionRange _targetVersion = new VersionRange(Kernel.runiEngineVersion, Kernel.runiEngineVersion);
+        [JsonIgnore] public VersionRange targetRuniEngineVersion => _targetRuniEngineVersion;
+        [JsonProperty(nameof(targetRuniEngineVersion))] VersionRange _targetRuniEngineVersion = new VersionRange(Kernel.runiEngineVersion, Kernel.runiEngineVersion);
 
-        [JsonIgnore] public string path { get; private set; } = "";
-        [JsonIgnore] public string iconPath { get; private set; } = "";
+        [JsonIgnore] public IOHandler ioHandler { get; private set; } = IOHandler.empty;
 
-        [JsonIgnore] public IReadOnlyList<string> nameSpaces { get; private set; } = new List<string>();
+        [JsonIgnore] public IReadOnlyList<string> nameSpaces { get; private set; } = Array.Empty<string>();
         [JsonIgnore] public IReadOnlyDictionary<Type, IResourceElement> resourceElements { get; private set; } = new Dictionary<Type, IResourceElement>();
 
+        [JsonIgnore] public bool isValid { get; private set; } = false;
         [JsonIgnore] public bool isLoaded { get; private set; } = false;
 
-        public static ResourcePack? Create(string path)
+        public static ResourcePack? Create(string path) => Create(new FileIOHandler(path));
+
+        public static ResourcePack? Create(IOHandler ioHandler)
         {
-            if (!ResourceManager.FileExtensionExists(Path.Combine(path, "pack"), out string jsonPath, ExtensionFilter.jsonFileFilter))
+            if (!ioHandler.FileExists("pack", out string jsonPath, ExtensionFilter.jsonFileFilter))
                 return null;
 
-            ResourcePack? resourcePack = JsonManager.JsonRead<ResourcePack>(jsonPath);
+            ResourcePack? resourcePack = JsonManager.JsonRead<ResourcePack>(jsonPath, "", ioHandler);
             if (resourcePack == null)
                 return null;
 
-            resourcePack.path = path;
-            resourcePack.iconPath = Path.Combine(path, "pack");
+            return Create(ioHandler, resourcePack);
+        }
+
+        public static ResourcePack? Create(IOHandler ioHandler, string name, string description, Version version) => Create(ioHandler, new ResourcePack(name, description, version, Kernel.runiEngineVersion));
+
+        static ResourcePack Create(IOHandler ioHandler, ResourcePack resourcePack)
+        {
+            resourcePack.ioHandler = ioHandler.CreateChild(ResourceManager.rootName);
 
             {
-                string[] nameSpacePaths = Directory.GetDirectories(Path.Combine(path, ResourceManager.rootName));
-                List<string> nameSpaces = new List<string>();
-
-                for (int j = 0; j < nameSpacePaths.Length; j++)
-                {
-                    string nameSpacePath = nameSpacePaths[j];
-                    nameSpaces.Add(Path.GetFileName(nameSpacePath));
-                }
-
-                resourcePack.nameSpaces = nameSpaces;
+                resourcePack.nameSpaces = ioHandler.GetDirectories(ResourceManager.rootName)
+                                                   .Select(static nameSpacePath => PathUtility.GetFileName(nameSpacePath))
+                                                   .ToArray();
             }
 
+            /*
+             * 좀 더 확장성 있게 수정해야함
+             * 실시간 로드/언로드 기능 구현해라!!!!!!!!
+             */
             {
                 Dictionary<Type, IResourceElement> resourceElements = new Dictionary<Type, IResourceElement>();
 
@@ -86,6 +103,8 @@ namespace RuniEngine.Resource
 
                 resourcePack.resourceElements = resourceElements;
             }
+
+            resourcePack.isValid = true;
 
             return resourcePack;
         }
