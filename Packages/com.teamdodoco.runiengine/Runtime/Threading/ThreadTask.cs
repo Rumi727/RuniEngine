@@ -1,12 +1,13 @@
 #nullable enable
-using RuniEngine.Resource.Texts;
+using RuniEngine.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace RuniEngine.Threading
 {
-    public class ThreadTask : AsyncTask
+    public class ThreadTask : ProgressTask
     {
         /// <summary>
         /// { get; } = Thread.CurrentThread.ManagedThreadId
@@ -19,91 +20,7 @@ namespace RuniEngine.Threading
         public static bool isMainThread => mainThreadId == Thread.CurrentThread.ManagedThreadId;
 
 
-        static readonly List<ThreadTask> _runningThreads = new List<ThreadTask>();
-        public static IReadOnlyList<ThreadTask> runningThreads { get; } = _runningThreads;
-
-
-
-        #region 이벤트
-        public static event Action? threadAdd
-        {
-            add
-            {
-                Lock(ref threadAddLock);
-                _threadAdd += value;
-                Unlock(ref threadAddLock);
-            }
-            remove
-            {
-                Lock(ref threadAddLock);
-                _threadAdd -= value;
-                Unlock(ref threadAddLock);
-            }
-        }
-        static Action? _threadAdd;
-        static int threadAddLock = 0;
-
-        public static event Action? threadChange
-        {
-            add
-            {
-                Lock(ref threadChangeLock);
-                _threadChange += value;
-                Unlock(ref threadChangeLock);
-            }
-            remove
-            {
-                Lock(ref threadChangeLock);
-                _threadChange -= value;
-                Unlock(ref threadChangeLock);
-            }
-        }
-        static Action? _threadChange;
-        static int threadChangeLock = 0;
-
-        public static event Action? threadRemove
-        {
-            add
-            {
-                Lock(ref threadRemoveLock);
-                _threadRemove += value;
-                Unlock(ref threadRemoveLock);
-            }
-            remove
-            {
-                Lock(ref threadRemoveLock);
-                _threadRemove -= value;
-                Unlock(ref threadRemoveLock);
-            }
-        }
-        static Action? _threadRemove;
-        static int threadRemoveLock = 0;
-
-        static void ThreadAddEventInvoke()
-        {
-            Lock(ref threadAddLock);
-            _threadAdd?.Invoke();
-            Unlock(ref threadAddLock);
-
-            ThreadChangeEventInvoke();
-        }
-
-        static void ThreadChangeEventInvoke()
-        {
-            Lock(ref threadChangeLock);
-            _threadChange?.Invoke();
-            Unlock(ref threadChangeLock);
-        }
-
-        static void ThreadRemoveEventInvoke()
-        {
-            ThreadChangeEventInvoke();
-
-            Lock(ref threadRemoveLock);
-            _threadRemove?.Invoke();
-            Unlock(ref threadRemoveLock);
-        }
-        #endregion
+        public static SynchronizedCollection<ThreadTask?> runningThreads { get; } = new();
 
 
 
@@ -130,6 +47,228 @@ namespace RuniEngine.Threading
 
 
 
+        #region 이벤트
+        public static event Action? threadAdd
+        {
+            add
+            {
+                lock (threadAddLock)
+                {
+                    _threadAdd += value;
+                }
+            }
+            remove
+            {
+                lock (threadAddLock)
+                {
+                    _threadAdd -= value;
+                }
+            }
+        }
+        static Action? _threadAdd;
+        static readonly object threadAddLock = new();
+
+        public static event Action? threadChange
+        {
+            add
+            {
+                lock (threadChangeLock)
+                {
+                    _threadChange += value;
+                }
+            }
+            remove
+            {
+                lock (threadChangeLock)
+                {
+                    _threadChange -= value;
+                }
+            }
+        }
+        static Action? _threadChange;
+        static readonly object threadChangeLock = new();
+
+        public static event Action? threadRemove
+        {
+            add
+            {
+                lock (threadRemoveLock)
+                {
+                    _threadRemove += value;
+                }
+            }
+            remove
+            {
+                lock (threadRemoveLock)
+                {
+                    _threadRemove -= value;
+                }
+            }
+        }
+        static Action? _threadRemove;
+        static readonly object threadRemoveLock = new();
+
+        static void ThreadAddEventInvoke()
+        {
+            lock (threadAddLock)
+            {
+                EventUtility.EventInvoke(_threadAdd);
+            }
+            ThreadChangeEventInvoke();
+        }
+
+        static void ThreadChangeEventInvoke()
+        {
+            lock (threadChangeLock)
+            {
+                EventUtility.EventInvoke(_threadChange);
+            }
+        }
+
+        static void ThreadRemoveEventInvoke()
+        {
+            ThreadChangeEventInvoke();
+            lock (threadRemoveLock)
+            {
+                EventUtility.EventInvoke(_threadRemove);
+            }
+        }
+        #endregion
+
+
+
+        public override NameSpacePathReplacePair name
+        {
+            get
+            {
+                lock (nameLock)
+                {
+                    return _name;
+                }
+            }
+            set
+            {
+                lock (nameLock)
+                {
+                    _name = value;
+                }
+            }
+        }
+        NameSpacePathReplacePair _name = "";
+        public readonly object nameLock = new();
+
+        public override NameSpacePathReplacePair description
+        {
+            get
+            {
+                lock (descriptionLock)
+                {
+                    return _description;
+                }
+            }
+            set
+            {
+                lock (descriptionLock)
+                {
+                    _description = value;
+                }
+            }
+        }
+        NameSpacePathReplacePair _description = "";
+        public readonly object descriptionLock = new();
+
+        public override float progress
+        {
+            get => Interlocked.CompareExchange(ref _progress, 0, 0);
+            set
+            {
+                if (Interlocked.Exchange(ref _progress, value) != value)
+                    progressTimeWatch.Restart();
+            }
+        }
+        float _progress = 0;
+
+        public override bool isLooping
+        {
+            get => Interlocked.Add(ref _isLooping, 0) != 0;
+            set => Interlocked.Exchange(ref _isLooping, value ? 1 : 0);
+        }
+        int _isLooping = 0;
+
+        public override bool cancellable
+        {
+            get => Interlocked.Add(ref _cancellable, 0) != 0;
+            set => Interlocked.Exchange(ref _cancellable, value ? 1 : 0);
+        }
+        int _cancellable = 0;
+
+        public override event Action? cancelEvent
+        {
+            add
+            {
+                lock (cancelEventLock)
+                {
+                    _cancelEvent += value;
+                }
+            }
+            remove
+            {
+                lock (cancelEventLock)
+                {
+                    _cancelEvent -= value;
+                }
+            }
+        }
+        Action? _cancelEvent = null;
+        public readonly object cancelEventLock = new();
+
+        public override bool isDisposed
+        {
+            get => Interlocked.Add(ref _isDisposed, 0) != 0;
+            protected set => Interlocked.Exchange(ref _isDisposed, value ? 1 : 0);
+        }
+        int _isDisposed = 0;
+
+        public override float runningTime
+        {
+            get
+            {
+                try
+                {
+                    Lock(ref stopwatchLock);
+                    return (float)runningTimeWatch.Elapsed.TotalSeconds;
+                }
+                finally
+                {
+                    Unlock(ref stopwatchLock);
+                }
+            }
+        }
+        readonly Stopwatch runningTimeWatch = new Stopwatch();
+        int stopwatchLock = 0;
+
+        public override float progressTime
+        {
+            get
+            {
+                try
+                {
+                    Lock(ref stopwatchLock);
+                    return (float)progressTimeWatch.Elapsed.TotalSeconds;
+                }
+                finally
+                {
+                    Unlock(ref stopwatchLock);
+                }
+            }
+        }
+        readonly Stopwatch progressTimeWatch = new Stopwatch();
+
+
+
+
+
+
         #region 생성자
         /// <exception cref="NotMainThreadException"></exception>
         public ThreadTask(ThreadStart method) : this(method, "", "", false, false) { }
@@ -138,39 +277,23 @@ namespace RuniEngine.Threading
         public ThreadTask(ThreadStart method, NameSpacePathReplacePair name) : this(method, name, "", false, false) { }
 
         /// <exception cref="NotMainThreadException"></exception>
-        public ThreadTask(ThreadStart method, NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool loop = false, bool cancellable = false) : base(name, info, loop, cancellable)
+        public ThreadTask(ThreadStart method, NameSpacePathReplacePair name, NameSpacePathReplacePair description, bool isLooping = false, bool cancellable = false)
         {
-            NotMainThreadException.Exception();
+            this.name = name;
+            this.description = description;
+            this.isLooping = isLooping;
+            this.cancellable = cancellable;
+
+            runningThreads.Add(this);
+            ThreadAddEventInvoke();
+
+            runningTimeWatch.Start();
+            progressTimeWatch.Start();
 
             thread = new Thread(method);
             thread.Start();
 
-            _runningThreads.Add(this);
-            ThreadAddEventInvoke();
-
-            Debug.Log($"{LanguageLoader.TryGetText(name.path, name.nameSpace)} thread meta data created");
-        }
-
-
-
-        /// <exception cref="NotMainThreadException"></exception>
-        public ThreadTask(Action<ThreadTask> method) : this(method, "", "", false, false) { }
-
-        /// <exception cref="NotMainThreadException"></exception>
-        public ThreadTask(Action<ThreadTask> method, NameSpacePathReplacePair name) : this(method, name, "", false, false) { }
-
-        /// <exception cref="NotMainThreadException"></exception>
-        public ThreadTask(Action<ThreadTask> method, NameSpacePathReplacePair name, NameSpacePathReplacePair info, bool loop = false, bool cancellable = false) : base(name, info, loop, cancellable)
-        {
-            NotMainThreadException.Exception();
-
-            thread = new Thread(() => method(this));
-            thread.Start();
-
-            _runningThreads.Add(this);
-            ThreadAddEventInvoke();
-
-            Debug.Log($"{LanguageLoader.TryGetText(name.path, name.nameSpace)} thread meta data created");
+            Debug.Log($"{name} thread task created");
         }
         #endregion
 
@@ -178,27 +301,26 @@ namespace RuniEngine.Threading
 
         public Thread? thread { get; private set; } = null;
 
-        /// <summary>
-        /// 이 함수는 메인 스레드에서만 실행할수 있습니다
-        /// This function can only be executed on the main thread
-        /// </summary>
-        /// <exception cref="NotMainThreadException"></exception>
         public override void Dispose()
         {
-            NotMainThreadException.Exception();
+            Debug.ForceLog($"{name} Thread Remove! Beware the Join method");
 
-            Debug.ForceLog($"{LanguageLoader.TryGetText(name.path, name.nameSpace)} Thread Remove! Beware the Join method");
+            if (isDisposed)
+                throw new ObjectDisposedException(GetType().Name);
 
-            _runningThreads.Remove(this);
-            ThreadRemoveEventInvoke();
+            EventUtility.EventInvoke(_cancelEvent);
 
-            if (thread != null)
-            {
-                thread.Join();
-                thread = null;
-            }
+            runningThreads.Remove(this);
 
-            base.Dispose();
+            EventUtility.EventInvoke(_threadChange);
+            EventUtility.EventInvoke(_threadRemove);
+
+            Debug.Log($"{name} async task ended");
+
+            isDisposed = true;
+
+            progressTimeWatch.Stop();
+            runningTimeWatch.Stop();
         }
     }
 }

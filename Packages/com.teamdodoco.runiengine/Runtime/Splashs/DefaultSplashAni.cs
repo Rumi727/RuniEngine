@@ -71,11 +71,7 @@ namespace RuniEngine.Splashs
                     progressBar.allowNoResponseAni = true;
 
                     if (BootLoader.resourceTask != null)
-                    {
-                        float value = BootLoader.resourceTask.progress / BootLoader.resourceTask.maxProgress;
-                        if (float.IsNormal(value))
-                            progressBar.progress = value;
-                    }
+                        progressBar.progress = BootLoader.resourceTask.progress;
                     else if (BootLoader.isAllLoaded)
                         progressBar.progress = 1;
                     else

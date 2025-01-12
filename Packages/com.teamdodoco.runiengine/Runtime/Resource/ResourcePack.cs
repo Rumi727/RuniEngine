@@ -126,17 +126,11 @@ namespace RuniEngine.Resource
                         int index = progressIndex;
                         IProgress<float> progress2 = Progress.Create<float>(y =>
                         {
-                            try
+                            lock (progressLists.internalSync)
                             {
-                                ThreadTask.Lock(ref progressLists.internalSync);
-
                                 progressLists.internalList[index] = y;
                                 progress.Report(progressLists.internalList.Sum() / resourceElements.Count);
 
-                            }
-                            finally
-                            {
-                                ThreadTask.Unlock(ref progressLists.internalSync);
                             }
                         });
 

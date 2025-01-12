@@ -5,191 +5,121 @@ using System.Threading;
 namespace System.Collections.Generic
 {
     [Runtime.InteropServices.ComVisible(false)]
-    public class SynchronizedCollection<T> : IList<T?>, IList
+    public class SynchronizedCollection<T> : IList<T>, IList, IReadOnlyList<T>
     {
-        public readonly List<T?> internalList;
-        public int internalSync = 0;
+        public readonly List<T> internalList;
+        public readonly object internalSync = new();
 
-        public SynchronizedCollection() => internalList = new List<T?>();
+        public SynchronizedCollection() => internalList = new List<T>();
 
-        public SynchronizedCollection(IEnumerable<T?>? list)
+        public SynchronizedCollection(IEnumerable<T> list)
         {
             if (list == null)
                 throw new ArgumentNullException("list");
 
-            internalList = new List<T?>(list);
+            internalList = new List<T>(list);
         }
 
-        public SynchronizedCollection(params T?[]? list)
+        public SynchronizedCollection(params T[] list)
         {
             if (list == null)
                 throw new ArgumentNullException("list");
 
-            internalList = new List<T?>(list);
+            internalList = new List<T>(list);
         }
 
         public int Count
         {
             get
             {
-                while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                    Thread.Yield();
-
-                int count = internalList.Count;
-
-                Interlocked.Decrement(ref internalSync);
-
-                return count;
+                lock (internalSync)
+                {
+                    return internalList.Count;
+                }
             }
         }
 
-        protected List<T?> Items => internalList;
+        protected List<T> Items => internalList;
 
-        public T? this[int index]
+        public T this[int index]
         {
             get
             {
-                while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                    Thread.Yield();
-
-                try
+                lock (internalSync)
                 {
                     return internalList[index];
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref internalSync);
                 }
             }
             set
             {
-                while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                    Thread.Yield();
-
-                try
+                lock (internalSync)
                 {
-                    if (index < 0 || index >= internalList.Count)
-                        throw new ArgumentOutOfRangeException();
-
                     SetItem(index, value);
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref internalSync);
                 }
             }
         }
 
-        public void Add(T? item)
+        public void Add(T item)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 int index = internalList.Count;
                 InsertItem(index, item);
-            }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
             }
         }
 
         public void Clear()
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 ClearItems();
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
-        public void CopyTo(T?[]? array, int index)
+        public void CopyTo(T[] array, int index)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 internalList.CopyTo(array, index);
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
-        public bool Contains(T? item)
+        public bool Contains(T item)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 return internalList.Contains(item);
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
-        public IEnumerator<T?> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 return internalList.GetEnumerator();
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
-        public int IndexOf(T? item)
+        public int IndexOf(T item)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 return InternalIndexOf(item);
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
-        public void Insert(int index, T? item)
+        public void Insert(int index, T item)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 if (index < 0 || index > internalList.Count)
                     throw new ArgumentOutOfRangeException();
 
                 InsertItem(index, item);
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
-        int InternalIndexOf(T? item)
+        int InternalIndexOf(T item)
         {
             int count = internalList.Count;
 
@@ -201,12 +131,9 @@ namespace System.Collections.Generic
             return -1;
         }
 
-        public bool Remove(T? item)
+        public bool Remove(T item)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 int index = InternalIndexOf(item);
                 if (index < 0)
@@ -215,39 +142,28 @@ namespace System.Collections.Generic
                 RemoveItem(index);
                 return true;
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
         public void RemoveAt(int index)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 if (index < 0 || index >= internalList.Count)
                     throw new ArgumentOutOfRangeException();
 
                 RemoveItem(index);
             }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
-            }
         }
 
         protected virtual void ClearItems() => internalList.Clear();
 
-        protected virtual void InsertItem(int index, T? item) => internalList.Insert(index, item);
+        protected virtual void InsertItem(int index, T item) => internalList.Insert(index, item);
 
         protected virtual void RemoveItem(int index) => internalList.RemoveAt(index);
 
-        protected virtual void SetItem(int index, T? item) => internalList[index] = item;
+        protected virtual void SetItem(int index, T item) => internalList[index] = item;
 
-        bool ICollection<T?>.IsReadOnly => false;
+        bool ICollection<T>.IsReadOnly => false;
 
         IEnumerator IEnumerable.GetEnumerator() => ((IList)internalList).GetEnumerator();
 
@@ -257,16 +173,9 @@ namespace System.Collections.Generic
 
         void ICollection.CopyTo(Array? array, int index)
         {
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
                 ((IList)internalList).CopyTo(array, index);
-            }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
             }
         }
 
@@ -276,7 +185,7 @@ namespace System.Collections.Generic
             set
             {
                 VerifyValueType(value);
-                this[index] = (T?)value;
+                this[index] = (T)value!;
             }
         }
 
@@ -288,42 +197,35 @@ namespace System.Collections.Generic
         {
             VerifyValueType(value);
 
-            while (Interlocked.CompareExchange(ref internalSync, 1, 0) != 0)
-                Thread.Yield();
-
-            try
+            lock (internalSync)
             {
-                Add((T?)value);
+                Add((T)value!);
                 return Count - 1;
-            }
-            finally
-            {
-                Interlocked.Decrement(ref internalSync);
             }
         }
 
         bool IList.Contains(object? value)
         {
             VerifyValueType(value);
-            return Contains((T?)value);
+            return Contains((T)value!);
         }
 
         int IList.IndexOf(object? value)
         {
             VerifyValueType(value);
-            return IndexOf((T?)value);
+            return IndexOf((T)value!);
         }
 
         void IList.Insert(int index, object? value)
         {
             VerifyValueType(value);
-            Insert(index, (T?)value);
+            Insert(index, (T)value!);
         }
 
         void IList.Remove(object? value)
         {
             VerifyValueType(value);
-            Remove((T?)value);
+            Remove((T)value!);
         }
 
         static void VerifyValueType(object? value)

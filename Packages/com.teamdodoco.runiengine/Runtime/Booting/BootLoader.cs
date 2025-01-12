@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using RuniEngine.Datas;
 using RuniEngine.Resource;
 using RuniEngine.Splashs;
+using RuniEngine.Tasks;
 using RuniEngine.Threading;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace RuniEngine.Booting
         public static bool isDataLoaded { get; private set; } = false;
         public static bool isAllLoaded { get; private set; } = false;
 
-        public static AsyncTask? resourceTask { get; private set; } = null;
+        public static ProgressTask? resourceTask { get; private set; } = null;
 
         public static IReadOnlyList<StorableClass> projectData
         {

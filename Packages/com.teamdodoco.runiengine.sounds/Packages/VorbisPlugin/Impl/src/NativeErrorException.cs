@@ -1,4 +1,3 @@
-#nullable enable
 namespace OggVorbis
 {
     public class NativeErrorException : System.Exception
