@@ -4920,6 +4920,16 @@ namespace RuniEngine
         public static double Tanh(this double value) => Math.Tanh(value);
         #endregion
 
+        #region To Float
+        public static float ToFloat(this double value) => (float)value.Clamp(float.MinValue, float.MaxValue);
+        #endregion
+
+        #region To Int
+        public static int ToInt(this long value) => (int)value.Clamp(int.MinValue, int.MaxValue);
+        public static int ToInt(this float value) => (int)value.Clamp(int.MinValue, int.MaxValue);
+        public static int ToInt(this double value) => (int)value.Clamp(int.MinValue, int.MaxValue);
+        #endregion
+
         #region Truncate
         public static float Truncate(this float value) => (float)Math.Truncate(value);
         public static double Truncate(this double value) => Math.Truncate(value);
