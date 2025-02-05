@@ -331,6 +331,9 @@
     "control_panel.generic.fps": "현재 프레임",
 
     "control_panel.generic.memory": "총 할당된 메모리 (MB)",
+    "control_panel.generic.memory.reserved": "총 예악된 메모리 (MB)",
+    "control_panel.generic.memory.unused_reserved": "총 사용되지 않은 예악된 메모리 (MB)",
+    "control_panel.generic.memory.mono": "총 모노 메모리 (MB)",
 
     "control_panel.generic.main_thread_id": "메인 스레드 ID",
 

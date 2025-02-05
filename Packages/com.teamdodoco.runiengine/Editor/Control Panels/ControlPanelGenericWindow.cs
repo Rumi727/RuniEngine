@@ -1,6 +1,7 @@
 #nullable enable
 using RuniEngine.Accounts;
 using RuniEngine.Threading;
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -39,6 +40,9 @@ namespace RuniEngine.Editor.ControlPanels
             DrawLine();
 
             DrawText("control_panel.generic.memory", (Profiler.GetTotalAllocatedMemoryLong() / 1048576f).Round(4));
+            DrawText("control_panel.generic.memory.reserved", (Profiler.GetTotalReservedMemoryLong() / 1048576f).Round(4));
+            DrawText("control_panel.generic.memory.unused_reserved", (Profiler.GetTotalUnusedReservedMemoryLong() / 1048576f).Round(4));
+            DrawText("control_panel.generic.memory.mono", (Profiler.GetMonoUsedSizeLong() / 1048576f).Round(4));
 
             DrawLine();
 
