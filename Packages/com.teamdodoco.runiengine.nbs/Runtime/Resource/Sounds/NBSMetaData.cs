@@ -43,5 +43,7 @@ namespace RuniEngine.Resource.Sounds
 #endif
 
         [JsonIgnore] public NBSFile? nbsFile { get; }
+
+        public override void Dispose() { }
     }
 }
