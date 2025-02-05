@@ -475,10 +475,14 @@ namespace RuniEngine.Resource.Sounds
 
         public async UniTask Unload()
         {
+            foreach (var item in allAudios.SelectMany(x => x.Value).Select(x => x.Value))
+            {
+                item.Dispose();
+                await UniTask.Yield();
+            }
+
             allAudios = new();
             isLoaded = false;
-
-            await UniTask.CompletedTask;
         }
     }
 }
