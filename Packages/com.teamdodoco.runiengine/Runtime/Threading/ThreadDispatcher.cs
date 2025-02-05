@@ -57,15 +57,29 @@ namespace RuniEngine.Threading
             }
         }
 
-        public static UniTask<T> Execute<T>(Func<T> func)
+        public static void ExecuteForget(Action action)
         {
-            UniTaskCompletionSource<T> tcs = new UniTaskCompletionSource<T>();
+            if (ThreadTask.isMainThread)
+                action.Invoke();
+            else
+                scheduledTasks.Enqueue(action);
+        }
+
+        public static UniTask Execute(Action action)
+        {
+            UniTaskCompletionSource tcs = new UniTaskCompletionSource();
+            if (ThreadTask.isMainThread)
+            {
+                InternalAction();
+                return tcs.Task;
+            }
+
             void InternalAction()
             {
                 try
                 {
-                    T returnValue = func();
-                    tcs.TrySetResult(returnValue);
+                    action.Invoke();
+                    tcs.TrySetResult();
                 }
                 catch (Exception e)
                 {
@@ -77,15 +91,21 @@ namespace RuniEngine.Threading
             return tcs.Task;
         }
 
-        public static UniTask Execute(Action action)
+        public static UniTask<T> Execute<T>(Func<T> func)
         {
-            UniTaskCompletionSource tcs = new UniTaskCompletionSource();
+            UniTaskCompletionSource<T> tcs = new UniTaskCompletionSource<T>();
+            if (ThreadTask.isMainThread)
+            {
+                InternalAction();
+                return tcs.Task;
+            }
+
             void InternalAction()
             {
                 try
                 {
-                    action();
-                    tcs.TrySetResult();
+                    T returnValue = func.Invoke();
+                    tcs.TrySetResult(returnValue);
                 }
                 catch (Exception e)
                 {
