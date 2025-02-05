@@ -1,10 +1,12 @@
 #nullable enable
 using RuniEngine.Editor.SerializedTypes;
-using RuniEngine.Editor.TypeDrawers;
+using RuniEngine.Jsons;
 using RuniEngine.Resource;
 using RuniEngine.Resource.Sounds;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,13 +19,19 @@ namespace RuniEngine.Editor
         protected SoundMetaDataTypeDrawer(SerializedTypeProperty property) : base(property) { }
 
         /// <summary><see cref="Line1GUI"/> 메소드에서 마지막으로 계산한 실제 오디오 경로를 반환합니다</summary>
-        protected string realAudioPath { get; private set; } = string.Empty;
+        //protected string realAudioPath { get; private set; } = string.Empty;
 
         protected abstract string folderName { get; }
         protected abstract ExtensionFilter extFilter { get; }
 
+        public string[] selectedAudioPaths = Array.Empty<string>();
+        public AudioFileMetaData[] selectedMetaDatas = Array.Empty<AudioFileMetaData>();
+
         protected override void InternalDrawStructGUI(Rect position, GUIContent? label)
         {
+            selectedAudioPaths = GetAudioRealPaths().ToArray();
+            selectedMetaDatas = selectedAudioPaths.Select(static x => JsonManager.JsonRead<AudioFileMetaData>(x, ".json", StreamingIOHandler.instance)).ToArray();
+
             Line1GUI(position);
 
             position.y += GetYSize(EditorStyles.textField) + 3;
@@ -64,14 +72,13 @@ namespace RuniEngine.Editor
 
             //Drag And Drop
             {
-                string assetAllPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, folderName).Replace("\\", "/");
-                string assetAllPathAndName = Path.Combine(assetAllPath, audioPath).Replace("\\", "/");
+                string assetAllPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, folderName).UniformDirectorySeparatorCharacter();
+                string assetAllPathAndName = Path.Combine(assetAllPath, audioPath).UniformDirectorySeparatorCharacter();
 
-                string assetPath = Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, nameSpace, folderName).Replace("\\", "/");
-                string assetPathAndName = Path.Combine(assetPath, audioPath).Replace("\\", "/");
+                string assetPath = Path.Combine("Assets", Kernel.streamingAssetsFolderName, ResourceManager.rootName, nameSpace, folderName).UniformDirectorySeparatorCharacter();
+                string assetPathAndName = Path.Combine(assetPath, audioPath).UniformDirectorySeparatorCharacter();
 
                 ResourceManager.FileExtensionExists(assetAllPathAndName, out string outPath, extFilter);
-                realAudioPath = outPath;
 
                 EditorGUI.BeginChangeCheck();
 
@@ -98,7 +105,7 @@ namespace RuniEngine.Editor
                         if (Path.GetExtension(changedAssetPathAneName) != extFilter.extensions[i])
                             continue;
 
-                        pathProperty.SetValue(PathUtility.GetPathWithoutExtension(changedAssetPathAneName).Replace("\\", "/"));
+                        pathProperty.SetValue(PathUtility.GetPathWithoutExtension(changedAssetPathAneName.UniformDirectorySeparatorCharacter()));
                         break;
                     }
                 }
@@ -146,5 +153,26 @@ namespace RuniEngine.Editor
         protected virtual void LineOtherGUI(Rect position) { }
 
         protected override float InternalGetStructHeight() => GetYSize(EditorStyles.textField) + 3 + GetYSize(EditorStyles.numberField);
+
+        IEnumerable<string> GetAudioRealPaths()
+        {
+            string nameSpace = (string)(property.metaData.GetValueOrDefault("nameSpace", null) ?? string.Empty);
+
+            SerializedTypeProperty? pathProperty = childSerializedType?.GetProperty(nameof(SoundMetaDataBase.path));
+            if (pathProperty == null)
+                yield break;
+
+            foreach (string? audioPath in pathProperty.GetValues().Cast<string?>())
+            {
+                if (audioPath == null)
+                    continue;
+
+                string assetAllPath = Path.Combine(Kernel.streamingAssetsPath, ResourceManager.rootName, nameSpace, folderName).UniformDirectorySeparatorCharacter();
+                string assetAllPathAndName = Path.Combine(assetAllPath, audioPath).UniformDirectorySeparatorCharacter();
+
+                ResourceManager.FileExtensionExists(assetAllPathAndName, out string outPath, extFilter);
+                yield return outPath;
+            }
+        }
     }
 }
