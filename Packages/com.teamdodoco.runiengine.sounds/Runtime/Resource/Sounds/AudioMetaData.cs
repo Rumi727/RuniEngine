@@ -47,5 +47,9 @@ namespace RuniEngine.Resource.Sounds
 
         [JsonIgnore] public float length => rawAudioClip?.length ?? 0;
         [JsonIgnore] public long samples => rawAudioClip?.samples ?? 0;
+
+        public bool isDisposed => rawAudioClip?.isDisposed ?? true;
+
+        public override void Dispose() => rawAudioClip?.Dispose();
     }
 }
