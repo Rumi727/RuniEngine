@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.Progress;
 using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource.Images
@@ -144,9 +145,7 @@ namespace RuniEngine.Resource.Images
         #region Get Texture Async
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 비동기로 가져옵니다
-        /// 다양한 포맷을 지원하며 이중엔 SC KRM이 지원하는 포맷과 유니티가 지원하는 포맷도 있습니다
         /// Asynchronously import an image file as a Texture2D type.
-        /// Various formats are supported. Among them, there are formats supported by SC KRM and formats supported by Unity.
         /// </summary>
         /// <param name="path">
         /// 파일의 경로
@@ -170,9 +169,7 @@ namespace RuniEngine.Resource.Images
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 비동기로 가져옵니다
-        /// 다양한 포맷을 지원하며 이중엔 SC KRM이 지원하는 포맷과 유니티가 지원하는 포맷도 있습니다
         /// Asynchronously import an image file as a Texture2D type.
-        /// Various formats are supported. Among them, there are formats supported by SC KRM and formats supported by Unity.
         /// </summary>
         /// <param name="path">
         /// 파일의 경로
@@ -190,9 +187,7 @@ namespace RuniEngine.Resource.Images
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 비동기로 가져옵니다
-        /// 다양한 포맷을 지원하며 이중엔 SC KRM이 지원하는 포맷과 유니티가 지원하는 포맷도 있습니다
         /// Asynchronously import an image file as a Texture2D type.
-        /// Various formats are supported. Among them, there are formats supported by SC KRM and formats supported by Unity.
         /// </summary>
         /// <param name="path">
         /// 파일의 경로
@@ -596,13 +591,13 @@ namespace RuniEngine.Resource.Images
 
             foreach (Texture2D? texture in packTextures.SelectMany(item => item.Value)
                                                        .Select(x => x.Value))
-                ResourceManager.garbages.Add(texture);
+                ResourceManager.RegisterGarbageResource(texture);
 
             foreach (Sprite? sprite in allTextureSprites.SelectMany(x => x.Value)
                                                         .SelectMany(x => x.Value)
                                                         .SelectMany(x => x.Value)
                                                         .SelectMany(x => x.Value))
-                ResourceManager.garbages.Add(sprite);
+                ResourceManager.RegisterGarbageResource(sprite);
 
             /// <summary>
             /// Texture2D = tempTextures[nameSpace][type][name];
@@ -741,11 +736,17 @@ namespace RuniEngine.Resource.Images
                             ResourceManager.RegisterManagedResource(background);
                         });
 
-                        ThreadDispatcher.Execute(() =>
+                        ThreadDispatcher.ExecuteForget(() =>
                         {
                             for (int i = 0; i < textures.Length; i++)
-                                Object.DestroyImmediate(textures[i]);
-                        }).Forget();
+                            {
+                                Texture2D? texture = textures[i];
+                                ResourceManager.UnregisterManagedResource(texture);
+
+                                if (texture != null)
+                                    Object.DestroyImmediate(texture);
+                            }
+                        });
 
                         if (background == null || rects == null)
                             continue;
@@ -863,6 +864,8 @@ namespace RuniEngine.Resource.Images
                                                       .SelectMany(x => x.Value)
                                                       .Where(x => x != null))
             {
+                ResourceManager.UnregisterManagedResource(item);
+
                 Object.DestroyImmediate(item);
                 await UniTask.Yield();
             }
@@ -871,6 +874,8 @@ namespace RuniEngine.Resource.Images
                                                        .Select(x => x.Value)
                                                        .Where(x => x != null))
             {
+                ResourceManager.UnregisterManagedResource(texture);
+
                 Object.DestroyImmediate(texture);
                 await UniTask.Yield();
             }

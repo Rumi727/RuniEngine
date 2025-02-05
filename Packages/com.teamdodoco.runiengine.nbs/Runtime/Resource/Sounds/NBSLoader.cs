@@ -104,6 +104,9 @@ namespace RuniEngine.Resource.Sounds
 
             await UniTask.SwitchToThreadPool();
 
+            foreach (var item in allNBSes.SelectMany(x => x.Value).Select(x => x.Value))
+                ResourceManager.RegisterGarbageResource(item);
+
             ConcurrentDictionary<string, NBSFile>? pathNBSes = new();
             ConcurrentDictionary<string, Dictionary<string, NBSData>> tempAllNBSes = new();
 
@@ -177,6 +180,12 @@ namespace RuniEngine.Resource.Sounds
 
         public async UniTask Unload()
         {
+            foreach (var item in allNBSes.SelectMany(x => x.Value).Select(x => x.Value))
+            {
+                item.Dispose();
+                await UniTask.Yield();
+            }
+
             allNBSes = new();
             isLoaded = false;
 

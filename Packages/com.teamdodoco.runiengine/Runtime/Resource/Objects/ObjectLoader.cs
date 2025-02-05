@@ -90,7 +90,7 @@ namespace RuniEngine.Resource.Objects
             await UniTask.SwitchToThreadPool();
 
             foreach (Object? unityObject in unityObjects.SelectMany(x => x.Value).Select(x => x.Value).Where(unityObject => unityObject != null))
-                ResourceManager.garbages.Add(unityObject);
+                ResourceManager.RegisterGarbageResource(unityObject);
 
             await UniTask.SwitchToMainThread();
 
@@ -152,6 +152,8 @@ namespace RuniEngine.Resource.Objects
         {
             foreach (Object? unityObject in unityObjects.SelectMany(x => x.Value).Select(x => x.Value).Where(unityObject => unityObject != null))
             {
+                ResourceManager.UnregisterManagedResource(unityObject);
+
                 Object.DestroyImmediate(unityObject);
                 await UniTask.Yield();
             }

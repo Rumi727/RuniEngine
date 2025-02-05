@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-
 using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource
@@ -33,9 +32,10 @@ namespace RuniEngine.Resource
 
 
 
-        static List<IDisposable> allManagedResources { get; } = new();
-        static List<Object?> allLoadedResources { get; } = new();
-        public static SynchronizedCollection<Object?> garbages { get; } = new SynchronizedCollection<Object?>();
+        static SynchronizedCollection<IDisposable> allManagedResources { get; } = new();
+        static SynchronizedCollection<Object?> allLoadedResources { get; } = new();
+        static SynchronizedCollection<IDisposable> managedGarbages { get; } = new SynchronizedCollection<IDisposable>();
+        static SynchronizedCollection<Object?> unityGarbages { get; } = new SynchronizedCollection<Object?>();
 
 
 
@@ -91,7 +91,7 @@ namespace RuniEngine.Resource
             }
             finally
             {
-                ThreadDispatcher.Execute(GarbageRemoval).Forget();
+                ThreadDispatcher.ExecuteForget(GarbageRemoval);
             }
         }
 
@@ -195,30 +195,58 @@ namespace RuniEngine.Resource
         {
             if (!ThreadTask.isMainThread)
             {
-                ThreadDispatcher.Execute(GarbageRemoval).Forget();
+                ThreadDispatcher.ExecuteForget(GarbageRemoval);
                 return;
             }
 
             NotMainThreadException.Exception();
 
-            for (int i = 0; i < garbages.Count; i++)
+            lock (managedGarbages.internalSync)
             {
-                Object? resource = garbages[i];
-                if (resource != null)
-                    Object.DestroyImmediate(resource, true);
+                for (int i = 0; i < managedGarbages.internalList.Count; i++)
+                {
+                    IDisposable resource = managedGarbages.internalList[i];
+
+                    try
+                    {
+                        resource.Dispose();
+                    }
+                    catch (ObjectDisposedException) { }
+                    catch (NullReferenceException) { }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
+                }
+
+                managedGarbages.internalList.Clear();
             }
 
-            for (int i = 0; i < allLoadedResources.Count; i++)
+            lock (unityGarbages.internalSync)
             {
-                Object? resource = allLoadedResources[i];
-                if (resource == null)
+                for (int i = 0; i < unityGarbages.internalList.Count; i++)
                 {
-                    allLoadedResources.RemoveAt(i);
-                    i--;
+                    Object? resource = unityGarbages.internalList[i];
+                    if (resource != null)
+                        Object.DestroyImmediate(resource, true);
+                }
+
+                unityGarbages.internalList.Clear();
+            }
+
+
+            lock (allLoadedResources.internalSync)
+            {
+                for (int i = 0; i < allLoadedResources.internalList.Count; i++)
+                {
+                    Object? resource = allLoadedResources.internalList[i];
+                    if (resource == null)
+                    {
+                        allLoadedResources.internalList.RemoveAt(i);
+                        i--;
+                    }
                 }
             }
-
-            garbages.Clear();
 
             GC.Collect();
             Resources.UnloadUnusedAssets();
@@ -226,8 +254,16 @@ namespace RuniEngine.Resource
 
 
 
+        public static void RegisterGarbageResource(Object? resource) => unityGarbages.Add(resource);
+        public static void RegisterGarbageResource(IDisposable resource) => managedGarbages.Add(resource);
+
+
+
         public static void RegisterManagedResource(Object? resource) => allLoadedResources.Add(resource);
         public static void RegisterManagedResource(IDisposable resource) => allManagedResources.Add(resource);
+
+        public static void UnregisterManagedResource(Object? resource) => allLoadedResources.Remove(resource);
+        public static void UnregisterManagedResource(IDisposable resource) => allManagedResources.Remove(resource);
 
 
 
@@ -239,49 +275,63 @@ namespace RuniEngine.Resource
             GarbageRemoval();
 
             System.Text.StringBuilder builder = StringBuilderCache.Acquire();
-            for (int i = 0; i < allLoadedResources.Count; i++)
-            {
-                Object? resource = allLoadedResources[i];
-                if (resource != null)
-                {
-                    builder.AppendLine(resource.ToString());
 
+            lock (allLoadedResources.internalSync)
+            {
+                for (int i = 0; i < allLoadedResources.internalList.Count; i++)
+                {
+                    Object? resource = allLoadedResources.internalList[i];
+                    if (resource != null)
+                    {
+                        builder.AppendLine(resource.ToString());
+
+                        try
+                        {
+                            Object.DestroyImmediate(resource, true);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogException(e);
+                        }
+                    }
+                }
+
+                if (allLoadedResources.internalList.Count > 0)
+                    Debug.Log($"Unloaded all {allLoadedResources.internalList.Count} Unity objects managed by Runi Engine.\nList of unloaded objects\n\n{builder}");
+
+                StringBuilderCache.Release(builder);
+
+                allLoadedResources.internalList.Clear();
+            }
+
+            builder = StringBuilderCache.Acquire();
+
+            lock (allManagedResources.internalSync)
+            {
+                for (int i = 0; i < allManagedResources.internalList.Count; i++)
+                {
                     try
                     {
-                        Object.DestroyImmediate(resource, true);
+                        IDisposable resource = allManagedResources.internalList[i];
+
+                        builder.AppendLine(resource.GetType().ToString());
+                        resource.Dispose();
                     }
+                    catch (ObjectDisposedException) { }
+                    catch (NullReferenceException) { }
                     catch (Exception e)
                     {
                         Debug.LogException(e);
                     }
                 }
-            }
 
-            if (allLoadedResources.Count > 0)
-                Debug.Log($"Unloaded all {allLoadedResources.Count} Unity objects managed by Runi Engine.\nList of unloaded objects\n\n{builder}");
+                if (allManagedResources.internalList.Count > 0)
+                    Debug.Log($"Unloaded all {allManagedResources.internalList.Count} managed objects.\nList of unloaded objects\n\n{builder}");
+
+                allManagedResources.internalList.Clear();
+            }
 
             StringBuilderCache.Release(builder);
-
-            allLoadedResources.Clear();
-
-            for (int i = 0; i < allManagedResources.Count; i++)
-            {
-                try
-                {
-                    allManagedResources[i].Dispose();
-                }
-                catch (ObjectDisposedException) { }
-                catch (NullReferenceException) { }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                }
-            }
-
-            if (allManagedResources.Count > 0)
-                Debug.Log($"Unloaded all {allManagedResources.Count} managed objects.");
-
-            allManagedResources.Clear();
 
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
             Resources.UnloadUnusedAssets();
