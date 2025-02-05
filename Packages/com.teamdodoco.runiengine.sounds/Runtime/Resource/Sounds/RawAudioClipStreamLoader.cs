@@ -1,6 +1,8 @@
 #nullable enable
 using NAudio.Wave;
 using RuniEngine.Threading;
+using System.Diagnostics;
+using System.Threading;
 
 namespace RuniEngine.Resource.Sounds
 {
@@ -26,6 +28,8 @@ namespace RuniEngine.Resource.Sounds
 
 
 
+        int loop = 0;
+        Stopwatch stopwatch = new Stopwatch();
         void Read(long index)
         {
             try
@@ -38,7 +42,29 @@ namespace RuniEngine.Resource.Sounds
                 if (stream.Position != index * 4)
                     stream.Position = index * 4;
 
-                reader.Read(buffer, 0, buffer.Length);
+                loop = 0;
+
+                Thread thread = new Thread(() =>
+                {
+                    //이새끼 시간 빠르게 바꾸면 멈출때 있음
+                    reader.Read(buffer, 0, buffer.Length);
+                    Interlocked.Exchange(ref loop, 1);
+                })
+                { IsBackground = false };
+
+                thread.Start();
+
+                stopwatch.Restart();
+                while (Interlocked.Add(ref loop, 0) == 0)
+                {
+                    if (stopwatch.ElapsedMilliseconds >= 100)
+                    {
+                        thread.Abort();
+                        Debug.LogError("Stream Audio Read Deadlock Detected!!!", nameof(RawAudioClipStreamLoader));
+
+                        break;
+                    }
+                }
             }
             finally
             {
@@ -68,6 +94,8 @@ namespace RuniEngine.Resource.Sounds
         /// <summary>Thread-safe</summary>
         public override void Dispose()
         {
+            base.Dispose();
+
             try
             {
                 ThreadTask.Lock(ref disposeLock);
