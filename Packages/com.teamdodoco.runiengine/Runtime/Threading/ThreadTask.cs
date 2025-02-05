@@ -26,7 +26,6 @@ namespace RuniEngine.Threading
 
         public static void Lock(ref int location)
         {
-            //Debug.ForceLog(LanguageLoader.TryGetText("thread_manager.lock").Replace("{class}", Debug.NameOfCallingClass()));
             while (Interlocked.CompareExchange(ref location, 1, 0) != 0)
             {
                 if (InfiniteLoopDetector.RunWithoutException())
@@ -41,7 +40,6 @@ namespace RuniEngine.Threading
 
         public static void Unlock(ref int location)
         {
-            //Debug.ForceLog(LanguageLoader.TryGetText("thread_manager.unlock").Replace("{class}", Debug.NameOfCallingClass()));
             Interlocked.Exchange(ref location, 0);
         }
 
