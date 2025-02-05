@@ -15,7 +15,7 @@ namespace RuniEngine.Rhythms
         {
             get
             {
-                if (audioSource == null)
+                if (audioSource == null || audioSource.clip == null)
                     return 0;
 
                 float time = audioSource.time;
