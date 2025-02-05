@@ -1,9 +1,4 @@
 #nullable enable
-#if ENABLE_RUNI_ENGINE_POOLING
-using RuniEngine.Booting;
-using RuniEngine.Pooling;
-using RuniEngine.Resource;
-#endif
 using RuniEngine.Resource.Sounds;
 using RuniEngine.Threading;
 using System;
@@ -38,9 +33,9 @@ namespace RuniEngine.Sounds
 
 
 
-        public int frequency => audioMetaData != null ? audioMetaData.frequency : 0;
+        public int frequency => audioMetaData != null ? audioMetaData.frequency : 48000;
 
-        public int channels => audioMetaData != null ? audioMetaData.channels : 0;
+        public int channels => audioMetaData != null ? audioMetaData.channels : 1;
 
 
         public override double time
@@ -268,8 +263,7 @@ namespace RuniEngine.Sounds
                 return;
 
             Stop();
-            if (!Refresh())
-                return;
+            Refresh();
 
             VarUpdate();
 
@@ -328,57 +322,63 @@ namespace RuniEngine.Sounds
             {
                 ThreadTask.Lock(ref onAudioFilterReadLock);
 
-                if (isPlaying && !isPaused && realTempo != 0 && audioMetaData != null && datas != null)
+                if (isPlaying && !isPaused && realTempo != 0)
                 {
                     long timeSamples = this.timeSamples;
                     long internalTimeSamples = Interlocked.Read(ref this.internalTimeSamples);
+                    double tempoAdjustmentIndex = Interlocked.CompareExchange(ref this.tempoAdjustmentIndex, 0, 0);
+
                     double tempo = realTempo;
                     double pitch = realPitch.Abs();
                     float volume = (float)this.volume;
                     bool loop = this.loop;
 
-                    int loopStartIndex = audioMetaData.loopStartIndex;
-                    int loopOffsetIndex = audioMetaData.loopOffsetIndex;
+                    int loopStartIndex = audioMetaData?.loopStartIndex ?? 0;
+                    int loopOffsetIndex = audioMetaData?.loopOffsetIndex ?? 0;
 
                     int audioChannels = this.channels;
                     long samplesLength = samples;
-                    long datasLength = datas.arrayLength;
 
-                    if (loopedSamples.Length != audioChannels)
-                        loopedSamples = new float[audioChannels];
-
-                    if (mixedSamples.Length != channels)
-                        mixedSamples = new float[channels];
-
-                    if (pitch > 0)
+                    if (audioMetaData != null && datas != null && !audioMetaData.isDisposed)
                     {
-                        for (int i = 0; i < data.Length; i += channels)
+                        long datasLength = datas.arrayLength;
+
+                        if (loopedSamples.Length != audioChannels)
+                            loopedSamples = new float[audioChannels];
+
+                        if (mixedSamples.Length != channels)
+                            mixedSamples = new float[channels];
+
+                        if (pitch > 0)
                         {
-                            long index;
-                            if (tempo > 0)
-                                index = (internalTimeSamples * audioChannels) + i;
-                            else
-                                index = (internalTimeSamples * audioChannels) - i;
-
-                            if (loop)
-                                AudioUtility.GetLoopedSamples(ref loopedSamples, index, datas, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels);
-                            else
+                            for (int i = 0; i < data.Length; i += channels)
                             {
-                                //메소드 호출도 상당한 비용이 들어감
-                                if (index >= 0 && index < datasLength)
-                                {
-                                    for (int j = 0; j < loopedSamples.Length; j++)
-                                        loopedSamples[j] = datas[index + j];
-                                }
+                                long index;
+                                if (tempo > 0)
+                                    index = (internalTimeSamples * audioChannels) + i;
                                 else
-                                    Array.Fill(loopedSamples, 0);
+                                    index = (internalTimeSamples * audioChannels) - i;
+
+                                if (loop)
+                                    AudioUtility.GetLoopedSamples(ref loopedSamples, index, datas, loop, loopStartIndex * audioChannels, loopOffsetIndex * audioChannels);
+                                else
+                                {
+                                    //메소드 호출도 상당한 비용이 들어감
+                                    if (index >= 0 && index < datasLength)
+                                    {
+                                        for (int j = 0; j < loopedSamples.Length; j++)
+                                            loopedSamples[j] = datas[index + j];
+                                    }
+                                    else
+                                        Array.Fill(loopedSamples, 0);
+                                }
+
+                                AudioUtility.MixChannel(ref mixedSamples, loopedSamples);
+                                AudioUtility.SetPanStereo(ref mixedSamples, panStereo, spatial, spatialStereo);
+
+                                for (int j = 0; j < channels; j++)
+                                    data[i + j] += mixedSamples[j] * volume;
                             }
-
-                            AudioUtility.MixChannel(ref mixedSamples, loopedSamples);
-                            AudioUtility.SetPanStereo(ref mixedSamples, panStereo, spatial, spatialStereo);
-
-                            for (int j = 0; j < channels; j++)
-                                data[i + j] += mixedSamples[j] * volume;
                         }
                     }
 
@@ -433,6 +433,7 @@ namespace RuniEngine.Sounds
 
                     Interlocked.Exchange(ref _timeSamples, timeSamples);
                     Interlocked.Exchange(ref this.internalTimeSamples, internalTimeSamples);
+                    Interlocked.Exchange(ref this.tempoAdjustmentIndex, tempoAdjustmentIndex);
                 }
             }
             finally
@@ -540,11 +541,11 @@ namespace RuniEngine.Sounds
         static AudioPlayer? InternalPlayAudio(string key, string nameSpace, float volume, bool loop, double pitch, double tempo, float panStereo, Transform? parent, bool spatial, Vector3 position, float minDistance, float maxDistance)
         {
             NotMainThreadException.Exception();
-            ResourceDataNotLoadedException.Exception();
+            Booting.ResourceDataNotLoadedException.Exception();
 
-            ResourceManager.SetDefaultNameSpace(ref nameSpace);
+            Resource.ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            AudioPlayer? audioPlayer = ObjectPoolingManager.ObjectClone<AudioPlayer>("audio_player", AudioLoader.soundsNameSpace, parent);
+            AudioPlayer? audioPlayer = Pooling.ObjectPoolingManager.ObjectClone<AudioPlayer>("audio_player", AudioLoader.soundsNameSpace, parent);
             if (audioPlayer == null)
                 return null;
 
