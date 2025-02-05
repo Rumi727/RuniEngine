@@ -1,11 +1,12 @@
 #nullable enable
 #if ENABLE_RUNI_ENGINE_RHYTHMS
 using RuniEngine.Rhythms;
+using System;
 #endif
 
 namespace RuniEngine.Resource.Sounds
 {
-    public abstract class SoundMetaDataBase
+    public abstract class SoundMetaDataBase : IDisposable
     {
         public SoundMetaDataBase(string path, double pitch, double tempo)
         {
@@ -19,6 +20,8 @@ namespace RuniEngine.Resource.Sounds
 
         public virtual double pitch { get; set; } = 1;
         public virtual double tempo { get; set; } = 1;
+
+        public abstract void Dispose();
 
 #if ENABLE_RUNI_ENGINE_RHYTHMS
         [NotNullField] public abstract BeatBPMPairList bpms { get; }
