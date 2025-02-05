@@ -31,18 +31,26 @@ namespace RuniEngine.Editor
 
             position.height = GetYSize(EditorStyles.miniPullDown);
 
-            //로드 타입
-            string jsonPath = realAudioPath + ".json";
+            RawAudioLoadType? loadType = null;
+            bool loadTypeMixed = false;
 
-            AudioFileMetaData? fileMetaData = JsonManager.JsonRead<AudioFileMetaData>(jsonPath);
-            RawAudioLoadType loadType = RawAudioLoadType.instant;
-            if (fileMetaData != null)
-                loadType = fileMetaData.Value.loadType;
+            for (int i = 0; i < selectedMetaDatas.Length; i++)
+            {
+                AudioFileMetaData fileMetaData = selectedMetaDatas[i];
+                if (loadType != null && loadType != fileMetaData.loadType)
+                {
+                    loadTypeMixed = true;
+                    break;
+                }
 
+                loadType = fileMetaData.loadType;
+            }
+
+            loadType ??= RawAudioLoadType.instant;
             EditorGUI.BeginChangeCheck();
 
             {
-                EditorGUI.showMixedValue = childSerializedType?.GetProperty(nameof(SoundMetaDataBase.path))?.isMixed ?? false;
+                EditorGUI.showMixedValue = loadTypeMixed;
 
                 string label = TryGetText("gui.load");
                 BeginLabelWidth(label);
@@ -53,24 +61,26 @@ namespace RuniEngine.Editor
                 EditorGUI.showMixedValue = false;
             }
 
-            if (!EditorGUI.EndChangeCheck() || !File.Exists(realAudioPath))
+            if (!EditorGUI.EndChangeCheck())
                 return;
 
-            if (loadType == RawAudioLoadType.instant)
+            for (int i = 0; i < selectedAudioPaths.Length; i++)
             {
-                if (!File.Exists(jsonPath))
-                    return;
+                string? audioPath = selectedAudioPaths[i];
 
-                File.Delete(jsonPath);
-                File.Delete(jsonPath + ".meta");
+                AudioFileMetaData metaData = selectedMetaDatas[i];
+                metaData.loadType = (RawAudioLoadType)loadType;
 
-                AssetDatabase.Refresh();
+                if (loadType != RawAudioLoadType.instant)
+                    File.WriteAllText(audioPath + ".json", JsonManager.ToJson(metaData));
+                else
+                {
+                    File.Delete(audioPath + ".json");
+                    File.Delete(audioPath + ".json.meta");
+                }
             }
-            else
-            {
-                File.WriteAllText(jsonPath, JsonManager.ToJson(new AudioFileMetaData(loadType)));
-                AssetDatabase.Refresh();
-            }
+
+            AssetDatabase.Refresh();
         }
 
         protected override void LineOtherGUI(Rect position)
