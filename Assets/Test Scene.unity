@@ -881,10 +881,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 994fab2ca0141f14a8c87d8b220c8622, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0.4
+  m_audioClip: {fileID: 8300000, guid: b0e3397f68127d044b73698ffd62f201, type: 3}
+  m_Resource: {fileID: 8300000, guid: b0e3397f68127d044b73698ffd62f201, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.216
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -996,9 +996,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 1282711249}
-  _rhythmOffset: 0.05
+  _rhythmOffset: 3.93
   _bpm:
-    bpm: 150
+    bpm: 185
     timeSignatures: 4
 --- !u!1 &1583197373
 GameObject:
@@ -1010,7 +1010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1583197377}
   - component: {fileID: 1583197376}
-  - component: {fileID: 1583197374}
+  - component: {fileID: 1583197378}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -1018,32 +1018,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1583197374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1583197373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e716b34178e31e34a96219d2380de77d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _key: test2
-  _nameSpace: runi-test
-  _isPaused: 0
-  _loop: 0
-  _pitch: 1
-  _tempo: 1
-  _pitchFixed: 0
-  _pitchTempoRatio: 1
-  _tempoPitchRatio: 1
-  _volume: 0.2
-  _panStereo: 0
-  _spatial: 0
-  _minDistance: 1
-  _maxDistance: 16
 --- !u!82 &1583197376
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1058,7 +1032,7 @@ AudioSource:
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -1156,6 +1130,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1583197378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583197373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e716b34178e31e34a96219d2380de77d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _key: test2
+  _nameSpace: runi-test
+  _isPaused: 0
+  _loop: 0
+  _pitch: 1
+  _tempo: 1
+  _pitchFixed: 0
+  _pitchTempoRatio: 1
+  _tempoPitchRatio: 1
+  _volume: 0.2
+  _panStereo: 0
+  _spatial: 0
+  _minDistance: 1
+  _maxDistance: 16
 --- !u!1 &1834987541
 GameObject:
   m_ObjectHideFlags: 0
@@ -1666,7 +1666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 276621663}
-  soundPlayer: {fileID: 1583197374}
+  soundPlayer: {fileID: 0}
   lastBeat: 0.16
   rectCorner:
     wasans: -0.21
