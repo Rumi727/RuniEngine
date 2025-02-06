@@ -38,28 +38,85 @@ namespace RuniEngine.Sounds
         public int channels => audioMetaData != null ? audioMetaData.channels : 1;
 
 
+        /// <summary>
+        /// Thread-safe
+        /// </summary>
         public override double time
         {
-            get => (double)timeSamples / (frequency != 0 ? frequency : AudioLoader.systemFrequency) / metaDataTempo;
-            set => timeSamples = (long)(value * metaDataTempo * (frequency != 0 ? frequency : AudioLoader.systemFrequency));
-        }
+            get
+            {
+                double value;
+                try
+                {
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
+                    value = (double)_timeSamples / (frequency != 0 ? frequency : AudioLoader.systemFrequency) / metaDataTempo;
+                }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
 
-        public long timeSamples
-        {
-            get => Interlocked.Read(ref _timeSamples);
+                return value;
+            }
             set
             {
-                if (timeSamples != value)
+                try
                 {
-                    Interlocked.Exchange(ref _timeSamples, value);
-                    Interlocked.Exchange(ref internalTimeSamples, value);
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
 
-                    Interlocked.Exchange(ref tempoAdjustmentIndex, 0);
+                    _timeSamples = (long)(value * metaDataTempo * (frequency != 0 ? frequency : AudioLoader.systemFrequency));
+                    internalTimeSamples = _timeSamples;
 
-                    //datas?.SetStreamPosition(value * channels);
-
-                    TimeChangedEventInvoke();
+                    tempoAdjustmentIndex = 0;
                 }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Thread-safe
+        /// </summary>
+        public long timeSamples
+        {
+            get
+            {
+                long value;
+
+                try
+                {
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
+                    value = _timeSamples;
+                }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
+
+                return value;
+            }
+            set
+            {
+                try
+                {
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
+
+                    _timeSamples = value;
+                    internalTimeSamples = value;
+
+                    tempoAdjustmentIndex = 0;
+
+                    if (_timeSamples != value)
+                        TimeChangedEventInvoke();
+                }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
+
+                //datas?.SetStreamPosition(value * channels);
             }
         }
         [HideInInspector, NonSerialized] long _timeSamples;
@@ -135,25 +192,29 @@ namespace RuniEngine.Sounds
 
         void Update()
         {
-#if ENABLE_RUNI_ENGINE_POOLING
+            try
             {
+                ThreadTask.Lock(ref onAudioFilterReadLock);
+
+#if ENABLE_RUNI_ENGINE_POOLING
                 //모든 버퍼 재생이 끝나기까지 최대한 대기
-                long internalTimeSamples = Interlocked.Read(ref this.internalTimeSamples);
-                if (isDisposable && !loop && (internalTimeSamples < -AudioLoader.bufferLength || internalTimeSamples > samples + AudioLoader.bufferLength || !isPlaying))
+                if (isDisposable && !loop)
                 {
-                    Remove();
-                    return;
+                    if (internalTimeSamples < -AudioLoader.bufferLength || internalTimeSamples > samples + AudioLoader.bufferLength || !isPlaying)
+                    {
+                        Remove();
+                        return;
+                    }
                 }
-            }
 #endif
 
-            //매 프레임 시간 보정
-            if (isPlaying && !isPaused)
+                //매 프레임 시간 보정
+                if (isPlaying && !isPaused)
+                    _timeSamples += (long)(Kernel.unscaledDeltaTimeDouble * frequency * realTempo);
+            }
+            finally
             {
-                long index = timeSamples;
-                index += (long)(Kernel.unscaledDeltaTimeDouble * frequency * realTempo);
-
-                Interlocked.Exchange(ref _timeSamples, index);
+                ThreadTask.Unlock(ref onAudioFilterReadLock);
             }
         }
 
@@ -244,8 +305,15 @@ namespace RuniEngine.Sounds
                     return false;
                 }
 
+                int lastFrequency = frequency;
+
                 this.audioData = audioData;
                 this.audioMetaData = audioMetaData;
+
+                _timeSamples *= lastFrequency / frequency;
+                internalTimeSamples *= lastFrequency / frequency;
+
+                tempoAdjustmentIndex = 0;
 
                 VarUpdate();
             }
@@ -271,8 +339,17 @@ namespace RuniEngine.Sounds
             {
                 long value = samples;
 
-                Interlocked.Exchange(ref _timeSamples, value);
-                Interlocked.Exchange(ref internalTimeSamples, value);
+                try
+                {
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
+
+                    _timeSamples = value;
+                    internalTimeSamples = value;
+                }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
             }
 
             if (audioSource != null)
@@ -298,8 +375,17 @@ namespace RuniEngine.Sounds
 
             Interlocked.Exchange(ref _spatialStereo, 0);
 
-            Interlocked.Exchange(ref _timeSamples, 0);
-            Interlocked.Exchange(ref internalTimeSamples, 0);
+            try
+            {
+                ThreadTask.Lock(ref onAudioFilterReadLock);
+
+                _timeSamples = 0;
+                internalTimeSamples = 0;
+            }
+            finally
+            {
+                ThreadTask.Unlock(ref onAudioFilterReadLock);
+            }
 
             //datas?.Stopping();
         }
@@ -324,9 +410,9 @@ namespace RuniEngine.Sounds
 
                 if (isPlaying && !isPaused && realTempo != 0)
                 {
-                    long timeSamples = this.timeSamples;
-                    long internalTimeSamples = Interlocked.Read(ref this.internalTimeSamples);
-                    double tempoAdjustmentIndex = Interlocked.CompareExchange(ref this.tempoAdjustmentIndex, 0, 0);
+                    long timeSamples = _timeSamples;
+                    long internalTimeSamples = this.internalTimeSamples;
+                    double tempoAdjustmentIndex = this.tempoAdjustmentIndex;
 
                     double tempo = realTempo;
                     double pitch = realPitch.Abs();
@@ -431,9 +517,9 @@ namespace RuniEngine.Sounds
                         }
                     }
 
-                    Interlocked.Exchange(ref _timeSamples, timeSamples);
-                    Interlocked.Exchange(ref this.internalTimeSamples, internalTimeSamples);
-                    Interlocked.Exchange(ref this.tempoAdjustmentIndex, tempoAdjustmentIndex);
+                    _timeSamples = timeSamples;
+                    this.internalTimeSamples = internalTimeSamples;
+                    this.tempoAdjustmentIndex = tempoAdjustmentIndex;
                 }
             }
             finally
