@@ -7,6 +7,9 @@ namespace RuniEngine
     {
         public static byte[] ReadFully(this Stream stream)
         {
+            if (stream is MemoryStream memoryStream)
+                return memoryStream.ToArray();
+
             using MemoryStream result = new MemoryStream();
 
             stream.CopyTo(result);

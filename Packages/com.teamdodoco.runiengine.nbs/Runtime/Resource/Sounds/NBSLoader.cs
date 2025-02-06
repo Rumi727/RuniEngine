@@ -53,11 +53,11 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static NBSFile? GetNBSFile(IOHandler ioHandler, string path)
+        public static NBSFile? GetNBSFile(IOHandler ioHandler)
         {
-            if (ioHandler.FileExists(path))
+            if (ioHandler.FileExists())
             {
-                using System.IO.Stream stream = ioHandler.OpenRead(path);
+                using System.IO.Stream stream = ioHandler.OpenRead();
                 return NBSReader.ReadNBSFile(stream);
             }
 
@@ -84,7 +84,7 @@ namespace RuniEngine.Resource.Sounds
             }))
             {
                 string path = PathUtility.Combine(ResourceManager.rootName, nameSpace, name);
-                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(path, ".json", ioHandler);
+                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(ioHandler.CreateChild(path + ".json"));
                 if (nbsDatas != null)
                     return nbsDatas.Keys.ToArray();
                 else
@@ -121,7 +121,7 @@ namespace RuniEngine.Resource.Sounds
                 if (!root.DirectoryExists())
                     return;
 
-                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>("", ".json", root);
+                Dictionary<string, NBSData>? nbsDatas = JsonManager.JsonRead<Dictionary<string, NBSData>>(root.AddExtension(".json"));
                 if (nbsDatas == null)
                     return;
 
@@ -132,7 +132,9 @@ namespace RuniEngine.Resource.Sounds
 
                 Parallel.ForEach(files, nbsPath =>
                 {
-                    NBSFile? nbsFile = GetNBSFile(root, nbsPath);
+                    IOHandler nbsHandler = root.CreateChild(nbsPath);
+
+                    NBSFile? nbsFile = GetNBSFile(nbsHandler);
                     if (nbsFile != null)
                         pathNBSes.TryAdd(PathUtility.GetPathWithoutExtension(nbsPath), nbsFile);
 

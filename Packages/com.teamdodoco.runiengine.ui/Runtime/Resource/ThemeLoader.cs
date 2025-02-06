@@ -26,15 +26,15 @@ namespace RuniEngine.Resource.Themes
 
 
 
-        public static ThemeStyle? GetStyle(IOHandler ioHandler, string key, string nameSpace = "")
+        public static ThemeStyle? GetStyle(ResourcePack resourcePack, string key, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             if (!isLoaded)
             {
-                string path = PathUtility.Combine(ResourceManager.rootName, nameSpace, name, key);
-                if (ResourceManager.FileExtensionExists(ioHandler, path, out string outPath, ExtensionFilter.jsonFileFilter))
-                    return JsonManager.JsonRead<ThemeStyle>(outPath);
+                string rootPath = PathUtility.Combine(nameSpace, name, key);
+                if (resourcePack.ioHandler.CreateChild(rootPath).FileExists(out IOHandler outHandler, ExtensionFilter.jsonFileFilter))
+                    return JsonManager.JsonRead<ThemeStyle>(outHandler);
 
                 return null;
             }
@@ -46,17 +46,19 @@ namespace RuniEngine.Resource.Themes
 
 
 
-        public static string[]? GetStyleKeys(IOHandler ioHandler, string nameSpace = "")
+        public static string[]? GetStyleKeys(ResourcePack resourcePack, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
             if (!isLoaded)
             {
-                string rootPath = PathUtility.Combine(ResourceManager.rootName, nameSpace, name);
-                if (!ioHandler.DirectoryExists(rootPath))
+                string rootPath = PathUtility.Combine(nameSpace, name);
+                IOHandler rootHandler = resourcePack.ioHandler.CreateChild(rootPath);
+
+                if (!rootHandler.DirectoryExists())
                     return null;
 
-                return ioHandler.GetAllFiles(rootPath, ExtensionFilter.jsonFileFilter).Select(x => PathUtility.GetPathWithoutExtension(x.Substring(rootPath.Length + 1))).ToArray();
+                return rootHandler.GetAllFiles(ExtensionFilter.jsonFileFilter).ToArray();
             }
 
             if (allStyles.TryGetValue(nameSpace, out Dictionary<string, ThemeStyle>? result))
@@ -67,12 +69,12 @@ namespace RuniEngine.Resource.Themes
 
 
 
-        public static string? GetStylePath(IOHandler ioHandler, string key, string nameSpace = "")
+        public static IOHandler? GetStylePath(ResourcePack resourcePack, string key, string nameSpace = "")
         {
             ResourceManager.SetDefaultNameSpace(ref nameSpace);
 
-            string path = PathUtility.Combine(ResourceManager.rootName, nameSpace, name, key);
-            if (ResourceManager.FileExtensionExists(ioHandler, path, out string outPath, ExtensionFilter.jsonFileFilter))
+            IOHandler rootHandler = resourcePack.ioHandler.CreateChild(PathUtility.Combine(nameSpace, name, key));
+            if (rootHandler.FileExists(out IOHandler outPath, ExtensionFilter.jsonFileFilter))
                 return outPath;
 
             return null;
@@ -94,7 +96,7 @@ namespace RuniEngine.Resource.Themes
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
-                string rootPath = PathUtility.Combine(ResourceManager.rootName, nameSpace, name);
+                string rootPath = PathUtility.Combine(nameSpace, name);
                 IOHandler root = resourcePack.ioHandler.CreateChild(rootPath);
 
                 if (!root.DirectoryExists())
@@ -105,14 +107,13 @@ namespace RuniEngine.Resource.Themes
 
                 foreach (string stylePath in root.GetAllFiles(ExtensionFilter.jsonFileFilter))
                 {
-                    ThemeStyle? style = JsonManager.JsonRead<ThemeStyle>(stylePath, "", root);
+                    IOHandler styleHandler = root.CreateChild(stylePath);
+                    ThemeStyle? style = JsonManager.JsonRead<ThemeStyle>(styleHandler);
                     if (style == null)
                         continue;
 
-                    string localStylePath = stylePath.Substring(rootPath.Length + 1).Replace("\\", "/");
-
                     tempAllStyles.TryAdd(nameSpace, new Dictionary<string, ThemeStyle>());
-                    tempAllStyles[nameSpace].TryAdd(localStylePath, style);
+                    tempAllStyles[nameSpace].TryAdd(stylePath, style);
                 }
 
                 ReportProgress();

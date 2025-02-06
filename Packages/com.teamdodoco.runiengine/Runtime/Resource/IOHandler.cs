@@ -7,17 +7,19 @@ using System.Linq;
 
 namespace RuniEngine.Resource
 {
-    public abstract class IOHandler : IDisposable
+    public abstract class IOHandler
     {
         public static readonly IOHandler empty = new EmptyIOHandler();
 
 
 
-        public IOHandler() { }
-        protected IOHandler(IOHandler parent, string childPath)
+        protected IOHandler() { }
+        protected IOHandler(IOHandler? parent, string childPath)
         {
             this.parent = parent;
+
             this.childPath = childPath.UniformDirectorySeparatorCharacter();
+            childFullPath = PathUtility.Combine(parent?.childFullPath, this.childPath);
         }
 
 
@@ -25,91 +27,78 @@ namespace RuniEngine.Resource
         public IOHandler? parent { get; }
 
         public string childPath { get; } = string.Empty;
-        public string childFullPath => PathUtility.Combine(parent?.childPath, childPath);
+        public string childFullPath { get; } = string.Empty;
+
+
 
         public abstract IOHandler CreateChild(string path);
+        public abstract IOHandler AddExtension(string extension);
 
-        public bool DirectoryExists() => DirectoryExists(string.Empty);
-        public abstract bool DirectoryExists(string path);
+        public abstract bool DirectoryExists();
 
-        public bool FileExists() => FileExists(string.Empty);
-        public bool FileExists(out string outPath, ExtensionFilter extensionFilter) => FileExists(out outPath, extensionFilter);
-        public abstract bool FileExists(string path, string extension = "");
-        public abstract bool FileExists(string path, out string outPath, ExtensionFilter extensionFilter);
+        public abstract bool FileExists();
+        public abstract bool FileExists(out IOHandler handler, ExtensionFilter extensionFilter);
 
-        public IEnumerable<string> GetDirectories() => GetDirectories(string.Empty);
-        public abstract IEnumerable<string> GetDirectories(string path);
+        public abstract IEnumerable<string> GetDirectories();
 
-        public IEnumerable<string> GetAllDirectories() => GetAllDirectories(string.Empty);
-        public abstract IEnumerable<string> GetAllDirectories(string path);
+        public abstract IEnumerable<string> GetAllDirectories();
 
-        public IEnumerable<string> GetFiles() => GetFiles(string.Empty);
-        public IEnumerable<string> GetFiles(ExtensionFilter extensionFilter) => GetFiles(string.Empty, extensionFilter);
-        public abstract IEnumerable<string> GetFiles(string path);
-        public abstract IEnumerable<string> GetFiles(string path, ExtensionFilter extensionFilter);
+        public abstract IEnumerable<string> GetFiles();
+        public abstract IEnumerable<string> GetFiles(ExtensionFilter extensionFilter);
 
-        public IEnumerable<string> GetAllFiles() => GetAllFiles(string.Empty);
-        public IEnumerable<string> GetAllFiles(ExtensionFilter extensionFilter) => GetAllFiles(string.Empty, extensionFilter);
-        public abstract IEnumerable<string> GetAllFiles(string path);
-        public abstract IEnumerable<string> GetAllFiles(string path, ExtensionFilter extensionFilter);
+        public abstract IEnumerable<string> GetAllFiles();
+        public abstract IEnumerable<string> GetAllFiles(ExtensionFilter extensionFilter);
 
-        public byte[] ReadAllBytes() => ReadAllBytes(string.Empty);
-        public abstract byte[] ReadAllBytes(string path, string extension = "");
+        public abstract byte[] ReadAllBytes();
 
-        public UniTask<byte[]> ReadAllBytesAsync() => ReadAllBytesAsync(string.Empty);
-        public abstract UniTask<byte[]> ReadAllBytesAsync(string path, string extension = "");
+        public abstract UniTask<byte[]> ReadAllBytesAsync();
 
-        public string ReadAllText() => ReadAllText(string.Empty);
-        public abstract string ReadAllText(string path, string extension = "");
+        public abstract string ReadAllText();
 
-        public UniTask<string> ReadAllTextAsync() => ReadAllTextAsync(string.Empty);
-        public abstract UniTask<string> ReadAllTextAsync(string path, string extension = "");
+        public abstract UniTask<string> ReadAllTextAsync();
 
-        public IEnumerable<string> ReadLines() => ReadLines(string.Empty);
-        public abstract IEnumerable<string> ReadLines(string path, string extension = "");
+        public abstract IEnumerable<string> ReadLines();
 
-        public Stream OpenRead() => OpenRead(string.Empty);
-        public abstract Stream OpenRead(string path, string extension = "");
-
-        public virtual void Dispose() { }
+        public abstract Stream OpenRead();
 
         sealed class EmptyIOHandler : IOHandler
         {
             public EmptyIOHandler() { }
-            EmptyIOHandler(IOHandler parent, string childPath) : base(parent, childPath) { }
+            EmptyIOHandler(IOHandler? parent, string childPath) : base(parent, childPath) { }
 
             public override IOHandler CreateChild(string path) => new EmptyIOHandler(this, path);
+            public override IOHandler AddExtension(string extension) => new EmptyIOHandler(parent, childPath + extension);
 
-            public override bool DirectoryExists(string path) => false;
+            public override bool DirectoryExists() => false;
 
-            public override bool FileExists(string path, string extension = "") => false;
-            public override bool FileExists(string path, out string outPath, ExtensionFilter extensionFilter)
+            public override bool FileExists() => false;
+            public override bool FileExists(out IOHandler outPath, ExtensionFilter extensionFilter)
             {
-                outPath = string.Empty;
+                outPath = empty;
                 return false;
             }
 
-            public override IEnumerable<string> GetDirectories(string path) => Enumerable.Empty<string>();
+            public override IEnumerable<string> GetDirectories() => Enumerable.Empty<string>();
 
-            public override IEnumerable<string> GetAllDirectories(string path) => Enumerable.Empty<string>();
+            public override IEnumerable<string> GetAllDirectories() => Enumerable.Empty<string>();
 
-            public override IEnumerable<string> GetFiles(string path) => Enumerable.Empty<string>();
-            public override IEnumerable<string> GetFiles(string path, ExtensionFilter extensionFilter) => Enumerable.Empty<string>();
+            public override IEnumerable<string> GetFiles() => Enumerable.Empty<string>();
+            public override IEnumerable<string> GetFiles(ExtensionFilter extensionFilter) => Enumerable.Empty<string>();
 
-            public override IEnumerable<string> GetAllFiles(string path) => Enumerable.Empty<string>();
-            public override IEnumerable<string> GetAllFiles(string path, ExtensionFilter extensionFilter) => Enumerable.Empty<string>();
+            public override IEnumerable<string> GetAllFiles() => Enumerable.Empty<string>();
+            public override IEnumerable<string> GetAllFiles(ExtensionFilter extensionFilter) => Enumerable.Empty<string>();
 
-            public override byte[] ReadAllBytes(string path, string extension = "") => Array.Empty<byte>();
+            public override byte[] ReadAllBytes() => Array.Empty<byte>();
 
-            public override UniTask<byte[]> ReadAllBytesAsync(string path, string extension = "") => new UniTask<byte[]>(Array.Empty<byte>());
+            public override UniTask<byte[]> ReadAllBytesAsync() => new UniTask<byte[]>(Array.Empty<byte>());
 
-            public override string ReadAllText(string path, string extension = "") => string.Empty;
+            public override string ReadAllText() => string.Empty;
 
-            public override UniTask<string> ReadAllTextAsync(string path, string extension = "") => new UniTask<string>(string.Empty);
+            public override UniTask<string> ReadAllTextAsync() => new UniTask<string>(string.Empty);
 
-            public override IEnumerable<string> ReadLines(string path, string extension = "") => Enumerable.Empty<string>();
+            public override IEnumerable<string> ReadLines() => Enumerable.Empty<string>();
 
-            public override Stream OpenRead(string path, string extension = "") => Stream.Null;
+            public override Stream OpenRead() => Stream.Null;
         }
     }
 }

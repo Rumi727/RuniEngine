@@ -67,12 +67,12 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(IOHandler ioHandler, string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Texture2D? GetTexture(IOHandler ioHandler, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(path + ".json") ?? new TextureMetaData();
-            return GetTexture(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(ioHandler.AddExtension(".json")) ?? new TextureMetaData();
+            return GetTexture(ioHandler, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(IOHandler ioHandler, string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTexture(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+        public static Texture2D? GetTexture(IOHandler ioHandler, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTexture(ioHandler, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 가져옵니다
@@ -109,17 +109,17 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷 (png, jpg 파일에서만 작동)
         /// </param>
         /// <returns></returns>
-        public static Texture2D? GetTexture(IOHandler ioHandler, string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Texture2D? GetTexture(IOHandler ioHandler, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            if (ioHandler.FileExists(path))
+            if (ioHandler.FileExists())
             {
                 Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap, false);
                 ResourceManager.RegisterManagedResource(texture);
 
                 texture.filterMode = filterMode;
-                texture.name = PathUtility.GetFileNameWithoutExtension(path);
+                texture.name = PathUtility.GetFileNameWithoutExtension(ioHandler.childPath);
                 texture.hideFlags = hideFlags;
                 texture.mipMapBias = -0.5f;
 
@@ -127,7 +127,7 @@ namespace RuniEngine.Resource.Images
                 loaderSettings.generateMipmap = generateMipmap;
                 loaderSettings.logException = true;
 
-                if (!AsyncImageLoader.LoadImage(texture, ioHandler.ReadAllBytes(path), loaderSettings))
+                if (!AsyncImageLoader.LoadImage(texture, ioHandler.ReadAllBytes(), loaderSettings))
                     return null;
 
                 if (compressionType == TextureCompressionQuality.normal)
@@ -159,12 +159,12 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷 (png, jpg 파일에서만 작동)
         /// </param>
         /// <returns></returns>
-        public static UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(path + ".json") ?? new TextureMetaData();
-            return GetTextureAsync(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+            TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(ioHandler.AddExtension(".json")) ?? new TextureMetaData();
+            return GetTextureAsync(ioHandler, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, string path, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTextureAsync(ioHandler, path, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
+        public static UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, TextureMetaData textureMetaData, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave) => GetTextureAsync(ioHandler, textureMetaData.filterMode, textureMetaData.generateMipmap, textureMetaData.compressionType, textureFormat, hideFlags);
 
         /// <summary>
         /// 이미지 파일을 Texture2D 타입으로 비동기로 가져옵니다
@@ -201,19 +201,19 @@ namespace RuniEngine.Resource.Images
         /// 텍스쳐 포맷
         /// </param>
         /// <returns></returns>
-        public static async UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, string path, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static async UniTask<Texture2D?> GetTextureAsync(IOHandler ioHandler, FilterMode filterMode, bool generateMipmap, TextureCompressionQuality compressionType, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            if (ioHandler.FileExists(path))
+            if (ioHandler.FileExists())
             {
-                byte[] textureBytes = await ioHandler.ReadAllBytesAsync(path);
+                byte[] textureBytes = await ioHandler.ReadAllBytesAsync();
 
                 Texture2D texture = new Texture2D(1, 1, textureFormat, generateMipmap);
                 ResourceManager.RegisterManagedResource(texture);
 
                 texture.filterMode = filterMode;
-                texture.name = PathUtility.GetFileNameWithoutExtension(path);
+                texture.name = PathUtility.GetFileNameWithoutExtension(ioHandler.childPath);
                 texture.mipMapBias = -0.5f;
 
                 AsyncImageLoader.LoaderSettings loaderSettings = AsyncImageLoader.LoaderSettings.Default;
@@ -278,15 +278,14 @@ namespace RuniEngine.Resource.Images
             string rootPath = PathUtility.Combine(nameSpace, ImageLoader.name);
             string path = PathUtility.Combine(rootPath, type, name);
 
-            IOHandler ioHandler = resourcePack.ioHandler;
+            resourcePack.ioHandler.CreateChild(path).FileExists(out IOHandler imageHandler, ExtensionFilter.pictureFileFilter);
 
-            ResourceManager.FileExtensionExists(path, out path, ExtensionFilter.pictureFileFilter);
             TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData>(PathUtility.Combine(rootPath, type) + ".json");
-            Texture2D? texture = GetTexture(ioHandler, path, textureMetaData, textureFormat);
+            Texture2D? texture = GetTexture(imageHandler, textureMetaData, textureFormat);
             if (texture == null)
                 return null;
 
-            Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(path, ".json", ioHandler);
+            Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(imageHandler.AddExtension(".json"));
             if (spriteMetaDatas == null)
             {
                 Object.DestroyImmediate(texture);
@@ -354,15 +353,15 @@ namespace RuniEngine.Resource.Images
         /// </param>
         /// <returns></returns>
         /// <exception cref="NotMainThreadMethodException"></exception>
-        public static Dictionary<string, Sprite?[]>? GetSprites(IOHandler ioHandler, string path, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
+        public static Dictionary<string, Sprite?[]>? GetSprites(IOHandler ioHandler, TextureFormat textureFormat = TextureFormat.RGBA32, HideFlags hideFlags = HideFlags.DontSave)
         {
             NotMainThreadException.Exception();
 
-            Texture2D? texture = GetTexture(ioHandler, path, textureFormat);
+            Texture2D? texture = GetTexture(ioHandler, textureFormat);
             if (texture == null)
                 return null;
 
-            Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(path + ".json");
+            Dictionary<string, SpriteMetaData[]>? spriteMetaDatas = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>>(ioHandler.AddExtension(".json"));
             spriteMetaDatas ??= new Dictionary<string, SpriteMetaData[]>();
 
             return GetSprites(texture, hideFlags, spriteMetaDatas);
@@ -434,10 +433,11 @@ namespace RuniEngine.Resource.Images
             }))
             {
                 string textureRootPath = PathUtility.Combine(nameSpace, name);
-                if (!resourcePack.ioHandler.DirectoryExists(textureRootPath))
+                IOHandler rootHandler = resourcePack.ioHandler.CreateChild(textureRootPath);
+                if (!rootHandler.DirectoryExists())
                     return result;
 
-                result = resourcePack.ioHandler.GetAllDirectories(textureRootPath).Select(x => x.Substring(textureRootPath.Length + 1, x.Length - textureRootPath.Length - 1)).ToArray();
+                result = rootHandler.GetAllDirectories().ToArray();
                 result = result.Insert(0, string.Empty);
             }
 
@@ -464,10 +464,12 @@ namespace RuniEngine.Resource.Images
             }))
             {
                 string typePath = PathUtility.Combine(nameSpace, name, type);
-                if (!resourcePack.ioHandler.DirectoryExists(typePath))
+                IOHandler typeHandler = resourcePack.ioHandler.CreateChild(typePath);
+
+                if (!typeHandler.DirectoryExists())
                     return result;
 
-                result = resourcePack.ioHandler.GetFiles(typePath, ExtensionFilter.pictureFileFilter).Select(x => PathUtility.GetFileNameWithoutExtension(x)).ToArray();
+                result = typeHandler.GetFiles(ExtensionFilter.pictureFileFilter).Select(x => PathUtility.GetFileNameWithoutExtension(x)).ToArray();
             }
 
             return result;
@@ -618,7 +620,7 @@ namespace RuniEngine.Resource.Images
                 {
                     string nameSpace = resourcePack.nameSpaces[i];
                     string rootPath = PathUtility.Combine(nameSpace, name);
-                    using IOHandler root = resourcePack.ioHandler.CreateChild(rootPath);
+                    IOHandler root = resourcePack.ioHandler.CreateChild(rootPath);
 
                     if (!root.DirectoryExists())
                     {
@@ -636,7 +638,7 @@ namespace RuniEngine.Resource.Images
 
                     void GetImage(IOHandler handler)
                     {
-                        TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>("", ".json", handler) ?? new TextureMetaData();
+                        TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(handler.AddExtension(".json")) ?? new TextureMetaData();
                         string typeName = handler.childPath;
 
                         tempTextureMetaDatas.TryAdd(nameSpace, new());
@@ -644,6 +646,7 @@ namespace RuniEngine.Resource.Images
 
                         foreach (string filePath in handler.GetFiles(ExtensionFilter.pictureFileFilter))
                         {
+                            IOHandler fileHandler = handler.CreateChild(filePath);
                             string fileName = PathUtility.GetFileNameWithoutExtension(filePath);
 
                             maxProgress++;
@@ -654,8 +657,8 @@ namespace RuniEngine.Resource.Images
                             {
                                 try
                                 {
-                                    Dictionary<string, SpriteMetaData[]> spriteMetaData = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>?>(filePath, ".json", handler) ?? new();
-                                    Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(handler, filePath, textureMetaData));
+                                    Dictionary<string, SpriteMetaData[]> spriteMetaData = JsonManager.JsonRead<Dictionary<string, SpriteMetaData[]>?>(fileHandler.AddExtension(".json")) ?? new();
+                                    Texture2D? texture = await await ThreadDispatcher.Execute(() => GetTextureAsync(fileHandler, textureMetaData));
                                     if (texture == null)
                                         return;
 
@@ -675,8 +678,6 @@ namespace RuniEngine.Resource.Images
                                 {
                                     progressValue++;
                                     progress?.Report((float)progressValue / maxProgress);
-
-                                    handler.Dispose();
                                 }
                             }
                         }

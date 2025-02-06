@@ -386,7 +386,7 @@ namespace RuniEngine.Resource
         /// 파일의 경로
         /// Path
         /// </param>
-        /// <param name="outPath">
+        /// <param name="outHandler">
         /// 검색한 확장자를 포함한 전체 경로
         /// Full path including searched extension
         /// </param>
@@ -395,19 +395,17 @@ namespace RuniEngine.Resource
         /// extension list
         /// </param>
         /// <returns></returns>
-        public static bool FileExtensionExists(IOHandler ioHandler, string path, out string outPath, ExtensionFilter extensionFilter)
+        public static bool FileExtensionExists(IOHandler handler, out IOHandler outHandler, ExtensionFilter extensionFilter)
         {
             for (int i = 0; i < extensionFilter.extensions.Length; i++)
             {
                 string extension = extensionFilter.extensions[i];
-                if (ioHandler.FileExists(path, extension))
-                {
-                    outPath = path + extension;
+                outHandler = handler.AddExtension(extension);
+                if (outHandler.FileExists())
                     return true;
-                }
             }
 
-            outPath = "";
+            outHandler = IOHandler.empty;
             return false;
         }
 

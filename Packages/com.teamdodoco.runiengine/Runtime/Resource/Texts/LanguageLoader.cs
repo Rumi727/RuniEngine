@@ -74,10 +74,11 @@ namespace RuniEngine.Resource.Texts
                 return false;
             }))
             {
-                if (!ResourceManager.FileExtensionExists(StreamingIOHandler.instance, PathUtility.Combine(ResourceManager.rootName, nameSpace, name, language), out string outPath, ExtensionFilter.jsonFileFilter))
+                IOHandler handler = StreamingIOHandler.instance.CreateChild(PathUtility.Combine(ResourceManager.rootName, nameSpace, name, language));
+                if (!handler.FileExists(out IOHandler outHandler, ExtensionFilter.jsonFileFilter))
                     return result4;
 
-                Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(outPath, "", StreamingIOHandler.instance);
+                Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(outHandler);
                 if (lang == null || !lang.TryGetValue(key, out string value))
                     return result4;
 
@@ -131,7 +132,7 @@ namespace RuniEngine.Resource.Texts
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
-                using IOHandler root = resourcePack.ioHandler.CreateChild(PathUtility.Combine(nameSpace, name));
+                IOHandler root = resourcePack.ioHandler.CreateChild(PathUtility.Combine(nameSpace, name));
 
                 if (!root.DirectoryExists())
                 {
@@ -142,8 +143,9 @@ namespace RuniEngine.Resource.Texts
                 foreach (string filePath in root.GetFiles(ExtensionFilter.jsonFileFilter))
                 {
                     string fileName = PathUtility.GetFileNameWithoutExtension(filePath);
+                    IOHandler fileHandler = root.CreateChild(filePath);
 
-                    Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(filePath, "", root);
+                    Dictionary<string, string>? lang = JsonManager.JsonRead<Dictionary<string, string>>(fileHandler);
                     if (lang == null)
                         continue;
 

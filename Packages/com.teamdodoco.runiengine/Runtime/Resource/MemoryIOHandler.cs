@@ -6,6 +6,9 @@ using System.IO;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
+using RuniEngine.Spans;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace RuniEngine
 {
@@ -14,7 +17,7 @@ namespace RuniEngine
     /// </summary>
     public sealed class MemoryIOHandler : IOHandler
     {
-        class VirtualDirectory : IDisposable
+        class VirtualDirectory
         {
             public readonly ConcurrentDictionary<string, VirtualDirectory> directories = new();
             public readonly ConcurrentDictionary<string, VirtualFile> files = new();
@@ -24,12 +27,10 @@ namespace RuniEngine
                 if (string.IsNullOrEmpty(path))
                     return this;
 
-                string[] paths = path.Split(PathUtility.directorySeparatorChars);
                 VirtualDirectory directory = this;
-
-                for (int i = 0; i < paths.Length; i++)
+                foreach (var item in path.AsSpan().SplitAny(PathUtility.directorySeparatorChars))
                 {
-                    path = paths[i];
+                    path = new string(item);
                     if (!directory.directories.TryGetValue(path, out directory))
                         return null;
                 }
@@ -37,175 +38,159 @@ namespace RuniEngine
                 return directory;
             }
 
-            public VirtualDirectory GetNestDirectory(string path, out string childPath)
-            {
-                childPath = path;
-
-                if (string.IsNullOrEmpty(path))
-                    return this;
-
-                string[] paths = path.Split(PathUtility.directorySeparatorChars);
-                VirtualDirectory result = this;
-
-                for (int i = 0; i < paths.Length; i++)
-                {
-                    path = paths[i];
-                    if (!result.directories.TryGetValue(path, out VirtualDirectory directory))
-                        break;
-
-                    result = directory;
-                    childPath = PathUtility.GetParentPath(childPath);
-
-                    continue;
-                }
-
-                return result;
-            }
-
             public VirtualFile? GetFile(string path)
             {
                 string parentPath = PathUtility.GetParentPath(path);
                 string fileName = PathUtility.GetFileName(path);
 
-                VirtualDirectory? directory = GetDirectory(parentPath);
-                if (directory == null)
-                    return null;
-
-                return directory.files.GetValueOrDefault(fileName);
-            }
-
-            public void Dispose()
-            {
-                directories.Clear();
-                files.Clear();
+                return GetDirectory(parentPath)?.files.GetValueOrDefault(fileName);
             }
         }
 
         class VirtualFile
         {
-            readonly IOHandler ioHandler = empty;
-            readonly string? shortcutPath = null;
+            readonly IOHandler? ioHandler = empty;
+            readonly Stream content = Stream.Null;
 
-            readonly MemoryStream content = (MemoryStream)Stream.Null;
+            VirtualFile(IOHandler ioHandler) => this.ioHandler = ioHandler;
+            VirtualFile(Stream stream) => content = stream;
 
-            VirtualFile(IOHandler ioHandler, string? shortcutPath)
-            {
-                this.ioHandler = ioHandler;
-                this.shortcutPath = shortcutPath;
-            }
+            public byte[] ReadAllBytes() => ioHandler?.ReadAllBytes() ?? content.ReadFully();
 
-            VirtualFile(byte[] content) => this.content = new MemoryStream(content.Copy());
+            public UniTask<byte[]> ReadAllBytesAsync() => ioHandler?.ReadAllBytesAsync() ?? UniTask.RunOnThreadPool(() => content.ReadFully());
 
-            public byte[] ReadAllBytes()
-            {
-                if (shortcutPath != null)
-                    return ioHandler.ReadAllBytes(shortcutPath);
+            public string ReadAllText() => ioHandler?.ReadAllText() ?? Encoding.UTF8.GetString(content.ReadFully());
 
-                return content.ToArray();
-            }
+            public UniTask<string> ReadAllTextAsync() => ioHandler?.ReadAllTextAsync() ?? UniTask.RunOnThreadPool(() => Encoding.UTF8.GetString(content.ReadFully()));
 
-            public UniTask<byte[]> ReadAllBytesAsync()
-            {
-                if (shortcutPath != null)
-                    return ioHandler.ReadAllBytesAsync(shortcutPath);
+            public IEnumerable<string> ReadLines() => ioHandler?.ReadLines() ?? Encoding.UTF8.GetString(content.ReadFully()).ReadLines();
 
-                return UniTask.RunOnThreadPool(() => content.ToArray());
-            }
+            public Stream OpenRead() => ioHandler?.OpenRead() ?? new MemoryStream(content.ReadFully(), false);
 
-            public string ReadAllText()
-            {
-                if (shortcutPath != null)
-                    return ioHandler.ReadAllText(shortcutPath);
-                
-                return Encoding.UTF8.GetString(content.ToArray());
-            }
+            public static VirtualFile CreateShortcut(IOHandler ioHandler) => new VirtualFile(ioHandler);
 
-            public UniTask<string> ReadAllTextAsync()
-            {
-                if (shortcutPath != null)
-                    return ioHandler.ReadAllTextAsync(shortcutPath);
-
-                return UniTask.RunOnThreadPool(() => Encoding.UTF8.GetString(content.ToArray()));
-            }
-
-            public IEnumerable<string> ReadLines()
-            {
-                if (shortcutPath != null)
-                    return ioHandler.ReadLines(shortcutPath);
-
-                return Encoding.UTF8.GetString(content.ToArray()).ReadLines();
-            }
-
-            public Stream OpenRead()
-            {
-                if (shortcutPath != null)
-                    return ioHandler.OpenRead(shortcutPath);
-
-                return new MemoryStream(content.ToArray(), false);
-            }
-
-            public static VirtualFile CreateShortcut(IOHandler ioHandler) => new VirtualFile(ioHandler, string.Empty);
-            public static VirtualFile CreateShortcut(IOHandler ioHandler, string path) => new VirtualFile(ioHandler, path);
-
-            public static VirtualFile Create(byte[] content) => new VirtualFile(content);
-            public static VirtualFile Create(string content) => new VirtualFile(Encoding.UTF8.GetBytes(content));
-            public static VirtualFile Create(Stream stream) => new VirtualFile(stream.ReadFully());
+            public static VirtualFile Create(byte[] content) => Create(new MemoryStream(content, false));
+            public static VirtualFile Create(string content) => Create(new MemoryStream(Encoding.UTF8.GetBytes(content), false));
+            public static VirtualFile Create(Stream stream) => new VirtualFile(stream);
         }
 
-        public MemoryIOHandler() => directory = new VirtualDirectory();
-        MemoryIOHandler(VirtualDirectory directory, MemoryIOHandler parent, string childPath) : base(parent, childPath) => this.directory = directory;
-
-
+        public MemoryIOHandler() => rootDirectory = new VirtualDirectory();
+        MemoryIOHandler(VirtualDirectory rootDirectory, MemoryIOHandler? parent, string childPath) : base(parent, childPath) => this.rootDirectory = rootDirectory;
 
         public new MemoryIOHandler? parent => (MemoryIOHandler?)base.parent;
+
+
+
+        readonly VirtualDirectory rootDirectory;
+
+
 
         /// <returns><see cref="MemoryIOHandler"/><br/>유니티 qt이 공변 반환 타입 지원 안하네 tllllllllqkf</returns>
         public override IOHandler CreateChild(string path)
         {
-            /*GetNearestDirectory(path, out string childPath);
-            return new MemoryIOHandler(directory?.GetDirectory(path), this, path);*/
-            throw new NotImplementedException();
+            MemoryIOHandler handler = this;
+            if (string.IsNullOrEmpty(path))
+                return handler;
+
+            foreach (var item in path.AsSpan().SplitAny(PathUtility.directorySeparatorChars))
+            {
+                string childPath = new string(item);
+                handler = new MemoryIOHandler(rootDirectory, handler, childPath);
+            }
+
+            return handler;
         }
 
-        public override bool DirectoryExists(string path)
+        public override IOHandler AddExtension(string extension) => new MemoryIOHandler(rootDirectory, parent, childPath + extension);
+
+
+
+        public override bool DirectoryExists() => rootDirectory.GetDirectory(childFullPath) != null;
+
+        public override bool FileExists() => rootDirectory.GetFile(childFullPath) != null;
+        public override bool FileExists(out IOHandler outHandler, ExtensionFilter extensionFilter) => ResourceManager.FileExtensionExists(this, out outHandler, extensionFilter);
+
+
+        public override IEnumerable<string> GetDirectories()
         {
-            /*VirtualDirectory? directory = GetNearestDirectory(out string nearPath);
-            directory = directory?.GetDirectory(PathUtility.Combine(nearPath, path));
-
-            return directory != null;*/
-            throw new NotImplementedException();
+            VirtualDirectory? directory = rootDirectory.GetDirectory(childFullPath) ?? throw new DirectoryNotFoundException(childFullPath);
+            foreach (var item in directory.directories)
+                yield return item.Key;
         }
 
-        public override bool FileExists(string path, string extension = "") => throw new NotImplementedException();
-        public override bool FileExists(string path, out string outPath, ExtensionFilter extensionFilter) => throw new NotImplementedException();
+        public override IEnumerable<string> GetAllDirectories() => InternalGetAllDirectories().Select(x => x.Key);
 
-        public override IEnumerable<string> GetDirectories(string path) => throw new NotImplementedException();
+        IEnumerable<KeyValuePair<string, VirtualDirectory>> InternalGetAllDirectories()
+        {
+            return Recurse(this, rootDirectory.GetDirectory(childFullPath) ?? throw new DirectoryNotFoundException(childFullPath), string.Empty);
 
-        public override IEnumerable<string> GetAllDirectories(string path) => throw new NotImplementedException();
+            static IEnumerable<KeyValuePair<string, VirtualDirectory>> Recurse(MemoryIOHandler handler, VirtualDirectory directory, string parentPath)
+            {
+                foreach (var item in directory.directories)
+                {
+                    string path = parentPath + item.Key;
+                    yield return new KeyValuePair<string, VirtualDirectory>(PathUtility.GetRelativePath(handler.parent?.childFullPath ?? string.Empty, path), item.Value);
 
-        public override IEnumerable<string> GetFiles(string path) => throw new NotImplementedException();
-        public override IEnumerable<string> GetFiles(string path, ExtensionFilter extensionFilter) => throw new NotImplementedException();
-
-        public override IEnumerable<string> GetAllFiles(string path) => throw new NotImplementedException();
-        public override IEnumerable<string> GetAllFiles(string path, ExtensionFilter extensionFilter) => throw new NotImplementedException();
-
-        public override byte[] ReadAllBytes(string path, string extension = "") => throw new NotImplementedException();
-
-        public override UniTask<byte[]> ReadAllBytesAsync(string path, string extension = "") => throw new NotImplementedException();
-
-        public override string ReadAllText(string path, string extension = "") => throw new NotImplementedException();
-
-        public override UniTask<string> ReadAllTextAsync(string path, string extension = "") => throw new NotImplementedException();
-
-        public override IEnumerable<string> ReadLines(string path, string extension = "") => throw new NotImplementedException();
-
-        public override Stream OpenRead(string path, string extension = "") => throw new NotImplementedException();
-
-        public override void Dispose() => directory?.Dispose();
+                    foreach (var subItem in Recurse(handler, item.Value, path))
+                        yield return subItem;
+                }
+            }
+        }
 
 
+        public override IEnumerable<string> GetFiles()
+        {
+            VirtualDirectory? directory = rootDirectory.GetDirectory(childFullPath) ?? throw new DirectoryNotFoundException(childFullPath);
+            return directory.files.Select(item => item.Key);
+        }
 
-        readonly VirtualDirectory directory;
+        public override IEnumerable<string> GetFiles(ExtensionFilter extensionFilter)
+        {
+            VirtualDirectory? directory = rootDirectory.GetDirectory(childFullPath) ?? throw new DirectoryNotFoundException(childFullPath);
+            return FilterFiles(directory.files.Keys, extensionFilter);
+        }
+
+        public override IEnumerable<string> GetAllFiles()
+        {
+            var directories = InternalGetAllDirectories();
+            return directories.SelectMany(directoryItem => directoryItem.Value.files.Select(fileItem => PathUtility.Combine(directoryItem.Key, fileItem.Key)));
+        }
+
+        public override IEnumerable<string> GetAllFiles(ExtensionFilter extensionFilter) => FilterFiles(GetAllFiles(), extensionFilter);
+
+        static IEnumerable<string> FilterFiles(IEnumerable<string> files, ExtensionFilter extensionFilter)
+        {
+            IEnumerable<string> patterns = extensionFilter.ToString().Split('|').Select(ConvertPatternToRegex);
+
+            // `*` 패턴이 포함되어 있다면 바로 모든 파일 반환
+            if (patterns.Contains(".*"))
+                return files;
+
+            return files.Where(file => patterns.Any(pattern => Regex.IsMatch(file, pattern, RegexOptions.IgnoreCase))).ToList();
+        }
+
+        static string ConvertPatternToRegex(string pattern)
+        {
+            if (pattern == "*" || pattern == "*.*")
+                return ".*"; // 모든 파일을 허용하는 패턴
+
+            string escaped = Regex.Escape(pattern).Replace(@"\*", ".*"); // '*'를 '.*'로 변환
+            return $"^{escaped}$";
+        }
+
+        public override byte[] ReadAllBytes() => rootDirectory.GetFile(childFullPath)?.ReadAllBytes() ?? throw new FileNotFoundException();
+
+        public override UniTask<byte[]> ReadAllBytesAsync() => rootDirectory.GetFile(childFullPath)?.ReadAllBytesAsync() ?? throw new FileNotFoundException();
+
+        public override string ReadAllText() => rootDirectory.GetFile(childFullPath)?.ReadAllText() ?? throw new FileNotFoundException();
+
+        public override UniTask<string> ReadAllTextAsync() => rootDirectory.GetFile(childFullPath)?.ReadAllTextAsync() ?? throw new FileNotFoundException();
+
+        public override IEnumerable<string> ReadLines() => rootDirectory.GetFile(childFullPath)?.ReadLines() ?? throw new FileNotFoundException();
+
+        public override Stream OpenRead() => rootDirectory.GetFile(childFullPath)?.OpenRead() ?? throw new FileNotFoundException();
+
+
 
         /*VirtualDirectory GetNearestDirectory(string path, out string childPath)
         {

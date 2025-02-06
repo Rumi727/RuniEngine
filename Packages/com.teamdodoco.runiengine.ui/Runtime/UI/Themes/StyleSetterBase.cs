@@ -72,7 +72,7 @@ namespace RuniEngine.UI.Themes
             if (editInScript != null)
                 return;
             
-            ThemeStyle? style = ThemeLoader.GetStyle(StreamingIOHandler.instance, key, nameSpace);
+            ThemeStyle? style = ThemeLoader.GetStyle(ResourcePack.defaultPack, key, nameSpace);
             if (style == null)
                 return;
 

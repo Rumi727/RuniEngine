@@ -59,10 +59,10 @@ namespace RuniEngine.Resource
 
         public static ResourcePack? Create(IOHandler ioHandler)
         {
-            if (!ioHandler.FileExists("pack", out string jsonPath, ExtensionFilter.jsonFileFilter))
+            if (!ioHandler.CreateChild("pack").FileExists(out IOHandler jsonHandler, ExtensionFilter.jsonFileFilter))
                 return null;
 
-            ResourcePack? resourcePack = JsonManager.JsonRead<ResourcePack>(jsonPath, "", ioHandler);
+            ResourcePack? resourcePack = JsonManager.JsonRead<ResourcePack>(jsonHandler);
             if (resourcePack == null)
                 return null;
 
@@ -73,13 +73,8 @@ namespace RuniEngine.Resource
 
         static ResourcePack Create(IOHandler ioHandler, ResourcePack resourcePack)
         {
-            resourcePack.ioHandler = ioHandler.CreateChild(ResourceManager.rootName);
-
-            {
-                resourcePack.nameSpaces = ioHandler.GetDirectories(ResourceManager.rootName)
-                                                   .Select(static nameSpacePath => PathUtility.GetFileName(nameSpacePath))
-                                                   .ToArray();
-            }
+            resourcePack.ioHandler = ioHandler = ioHandler.CreateChild(ResourceManager.rootName);
+            resourcePack.nameSpaces = ioHandler.GetDirectories().ToArray();
 
             /*
              * 좀 더 확장성 있게 수정해야함

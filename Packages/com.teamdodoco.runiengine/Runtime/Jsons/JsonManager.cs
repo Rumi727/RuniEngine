@@ -42,12 +42,12 @@ namespace RuniEngine.Jsons
         /// 경로에 확장자 사용
         /// </param>
         /// <returns></returns>
-        public static T? JsonRead<T>(string path, string extension, IOHandler ioHandler)
+        public static T? JsonRead<T>(IOHandler ioHandler)
         {
-            if (!ioHandler.FileExists(path, extension))
+            if (!ioHandler.FileExists())
                 return default;
 
-            string json = ioHandler.ReadAllText(path, extension);
+            string json = ioHandler.ReadAllText();
             if (!string.IsNullOrEmpty(json))
                 return ToObject<T>(json);
 
@@ -86,12 +86,12 @@ namespace RuniEngine.Jsons
         /// 경로에 확장자 사용
         /// </param>
         /// <returns></returns>
-        public static object? JsonRead(Type type, string path, string extension, IOHandler ioHandler)
+        public static object? JsonRead(Type type, IOHandler ioHandler)
         {
-            if (!ioHandler.FileExists(path, extension))
+            if (!ioHandler.FileExists())
                 return default;
 
-            string json = ioHandler.ReadAllText(path, extension);
+            string json = ioHandler.ReadAllText();
             if (!string.IsNullOrEmpty(json))
                 return ToObject(type, json);
 

@@ -71,10 +71,10 @@ namespace RuniEngine.Editor.ProjectSettings
             string nameSpacePath = Path.Combine(ResourceManager.rootName, nameSpace);
             string themeFolderPath = Path.Combine(nameSpacePath, ThemeLoader.name);
 
-            if (!StreamingIOHandler.instance.DirectoryExists(nameSpacePath))
+            if (!StreamingIOHandler.instance.CreateChild(nameSpacePath).DirectoryExists())
                 return;
 
-            string[]? keys = ThemeLoader.GetStyleKeys(StreamingIOHandler.instance, nameSpace);
+            string[]? keys = ThemeLoader.GetStyleKeys(ResourcePack.defaultPack, nameSpace);
             if (keys == null)
             {
                 if (GUILayout.Button(TryGetText("project_setting.theme.styles_folder_create")))
@@ -112,7 +112,7 @@ namespace RuniEngine.Editor.ProjectSettings
             DrawLine();
 
             {
-                ThemeStyle? style = ThemeLoader.GetStyle(StreamingIOHandler.instance, key, nameSpace);
+                ThemeStyle? style = ThemeLoader.GetStyle(ResourcePack.defaultPack, key, nameSpace);
                 if (style == null)
                     return;
 
@@ -123,7 +123,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    string? path = ThemeLoader.GetStylePath(StreamingIOHandler.instance, key, nameSpace);
+                    string? path = ThemeLoader.GetStylePath(ResourcePack.defaultPack, key, nameSpace)?.childFullPath;
                     if (path != null)
                         File.WriteAllText(path, JsonManager.ToJson(style));
                 }

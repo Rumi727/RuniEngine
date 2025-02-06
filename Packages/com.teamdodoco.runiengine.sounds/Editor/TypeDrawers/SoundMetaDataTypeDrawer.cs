@@ -30,7 +30,7 @@ namespace RuniEngine.Editor
         protected override void InternalDrawStructGUI(Rect position, GUIContent? label)
         {
             selectedAudioPaths = GetAudioRealPaths().ToArray();
-            selectedMetaDatas = selectedAudioPaths.Select(static x => JsonManager.JsonRead<AudioFileMetaData>(x, ".json", StreamingIOHandler.instance)).ToArray();
+            selectedMetaDatas = selectedAudioPaths.Select(static x => JsonManager.JsonRead<AudioFileMetaData>(x + ".json")).ToArray();
 
             Line1GUI(position);
 

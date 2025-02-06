@@ -116,7 +116,7 @@ namespace RuniEngine.Editor.ProjectSettings
 
             if (!cachedLocalTextures.TryGetValue(filePath, out texture) || texture == null)
             {
-                texture = ImageLoader.GetTexture(StreamingIOHandler.instance, filePath, textureMetaData.filterMode, textureMetaData.generateMipmap, Resource.Images.TextureCompressionQuality.none, TextureFormat.Alpha8);
+                texture = ImageLoader.GetTexture(StreamingIOHandler.instance.CreateChild(filePath), textureMetaData.filterMode, textureMetaData.generateMipmap, Resource.Images.TextureCompressionQuality.none, TextureFormat.Alpha8);
                 cachedLocalTextures[filePath] = texture;
             }
 

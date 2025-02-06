@@ -101,7 +101,7 @@ namespace RuniEngine.Resource.Objects
             for (int i = 0; i < resourcePack.nameSpaces.Count; i++)
             {
                 string nameSpace = resourcePack.nameSpaces[i];
-                using IOHandler root = resourcePack.ioHandler.CreateChild(PathUtility.Combine(nameSpace, name)); 
+                IOHandler root = resourcePack.ioHandler.CreateChild(PathUtility.Combine(nameSpace, name)); 
 
                 if (!root.FileExists())
                 {

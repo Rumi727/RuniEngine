@@ -2,10 +2,8 @@
 using Cysharp.Threading.Tasks;
 using NAudio.Vorbis;
 using NAudio.Wave;
-using OggVorbis;
 using RuniEngine.Booting;
 using RuniEngine.Jsons;
-using RuniEngine.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
+
 using Object = UnityEngine.Object;
 
 namespace RuniEngine.Resource.Sounds
@@ -165,18 +163,18 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static RawAudioClip? GetRawAudio(IOHandler ioHandler, string path, RawAudioLoadType loadType)
+        public static RawAudioClip? GetRawAudio(IOHandler ioHandler, RawAudioLoadType loadType)
         {
-            if (!ioHandler.FileExists(path))
+            if (!ioHandler.FileExists())
                 return null;
 
-            string ext = PathUtility.GetExtension(path);
+            string ext = PathUtility.GetExtension(ioHandler.childPath);
             using WaveStream? stream = ext switch
             {
-                ".ogg" => new VorbisWaveReader(ioHandler.OpenRead(path)),
-                ".wav" => new WaveFileReader(ioHandler.OpenRead(path)),
-                ".mp3" => new Mp3FileReader(ioHandler.OpenRead(path)),
-                ".aiff" => new AiffFileReader(ioHandler.OpenRead(path)),
+                ".ogg" => new VorbisWaveReader(ioHandler.OpenRead()),
+                ".wav" => new WaveFileReader(ioHandler.OpenRead()),
+                ".mp3" => new Mp3FileReader(ioHandler.OpenRead()),
+                ".aiff" => new AiffFileReader(ioHandler.OpenRead()),
                 _ => null
             };
 
@@ -282,15 +280,15 @@ namespace RuniEngine.Resource.Sounds
 
 
 
-        public static async UniTask<AudioClip?> GetAudio(IOHandler ioHandler, string path, string extension, AudioType type, bool stream = false, HideFlags hideFlags = HideFlags.DontSave)
+        /*public static async UniTask<AudioClip?> GetAudio(IOHandler ioHandler, AudioType type, bool stream = false, HideFlags hideFlags = HideFlags.DontSave)
         {
 #if !((UNITY_STANDALONE_LINUX && !UNITY_EDITOR) || UNITY_EDITOR_LINUX)
-            if (ioHandler.FileExists(path, extension))
+            if (ioHandler.FileExists())
             {
                 if (type == AudioType.OGGVORBIS && !stream)
-                    return await VorbisPlugin.ToAudioClipAsync(await ioHandler.ReadAllBytesAsync(path, extension), PathUtility.GetFileNameWithoutExtension(path));
+                    return await VorbisPlugin.ToAudioClipAsync(await ioHandler.ReadAllBytesAsync(), PathUtility.GetFileNameWithoutExtension(path));
 
-                NotMainThreadException.Exception();
+                /*NotMainThreadException.Exception();
 
                 using UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path.UrlPathPrefix(), type);
                 DownloadHandlerAudioClip downloadHandlerAudioClip = (DownloadHandlerAudioClip)www.downloadHandler;
@@ -313,7 +311,7 @@ namespace RuniEngine.Resource.Sounds
             }
 #endif
             return null;
-        }
+        }*/
 
 
 
@@ -337,7 +335,7 @@ namespace RuniEngine.Resource.Sounds
             }))
             {
                 string path = PathUtility.Combine(ResourceManager.rootName, nameSpace, name);
-                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(path, ".json", ioHandler);
+                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(ioHandler.CreateChild(path + ".json"));
                 if (audioDatas != null)
                     result = audioDatas.Keys.ToArray();
             }
@@ -365,11 +363,11 @@ namespace RuniEngine.Resource.Sounds
             Parallel.ForEach(resourcePack.nameSpaces, nameSpace =>
             {
                 string folderPath = PathUtility.Combine(nameSpace, name);
-                using IOHandler root = resourcePack.ioHandler.CreateChild(folderPath);
+                IOHandler root = resourcePack.ioHandler.CreateChild(folderPath);
                 if (!root.DirectoryExists())
                     return;
 
-                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>("", ".json", root);
+                Dictionary<string, AudioData>? audioDatas = JsonManager.JsonRead<Dictionary<string, AudioData>>(root.AddExtension(".json"));
                 if (audioDatas == null)
                     return;
 
@@ -380,7 +378,8 @@ namespace RuniEngine.Resource.Sounds
 
                 Parallel.ForEach(files, audioPath =>
                 {
-                    AudioType audioType = PathUtility.GetExtension(audioPath).ToLower() switch
+                    IOHandler audioHandler = root.CreateChild(audioPath);
+                    /*AudioType audioType = PathUtility.GetExtension(audioPath).ToLower() switch
                     {
                         ".ogg" => AudioType.OGGVORBIS,
                         ".mp3" => AudioType.MPEG,
@@ -394,16 +393,16 @@ namespace RuniEngine.Resource.Sounds
                         ".xma" => AudioType.XMA,
                         ".s3m" => AudioType.S3M,
                         _ => AudioType.UNKNOWN,
-                    };
+                    };*/
 
-                    AudioFileMetaData? metaData = JsonManager.JsonRead<AudioFileMetaData>(audioPath + ".json");
+                    AudioFileMetaData? metaData = JsonManager.JsonRead<AudioFileMetaData>(audioHandler.AddExtension(".json"));
                     RawAudioLoadType loadType = RawAudioLoadType.instant;
                     if (metaData != null)
                         loadType = metaData.Value.loadType;
 
-                    RawAudioClip? rawAudioClip = null;
-                    if (audioType == AudioType.OGGVORBIS || audioType == AudioType.MPEG || audioType == AudioType.AIFF)
-                        rawAudioClip = GetRawAudio(root, audioPath, loadType);
+                    RawAudioClip? rawAudioClip = GetRawAudio(audioHandler, loadType);
+                    /*if (audioType == AudioType.OGGVORBIS || audioType == AudioType.MPEG || audioType == AudioType.AIFF)
+                        rawAudioClip = GetRawAudio(audioHandler, loadType);*/
                     /*else
 
                     var awaiter = ThreadDispatcher.Execute(Load).GetAwaiter();
