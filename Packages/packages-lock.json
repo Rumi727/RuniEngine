@@ -26,15 +26,6 @@
       },
       "hash": "ed208e11ff54a433bfa8cb2a52f99cd67ab280b7"
     },
-    "com.rumi.visual-studio.nullable": {
-      "version": "https://github.com/Rumi727/Unity-Nullable-Enabler.git?path=Packages/com.rumi.visual-studio.nullable",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.ide.visualstudio": "2.0.22"
-      },
-      "hash": "969a209aa9487d982a5e2e012167dbdb62edfa18"
-    },
     "com.singularitygroup.hotreload": {
       "version": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git#1.12.12",
       "depth": 0,
@@ -193,7 +184,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.11.1",
+      "version": "1.11.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -288,7 +279,7 @@
       }
     },
     "com.unity.toolchain.win-x86_64-linux-x86_64": {
-      "version": "2.0.9",
+      "version": "2.0.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {

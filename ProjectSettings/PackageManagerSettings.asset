@@ -34,6 +34,8 @@ MonoBehaviour:
     - com.coffee.softmask-for-ugui
     - com.cysharp.unitask
     - com.unity.uiextensions
+    - extensions.unity.imageloader
+    - extensions.unity.audioloader
     m_IsDefault: 0
     m_Capabilities: 0
     m_ConfigSource: 4
@@ -42,6 +44,6 @@ MonoBehaviour:
   m_RegistryInfoDraft:
     m_Modified: 0
     m_ErrorMessage: 
-    m_UserModificationsInstanceId: -866
-    m_OriginalInstanceId: -870
+    m_UserModificationsInstanceId: -864
+    m_OriginalInstanceId: -868
   m_LoadAssets: 0
