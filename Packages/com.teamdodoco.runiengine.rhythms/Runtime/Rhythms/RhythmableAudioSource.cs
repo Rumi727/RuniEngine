@@ -5,7 +5,7 @@ using UnityEngine;
 namespace RuniEngine.Rhythms
 {
     [RequireComponent(typeof(AudioSource))]
-    public class RhythmableAudioSource : MonoBehaviour, IRhythmable
+    public sealed class RhythmableAudioSource : MonoBehaviour, IRhythmable
     {
         public AudioSource? audioSource => _audioSource = this.GetComponentFieldSave(_audioSource);
         [SerializeField, HideInInspector] AudioSource? _audioSource;
