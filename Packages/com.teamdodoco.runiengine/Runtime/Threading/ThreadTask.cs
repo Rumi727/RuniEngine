@@ -317,8 +317,17 @@ namespace RuniEngine.Threading
 
             isDisposed = true;
 
-            progressTimeWatch.Stop();
-            runningTimeWatch.Stop();
+            try
+            {
+                Lock(ref stopwatchLock);
+
+                progressTimeWatch.Stop();
+                runningTimeWatch.Stop();
+            }
+            finally
+            {
+                Unlock(ref stopwatchLock);
+            }
         }
     }
 }
