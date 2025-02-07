@@ -169,7 +169,9 @@ namespace RuniEngine.Resource.Sounds
                 return null;
 
             string ext = PathUtility.GetExtension(ioHandler.childPath);
-            using WaveStream? stream = ext switch
+
+            //using 쓰면 RawAudioClip가 관리 못함
+            WaveStream? stream = ext switch
             {
                 ".ogg" => new VorbisWaveReader(ioHandler.OpenRead()),
                 ".wav" => new WaveFileReader(ioHandler.OpenRead()),
