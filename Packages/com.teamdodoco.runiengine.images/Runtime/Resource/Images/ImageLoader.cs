@@ -639,7 +639,7 @@ namespace RuniEngine.Resource.Images
                     void GetImage(IOHandler handler)
                     {
                         TextureMetaData textureMetaData = JsonManager.JsonRead<TextureMetaData?>(handler.AddExtension(".json")) ?? new TextureMetaData();
-                        string typeName = handler.childPath;
+                        string typeName = PathUtility.GetRelativePath(root.childFullPath, handler.childFullPath);
 
                         tempTextureMetaDatas.TryAdd(nameSpace, new());
                         tempTextureMetaDatas[nameSpace].TryAdd(typeName, textureMetaData);
