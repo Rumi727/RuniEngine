@@ -105,13 +105,13 @@ namespace RuniEngine
             if (relativeTo.Length <= 0)
                 return path;
 
-            if (path.Length <= 0)
+            if (path.Length <= 0 || relativeTo == path)
                 return string.Empty;
 
             if (path.StartsWith(relativeTo))
             {
                 path = path.Substring(relativeTo.Length);
-                if (path[0] == directorySeparatorChar)
+                if (path.Length > 0 && path[0] == directorySeparatorChar)
                     path = path.Substring(1);
             }
 
