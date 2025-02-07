@@ -310,8 +310,10 @@ namespace RuniEngine.Sounds
                 this.audioData = audioData;
                 this.audioMetaData = audioMetaData;
 
-                _timeSamples *= lastFrequency / frequency;
-                internalTimeSamples *= lastFrequency / frequency;
+                double multiply = (double)frequency / lastFrequency;
+
+                _timeSamples = (long)(_timeSamples * multiply);
+                internalTimeSamples = (long)(internalTimeSamples * multiply);
 
                 tempoAdjustmentIndex = 0;
 
