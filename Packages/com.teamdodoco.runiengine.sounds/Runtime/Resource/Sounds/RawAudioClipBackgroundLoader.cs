@@ -32,18 +32,18 @@ namespace RuniEngine.Resource.Sounds
         }
 
         /// <summary>Thread-safe</summary>
-        public override bool isLoading => Interlocked.Add(ref _isLoading, 0) != 0;
+        public override bool isLoading => Interlocked.CompareExchange(ref _isLoading, 0, 0) != 0;
         int _isLoading;
 
         /// <summary>Thread-safe</summary>
-        public override bool isLoaded => Interlocked.Add(ref _isLoaded, 0) != 0;
+        public override bool isLoaded => Interlocked.CompareExchange(ref _isLoaded, 0, 0) != 0;
         int _isLoaded;
 
         /// <summary>Thread-safe</summary>
         public override bool isStream => false;
 
         /// <summary>Thread-safe</summary>
-        public bool isDisposed => Interlocked.Add(ref _isDisposed, 0) != 0;
+        public bool isDisposed => Interlocked.CompareExchange(ref _isDisposed, 0, 0) != 0;
         int _isDisposed;
 
 
