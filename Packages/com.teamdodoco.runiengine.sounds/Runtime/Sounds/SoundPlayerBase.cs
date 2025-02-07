@@ -278,7 +278,7 @@ namespace RuniEngine.Sounds
 
         public abstract bool Refresh();
 
-        public virtual void Play() => Interlocked.Exchange(ref _isPlaying, 1);
+        public virtual void Play(double time = 0) => Interlocked.Exchange(ref _isPlaying, 1);
 
         public virtual void Stop() => Interlocked.Exchange(ref _isPlaying, 0);
 

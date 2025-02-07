@@ -192,29 +192,43 @@ namespace RuniEngine.Sounds
 
         void Update()
         {
-            try
-            {
-                ThreadTask.Lock(ref onAudioFilterReadLock);
-
 #if ENABLE_RUNI_ENGINE_POOLING
-                //모든 버퍼 재생이 끝나기까지 최대한 대기
-                if (isDisposable && !loop)
+            //모든 버퍼 재생이 끝나기까지 최대한 대기
+            if (isDisposable && !loop)
+            {
+                long internalTimeSamples;
+
+                try
                 {
-                    if (internalTimeSamples < -AudioLoader.bufferLength || internalTimeSamples > samples + AudioLoader.bufferLength || !isPlaying)
-                    {
-                        Remove();
-                        return;
-                    }
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
+                    internalTimeSamples = this.internalTimeSamples;
                 }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
+
+                if (internalTimeSamples < -AudioLoader.bufferLength || internalTimeSamples > samples + AudioLoader.bufferLength || !isPlaying)
+                {
+                    Remove();
+                    return;
+                }
+            }
 #endif
 
-                //매 프레임 시간 보정
-                if (isPlaying && !isPaused)
-                    _timeSamples += (long)(Kernel.unscaledDeltaTimeDouble * frequency * realTempo);
-            }
-            finally
+            if (isPlaying && !isPaused)
             {
-                ThreadTask.Unlock(ref onAudioFilterReadLock);
+                try
+                {
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
+
+                    //매 프레임 시간 보정
+                    _timeSamples += (long)(Kernel.unscaledDeltaTimeDouble * frequency * realTempo);
+                }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
             }
         }
 
@@ -283,6 +297,8 @@ namespace RuniEngine.Sounds
 
         public override bool Refresh()
         {
+            int lastFrequency = frequency;
+
             try
             {
                 ThreadTask.Lock(ref onAudioFilterReadLock);
@@ -305,11 +321,13 @@ namespace RuniEngine.Sounds
                     return false;
                 }
 
-                int lastFrequency = frequency;
-
                 this.audioData = audioData;
                 this.audioMetaData = audioMetaData;
 
+                VarUpdate();
+            }
+            finally
+            {
                 double multiply = (double)frequency / lastFrequency;
 
                 _timeSamples = (long)(_timeSamples * multiply);
@@ -317,17 +335,13 @@ namespace RuniEngine.Sounds
 
                 tempoAdjustmentIndex = 0;
 
-                VarUpdate();
-            }
-            finally
-            {
                 ThreadTask.Unlock(ref onAudioFilterReadLock);
             }
 
             return true;
         }
 
-        public override void Play()
+        public override void Play(double time = 0)
         {
             if (!isActiveAndEnabled)
                 return;
@@ -337,6 +351,20 @@ namespace RuniEngine.Sounds
 
             VarUpdate();
 
+            if (time != 0)
+            {
+                try
+                {
+                    ThreadTask.Lock(ref onAudioFilterReadLock);
+
+                    _timeSamples = (long)(time * frequency);
+                    internalTimeSamples = (long)(time * frequency);
+                }
+                finally
+                {
+                    ThreadTask.Unlock(ref onAudioFilterReadLock);
+                }
+            }
             if (tempo < 0)
             {
                 long value = samples;
