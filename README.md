@@ -29,7 +29,7 @@ UI는 [osu!lazer](https://github.com/ppy/osu)에서 영감을 받았습니다
 
 ## 라이선스
 
-[MIT License](https://opensource.org/licenses/MIT)
+[MPL-2.0](https://opensource.org/license/mpl-2-0)
 
 ## 사용한 패키지와 DLL, 오픈 소스 출처
 

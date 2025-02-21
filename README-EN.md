@@ -29,7 +29,7 @@ Well, whatever, ~~When I say kernel, it is kernel. There is so much talk. so wha
 
 ## License
 
-[MIT License](https://opensource.org/licenses/MIT)
+[MPL-2.0](https://opensource.org/license/mpl-2-0)
 
 ## Packages and DLLs used, open source sources
 
