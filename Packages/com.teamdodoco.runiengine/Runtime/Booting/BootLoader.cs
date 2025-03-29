@@ -153,7 +153,7 @@ namespace RuniEngine.Booting
             await UniTask.SwitchToThreadPool();
 
             List<MethodInfo> methods = new List<MethodInfo>();
-            IReadOnlyList<Type> types = ReflectionManager.types;
+            IReadOnlyList<Type> types = ReflectionUtility.types;
             for (int typesIndex = 0; typesIndex < types.Count; typesIndex++)
             {
                 MethodInfo[] methodInfos = types[typesIndex].GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
@@ -187,7 +187,7 @@ namespace RuniEngine.Booting
         /// </summary>
         public static void StaticReset()
         {
-            IReadOnlyList<Type> types = ReflectionManager.types;
+            IReadOnlyList<Type> types = ReflectionUtility.types;
             for (int i = 0; i < types.Count; i++)
             {
                 PropertyInfo[] propertyInfos = types[i].GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);

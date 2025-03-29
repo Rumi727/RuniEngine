@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 
 namespace RuniEngine
 {
-    public static class ReflectionManager
+    public static class ReflectionUtility
     {
-        static ReflectionManager()
+        static ReflectionUtility()
         {
             assemblys = AppDomain.CurrentDomain.GetAssemblies();
 
