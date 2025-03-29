@@ -62,6 +62,9 @@ namespace RuniEngine.Booting
             //Path Init
             Kernel.PathInitialize();
 
+            //Awaken Invoke
+            AttributeInvoke<AwakenAttribute>();
+
             //Player Loop Setting
             Debug.Log("Player Loop Setting...");
             {
@@ -69,9 +72,6 @@ namespace RuniEngine.Booting
 
                 //UniTask Setting
                 PlayerLoopHelper.Initialize(ref loopSystems);
-
-                //Awaken Invoke
-                AttributeInvoke<AwakenAttribute>();
 
                 //Custom Update Setting
                 CustomPlayerLoopSetter.EventRegister(ref loopSystems);
