@@ -30,7 +30,7 @@ namespace RuniEngine.Install
             {
                 installerScreens.Clear();
 
-                IReadOnlyList<Type> types = ReflectionManager.types;
+                IReadOnlyList<Type> types = ReflectionUtility.types;
                 for (int i = 0; i < types.Count; i++)
                 {
                     Type type = types[i];

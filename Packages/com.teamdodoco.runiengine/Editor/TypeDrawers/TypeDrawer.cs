@@ -14,12 +14,12 @@ namespace RuniEngine.Editor.TypeDrawers
     {
         static TypeDrawer()
         {
-            List<Type> typeDrawers = new List<Type>(ReflectionManager.types.Count);
-            List<Type> attributeDrawers = new List<Type>(ReflectionManager.types.Count);
+            List<Type> typeDrawers = new List<Type>(ReflectionUtility.types.Count);
+            List<Type> attributeDrawers = new List<Type>(ReflectionUtility.types.Count);
 
-            for (int i = 0; i < ReflectionManager.types.Count; i++)
+            for (int i = 0; i < ReflectionUtility.types.Count; i++)
             {
-                Type type = ReflectionManager.types[i];
+                Type type = ReflectionUtility.types[i];
                 if (!type.IsSubtypeOf<TypeDrawer>() || !type.AttributeContains<CustomTypeDrawerAttribute>())
                     continue;
 

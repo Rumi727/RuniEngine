@@ -22,7 +22,7 @@ namespace RuniEngine.Datas
         public static StorableClass[] AutoInitialize(Type attribute)
         {
             List<StorableClass> storableObjectInfos = new List<StorableClass>();
-            IReadOnlyList<Type> types = ReflectionManager.types;
+            IReadOnlyList<Type> types = ReflectionUtility.types;
 
             for (int i = 0; i < types.Count; i++)
             {
@@ -51,7 +51,7 @@ namespace RuniEngine.Datas
         public static StorableClass[] AutoInstanceInitialize(Type attribute)
         {
             List<StorableClass> storableObjectInfos = new List<StorableClass>();
-            IReadOnlyList<Type> types = ReflectionManager.types;
+            IReadOnlyList<Type> types = ReflectionUtility.types;
 
             for (int i = 0; i < types.Count; i++)
             {
