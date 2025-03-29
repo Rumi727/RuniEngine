@@ -71,7 +71,7 @@ namespace RuniEngine.Booting
                 PlayerLoopHelper.Initialize(ref loopSystems);
 
                 //Awaken Invoke
-                await AttributeInvoke<AwakenAttribute>();
+                AttributeInvoke<AwakenAttribute>();
 
                 //Custom Update Setting
                 CustomPlayerLoopSetter.EventRegister(ref loopSystems);
