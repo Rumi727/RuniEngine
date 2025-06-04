@@ -2,7 +2,9 @@
 
 Languages available in README: \[[**한국어 (대한민국)**](README.md)\] \[[English (US)](README-EN.md)\]
 
-**개발 중인 프로젝트입니다.**\
+~~**개발 중인 프로젝트입니다.**~~\
+**다시 새로 만들고 있습니다.** (곧 깃허브 퍼블릭 전환 예정)
+
 지금은 [SC KRM 1.0](https://github.com/Rumi727/SC-KRM-1.0/)을 사용해주세요.
 
 ## 소개
