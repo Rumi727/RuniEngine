@@ -1,8 +1,12 @@
+**Project moved: [RuniOS](https://github.com/Rumi727/Runiverse-OS)**
+
+
+
 # Runi Engine
 
 Languages available in README: \[[**한국어 (대한민국)**](README.md)\] \[[English (US)](README-EN.md)\]
 
-프로젝트 이동 됨 : [RuniOS](https://github.com/Rumi727/Runiverse-OS/)
+**프로젝트 이동 됨 : [RuniOS](https://github.com/Rumi727/Runiverse-OS/)**
 
 ~~**개발 중인 프로젝트입니다.**~~\
 ~~**다시 새로 만들고 있습니다.** (곧 깃허브 퍼블릭 전환 예정)~~
