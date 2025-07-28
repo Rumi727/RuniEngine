@@ -1,6 +1,6 @@
 # Runi Engine
 
-Languages available in README: \[[**한국어 (대한민국)**](README.md)\] \[[English (US)](README-EN.md)\]
+Languages available in README: \[[한국어 (대한민국)](README.md)\] \[[**English (US)**](README-EN.md)\]
 
 **Project moved: [RuniOS](https://github.com/Rumi727/Runiverse-OS)**
 
