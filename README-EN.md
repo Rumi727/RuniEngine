@@ -2,7 +2,9 @@
 
 Languages available in README: \[[**한국어 (대한민국)**](README.md)\] \[[English (US)](README-EN.md)\]
 
-**This project is under development**\
+**Project moved: [RuniOS](https://github.com/Rumi727/Runiverse-OS)**
+
+~~**This project is under development**\~~
 For now, please use [SC KRM 1.0](https://github.com/SimsimhanChobo/SC-KRM-1.0/)
 
 ## Introduction
